@@ -6,92 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <Style x:Key="myControl" TargetType="Button">
-            <Setter Property="Padding" Value="0,0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid Name="Grid" HorizontalAlignment="Stretch" Padding="12, 0, 12, 12">
-                            <Grid.Transitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition FromVerticalOffset="0" FromHorizontalOffset="20" />
-                                </TransitionCollection>
-                            </Grid.Transitions>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualStateGroup.Transitions>
-                                        <VisualTransition From="Pressed" To="PointerOver">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="Super"/>
-                                            </Storyboard>
-                                        </VisualTransition>
-                                        <VisualTransition From="PointerOver" To="Normal">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="Super"/>
-                                            </Storyboard>
-                                        </VisualTransition>
-                                        <VisualTransition From="Pressed" To="Normal">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="Super"/>
-                                            </Storyboard>
-                                        </VisualTransition>
-                                    </VisualStateGroup.Transitions>
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="PointerOver"/>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="Super"/>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid Name="Super">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="82"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Width="70" Margin="0,14,0,0" Height="77" VerticalAlignment="Top" HorizontalAlignment="Left">
-                                    <Ellipse Canvas.ZIndex="0" Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                             Fill="{ThemeResource SystemChromeHighColor}" Opacity="{Binding Path=opacity}"/>
-                                    <Grid Opacity="{Binding Path=opacity}" Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <Ellipse Name="BitEll" Canvas.ZIndex="2" Width="70" Height="70" VerticalAlignment="Center" 
-                                                 HorizontalAlignment="Center" >
-                                            <Ellipse.Fill>
-                                                <ImageBrush Stretch="UniformToFill" ImageOpened="ImageBrush_ImageOpened" Opacity="0">
-                                                    <ImageBrush.ImageSource>
-                                                        <BitmapImage UriSource="{Binding Path=image}" CreateOptions="IgnoreImageCache" DecodePixelHeight="60" DecodePixelType="Logical" />
-                                                    </ImageBrush.ImageSource>
-                                                </ImageBrush>
-                                            </Ellipse.Fill>
-                                        </Ellipse>
-                                    </Grid>
-                                    <TextBlock Canvas.ZIndex="1" FontSize="26" Foreground="{ThemeResource ApplicationPageBackgroundThemeBrush}" FontFamily="Segoe MDL2 Assets" Text="&#xE8F3;" VerticalAlignment="Center" Opacity="{Binding Path=iconopacity}" HorizontalAlignment="Center"/>
-                                </Grid>
-                                <Grid Grid.Column="1" Grid.Row="0">
-                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,40,0" Opacity="{Binding Path=opacity}" FontSize="12"
-                                               Text="{Binding Path=feed}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                    <TextBlock TextWrapping="NoWrap" TextTrimming="None" VerticalAlignment="Center" FontSize="12" Opacity="{Binding Path=opacity}"
-                                               HorizontalAlignment="Right" Text="{Binding Path=dateoffset}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                </Grid>
-                                <TextBlock Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" Text="{Binding Path=title}" Opacity="{Binding Path=opacity}" Margin="0,-14,0,0"/>
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Page.Resources>
-
+    
     <Grid>
-        
         <Grid Name="Welcome" Visibility="Collapsed" Grid.Row="1" Canvas.ZIndex="9">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE897;" FontSize="50" TextAlignment="Center" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
@@ -100,29 +16,63 @@
                 <Button x:Uid="NewWelcomeBtn" HorizontalAlignment="Center" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White" Margin="12" Name="NavigateToSourcePage" Click="NavigateToSourcePage_Click"/>
             </StackPanel>
         </Grid>
-
         <ProgressRing Name="ProgRing" Canvas.ZIndex="0" IsActive="True" Width="70" Height="70" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-        <ScrollViewer Canvas.ZIndex="1" Name="Scroller" MaxWidth="700" HorizontalAlignment="Left" BorderThickness="0" VerticalScrollBarVisibility="Visible" >
-            <StackPanel Orientation="Vertical" >
-                <ItemsControl Name="Display" HorizontalAlignment="Center">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button HorizontalAlignment="Stretch" Style="{StaticResource myControl}" Tapped="ListTapped" Holding="Button_RightTapped" RightTapped="Button_RightTapped">
-                                <FlyoutBase.AttachedFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Name="ReadItem" x:Uid="MenuRead" Click="ReadItem_Click" />
-                                        <MenuFlyoutItem Name="OpenInEdge" x:Uid="MenuOpenInEdge" Click="BarWeb_Click"/>
-                                        <MenuFlyoutItem Name="CopyLink" x:Uid="MenuCopyLink" Click="CopyLink_Click" />
-                                        <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem Name="AddToFavs" x:Uid="MenuAddToFavs" Click="AddToFavs_Click" />
-                                    </MenuFlyout>
-                                </FlyoutBase.AttachedFlyout>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <Button Name="Showmore" Visibility="Collapsed" Background="{ThemeResource SystemChromeMediumColor}" Padding="12" Margin="6,12" HorizontalAlignment="Stretch" x:Uid="ShowmoreButton" Click="Showmore_Click" />
-            </StackPanel>
-        </ScrollViewer>
+        <ListView Name="Display" HorizontalAlignment="Center" ShowsScrollingPlaceholders="False" SelectionMode="None">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Name="Grid" HorizontalAlignment="Stretch" Padding="0" Margin="0 0 0 14" Background="Transparent"
+                        Tapped="ListTapped" Holding="Button_RightTapped" RightTapped="Button_RightTapped">
+                        <FlyoutBase.AttachedFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Name="ReadItem" x:Uid="MenuRead" Click="ReadItem_Click" />
+                                <MenuFlyoutItem Name="OpenInEdge" x:Uid="MenuOpenInEdge" Click="BarWeb_Click"/>
+                                <MenuFlyoutItem Name="CopyLink" x:Uid="MenuCopyLink" Click="CopyLink_Click" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Name="AddToFavs" x:Uid="MenuAddToFavs" Click="AddToFavs_Click" />
+                            </MenuFlyout>
+                        </FlyoutBase.AttachedFlyout>
+                        <Grid Name="Super">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="82"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Width="70" Margin="0,14,0,0" Height="77" VerticalAlignment="Top" HorizontalAlignment="Left">
+                                <Ellipse Canvas.ZIndex="0" Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                        Fill="{ThemeResource SystemChromeHighColor}" Opacity="{Binding Path=opacity}"/>
+                                <Grid Opacity="{Binding Path=opacity}" Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Ellipse Name="BitEll" Canvas.ZIndex="2" Width="70" Height="70" VerticalAlignment="Center" 
+                                            HorizontalAlignment="Center" >
+                                        <Ellipse.Fill>
+                                            <ImageBrush Stretch="UniformToFill" ImageOpened="ImageBrush_ImageOpened" Opacity="0">
+                                                <ImageBrush.ImageSource>
+                                                    <BitmapImage UriSource="{Binding Path=image}" CreateOptions="IgnoreImageCache" DecodePixelHeight="60" DecodePixelType="Logical" />
+                                                </ImageBrush.ImageSource>
+                                            </ImageBrush>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                </Grid>
+                                <TextBlock Canvas.ZIndex="1" FontSize="26" Foreground="{ThemeResource ApplicationPageBackgroundThemeBrush}" FontFamily="Segoe MDL2 Assets" Text="&#xE8F3;" VerticalAlignment="Center" Opacity="{Binding Path=iconopacity}" HorizontalAlignment="Center"/>
+                            </Grid>
+                            <Grid Grid.Column="1" Grid.Row="0">
+                                <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,40,0" Opacity="{Binding Path=opacity}" FontSize="12"
+                                        Text="{Binding Path=feed}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                <TextBlock TextWrapping="NoWrap" TextTrimming="None" VerticalAlignment="Center" FontSize="12" Opacity="{Binding Path=opacity}"
+                                        HorizontalAlignment="Right" Text="{Binding Path=dateoffset}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                            </Grid>
+                            <TextBlock Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" Text="{Binding Path=title}" Opacity="{Binding Path=opacity}" Margin="0,-14,0,0"/>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

@@ -106,14 +106,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="helpers\BackgroundTaskManager.cs" />
+    <Compile Include="Helpers\BackgroundTaskManager.cs" />
     <Compile Include="BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="CategoryDialog.xaml.cs">
       <DependentUpon>CategoryDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="helpers\SyndicationConverter.cs" />
+    <Compile Include="Helpers\SyndicationConverter.cs" />
     <Compile Include="ItemsControlView.xaml.cs">
       <DependentUpon>ItemsControlView.xaml</DependentUpon>
     </Compile>
@@ -129,7 +129,7 @@
     <Compile Include="PFeed.xaml.cs">
       <DependentUpon>PFeed.xaml</DependentUpon>
     </Compile>
-    <Compile Include="helpers\ClassBundle.cs" />
+    <Compile Include="Helpers\ClassBundle.cs" />
     <Compile Include="PFeedList.xaml.cs">
       <DependentUpon>PFeedList.xaml</DependentUpon>
     </Compile>
@@ -137,8 +137,8 @@
     <Compile Include="PSettings.xaml.cs">
       <DependentUpon>PSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="helpers\HtmlToRichTextBlock.cs" />
-    <Compile Include="helpers\SerializerExtensions.cs" />
+    <Compile Include="Helpers\HtmlToRichTextBlock.cs" />
+    <Compile Include="Helpers\SerializerExtensions.cs" />
     <Compile Include="Search.xaml.cs">
       <DependentUpon>Search.xaml</DependentUpon>
     </Compile>

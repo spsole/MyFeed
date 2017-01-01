@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Resources;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -94,29 +89,21 @@ namespace myFeed
 
         private async void HamburgerListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch (HamburgerListBox.SelectedIndex)
+            if (HamburgerListBox.SelectedIndex > 0)
             {
-                case 0:
-                    return;
-                case 1:
-                    MainFrame.Navigate(typeof(PFeed));
-                    break;
-                case 2:
-                    MainFrame.Navigate(typeof(PFavorites));
-                    break;
-                case 3:
-                    MainFrame.Navigate(typeof(PFeedList));
-                    break;
-                case 4:
-                    MainFrame.Navigate(typeof(Search));
-                    break;
-                case 5:
-                    MainFrame.Navigate(typeof(PSettings));
-                    break;
-            }
+                var switcher = new Dictionary<int, Type>
+                {
+                    { 1, typeof(PFeed) },
+                    { 2, typeof(PFavorites) },
+                    { 3, typeof(PFeedList) },
+                    { 4, typeof(Search) },
+                    { 5, typeof(PSettings) }
+                };
 
-            await Task.Delay(150);
-            ClosePane();
+                MainFrame.Navigate(switcher[HamburgerListBox.SelectedIndex]);
+                await Task.Delay(150);
+                ClosePane();
+            }
         }
         
         private void MyButton_Click(object sender, RoutedEventArgs e)

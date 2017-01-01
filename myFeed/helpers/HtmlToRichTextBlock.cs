@@ -190,6 +190,8 @@ namespace myFeed
             {
                 InlineUIContainer iui = new InlineUIContainer();
                 var sourceUri = System.Net.WebUtility.HtmlDecode(node.Attributes["src"].Value);
+                if (sourceUri.Length > 3 && sourceUri[0] == '/' && sourceUri[1] == '/')
+                    sourceUri = $"http:{sourceUri}"; // fix for hi-news.ru
                 Image img = new Image()
                 {
                     Source = new BitmapImage(new Uri(sourceUri, UriKind.Absolute))
@@ -209,7 +211,7 @@ namespace myFeed
                     {
                         From = 0,
                         To = 1,
-                        Duration = TimeSpan.FromSeconds(0.2),
+                        Duration = TimeSpan.FromSeconds(0.3),
                         EnableDependentAnimation = true
                     };
                     Storyboard.SetTarget(fade, img);

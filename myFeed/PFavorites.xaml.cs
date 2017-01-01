@@ -52,7 +52,8 @@ namespace myFeed
 
             if (files.Count == 0) Welcome.Visibility = Visibility.Visible;
 
-            foreach (StorageFile file in files) itemlist.Add(await SerializerExtensions.DeSerializeObject<PFeedItem>(file));
+            foreach (StorageFile file in files)
+                itemlist.Add(await SerializerExtensions.DeSerializeObject<PFeedItem>(file));
             await Task.Delay(TimeSpan.FromMilliseconds(5));
 
             if (NavUri != null)
@@ -79,7 +80,7 @@ namespace myFeed
 
         private void ListTapped(object sender, TappedRoutedEventArgs e)
         {
-            Button stack = (Button)sender;
+            FrameworkElement stack = (FrameworkElement)sender;
             PFeedItem p = (PFeedItem)stack.DataContext;
             ArticleFrame.Navigate(typeof(PArticle), p);
         }
@@ -140,27 +141,33 @@ namespace myFeed
 
         private void ImageBrush_ImageOpened(object sender, RoutedEventArgs e)
         {
-            ImageBrush img = sender as ImageBrush;
-            img.Opacity = 0;
-            if (img.ImageSource.ToString() == string.Empty) return;
-            DoubleAnimation fade = new DoubleAnimation()
+            try
             {
-                From = 0,
-                To = 1,
-                Duration = TimeSpan.FromSeconds(0.4),
-                EnableDependentAnimation = true
-            };
-            Storyboard.SetTarget(fade, img);
-            Storyboard.SetTargetProperty(fade, "Opacity");
-            Storyboard openpane = new Storyboard();
-            openpane.Children.Add(fade);
-            openpane.Begin();
+                ImageBrush img = sender as ImageBrush;
+                img.Opacity = 0;
+                DoubleAnimation fade = new DoubleAnimation()
+                {
+                    From = 0,
+                    To = 1,
+                    Duration = TimeSpan.FromSeconds(0.3),
+                    EnableDependentAnimation = true
+                };
+                Storyboard.SetTarget(fade, img);
+                Storyboard.SetTargetProperty(fade, "Opacity");
+                Storyboard openpane = new Storyboard();
+                openpane.Children.Add(fade);
+                openpane.Begin();
+            }
+            catch
+            {
+
+            }
         }
 
         private void SavedItem_Holding(object sender, RoutedEventArgs e)
         {
             PFeedItem feeditem = (PFeedItem)((FrameworkElement)sender).DataContext;
-            MenuFlyout menu = FlyoutBase.GetAttachedFlyout((Button)sender) as MenuFlyout;
+            MenuFlyout menu = FlyoutBase.GetAttachedFlyout((FrameworkElement)sender) as MenuFlyout;
             MenuFlyoutItem itempin = menu.Items[2] as MenuFlyoutItem;
             MenuFlyoutItem itemunpin = menu.Items[3] as MenuFlyoutItem;
 

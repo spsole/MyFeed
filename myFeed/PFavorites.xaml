@@ -33,137 +33,6 @@
                 <DiscreteObjectKeyFrame KeyTime="0:0:0.0" Value="Visible"/>
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
-
-        <Style x:Key="myControl" TargetType="Button">
-            <Setter Property="Padding" Value="0,0"/>
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid Name="Grid" HorizontalAlignment="Stretch" Padding="12,6,12,12" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                            <Grid.Transitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition FromVerticalOffset="0" FromHorizontalOffset="20" />
-                                </TransitionCollection>
-                            </Grid.Transitions>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualStateGroup.Transitions>
-                                        <VisualTransition From="Pressed" To="PointerOver">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="Super"/>
-                                            </Storyboard>
-                                        </VisualTransition>
-                                        <VisualTransition From="PointerOver" To="Normal">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="Super"/>
-                                            </Storyboard>
-                                        </VisualTransition>
-                                        <VisualTransition From="Pressed" To="Normal">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="Super"/>
-                                            </Storyboard>
-                                        </VisualTransition>
-                                    </VisualStateGroup.Transitions>
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="PointerOver"/>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="Super"/>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid Name="Super" HorizontalAlignment="Stretch">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="82"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Width="70" Margin="0,14,0,0" Height="77" VerticalAlignment="Top" HorizontalAlignment="Left">
-                                    <Ellipse Canvas.ZIndex="0" Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                             Fill="{ThemeResource SystemChromeHighColor}" Opacity="1"/>
-                                    <Grid Opacity="1" Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <Ellipse Name="BitEll" Canvas.ZIndex="2" Width="70" Height="70" VerticalAlignment="Center" 
-                                                 HorizontalAlignment="Center" >
-                                            <Ellipse.Transitions>
-                                                <TransitionCollection>
-                                                    <AddDeleteThemeTransition />
-                                                </TransitionCollection>
-                                            </Ellipse.Transitions>
-                                            <Ellipse.Fill>
-                                                <ImageBrush Stretch="UniformToFill" ImageOpened="ImageBrush_ImageOpened" Opacity="0">
-                                                    <ImageBrush.ImageSource>
-                                                        <BitmapImage UriSource="{Binding Path=image}" DecodePixelHeight="60" DecodePixelType="Logical" CreateOptions="IgnoreImageCache" />
-                                                    </ImageBrush.ImageSource>
-                                                </ImageBrush>
-                                            </Ellipse.Fill>
-                                        </Ellipse>
-                                    </Grid>
-                                    <TextBlock Canvas.ZIndex="1" FontSize="26" Foreground="{ThemeResource ApplicationPageBackgroundThemeBrush}" FontFamily="Segoe MDL2 Assets" Text="&#xE8A1;" VerticalAlignment="Center" Opacity="{Binding Path=iconopacity}" HorizontalAlignment="Center"/>
-                                </Grid>
-                                <Grid Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch">
-                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,40,0" Opacity="1" FontSize="12"
-                                               Text="{Binding Path=feed}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                    <TextBlock TextWrapping="NoWrap" TextTrimming="None" VerticalAlignment="Center" FontSize="12" Opacity="1"
-                                               HorizontalAlignment="Right" Text="{Binding Path=dateoffset}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                </Grid>
-                                <TextBlock Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" Text="{Binding Path=title}" Opacity="1" Margin="0,-14,0,0"/>
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="ListViewItem">
-            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-            <Setter Property="TabNavigation" Value="Local"/>
-            <Setter Property="IsHoldingEnabled" Value="True"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
-            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter
-          ContentTransitions="{TemplateBinding ContentTransitions}"
-          SelectionCheckMarkVisualEnabled="True"
-          CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-          CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}"
-          DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}"
-          DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-          FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}"
-          FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}"
-          PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-          PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
-          PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-          SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}"
-          SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
-          SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}"
-          PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
-          SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
-          DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-          DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-          ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-          ContentMargin="{TemplateBinding Padding}"
-          CheckMode="Inline"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Page.Resources>
 
     <Grid Name="Padder">
@@ -214,7 +83,13 @@
 
         <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <ProgressBar Name="LoadStatus" VerticalAlignment="Top" IsIndeterminate="True" Canvas.ZIndex="2"/>
-            <ListView Name="Display" HorizontalAlignment="Center" MaxWidth="700">
+            <ListView Name="Display" HorizontalAlignment="Center" MaxWidth="700" 
+                      ShowsScrollingPlaceholders="False" SelectionMode="None">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.ItemContainerTransitions>
                     <TransitionCollection>
                         <AddDeleteThemeTransition />
@@ -222,8 +97,8 @@
                 </ListView.ItemContainerTransitions>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Button HorizontalAlignment="Stretch" Style="{StaticResource myControl}" 
-                            Tapped="ListTapped" RightTapped="SavedItem_Holding" Holding="SavedItem_Holding">
+                        <Grid Name="Grid" HorizontalAlignment="Stretch" Padding="0" Margin="0 0 0 14" Background="Transparent"
+                            Tapped="ListTapped" Holding="SavedItem_Holding" RightTapped="SavedItem_Holding">
                             <FlyoutBase.AttachedFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Name="ReadItem" Click="ReadItem_Click" x:Uid="MenuRead" />
@@ -234,7 +109,47 @@
                                     <MenuFlyoutItem Name="DeleteItem" Click="DeleteItem_Click" x:Uid="MenuDelete" />
                                 </MenuFlyout>
                             </FlyoutBase.AttachedFlyout>
-                        </Button>
+                            <Grid.Transitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition FromVerticalOffset="0" FromHorizontalOffset="20" />
+                                </TransitionCollection>
+                            </Grid.Transitions>
+                            <Grid Name="Super">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="82"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Width="70" Margin="0,14,0,0" Height="77" VerticalAlignment="Top" HorizontalAlignment="Left">
+                                    <Ellipse Canvas.ZIndex="0" Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                        Fill="{ThemeResource SystemChromeHighColor}" />
+                                    <Grid Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center" Canvas.ZIndex="2">
+                                        <Ellipse Name="BitEll" Canvas.ZIndex="2" Width="70" Height="70" VerticalAlignment="Center" 
+                                             HorizontalAlignment="Center" >
+                                            <Ellipse.Fill>
+                                                <ImageBrush Stretch="UniformToFill" ImageOpened="ImageBrush_ImageOpened" Opacity="0">
+                                                    <ImageBrush.ImageSource>
+                                                        <BitmapImage UriSource="{Binding Path=image}" CreateOptions="IgnoreImageCache" DecodePixelHeight="60" DecodePixelType="Logical" />
+                                                    </ImageBrush.ImageSource>
+                                                </ImageBrush>
+                                            </Ellipse.Fill>
+                                        </Ellipse>
+                                    </Grid>
+                                    <TextBlock Canvas.ZIndex="1" FontSize="26" Foreground="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+                                        FontFamily="Segoe MDL2 Assets" Text="&#xE8F3;" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Grid>
+                                <Grid Grid.Column="1" Grid.Row="0">
+                                    <TextBlock TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="0,0,40,0" FontSize="12"
+                                        Text="{Binding Path=feed}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                    <TextBlock TextWrapping="NoWrap" TextTrimming="None" VerticalAlignment="Center" FontSize="12"
+                                        HorizontalAlignment="Right" Text="{Binding Path=dateoffset}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                </Grid>
+                                <TextBlock Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" Text="{Binding Path=title}" Margin="0,-14,0,0"/>
+                            </Grid>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

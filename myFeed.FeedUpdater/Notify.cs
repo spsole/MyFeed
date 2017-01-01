@@ -10,6 +10,8 @@ using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.Web.Syndication;
+using System.Xml;
+using Windows.Data.Xml.Dom;
 
 namespace myFeed.FeedUpdater
 {
@@ -96,7 +98,9 @@ namespace myFeed.FeedUpdater
 
         private static void Log(string str)
         {
+#if DEBUG
             Debug.WriteLine("[NOTIFY TASK] " + str);
+#endif
         }
 
         static MemoryStream GenerateStreamFromString(string s)
@@ -142,7 +146,7 @@ namespace myFeed.FeedUpdater
                         </binding>
                       </visual>
                     </toast>";
-                Windows.Data.Xml.Dom.XmlDocument xml = new Windows.Data.Xml.Dom.XmlDocument();
+                XmlDocument xml = new XmlDocument();
                 xml.LoadXml(notifytext);
                 ToastNotificationManager.CreateToastNotifier().Show(new ToastNotification(xml));
             }

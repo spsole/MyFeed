@@ -14,29 +14,24 @@ namespace myFeed
         {
             try
             {
-                XmlDocument xmlDocument = new XmlDocument();
-                XmlSerializer serializer = new XmlSerializer(serializableObject.GetType());
-                using (MemoryStream stream = new MemoryStream())
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.OmitXmlDeclaration = true;
+
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                using (StringWriter stringWriter = new StringWriter())
+
+                using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter, settings))
                 {
-                    serializer.Serialize(stream, serializableObject);
-                    stream.Position = 0;
-                    xmlDocument.Load(stream);
-
-                    using (var stringWriter = new StringWriter())
-                    using (var xmlTextWriter = XmlWriter.Create(stringWriter))
-                    {
-                        xmlDocument.WriteTo(xmlTextWriter);
-                        xmlTextWriter.Flush();
-                        string finish = stringWriter.GetStringBuilder().ToString();
-                        await FileIO.WriteTextAsync(file, finish);
-                    }
-
-                    stream.Dispose();
+                    serializer.Serialize(xmlWriter, serializableObject);
+                    string ready = stringWriter.ToString();
+                    await FileIO.WriteTextAsync(file, ready);
                 }
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Debug.Write(ex.ToString());
+#endif
             }
         }
 
@@ -50,12 +45,13 @@ namespace myFeed
                 using (TextReader reader = new StringReader(filestring))
                 {
                     objectOut = (T)serializer.Deserialize(reader);
-                    reader.Dispose();
                 }
             }
             catch (Exception ex)
             {
+#if DEBUG
                 Debug.Write(ex.ToString());
+#endif
             }
             return objectOut;
         }

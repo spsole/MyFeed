@@ -37,91 +37,6 @@
             <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="NetworkError"
                              From="0" To="1" />
         </Storyboard>
-        <Style x:Key="SearchItem" TargetType="Button">
-            <Setter Property="Padding" Value="0,0"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                        <Grid Name="Grid" HorizontalAlignment="Stretch" Padding="12, 0, 12, 12">
-                            <Grid.Transitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition />
-                                </TransitionCollection>
-                            </Grid.Transitions>
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualStateGroup.Transitions>
-                                        <VisualTransition From="Pressed" To="PointerOver">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="Super"/>
-                                            </Storyboard>
-                                        </VisualTransition>
-                                        <VisualTransition From="PointerOver" To="Normal">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="Super"/>
-                                            </Storyboard>
-                                        </VisualTransition>
-                                        <VisualTransition From="Pressed" To="Normal">
-                                            <Storyboard>
-                                                <PointerUpThemeAnimation Storyboard.TargetName="Super"/>
-                                            </Storyboard>
-                                        </VisualTransition>
-                                    </VisualStateGroup.Transitions>
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="PointerOver"/>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="Super"/>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-
-                            <Grid Name="Super" VerticalAlignment="Top" Margin="0,6" Holding="Grid_Holding" 
-                                  RightTapped="Grid_Holding" HorizontalAlignment="Stretch" MinHeight="54" 
-                                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-                                <FlyoutBase.AttachedFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem x:Uid="SearchItemAdd" Name="SearchItemAdd" Click="AddButton_Click"/>
-                                        <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem x:Uid="SearchItemOpen" Name="SearchItemOpen" Click="SearchItemOpen_Click"/>
-                                        <MenuFlyoutItem x:Uid="SearchItemCopy" Name="SearchItemCopy" Click="SearchItemCopy_Click" />
-                                    </MenuFlyout>
-                                </FlyoutBase.AttachedFlyout>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="32" />
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Column="0">
-                                    <StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Image Source="{Binding Path=feedimg}" ImageOpened="Image_ImageOpened" Opacity="0" 
-                                                       Stretch="UniformToFill" Width="16" Height="16" Margin="0,0,6,0" 
-                                                       VerticalAlignment="Center" />
-                                            <TextBlock Text="{Binding Path=feedtitle}" FontWeight="SemiBold" FontSize="15" 
-                                                           TextTrimming="CharacterEllipsis" HorizontalAlignment="Left"/>
-                                        </StackPanel>
-                                        <TextBlock Text="{Binding Path=feedsubtitle}" FontSize="14" TextWrapping="Wrap" 
-                                                       Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
-                                        <TextBlock Text="{Binding Path=feedlink}" FontSize="14" TextTrimming="CharacterEllipsis" 
-                                                       Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                    </StackPanel>
-                                </Grid>
-                                <Grid Grid.Column="1">
-                                    <Button Name="AddButton" Style="{ThemeResource TextBlockButtonStyle}" 
-                                                FontSize="16" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
-                                                HorizontalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE710;" 
-                                                VerticalAlignment="Center" Click="AddButton_Click" />
-                                </Grid>
-                            </Grid>
-
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Page.Resources>
     
     <Grid>
@@ -165,8 +80,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBox Name="SearchInput" x:Uid="SearchInput" Margin="0 0 12 0"
-                     VerticalAlignment="Center" Grid.Column="0" />
+            <TextBox Name="SearchInput" x:Uid="SearchInput" Margin="0 0 12 0" VerticalAlignment="Center" Grid.Column="0" />
             <Button Name="FindAll" x:Uid="FindAll" Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
                     Grid.Column="1" Foreground="White" Click="FindAll_Click" FontSize="16" />
         </Grid>
@@ -192,13 +106,52 @@
             <ScrollViewer Padding="0">
                 <Grid>
                     <ProgressBar Visibility="Collapsed"  Name="LoadStatus" IsIndeterminate="False" VerticalAlignment="Top" Canvas.ZIndex="2" Opacity="1"/>
-                    <ItemsControl Name="Display" HorizontalAlignment="Stretch">
-                        <ItemsControl.ItemTemplate>
+                    <ListView Name="Display" HorizontalAlignment="Stretch">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Button Style="{StaticResource SearchItem}" HorizontalAlignment="Stretch"/>
+                                <Grid Name="Super" VerticalAlignment="Top" Margin="0,6" Holding="Grid_Holding" 
+                                  RightTapped="Grid_Holding" HorizontalAlignment="Stretch" MinHeight="54" >
+                                    <FlyoutBase.AttachedFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem x:Uid="SearchItemAdd" Name="SearchItemAdd" Click="AddButton_Click"/>
+                                            <MenuFlyoutSeparator />
+                                            <MenuFlyoutItem x:Uid="SearchItemOpen" Name="SearchItemOpen" Click="SearchItemOpen_Click"/>
+                                            <MenuFlyoutItem x:Uid="SearchItemCopy" Name="SearchItemCopy" Click="SearchItemCopy_Click" />
+                                        </MenuFlyout>
+                                    </FlyoutBase.AttachedFlyout>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="32" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Image Source="{Binding Path=feedimg}" ImageOpened="Image_ImageOpened" Opacity="0" 
+                                                    Stretch="UniformToFill" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                                <TextBlock Text="{Binding Path=feedtitle}" FontWeight="SemiBold" FontSize="15" 
+                                                    TextTrimming="CharacterEllipsis" HorizontalAlignment="Left"/>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding Path=feedsubtitle}" FontSize="14" TextWrapping="Wrap" 
+                                                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
+                                            <TextBlock Text="{Binding Path=feedlink}" FontSize="14" TextTrimming="CharacterEllipsis" 
+                                                Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid Grid.Column="1">
+                                        <Button Name="AddButton" Style="{ThemeResource TextBlockButtonStyle}" 
+                                            FontSize="16" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
+                                            HorizontalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE710;" 
+                                            VerticalAlignment="Center" Click="AddButton_Click" />
+                                    </Grid>
+                                </Grid>
                             </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </Grid>
             </ScrollViewer>
         </Grid>    

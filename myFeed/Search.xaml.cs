@@ -60,21 +60,21 @@ namespace myFeed
 
                 if (responseString != string.Empty)
                 {
-                    dynamic stuff = JObject.Parse(responseString);
+                    JObject stuff = JObject.Parse(responseString);
                     Display.Items.Clear();
-                    foreach (var item in stuff.responseData.entries)
+                    foreach (var item in stuff["responseData"]["entries"])
                     {
                         ListFeed lf = new ListFeed();
-                        lf.feedid = item.url;
-                        lf.feedlink = item.link;
+                        lf.feedid = item["url"].Value<string>();
+                        lf.feedlink = item["link"].Value<string>();
 
                         string content;
-                        content = Regex.Replace(item.title.ToString(), @"<[^>]*>", string.Empty);
+                        content = Regex.Replace(item["title"].Value<string>().ToString(), @"<[^>]*>", string.Empty);
                         content = Regex.Replace(content, @"(&.*?;)", " ");
                         content = Regex.Replace(content, @"\r|\n", string.Empty);
                         lf.feedtitle = content;
 
-                        content = Regex.Replace(item.contentSnippet.ToString(), @"<[^>]*>", string.Empty);
+                        content = Regex.Replace(item["contentSnippet"].Value<string>().ToString(), @"<[^>]*>", string.Empty);
                         content = Regex.Replace(content, @"(&.*?;)", " ");
                         content = Regex.Replace(content, @"\r|\n", string.Empty);
                         lf.feedsubtitle = content;

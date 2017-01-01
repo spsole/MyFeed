@@ -18,7 +18,6 @@ namespace myFeed {
         /// <summary>
         /// Контейнер для сериализации информации о пользовательских настройках.
         /// </summary>
-        [DataContract]
         public class ConfigFile
         {
             public int FontSize = 17;
@@ -40,7 +39,11 @@ namespace myFeed {
         /// кода; поэтому она является логическим эквивалентом main() или WinMain().
         /// </summary>
         public App()
-        {
+        {            
+            Microsoft.ApplicationInsights.WindowsAppInitializer.InitializeAsync(
+                Microsoft.ApplicationInsights.WindowsCollectors.Metadata |
+                Microsoft.ApplicationInsights.WindowsCollectors.Session);
+
             try
             {
                 this.LoadConfig();
@@ -50,11 +53,7 @@ namespace myFeed {
             {
 
             }
-            
-            Microsoft.ApplicationInsights.WindowsAppInitializer.InitializeAsync(
-                Microsoft.ApplicationInsights.WindowsCollectors.Metadata |
-                Microsoft.ApplicationInsights.WindowsCollectors.Session);
-            
+
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }

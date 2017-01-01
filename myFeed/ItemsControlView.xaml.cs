@@ -29,14 +29,10 @@ namespace myFeed
             InitializeComponent();
             Loaded += async (s, a) =>
             {
-                if (bag.list.Count == 0) Welcome.Visibility = Visibility.Visible;
+                if (bag.list.Count == 0)
+                    Welcome.Visibility = Visibility.Visible;
                 await Go(bag.list);
-                foreach (PFeedItem item in Fullfeed.GetRange(0, (Fullfeed.Count >= itemscount)
-                    ? itemscount : Fullfeed.Count))
-                {
-                    CompareAddTimeRead(item);
-                }
-                Showmore.Visibility = (Fullfeed.Count > itemscount) ? Visibility.Visible : Visibility.Collapsed;
+                Fullfeed.ForEach(i => CompareAddTimeRead(i));
                 ProgRing.IsActive = false;
             };
         }
@@ -54,26 +50,8 @@ namespace myFeed
             Display.Items.Add(item);
         }
 
-        private void Showmore_Click(object sender, RoutedEventArgs e)
-        {
-            Showmore.IsEnabled = false;
-            if ((Fullfeed.Count - itemscount) < 20)
-            {
-                foreach (PFeedItem item in Fullfeed.GetRange(itemscount, Fullfeed.Count - itemscount)) CompareAddTimeRead(item);
-                Showmore.Visibility = Visibility.Collapsed;
-                itemscount = Fullfeed.Count;
-            }
-            else
-            {
-                foreach (PFeedItem item in Fullfeed.GetRange(itemscount, 10)) CompareAddTimeRead(item);
-                itemscount += 10;
-            }
-            Showmore.IsEnabled = true;
-        }
-
         private async Task Go(List<Website> sites)
         {
-            await Task.Delay(300);
             List<PFeedItem> fullfeed = new List<PFeedItem>();
             foreach (Website website in sites)
             {
@@ -107,7 +85,10 @@ namespace myFeed
                                 Match match2 = Regex.Match(val, @"src=\""(.*?)\""", RegexOptions.Singleline);
                                 if (match2.Success)
                                 {
-                                    target.image = match2.Groups[1].Value;
+                                    string uri = match2.Groups[1].Value;
+                                    if (uri.Length > 3 && uri[0] == '/' && uri[1] == '/')
+                                        uri = $"http:{uri}";
+                                    target.image = uri;
                                     target.iconopacity = 0;
                                 }
                             }
@@ -129,7 +110,7 @@ namespace myFeed
         private async void MarkAsRead(PFeedItem item)
         {
             if (App.Read.Contains(item.GetTileId())) return;
-            Button button = VisualTreeHelper.GetChild((FrameworkElement)Display.ContainerFromItem(item), 0) as Button;
+            FrameworkElement button = VisualTreeHelper.GetChild((FrameworkElement)Display.ContainerFromItem(item), 0) as FrameworkElement;
             await FileIO.AppendTextAsync(await ApplicationData.Current.LocalFolder.GetFileAsync("read.txt"), 
                 item.GetTileId() + ";");
             App.Read = App.Read + item.GetTileId() + ";";
@@ -138,21 +119,27 @@ namespace myFeed
 
         private void ImageBrush_ImageOpened(object sender, RoutedEventArgs e)
         {
-            ImageBrush img = sender as ImageBrush;
-            img.Opacity = 0;
-            if (img.ImageSource.ToString() == string.Empty) return;
-            DoubleAnimation fade = new DoubleAnimation()
+            try
             {
-                From = 0,
-                To = 1,
-                Duration = TimeSpan.FromSeconds(0.4),
-                EnableDependentAnimation = true
-            };
-            Storyboard.SetTarget(fade, img);
-            Storyboard.SetTargetProperty(fade, "Opacity");
-            Storyboard openpane = new Storyboard();
-            openpane.Children.Add(fade);
-            openpane.Begin();
+                ImageBrush img = sender as ImageBrush;
+                img.Opacity = 0;
+                DoubleAnimation fade = new DoubleAnimation()
+                {
+                    From = 0,
+                    To = 1,
+                    Duration = TimeSpan.FromSeconds(0.3),
+                    EnableDependentAnimation = true
+                };
+                Storyboard.SetTarget(fade, img);
+                Storyboard.SetTargetProperty(fade, "Opacity");
+                Storyboard openpane = new Storyboard();
+                openpane.Children.Add(fade);
+                openpane.Begin();
+            }
+            catch
+            {
+
+            }
         }
 
         private async void BarWeb_Click(object sender, RoutedEventArgs e)
@@ -179,15 +166,15 @@ namespace myFeed
 
         private void ListTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            PFeedItem item = (PFeedItem)((Button)sender).DataContext;
+            PFeedItem item = (PFeedItem)((FrameworkElement)sender).DataContext;
             bag.frame.Navigate(typeof(PArticle), item);
             MarkAsRead(item);
         }
 
         private async void Button_RightTapped(object sender, RoutedEventArgs e)
         {
-            PFeedItem item = (PFeedItem)((Button)sender).DataContext;
-            MenuFlyout menu = FlyoutBase.GetAttachedFlyout((Button)sender) as MenuFlyout;
+            PFeedItem item = (PFeedItem)((FrameworkElement)sender).DataContext;
+            MenuFlyout menu = FlyoutBase.GetAttachedFlyout((FrameworkElement)sender) as MenuFlyout;
             MenuFlyoutItem favbutton = menu.Items[4] as MenuFlyoutItem;
             MenuFlyoutSeparator favsep = menu.Items[3] as MenuFlyoutSeparator;
 
