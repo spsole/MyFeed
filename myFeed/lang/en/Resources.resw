@@ -489,4 +489,7 @@
   <data name="SDescRate.Text" xml:space="preserve">
     <value>If you like myFeed, please, rate five stars in Windows Store!</value>
   </data>
+  <data name="FeedSearchL.Text" xml:space="preserve">
+    <value>Search feeds</value>
+  </data>
 </root>

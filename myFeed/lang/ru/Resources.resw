@@ -489,4 +489,7 @@
   <data name="SDescRate.Text" xml:space="preserve">
     <value>Если Вам нравится myFeed, пожалуйста, оцените приложение в магазине Windows!</value>
   </data>
+  <data name="FeedSearchL.Text" xml:space="preserve">
+    <value>Поиск каналов</value>
+  </data>
 </root>

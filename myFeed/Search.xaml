@@ -70,8 +70,7 @@
         <Grid Grid.Row="0" Height="48" VerticalAlignment="Top">
             <Grid VerticalAlignment="Top">
                 <TextBlock Name="HeadingCapsBlock" Canvas.ZIndex="4" HorizontalAlignment="Left" Margin="12 14 0 0" TextWrapping="Wrap" 
-                           x:Uid="SearchHeading" VerticalAlignment="Top" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
-                           FontWeight="Bold" />
+                           x:Uid="SearchHeading" VerticalAlignment="Top" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" FontWeight="Bold" />
             </Grid>
         </Grid>
 
@@ -103,57 +102,53 @@
         </Grid>
 
         <Grid MaxWidth="550" Grid.Row="2">
-            <ScrollViewer Padding="0">
-                <Grid>
-                    <ProgressBar Visibility="Collapsed"  Name="LoadStatus" IsIndeterminate="False" VerticalAlignment="Top" Canvas.ZIndex="2" Opacity="1"/>
-                    <ListView Name="Display" HorizontalAlignment="Stretch">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Name="Super" VerticalAlignment="Top" Margin="0,6" Holding="Grid_Holding" 
-                                  RightTapped="Grid_Holding" HorizontalAlignment="Stretch" MinHeight="54" >
-                                    <FlyoutBase.AttachedFlyout>
-                                        <MenuFlyout>
-                                            <MenuFlyoutItem x:Uid="SearchItemAdd" Name="SearchItemAdd" Click="AddButton_Click"/>
-                                            <MenuFlyoutSeparator />
-                                            <MenuFlyoutItem x:Uid="SearchItemOpen" Name="SearchItemOpen" Click="SearchItemOpen_Click"/>
-                                            <MenuFlyoutItem x:Uid="SearchItemCopy" Name="SearchItemCopy" Click="SearchItemCopy_Click" />
-                                        </MenuFlyout>
-                                    </FlyoutBase.AttachedFlyout>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="32" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid Grid.Column="0">
-                                        <StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Image Source="{Binding Path=feedimg}" ImageOpened="Image_ImageOpened" Opacity="0" 
-                                                    Stretch="UniformToFill" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" />
-                                                <TextBlock Text="{Binding Path=feedtitle}" FontWeight="SemiBold" FontSize="15" 
-                                                    TextTrimming="CharacterEllipsis" HorizontalAlignment="Left"/>
-                                            </StackPanel>
-                                            <TextBlock Text="{Binding Path=feedsubtitle}" FontSize="14" TextWrapping="Wrap" 
-                                                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
-                                            <TextBlock Text="{Binding Path=feedlink}" FontSize="14" TextTrimming="CharacterEllipsis" 
-                                                Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                        </StackPanel>
-                                    </Grid>
-                                    <Grid Grid.Column="1">
-                                        <Button Name="AddButton" Style="{ThemeResource TextBlockButtonStyle}" 
-                                            FontSize="16" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
-                                            HorizontalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE710;" 
-                                            VerticalAlignment="Center" Click="AddButton_Click" />
-                                    </Grid>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
-            </ScrollViewer>
+            <ProgressBar Visibility="Collapsed"  Name="LoadStatus" IsIndeterminate="False" VerticalAlignment="Top" Canvas.ZIndex="2" Opacity="1"/>
+            <ListView Name="Display" HorizontalAlignment="Stretch" SelectionMode="None">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Name="Super" VerticalAlignment="Top" Margin="0,6" Holding="Grid_Holding" 
+                            RightTapped="Grid_Holding" HorizontalAlignment="Stretch" MinHeight="54" >
+                            <FlyoutBase.AttachedFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem x:Uid="SearchItemAdd" Name="SearchItemAdd" Click="AddButton_Click"/>
+                                    <MenuFlyoutSeparator />
+                                    <MenuFlyoutItem x:Uid="SearchItemOpen" Name="SearchItemOpen" Click="SearchItemOpen_Click"/>
+                                    <MenuFlyoutItem x:Uid="SearchItemCopy" Name="SearchItemCopy" Click="SearchItemCopy_Click" />
+                                </MenuFlyout>
+                            </FlyoutBase.AttachedFlyout>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="32" />
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{Binding Path=feedimg}" ImageOpened="Image_ImageOpened" Opacity="0" 
+                                            Stretch="UniformToFill" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding Path=feedtitle}" FontWeight="SemiBold" FontSize="15" 
+                                            TextTrimming="CharacterEllipsis" HorizontalAlignment="Left"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding Path=feedsubtitle}" FontSize="14" TextWrapping="Wrap" 
+                                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" />
+                                    <TextBlock Text="{Binding Path=feedlink}" FontSize="14" TextTrimming="CharacterEllipsis" 
+                                        Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" />
+                                </StackPanel>
+                            </Grid>
+                            <Grid Grid.Column="1">
+                                <Button Name="AddButton" Style="{ThemeResource TextBlockButtonStyle}" 
+                                    FontSize="16" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
+                                    HorizontalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE710;" 
+                                    VerticalAlignment="Center" Click="AddButton_Click" />
+                            </Grid>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>    
     </Grid>
 </Page>

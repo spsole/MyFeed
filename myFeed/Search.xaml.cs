@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Diagnostics;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
@@ -22,8 +20,8 @@ namespace myFeed
         public Search()
         {
             this.InitializeComponent();
-            App.ChosenIndex = 4;
             App.CanNavigate = true;
+            App.ChosenIndex = 4;
         }
 
         private async void FindAll_Click(object sender, RoutedEventArgs e)
@@ -32,11 +30,13 @@ namespace myFeed
             {
                 WelcomeDisabling.Begin();
                 NetworkError.Visibility = Visibility.Collapsed;
-                LoadStatus.IsIndeterminate = true;
                 LoadStatus.Visibility = Visibility.Visible;
+                LoadStatus.IsIndeterminate = true;
                 StatusBarEnabling.Begin();
 
-                await SearchForFeeds(@"https://ajax.googleapis.com/ajax/services/feed/find?v=1.0&q=" + SearchInput.Text);
+                await SearchForFeeds(
+                    $"http://cloud.feedly.com/v3/search/feeds?count=20&query=:{SearchInput.Text}"
+                );
 
                 LoadStatus.IsIndeterminate = false;
                 StatusBarDisabling.Begin();
@@ -47,48 +47,34 @@ namespace myFeed
         {
             try
             {
-                WebRequest request = WebRequest.Create(query);
-                request.ContentType = "application/json; charset=utf-8";
-                WebResponse response = await request.GetResponseAsync();
-
-                string responseString = string.Empty;
-                using (Stream stream = response.GetResponseStream())
+                using (HttpClient httpClient = new HttpClient())
+                using (HttpResponseMessage responseMessage = await httpClient.GetAsync(query))
                 {
-                    StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-                    responseString = reader.ReadToEnd();
-                }
-
-                if (responseString != string.Empty)
-                {
+                    string responseString = await responseMessage.Content.ReadAsStringAsync();
                     JObject stuff = JObject.Parse(responseString);
                     Display.Items.Clear();
-                    foreach (var item in stuff["responseData"]["entries"])
+
+                    foreach (var item in stuff["results"])
                     {
-                        ListFeed lf = new ListFeed();
-                        lf.feedid = item["url"].Value<string>();
-                        lf.feedlink = item["link"].Value<string>();
-
-                        string content;
-                        content = Regex.Replace(item["title"].Value<string>().ToString(), @"<[^>]*>", string.Empty);
-                        content = Regex.Replace(content, @"(&.*?;)", " ");
-                        content = Regex.Replace(content, @"\r|\n", string.Empty);
-                        lf.feedtitle = content;
-
-                        content = Regex.Replace(item["contentSnippet"].Value<string>().ToString(), @"<[^>]*>", string.Empty);
-                        content = Regex.Replace(content, @"(&.*?;)", " ");
-                        content = Regex.Replace(content, @"\r|\n", string.Empty);
-                        lf.feedsubtitle = content;
-
-                        lf.feedimg = "http://www.google.com/s2/favicons?domain=" + lf.feedlink;
-                        Display.Items.Add(lf);
+                        ListFeed listFeed = new ListFeed()
+                        {
+                            feedid = ((string)item["feedId"]).Substring(5),
+                            feedimg = (string)item["iconUrl"],
+                            feedtitle = (string)item["title"],
+                            feedlink = (string)item["website"],
+                            feedsubtitle = (string)item["description"]
+                        };
+                        Display.Items.Add(listFeed);
                     }
+                    
+                    if (Display.Items.Count == 0) throw new Exception();
                 }
-
-                if (Display.Items.Count < 1)
-                    throw new Exception();
             }
-            catch
+            catch (Exception ex)
             {
+#if DEBUG
+                Debug.WriteLine(ex);
+#endif
                 NetworkError.Opacity = 0;
                 NetworkError.Visibility = Visibility.Visible;
                 ErrorEnabling.Begin();

@@ -91,7 +91,7 @@
                     <ListBoxItem Name="SearchFeedItem" Height="48">
                         <StackPanel Orientation="Horizontal" Margin="2,0,0,0">
                             <TextBlock Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Text="&#xE71E;" FontSize="18" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" />
-                            <TextBlock Foreground="{ThemeResource ApplicationForegroundThemeBrush}" Text="Поиск лент" Margin="28,0,0,0" VerticalAlignment="Center" />
+                            <TextBlock Foreground="{ThemeResource ApplicationForegroundThemeBrush}" x:Uid="FeedSearchL" Margin="28,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </ListBoxItem>
                     <ListBoxItem Name="SettingsItem" Height="48">

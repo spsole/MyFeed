@@ -1,9 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26014.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "myFeed", "myFeed\myFeed.csproj", "{7904AB34-B510-4B2A-9801-CAA1B57B6DD3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{49FDD21C-4A32-4519-B465-0098A251827E} = {49FDD21C-4A32-4519-B465-0098A251827E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "myFeed.FeedUpdater", "myFeed.FeedUpdater\myFeed.FeedUpdater.csproj", "{49FDD21C-4A32-4519-B465-0098A251827E}"
 EndProject
