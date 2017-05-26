@@ -23,7 +23,7 @@ namespace myFeed
                     builder.TaskEntryPoint = "myFeed.FeedUpdater.Notify";
                     builder.SetTrigger(new TimeTrigger(CheckTime, false)); /// Note: Time measures in minutes here, e.g. 30 = 30 minutes
                     builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
-                    builder.Register();
+                    //builder.Register();
                 }
             }
         }
