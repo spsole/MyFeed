@@ -23,14 +23,17 @@ $RECYCLE.BIN/
 # =========================
 myFeed/AppPackages/
 myFeed/Assets
-myFeed/Properties
-myFeed.FeedUpdater/Properties
 myFeed.FeedUpdater/obj
 myFeed.FeedUpdater/bin
+myFeed.FeedModels/obj
+myFeed.FeedModels/bin
 myFeed/myFeed_StoreKey.pfx
 myFeed/bin
 myFeed/obj
 myFeed/BundleArtifacts
+myFeed/project.lock.json
+myFeed.FeedUpdater/project.lock.json
+myFeed.FeedModels/project.lock.json
 .vs/
 
 # OSX

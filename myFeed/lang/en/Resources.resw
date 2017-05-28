@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddButton.Content" xml:space="preserve">
+  <data name="AddButton.Text" xml:space="preserve">
     <value>Add</value>
   </data>
   <data name="AddToFavorites.ToolTipService.ToolTip" xml:space="preserve">
@@ -171,7 +171,7 @@
   <data name="Favorites.Text" xml:space="preserve">
     <value>FAVORITES</value>
   </data>
-  <data name="FavoritesL.Text" xml:space="preserve">
+  <data name="FavoritesL" xml:space="preserve">
     <value>Favorites</value>
   </data>
   <data name="FavoritesWelcome.Text" xml:space="preserve">
@@ -183,22 +183,22 @@
   <data name="Feed.Text" xml:space="preserve">
     <value>MY FEED</value>
   </data>
-  <data name="FeedL.Text" xml:space="preserve">
+  <data name="FeedL" xml:space="preserve">
     <value>My feed</value>
   </data>
   <data name="Feedlist.Text" xml:space="preserve">
     <value>RSS CHANNELS</value>
   </data>
-  <data name="FeedlistL.Text" xml:space="preserve">
+  <data name="FeedlistL" xml:space="preserve">
     <value>RSS Channels</value>
   </data>
-  <data name="FontSizeLarge.Content" xml:space="preserve">
+  <data name="FontSizeLarge" xml:space="preserve">
     <value>Large</value>
   </data>
-  <data name="FontSizeMiddle.Content" xml:space="preserve">
+  <data name="FontSizeMiddle" xml:space="preserve">
     <value>Middle</value>
   </data>
-  <data name="FontSizeSmall.Content" xml:space="preserve">
+  <data name="FontSizeSmall" xml:space="preserve">
     <value>Small</value>
   </data>
   <data name="LinkNotValid" xml:space="preserve">
@@ -213,16 +213,19 @@
   <data name="MenuRead.Text" xml:space="preserve">
     <value>Read</value>
   </data>
+  <data name="MarkAsRead.Text" xml:space="preserve">
+    <value>Mark as read</value>
+  </data>
   <data name="Ok" xml:space="preserve">
     <value>Ok</value>
   </data>
   <data name="OpenInEdge.ToolTipService.ToolTip" xml:space="preserve">
     <value>Open in a web browser</value>
   </data>
-  <data name="Personalization.Text" xml:space="preserve">
+  <data name="Personalization.Header" xml:space="preserve">
     <value>Personalization</value>
   </data>
-  <data name="Reset.Text" xml:space="preserve">
+  <data name="Reset.Header" xml:space="preserve">
     <value>Reset</value>
   </data>
   <data name="ResetButton.Content" xml:space="preserve">
@@ -234,11 +237,17 @@
   <data name="Settings.Text" xml:space="preserve">
     <value>SETTINGS</value>
   </data>
-  <data name="SettingsL.Text" xml:space="preserve">
+  <data name="SettingsL" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="Share.ToolTipService.ToolTip" xml:space="preserve">
     <value>Share</value>
+  </data>
+  <data name="Share.Text" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Notifications.Text" xml:space="preserve">
+    <value>Notifications</value>
   </data>
   <data name="ShowMessageAlert" xml:space="preserve">
     <value>This action will lead to all data delition. Is this exactly what are you going to do?</value>
@@ -301,7 +310,7 @@
     <value>Category</value>
   </data>
   <data name="EnterALinkToRssFeed.Text" xml:space="preserve">
-    <value>Enter a link to new RSS feed:</value>
+    <value>ENTER A LINK TO RSS FEED:</value>
   </data>
   <data name="EnterNameOfNewCategory.Text" xml:space="preserve">
     <value>Enter the name of the category:</value>
@@ -318,22 +327,22 @@
   <data name="AddToFavs.Text" xml:space="preserve">
     <value>Add to favorites</value>
   </data>
-  <data name="Notify15min.Content" xml:space="preserve">
+  <data name="Notify15min" xml:space="preserve">
     <value>Every 15 minutes</value>
   </data>
-  <data name="Notify1hour.Content" xml:space="preserve">
+  <data name="Notify1hour" xml:space="preserve">
     <value>Every hour</value>
   </data>
-  <data name="Notify30min.Content" xml:space="preserve">
+  <data name="Notify30min" xml:space="preserve">
     <value>Every 30 minutes</value>
   </data>
-  <data name="Notify3hours.Content" xml:space="preserve">
+  <data name="Notify3hours" xml:space="preserve">
     <value>Every 3 hours</value>
   </data>
   <data name="NotifyCheckTime.Text" xml:space="preserve">
     <value>How often should notification service connect to the Internet and check for new articles?</value>
   </data>
-  <data name="NotifyDisabled.Content" xml:space="preserve">
+  <data name="NotifyDisabled" xml:space="preserve">
     <value>Never</value>
   </data>
   <data name="PinButton.ToolTipService.ToolTip" xml:space="preserve">
@@ -366,7 +375,7 @@
   <data name="DeleteSource.Text" xml:space="preserve">
     <value>Delete this feed</value>
   </data>
-  <data name="FindAll.Content" xml:space="preserve">
+  <data name="FindAll.Text" xml:space="preserve">
     <value>Search</value>
   </data>
   <data name="SearchDialog.PrimaryButtonText" xml:space="preserve">
@@ -385,7 +394,7 @@
     <value>SEARCH RSS FEEDS</value>
   </data>
   <data name="SearchHelpSubtitle.Text" xml:space="preserve">
-    <value>Enter the search query into the text field, for example "News" or "Politics", and press "Search"!</value>
+    <value>Enter the search query into the text field, for example "News", and press "Search"!</value>
   </data>
   <data name="SearchHelpTitle.Text" xml:space="preserve">
     <value>Here you can find RSS feeds you are interested in.</value>
@@ -474,7 +483,7 @@
   <data name="CopyLinkToImage" xml:space="preserve">
     <value>Copy link</value>
   </data>
-  <data name="AboutApp.Text" xml:space="preserve">
+  <data name="AboutApp.Header" xml:space="preserve">
     <value>About</value>
   </data>
   <data name="SDFeedback.Content" xml:space="preserve">
@@ -489,7 +498,28 @@
   <data name="SDescRate.Text" xml:space="preserve">
     <value>If you like myFeed, please, rate five stars in Windows Store!</value>
   </data>
-  <data name="FeedSearchL.Text" xml:space="preserve">
+  <data name="FeedSearchL" xml:space="preserve">
     <value>Search feeds</value>
+  </data>
+  <data name="MarkAsUnread.Text" xml:space="preserve">
+    <value>Mark as unread</value>
+  </data>
+  <data name="NewSourceWelcomeTitle.Text" xml:space="preserve">
+    <value>Here your news providers will be stored.</value>
+  </data>
+  <data name="NewSourceWelcomeSubtitle.Text" xml:space="preserve">
+    <value>Add a new category!</value>
+  </data>
+  <data name="NewSourceAddCategory.Text" xml:space="preserve">
+    <value>Add a category</value>
+  </data>
+  <data name="SourceBarAdd.Label" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="SourceBarSelect.Label" xml:space="preserve">
+    <value>Reorder</value>
+  </data>
+  <data name="SourceBarCancel.Label" xml:space="preserve">
+    <value>Cancel</value>
   </data>
 </root>

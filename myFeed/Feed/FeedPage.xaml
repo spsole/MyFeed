@@ -1,0 +1,121 @@
+﻿<Page
+    x:Class="myFeed.Feed.FeedPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:myFeed.Feed"
+    xmlns:localcontrols="using:myFeed.Feed.Controls"
+    xmlns:usercontrols="using:myFeed.Extensions.UserControls"
+    xmlns:controls="using:myFeed.Extensions.Controls"
+    xmlns:converters="using:myFeed.Extensions.Converters"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <SuppressNavigationTransitionInfo/>
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Page.Resources>
+        <converters:FalseToVisibleConverter x:Key="FalseToVisible"/>
+        <converters:TrueToVisibleConverter x:Key="TrueToVisible" />
+        <converters:UpperStringConverter x:Key="StrToUpper"/>
+    </Page.Resources>
+
+    <Grid>
+        <localcontrols:EmptyControl Canvas.ZIndex="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Visibility="{x:Bind ViewModel.IsFeedEmpty.Value, Mode=OneWay, Converter={StaticResource TrueToVisible}}"
+            RefreshRequested="{x:Bind ViewModel.FetchAsync, Mode=OneWay}"/> 
+        <usercontrols:LoadingUserControl Canvas.ZIndex="1" IsActive="{x:Bind ViewModel.IsLoading.Value, Mode=OneWay}"/>
+        <toolkit:PullToRefreshListView
+            ItemsSource="{x:Bind ViewModel, Mode=OneWay}"
+            ShowsScrollingPlaceholders="False" 
+            RefreshRequested="{x:Bind ViewModel.FetchAsync, Mode=OneWay}"
+            IsItemClickEnabled="True"
+            SelectionMode="None">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <toolkit:PullToRefreshListView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromVerticalOffset="0" FromHorizontalOffset="30" />
+                </TransitionCollection>
+            </toolkit:PullToRefreshListView.ItemContainerTransitions>
+            <toolkit:PullToRefreshListView.PullToRefreshContent>
+                <Border HorizontalAlignment="Center" CornerRadius="10" Width="20" Height="20" 
+                    Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
+            </toolkit:PullToRefreshListView.PullToRefreshContent>
+            <toolkit:PullToRefreshListView.ReleaseToRefreshContent>
+                <Border HorizontalAlignment="Center" CornerRadius="10" Width="20" Height="20" 
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+            </toolkit:PullToRefreshListView.ReleaseToRefreshContent>
+            <toolkit:PullToRefreshListView.ItemTemplate>
+                <DataTemplate x:DataType="local:FeedItemViewModel">
+                    <Grid Margin="0 12" Background="Transparent"
+                        RightTapped="ShowFlyout" Holding="ShowFlyout"
+                        Tapped="OpenArticleUsingXamlWeeds"
+                        Opacity="{x:Bind ReadStateOpacity, Mode=OneWay}">
+                        <FlyoutBase.AttachedFlyout>
+                            <MenuFlyout x:Name="NewsItemFlyout">
+                                <controls:MenuFlyoutItemWithIcon x:Uid="MenuRead" Icon="PostUpdate" Click="OpenArticleUsingXamlWeeds"/>
+                                <controls:MenuFlyoutItemWithIcon x:Uid="MenuOpenInEdge" Icon="Link" Click="{x:Bind OpenInEdge}"/>
+                                <controls:MenuFlyoutItemWithIcon x:Uid="MenuCopyLink" Icon="Copy" Click="{x:Bind CopyLink}"/>
+                                <controls:MenuFlyoutItemWithIcon x:Uid="Share" Icon="ReShare" Click="{x:Bind Share}"/>
+                                <MenuFlyoutSeparator />
+                                <controls:MenuFlyoutItemWithIcon x:Uid="MarkAsRead" Icon="Read" Click="{x:Bind MarkAsRead}"
+                                    Visibility="{x:Bind IsRead.Value, Mode=OneWay, Converter={StaticResource FalseToVisible}}"/>
+                                <controls:MenuFlyoutItemWithIcon x:Uid="MarkAsUnread" Icon="Mail" Click="{x:Bind MarkAsUnread}"
+                                    Visibility="{x:Bind IsRead.Value, Mode=OneWay, Converter={StaticResource TrueToVisible}}"/>
+                                <controls:MenuFlyoutItemWithIcon x:Uid="MenuAddToFavs" Icon="OutlineStar" Click="{x:Bind AddToFavorites}"
+                                    Visibility="{x:Bind IsFavorite.Value, Mode=OneWay, Converter={StaticResource FalseToVisible}}"/>
+                            </MenuFlyout>
+                        </FlyoutBase.AttachedFlyout>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="94" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Margin="12 0" VerticalAlignment="Top">
+                            <Ellipse Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
+                            <SymbolIcon Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                                Visibility="{x:Bind HasImage, Converter={StaticResource FalseToVisible}}"
+                                VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Opacity="1" Symbol="PostUpdate"/>
+                            <usercontrols:EllipticImageUserControl 
+                                ImageSource="{x:Bind Image}" Width="70" Height="70"
+                                VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </Grid>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0 0 12 0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE735;" FontSize="11"
+                                    Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="0 0 3 -3"
+                                    Visibility="{x:Bind IsFavorite.Value, Mode=OneWay, Converter={StaticResource TrueToVisible}}"/>
+                                <TextBlock Grid.Column="1" Text="{x:Bind FeedTitle, Converter={StaticResource StrToUpper}}" 
+                                    FontSize="11" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                    TextTrimming="CharacterEllipsis" FontWeight="SemiBold"/>
+                                <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                    Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                    Text="{x:Bind HumanifiedDate}" FontSize="11" FontWeight="SemiBold"/>
+                            </Grid>
+                            <TextBlock Text="{x:Bind Title}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+            </toolkit:PullToRefreshListView.ItemTemplate>
+        </toolkit:PullToRefreshListView>
+    </Grid>
+</Page>

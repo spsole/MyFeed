@@ -1,0 +1,178 @@
+﻿<Page
+    x:Class="myFeed.Sources.SourcesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:myFeed.Sources"
+    xmlns:localcontrols="using:myFeed.Sources.Controls"
+    xmlns:usercontrols="using:myFeed.Extensions.UserControls"
+    xmlns:controls="using:myFeed.Extensions.Controls"
+    xmlns:convverters="using:myFeed.Extensions.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Unloaded="OnUnloaded"
+    x:Name="Rootpage"
+    mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <NavigationThemeTransition.DefaultNavigationTransitionInfo>
+                    <EntranceNavigationTransitionInfo />
+                </NavigationThemeTransition.DefaultNavigationTransitionInfo>
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Page.Resources>
+        <convverters:TrueToVisibleConverter x:Key="TrueVisible"/>
+        <convverters:FalseToVisibleConverter x:Key="FalseVisible"/>
+        <convverters:NegateBoolConverter x:Key="NegateBool"/>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="48"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <usercontrols:TitleUserControl x:Uid="Feedlist"/>
+        <usercontrols:LoadingUserControl Canvas.ZIndex="1" Grid.Row="1" 
+            IsActive="{x:Bind ViewModel.IsLoadingProperty.Value, Mode=OneWay}"/>
+        <controls:TransparentButton Grid.Row="0" HorizontalAlignment="Right" 
+            Symbol="Zoom" Click="{x:Bind ViewModel.NavigateToSearch}"/>
+        <localcontrols:WelcomeControl Grid.Row="1" Canvas.ZIndex="1"
+            AddRequested="{x:Bind ViewModel.AddCategory}" AddFromSearchRequested="{x:Bind ViewModel.NavigateToSearch}"
+            Visibility="{x:Bind ViewModel.IsWelcomeVisibleProperty.Value, Mode=OneWay, Converter={StaticResource TrueVisible}}"/>
+        <CommandBar Grid.Row="1" Canvas.ZIndex="1" VerticalAlignment="Bottom"
+            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+            <AppBarButton x:Uid="SourceBarAdd" Icon="Add" Click="{x:Bind ViewModel.AddCategory}"
+                Visibility="{x:Bind ViewModel.IsRearrangeEnabledProperty.Value, Mode=OneWay, Converter={StaticResource FalseVisible}}"/>
+            <AppBarButton x:Uid="SourceBarSelect" Icon="Sort" Click="{x:Bind ViewModel.ToggleRearrange}"
+                Visibility="{x:Bind ViewModel.IsRearrangeEnabledProperty.Value, Mode=OneWay, Converter={StaticResource FalseVisible}}"/>
+            <AppBarButton x:Uid="SourceBarCancel" Icon="Cancel" Click="{x:Bind ViewModel.ToggleRearrange}"
+                Visibility="{x:Bind ViewModel.IsRearrangeEnabledProperty.Value, Mode=OneWay, Converter={StaticResource TrueVisible}}"/>
+        </CommandBar>
+        <ListView Grid.Row="1" AllowDrop="True" Padding="0 6 0 54" SelectionChanged="OnSelectionChanged"
+            CanReorderItems="{x:Bind ViewModel.IsRearrangeEnabledProperty.Value, Mode=OneWay}"
+            ItemsSource="{x:Bind ViewModel.Items}" ShowsScrollingPlaceholders="False">
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                </TransitionCollection>
+            </ListView.ItemContainerTransitions>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="0"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="local:SourceCategoryViewModel">
+                    <controls:Expander Margin="12 6 12 6" HorizontalContentAlignment="Stretch"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        IsExpanded="{x:Bind IsContentPresent.Value, Mode=TwoWay}"
+                        IsEnabled="{Binding ViewModel.IsRearrangeEnabledProperty.Value, ElementName=Rootpage, Converter={StaticResource NegateBool}}">
+                        <controls:Expander.HeaderContent>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="{x:Bind Title.Value, Mode=OneWay}" Margin="0 0 6 0"/>
+                                    <TextBlock Text="{x:Bind Items.Count, Mode=OneWay}" Opacity="0.5"/>
+                                </StackPanel>
+                                <Button Background="Transparent" Width="48" Height="48" 
+                                        Style="{StaticResource TextBlockButtonStyle}"
+                                        Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                        Grid.Column="1" Click="{x:Bind RenameCategory}">
+                                    <Button.Content>
+                                        <SymbolIcon Symbol="Edit"/>
+                                    </Button.Content>
+                                </Button>
+                                <Button Background="Transparent" Width="48" Height="48"
+                                        Style="{StaticResource TextBlockButtonStyle}" 
+                                        Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                        Grid.Column="2" Click="{x:Bind RemoveCategory}">
+                                    <Button.Content>
+                                        <SymbolIcon Symbol="Delete"/>
+                                    </Button.Content>
+                                </Button>
+                            </Grid>
+                        </controls:Expander.HeaderContent>
+                        <StackPanel>
+                            <ListView ItemsSource="{x:Bind Items}" 
+                                SelectionMode="None" HorizontalAlignment="Stretch">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Padding" Value="0"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemContainerTransitions>
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition/>    
+                                    </TransitionCollection>
+                                </ListView.ItemContainerTransitions>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="local:SourceItemViewModel">
+                                        <Grid Margin="0 6" RightTapped="ShowFlyout" Holding="ShowFlyout">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <FlyoutBase.AttachedFlyout>
+                                                <MenuFlyout x:Name="NewsItemFlyout">
+                                                    <controls:MenuFlyoutItemWithIcon x:Uid="CopyLink" Icon="Copy" Click="{x:Bind CopyLink}"/>
+                                                    <controls:MenuFlyoutItemWithIcon x:Uid="MenuOpenInEdge" Icon="Link" Click="{x:Bind OpenInEdge}"/>
+                                                    <MenuFlyoutSeparator/>
+                                                    <controls:MenuFlyoutItemWithIcon x:Uid="DeleteSource" Icon="Delete" Click="{x:Bind DeleteSource}"/>
+                                                </MenuFlyout>
+                                            </FlyoutBase.AttachedFlyout>
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{x:Bind Name}"/>
+                                                <TextBlock Text="{x:Bind Url}" FontSize="13" 
+                                                    Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Margin="9 0 0 0" Width="100">
+                                                <ToggleSwitch IsOn="{x:Bind NotificationsEnabled.Value, Mode=TwoWay}" />
+                                                <TextBlock x:Uid="Notifications" FontSize="12" Margin="0 -3 0 0" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <StackPanel>
+                                <StackPanel.Transitions>
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition/>
+                                    </TransitionCollection>
+                                </StackPanel.Transitions>
+                                <TextBlock FontWeight="SemiBold" FontSize="12"
+                                    x:Uid="EnterALinkToRssFeed" Margin="0 6 0 0"/>
+                                <Grid Margin="0 6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox PlaceholderText="http://example.com/rss" Margin="0 3"
+                                        Text="{x:Bind NewSourceUri.Value, Mode=TwoWay}"/>
+                                    <Button Grid.Column="1" Margin="12 0 0 0"
+                                        Foreground="White" Click="{x:Bind AddSource}"
+                                        Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+                                        <Button.Content>
+                                            <TextBlock>
+                                                <Run FontSize="12" FontFamily="Segoe MDL2 Assets" Text="&#xE710;"/>
+                                                <Run FontSize="15" x:Uid="AddButton"/>
+                                            </TextBlock>
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </controls:Expander>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddButton.Content" xml:space="preserve">
+  <data name="AddButton.Text" xml:space="preserve">
     <value>Добавить</value>
   </data>
   <data name="AddToFavorites.ToolTipService.ToolTip" xml:space="preserve">
@@ -171,7 +171,7 @@
   <data name="Favorites.Text" xml:space="preserve">
     <value>ИЗБРАННОЕ</value>
   </data>
-  <data name="FavoritesL.Text" xml:space="preserve">
+  <data name="FavoritesL" xml:space="preserve">
     <value>Избранное</value>
   </data>
   <data name="FavoritesWelcome.Text" xml:space="preserve">
@@ -183,22 +183,22 @@
   <data name="Feed.Text" xml:space="preserve">
     <value>МОЯ ЛЕНТА</value>
   </data>
-  <data name="FeedL.Text" xml:space="preserve">
+  <data name="FeedL" xml:space="preserve">
     <value>Моя лента</value>
   </data>
   <data name="Feedlist.Text" xml:space="preserve">
     <value>ИСТОЧНИКИ</value>
   </data>
-  <data name="FeedlistL.Text" xml:space="preserve">
+  <data name="FeedlistL" xml:space="preserve">
     <value>Источники</value>
   </data>
-  <data name="FontSizeLarge.Content" xml:space="preserve">
+  <data name="FontSizeLarge" xml:space="preserve">
     <value>Крупный</value>
   </data>
-  <data name="FontSizeMiddle.Content" xml:space="preserve">
+  <data name="FontSizeMiddle" xml:space="preserve">
     <value>Средний</value>
   </data>
-  <data name="FontSizeSmall.Content" xml:space="preserve">
+  <data name="FontSizeSmall" xml:space="preserve">
     <value>Мелкий</value>
   </data>
   <data name="LinkNotValid" xml:space="preserve">
@@ -219,10 +219,10 @@
   <data name="OpenInEdge.ToolTipService.ToolTip" xml:space="preserve">
     <value>Открыть в браузере</value>
   </data>
-  <data name="Personalization.Text" xml:space="preserve">
+  <data name="Personalization.Header" xml:space="preserve">
     <value>Персонализация</value>
   </data>
-  <data name="Reset.Text" xml:space="preserve">
+  <data name="Reset.Header" xml:space="preserve">
     <value>Сброс</value>
   </data>
   <data name="ResetButton.Content" xml:space="preserve">
@@ -234,11 +234,17 @@
   <data name="Settings.Text" xml:space="preserve">
     <value>НАСТРОЙКИ</value>
   </data>
-  <data name="SettingsL.Text" xml:space="preserve">
+  <data name="SettingsL" xml:space="preserve">
     <value>Настройки</value>
   </data>
   <data name="Share.ToolTipService.ToolTip" xml:space="preserve">
     <value>Поделиться статьёй</value>
+  </data>
+  <data name="Share.Text" xml:space="preserve">
+    <value>Поделиться</value>
+  </data>
+  <data name="Notifications.Text" xml:space="preserve">
+    <value>Уведомления</value>
   </data>
   <data name="ShowMessageAlert" xml:space="preserve">
     <value>Это действие приведёт к очистке списка источников. Удалённые данные восстановить невозможно.</value>
@@ -301,7 +307,7 @@
     <value>Категория</value>
   </data>
   <data name="EnterALinkToRssFeed.Text" xml:space="preserve">
-    <value>Введите ссылку на RSS ленту:</value>
+    <value>ВВЕДИТЕ ССЫЛКУ НА RSS ЛЕНТУ:</value>
   </data>
   <data name="EnterNameOfNewCategory.Text" xml:space="preserve">
     <value>Введите название категории:</value>
@@ -315,22 +321,22 @@
   <data name="UnpinFromStart.Text" xml:space="preserve">
     <value>Открепить от начального экрана</value>
   </data>
-  <data name="Notify15min.Content" xml:space="preserve">
+  <data name="Notify15min" xml:space="preserve">
     <value>каждые 15 минут</value>
   </data>
-  <data name="Notify1hour.Content" xml:space="preserve">
+  <data name="Notify1hour" xml:space="preserve">
     <value>каждый час</value>
   </data>
-  <data name="Notify30min.Content" xml:space="preserve">
+  <data name="Notify30min" xml:space="preserve">
     <value>каждые 30 минут</value>
   </data>
-  <data name="Notify3hours.Content" xml:space="preserve">
+  <data name="Notify3hours" xml:space="preserve">
     <value>каждые 3 часа</value>
   </data>
   <data name="NotifyCheckTime.Text" xml:space="preserve">
     <value>Как часто служба уведомлений должна проверять, появилось ли что-то новое в ваших RSS каналах?</value>
   </data>
-  <data name="NotifyDisabled.Content" xml:space="preserve">
+  <data name="NotifyDisabled" xml:space="preserve">
     <value>никогда</value>
   </data>
   <data name="AddToFavs.Text" xml:space="preserve">
@@ -366,7 +372,7 @@
   <data name="DeleteSource.Text" xml:space="preserve">
     <value>Удалить источник</value>
   </data>
-  <data name="FindAll.Content" xml:space="preserve">
+  <data name="FindAll.Text" xml:space="preserve">
     <value>Найти</value>
   </data>
   <data name="SearchDialog.PrimaryButtonText" xml:space="preserve">
@@ -385,10 +391,10 @@
     <value>ПОИСК RSS ЛЕНТ</value>
   </data>
   <data name="SearchHelpSubtitle.Text" xml:space="preserve">
-    <value>Введите в текстовое поле запрос, например "Новости" или "Политика", и нажмите "Найти"!</value>
+    <value>Введите в текстовое поле запрос, например "Новости", и нажмите "Найти"!</value>
   </data>
   <data name="SearchHelpTitle.Text" xml:space="preserve">
-    <value>Здесь можно найти интересующие Вас источники новостей.</value>
+    <value>Здесь можно найти интересующие вас источники новостей.</value>
   </data>
   <data name="SearchInput.PlaceholderText" xml:space="preserve">
     <value>Введите запрос...</value>
@@ -474,7 +480,7 @@
   <data name="CopyLinkToImage" xml:space="preserve">
     <value>Скопировать ссылку</value>
   </data>
-  <data name="AboutApp.Text" xml:space="preserve">
+  <data name="AboutApp.Header" xml:space="preserve">
     <value>О приложении</value>
   </data>
   <data name="SDFeedback.Content" xml:space="preserve">
@@ -489,7 +495,31 @@
   <data name="SDescRate.Text" xml:space="preserve">
     <value>Если Вам нравится myFeed, пожалуйста, оцените приложение в магазине Windows!</value>
   </data>
-  <data name="FeedSearchL.Text" xml:space="preserve">
+  <data name="FeedSearchL" xml:space="preserve">
     <value>Поиск каналов</value>
+  </data>
+  <data name="MarkAsRead.Text" xml:space="preserve">
+    <value>Пометить как прочитанное</value>
+  </data>
+  <data name="MarkAsUnread.Text" xml:space="preserve">
+    <value>Пометить как непрочитанное</value>
+  </data>
+  <data name="NewSourceWelcomeTitle.Text" xml:space="preserve">
+    <value>Здесь будут храниться ваши поставщики новостей.</value>
+  </data>
+  <data name="NewSourceWelcomeSubtitle.Text" xml:space="preserve">
+    <value>Добавьте новую категорию!</value>
+  </data>
+  <data name="NewSourceAddCategory.Text" xml:space="preserve">
+    <value>Добавить категорию</value>
+  </data>
+  <data name="SourceBarAdd.Label" xml:space="preserve">
+    <value>Добавить</value>
+  </data>
+  <data name="SourceBarSelect.Label" xml:space="preserve">
+    <value>Упорядочить</value>
+  </data>
+  <data name="SourceBarCancel.Label" xml:space="preserve">
+    <value>Отменить</value>
   </data>
 </root>

@@ -16,11 +16,11 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>myFeed_StoreKey.pfx</PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <PackageCertificateKeyFile>myFeed_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>62E93428053C8257ABFD124A0F60B631B8337EF4</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>89CE228C1B604D24BAEE45AD9FFC5D3422DB030F</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -97,57 +97,123 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <PRIResource Include="lang\ru\Resources.resw" />
-    <PRIResource Include="lang\en\Resources.resw" />
+    <PRIResource Include="Lang\en\Resources.resw" />
+    <PRIResource Include="Lang\ru\Resources.resw" />
     <None Include="myFeed_StoreKey.pfx" />
+    <None Include="myFeed_TemporaryKey.pfx" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\BackgroundTaskManager.cs" />
-    <Compile Include="BlankPage.xaml.cs">
-      <DependentUpon>BlankPage.xaml</DependentUpon>
+    <Compile Include="AppTemplates.xaml.cs">
+      <DependentUpon>AppTemplates.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CategoryDialog.xaml.cs">
-      <DependentUpon>CategoryDialog.xaml</DependentUpon>
+    <Compile Include="Article\ArticlePage.xaml.cs">
+      <DependentUpon>ArticlePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\SyndicationConverter.cs" />
-    <Compile Include="ItemsControlView.xaml.cs">
-      <DependentUpon>ItemsControlView.xaml</DependentUpon>
+    <Compile Include="Article\EmptyPage.xaml.cs">
+      <DependentUpon>EmptyPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
+    <Compile Include="Extensions\BackgroundTasksManager.cs" />
+    <Compile Include="Extensions\Controls\Expander.cs" />
+    <Compile Include="Extensions\Controls\MenuFlyoutItemWithIcon.cs" />
+    <Compile Include="Extensions\Controls\SwipableSplitView.cs" />
+    <Compile Include="Extensions\Controls\TransparentButton.cs" />
+    <Compile Include="Extensions\Converters\FalseToVisibleConverter.cs" />
+    <Compile Include="Extensions\Converters\NegateBoolConverter.cs" />
+    <Compile Include="Extensions\Converters\TrueToVisibleConverter.cs" />
+    <Compile Include="Extensions\Converters\UpperStringConverter.cs" />
+    <Compile Include="Extensions\DeeplyObservableCollection.cs" />
+    <Compile Include="Extensions\HtmlToRichTextBlock.cs" />
+    <Compile Include="Extensions\SyndicationConverter.cs" />
+    <Compile Include="Extensions\Tools.cs" />
+    <Compile Include="Extensions\UserControls\EllipticImageUserControl.xaml.cs">
+      <DependentUpon>EllipticImageUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PArticle.xaml.cs">
-      <DependentUpon>PArticle.xaml</DependentUpon>
+    <Compile Include="Extensions\UserControls\LoadingUserControl.xaml.cs">
+      <DependentUpon>LoadingUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PFavorites.xaml.cs">
-      <DependentUpon>PFavorites.xaml</DependentUpon>
+    <Compile Include="Extensions\UserControls\TitleUserControl.xaml.cs">
+      <DependentUpon>TitleUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PFeed.xaml.cs">
-      <DependentUpon>PFeed.xaml</DependentUpon>
+    <Compile Include="Extensions\ViewModelBase.cs" />
+    <Compile Include="Extensions\ViewModels\ComboBoxViewModel.cs" />
+    <Compile Include="Extensions\ViewModels\IUserSelectableProperty.cs" />
+    <Compile Include="Extensions\ViewModels\ObservableProperty.cs" />
+    <Compile Include="Extensions\ViewModels\RadioGroupViewModel.cs" />
+    <Compile Include="Extensions\ViewModels\SelectableProperty.cs" />
+    <Compile Include="Fave\Controls\WelcomeControl.xaml.cs">
+      <DependentUpon>WelcomeControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\ClassBundle.cs" />
-    <Compile Include="PFeedList.xaml.cs">
-      <DependentUpon>PFeedList.xaml</DependentUpon>
+    <Compile Include="Fave\FaveItemViewModel.cs" />
+    <Compile Include="Fave\FaveManager.cs" />
+    <Compile Include="Fave\FavePage.xaml.cs">
+      <DependentUpon>FavePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Fave\FavePageViewModel.cs" />
+    <Compile Include="Feed\Controls\EmptyControl.xaml.cs">
+      <DependentUpon>EmptyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Feed\Controls\StartScreen.xaml.cs">
+      <DependentUpon>StartScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Feed\Controls\WelcomeControl.xaml.cs">
+      <DependentUpon>WelcomeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Feed\FeedCategoriesPage.xaml.cs">
+      <DependentUpon>FeedCategoriesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Feed\FeedCategoriesViewModel.cs" />
+    <Compile Include="Feed\FeedItemViewModel.cs" />
+    <Compile Include="Feed\FeedManager.cs" />
+    <Compile Include="Feed\FeedPage.xaml.cs">
+      <DependentUpon>FeedPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Feed\FeedViewModel.cs" />
+    <Compile Include="Navigation\MenuItemViewModel.cs" />
+    <Compile Include="Navigation\MenuViewModel.cs" />
+    <Compile Include="Navigation\NavigationManager.cs" />
+    <Compile Include="Navigation\NavigationPage.xaml.cs">
+      <DependentUpon>NavigationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PSettings.xaml.cs">
-      <DependentUpon>PSettings.xaml</DependentUpon>
+    <Compile Include="Search\Controls\NothingControl.xaml.cs">
+      <DependentUpon>NothingControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\HtmlToRichTextBlock.cs" />
-    <Compile Include="Helpers\SerializerExtensions.cs" />
-    <Compile Include="Search.xaml.cs">
-      <DependentUpon>Search.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SearchAddDialog.xaml.cs">
+    <Compile Include="Search\Controls\SearchAddDialog.xaml.cs">
       <DependentUpon>SearchAddDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SourcesView.xaml.cs">
-      <DependentUpon>SourcesView.xaml</DependentUpon>
+    <Compile Include="Search\Controls\SearchAddDialogViewModel.cs" />
+    <Compile Include="Search\Controls\WelcomeControl.xaml.cs">
+      <DependentUpon>WelcomeControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Search\Models\SearchItemModel.cs" />
+    <Compile Include="Search\Models\SearchRootModel.cs" />
+    <Compile Include="Search\SearchItemViewModel.cs" />
+    <Compile Include="Search\SearchPage.xaml.cs">
+      <DependentUpon>SearchPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchPageViewModel.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="Settings\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\SettingsPageViewModel.cs" />
+    <Compile Include="Sources\Controls\RenameDialog.xaml.cs">
+      <DependentUpon>RenameDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\Controls\WelcomeControl.xaml.cs">
+      <DependentUpon>WelcomeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\SourceCategoryViewModel.cs" />
+    <Compile Include="Sources\SourceItemViewModel.cs" />
+    <Compile Include="Sources\SourcesManager.cs" />
+    <Compile Include="Sources\SourcesPage.xaml.cs">
+      <DependentUpon>SourcesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\SourcesPageViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -176,67 +242,127 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Page Include="BlankPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="CategoryDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ItemsControlView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="PArticle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PFavorites.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PFeed.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PFeedList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="PSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Search.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SearchAddDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SourcesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="AppTemplates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Article\ArticlePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Article\EmptyPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Extensions\Controls\Expander.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Extensions\Controls\MenuFlyoutItemWithIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Extensions\Controls\SwipableSplitView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Extensions\Controls\TransparentButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Extensions\UserControls\EllipticImageUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Extensions\UserControls\LoadingUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Extensions\UserControls\TitleUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Fave\Controls\WelcomeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Fave\FavePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Feed\Controls\EmptyControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Feed\Controls\StartScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Feed\Controls\WelcomeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Feed\FeedCategoriesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Feed\FeedPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Navigation\NavigationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Search\Controls\NothingControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Search\Controls\SearchAddDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Search\Controls\WelcomeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Search\SearchPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\SettingsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Sources\Controls\RenameDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Sources\Controls\WelcomeControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Sources\SourcesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\myFeed.FeedModels\myFeed.FeedModels.csproj">
+      <Project>{5314eec2-50e7-42aa-89e2-49f055b0e661}</Project>
+      <Name>myFeed.FeedModels</Name>
+    </ProjectReference>
     <ProjectReference Include="..\myFeed.FeedUpdater\myFeed.FeedUpdater.csproj">
-      <Project>{49fdd21c-4a32-4519-b465-0098a251827e}</Project>
+      <Project>{0052245a-d8a0-4b3b-9782-203c7342a54c}</Project>
       <Name>myFeed.FeedUpdater</Name>
     </ProjectReference>
   </ItemGroup>
