@@ -1,5 +1,7 @@
 # myFeed
-Read news from websites via <b>myFeed</b>, find interesting feeds in the internet and group them by categories, save favourite articles to your device with an ability to read them offline, share interesting posts with friends. <b>myFeed</b> has an intuitive interface and works fast, this makes the process of reading RSS feeds ever more convenient. 
+Read news from websites via <b>myFeed</b>, find interesting feeds in the internet and group them by categories, save favourite articles to your device with an ability to read them offline, share interesting posts with friends.
+
+<b>myFeed</b> has an intuitive interface and works fast, this makes the process of reading RSS feeds ever more convenient. 
 
 <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get myFeed from Windows Store for your mobile or desktop Windows 10 device right now!</a>
 
@@ -20,5 +22,5 @@ myFeed is a <i>completely free</i> and <i>open-source</i> application. Forever. 
 - <a href="https://www.visualstudio.com/ru/vs/whatsnew/">Visual Studio 2017</a>
 - <a href="https://www.jetbrains.com/resharper/">JetBrains ReSharper</a>
 
-## License info
+## License Info
 Licensed under <a href="https://github.com/Worldbeater/myFeed/blob/master/LICENSE.md">Apache 2.0 license</a>.
