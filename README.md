@@ -1,8 +1,10 @@
 # myFeed
-Read news from websites via <b>myFeed</b>, find interesting feeds in the internet and group them by categories, save favourite articles to your device with an ability to read them offline, share interesting posts with friends. <b>myFeed</b> has an intuitive interface and works fast, this makes the process of reading RSS feeds ever more convenient. <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get myFeed from Windows Store for your mobile or desktop Windows 10 device right now!</a>
+Read news from websites via <b>myFeed</b>, find interesting feeds in the internet and group them by categories, save favourite articles to your device with an ability to read them offline, share interesting posts with friends. <b>myFeed</b> has an intuitive interface and works fast, this makes the process of reading RSS feeds ever more convenient. 
+
+<a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get myFeed from Windows Store for your mobile or desktop Windows 10 device right now!</a>
 
 <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">
-  <img src="https://worldbeater.github.io/mockups/myFeed.png" width="600"/>
+  <img src="https://worldbeater.github.io/mockups/myFeed.png" width="670"/>
 </a>
 
 ## About
