@@ -2,7 +2,7 @@
 using System.Linq;
 using myFeed.Extensions.ViewModels;
 using myFeed.FeedModels.Models;
-using myFeed.Search.Models;
+using myFeed.FeedModels.Models.Feedly;
 using myFeed.Sources;
 
 namespace myFeed.Search.Controls

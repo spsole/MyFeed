@@ -98,7 +98,9 @@
       <SubType>Designer</SubType>
     </Content>
     <PRIResource Include="Lang\en\Resources.resw" />
-    <PRIResource Include="Lang\ru\Resources.resw" />
+    <PRIResource Include="Lang\ru\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <None Include="myFeed_StoreKey.pfx" />
     <None Include="myFeed_TemporaryKey.pfx" />
     <None Include="project.json" />
@@ -189,13 +191,12 @@
     <Compile Include="Search\Controls\WelcomeControl.xaml.cs">
       <DependentUpon>WelcomeControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Search\Models\SearchItemModel.cs" />
-    <Compile Include="Search\Models\SearchRootModel.cs" />
     <Compile Include="Search\SearchItemViewModel.cs" />
     <Compile Include="Search\SearchPage.xaml.cs">
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Search\SearchPageViewModel.cs" />
+    <Compile Include="Settings\OpmlManager.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="Settings\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>

@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace myFeed.Search.Models
+namespace myFeed.FeedModels.Models.Feedly
 {
     /// <summary>
     /// Represents a single search result model.
     /// </summary>
-    public class SearchItemModel
+    public sealed class SearchItemModel
     {
         /// <summary>
         /// Item tags.

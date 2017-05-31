@@ -1,9 +1,8 @@
-﻿using System.Linq;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using myFeed.Extensions;
 using myFeed.Extensions.ViewModels;
-using myFeed.Search.Models;
+using myFeed.FeedModels.Models.Feedly;
 using Newtonsoft.Json;
 
 namespace myFeed.Search

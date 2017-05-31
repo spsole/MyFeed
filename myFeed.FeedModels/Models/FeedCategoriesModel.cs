@@ -10,6 +10,18 @@ namespace myFeed.FeedModels.Models
     public sealed class FeedCategoriesModel
     {
         /// <summary>
+        /// Empty constructor for serialization.
+        /// </summary>
+        public FeedCategoriesModel() { }
+
+        /// <summary>
+        /// Initializes new FeedCategoriesModel.
+        /// </summary>
+        public FeedCategoriesModel(
+            List<FeedCategoryModel> categories) => 
+            Categories = categories;
+
+        /// <summary>
         /// Categories XML array.
         /// </summary>
         [XmlArray("categories")]

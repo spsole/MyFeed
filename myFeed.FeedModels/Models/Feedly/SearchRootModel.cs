@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace myFeed.Search.Models
+namespace myFeed.FeedModels.Models.Feedly
 {
     /// <summary>
     /// Represents feedly search results object.
     /// </summary>
-    public class SearchRootModel
+    public sealed class SearchRootModel
     {
         /// <summary>
         /// List of items that were found by a feedly search engine.

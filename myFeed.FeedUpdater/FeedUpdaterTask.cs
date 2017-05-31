@@ -36,11 +36,13 @@ namespace myFeed.FeedUpdater
             var localFolder = ApplicationData.Current.LocalFolder;
             var categoriesFile = await localFolder.GetFileAsync("sites");
             var dateOffsetFile = await localFolder.GetFileAsync("datecutoff");
+            var configFile = await localFolder.GetFileAsync("config");
 
             // Deserialize info from files and folders.
             var categoriesModel = await GenericXmlSerializer.DeSerializeObject<FeedCategoriesModel>(categoriesFile);
             var cutOffText = await FileIO.ReadTextAsync(dateOffsetFile);
             var cutOffDate = DateTime.Parse(cutOffText, CultureInfo.InvariantCulture);
+            var configModel = await GenericXmlSerializer.DeSerializeObject<ConfigModel>(configFile);
 
             // Update last-try date-time.
             await FileIO.WriteTextAsync(dateOffsetFile, DateTime.Now.ToString(CultureInfo.InvariantCulture));
@@ -84,7 +86,8 @@ namespace myFeed.FeedUpdater
             {
                 // Here 'content' means related category name.
                 Log($"Sending Toast: {model.Title}");
-                await SendToastNotification(model, model.Content);
+                await SendToastNotification(model, model.Content, 
+                    configModel.DownloadImages, configModel.BannersEnabled);
             }
 
             // Indicate that this task can be 
@@ -109,13 +112,16 @@ namespace myFeed.FeedUpdater
         /// </summary>
         /// <param name="model">Model</param>
         /// <param name="categoryName">Related category name</param>
-        private static async Task SendToastNotification(FeedItemModel model, string categoryName)
+        /// <param name="needImages">Should manager load images</param>
+        /// <param name="needSound">Should banners be shown</param>
+        private static async Task SendToastNotification(FeedItemModel model,
+            string categoryName, bool needImages, bool needSound)
         {
             await Task.Delay(300);
             var command = $"{model.GetTileId()};{categoryName}";
 
             var imageString = 
-                Uri.IsWellFormedUriString(model.ImageUri, UriKind.Absolute)
+                Uri.IsWellFormedUriString(model.ImageUri, UriKind.Absolute) && needImages
                 ? $@"<image src='{model.ImageUri}' placement='appLogoOverride' hint-crop='circle'/>"
                 : string.Empty;
 
@@ -135,10 +141,10 @@ namespace myFeed.FeedUpdater
 
             var xmlDocument = new Windows.Data.Xml.Dom.XmlDocument();
             xmlDocument.LoadXml(tileXmlString);
+            var notification = new ToastNotification(xmlDocument) { SuppressPopup = !needSound };
             ToastNotificationManager
                 .CreateToastNotifier()
-                .Show(new ToastNotification(
-                    xmlDocument));
+                .Show(notification);
         }
 
         /// <summary>

@@ -28,7 +28,7 @@
             Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
         <Pivot Grid.Row="1">
             <PivotItem x:Uid="Personalization" Margin="0">
-                <ScrollViewer Padding="12 0">
+                <ScrollViewer Padding="12 0 12 12">
                     <StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock x:Uid="ChangeTextSizeTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}"/>
@@ -50,6 +50,11 @@
                                 SelectedItem="{x:Bind ViewModel.NotificationsBox.SelectedItem, Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
+                            <TextBlock x:Uid="NotifyBannersTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" />
+                            <TextBlock x:Uid="NotifyBannersText" TextWrapping="Wrap" Margin="0 6"/>
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.BannersSwitch.Value, Mode=TwoWay}"/>
+                        </StackPanel>
+                        <StackPanel Margin="0 6">
                             <TextBlock x:Uid="ChangeThemeTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}"/>
                             <TextBlock x:Uid="ChangeTheme" TextWrapping="Wrap" Margin="0 6"/>
                             <RadioButton x:Uid="ChangeThemeDefault" IsChecked="{x:Bind ViewModel.ThemeGroup.Items[0].IsSelected, Mode=TwoWay}"/>
@@ -59,28 +64,43 @@
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
-            <PivotItem x:Uid="Reset" Margin="0">
-                <StackPanel Margin="12 6">
-                    <TextBlock x:Uid="ResetTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}"/>
-                    <TextBlock x:Uid="ResetText" Margin="0 6" TextWrapping="Wrap"/>
-                    <Button x:Uid="ResetButton" Margin="0 9" Click="{x:Bind ViewModel.ResetSettings}"/>
-                </StackPanel>
+            <PivotItem x:Uid="ResetSection" Margin="0">
+                <ScrollViewer Padding="12 0 12 12">
+                    <StackPanel>
+                        <StackPanel Margin="0 6">
+                            <TextBlock x:Uid="OpmlExportTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}"/>
+                            <TextBlock x:Uid="OpmlExportDesc" TextWrapping="Wrap" Margin="0 6"/>
+                            <Button x:Uid="OpmlExport" Click="{x:Bind ViewModel.ExportSettingsToOpml}" Margin="0 6"/>
+                        </StackPanel>
+                        <StackPanel Margin="0 6">
+                            <TextBlock x:Uid="OpmlImportTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}"/>
+                            <TextBlock x:Uid="OpmlImportDesc" TextWrapping="Wrap" Margin="0 6"/>
+                            <Button x:Uid="OpmlImport" Click="{x:Bind ViewModel.ImportSettingsFromOpml}" Margin="0 6"/>
+                        </StackPanel>
+                        <StackPanel Margin="0 6">
+                            <TextBlock x:Uid="ResetTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}"/>
+                            <TextBlock x:Uid="ResetText" Margin="0 6" TextWrapping="Wrap"/>
+                            <Button x:Uid="ResetButton" Margin="0 6" Click="{x:Bind ViewModel.ResetSettings}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
             </PivotItem>
             <PivotItem x:Uid="AboutApp" Margin="0">
-                <ScrollViewer Padding="12 0">
+                <ScrollViewer Padding="12 0 12 12">
                     <StackPanel>
                         <Grid Margin="0 12">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="120"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" MaxWidth="100" MaxHeight="100">
-                                <Image Source="ms-appx:///Images/Logo.png" Height="100" Width="100"/>
+                            <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" MaxWidth="120" MaxHeight="120">
+                                <Image Source="ms-appx:///Images/Logo.png" Height="120" Width="120"/>
                             </Grid>
                             <StackPanel Grid.Column="1" Margin="12 0">
                                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" 
                                     Margin="0 6" Text="myFeed" TextWrapping="Wrap" />
-                                <TextBlock Text="© Artjom Graf 2016" TextWrapping="Wrap" />
+                                <TextBlock Text="© Artjom Graf 2017" TextWrapping="NoWrap" Margin="0 0 0 3" />
+                                <TextBlock Text="{x:Bind ViewModel.AppVersion}" TextWrapping="NoWrap" />
                                 <Button Margin="0 6" Style="{StaticResource TextBlockButtonStyle}" 
                                     Padding="0" Content="worldbeater.github.io" 
                                     Click="{x:Bind ViewModel.OpenCreditPage}"/>

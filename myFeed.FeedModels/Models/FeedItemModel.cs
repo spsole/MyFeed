@@ -54,24 +54,24 @@ namespace myFeed.FeedModels.Models
         public static FeedItemModel FromSyndicationItem(SyndicationItem item, string feedTitle)
         {
             // Init model with easy-get properties. 
-            FeedItemModel model = new FeedItemModel()
+            var model = new FeedItemModel
             {
                 FeedTitle = feedTitle,
                 Title = item.Title.Text,
-                Content = item.Summary.Text,
+                Content = item.Summary?.Text ?? string.Empty,
                 Uri = item.Links.FirstOrDefault()?.Uri.ToString(),
                 PublishedDate = item.PublishedDate.ToString(@"yyyy-MM-dd HH:mm:ss")
             };
 
             // Init image properties.
-            Match match = Regex.Match(model.Content, @"<img(.*?)>", RegexOptions.Singleline);
+            var match = Regex.Match(model.Content, @"<img(.*?)>", RegexOptions.Singleline);
             if (match.Success)
             {
-                string val = match.Groups[1].Value;
-                Match match2 = Regex.Match(val, @"src=\""(.*?)\""", RegexOptions.Singleline);
+                var val = match.Groups[1].Value;
+                var match2 = Regex.Match(val, @"src=\""(.*?)\""", RegexOptions.Singleline);
                 if (match2.Success)
                 {
-                    string uri = match2.Groups[1].Value;
+                    var uri = match2.Groups[1].Value;
                     if (uri.Length > 3 && uri[0] == '/' && uri[1] == '/')
                         uri = $"http:{uri}";
                     model.ImageUri = uri;

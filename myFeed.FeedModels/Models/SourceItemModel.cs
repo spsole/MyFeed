@@ -9,6 +9,18 @@ namespace myFeed.FeedModels.Models
     public sealed class SourceItemModel
     {
         /// <summary>
+        /// Empty constructor for serialization.
+        /// </summary>
+        public SourceItemModel() { }
+
+        /// <summary>
+        /// Initializes new source item model.
+        /// </summary>
+        public SourceItemModel(
+            string uri, bool notify) =>
+            (Uri, Notify) = (uri, notify);
+
+        /// <summary>
         /// Website's feed Uri.
         /// </summary>
         [XmlElement("url")]

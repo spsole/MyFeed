@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Storage;
 using myFeed.FeedModels.Models;
 using myFeed.FeedModels.Serialization;
@@ -15,7 +16,6 @@ namespace myFeed.Settings
 
         private ConfigModel _settingsModel;
         private static SettingsManager _instance;
-
         private SettingsManager() { }
 
         /// <summary>
@@ -70,11 +70,23 @@ namespace myFeed.Settings
         /// Save settings to hard disk and returns updated config model.
         /// </summary>
         /// <returns></returns>
-        public async void SaveSettings()
+        public async void SaveSettings() => 
+            GenericXmlSerializer.SerializeObject(_settingsModel, 
+                await ApplicationData.Current.LocalFolder.GetFileAsync("config"));
+
+        #region Static methods
+
+        /// <summary>
+        /// Returns currently install app version code.
+        /// </summary>
+        /// <returns>App version</returns>
+        public static string GetAppVersion()
         {
-            // Serialize object.
-            var configFile = await ApplicationData.Current.LocalFolder.GetFileAsync("config");
-            GenericXmlSerializer.SerializeObject(_settingsModel, configFile);
+            var package = Package.Current;
+            var version = package.Id.Version;
+            return $"v{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
         }
+
+        #endregion
     }
 }

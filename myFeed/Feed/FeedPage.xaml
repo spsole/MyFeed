@@ -33,12 +33,10 @@
             Visibility="{x:Bind ViewModel.IsFeedEmpty.Value, Mode=OneWay, Converter={StaticResource TrueToVisible}}"
             RefreshRequested="{x:Bind ViewModel.FetchAsync, Mode=OneWay}"/> 
         <usercontrols:LoadingUserControl Canvas.ZIndex="1" IsActive="{x:Bind ViewModel.IsLoading.Value, Mode=OneWay}"/>
-        <toolkit:PullToRefreshListView
+        <toolkit:PullToRefreshListView SelectionMode="None"
             ItemsSource="{x:Bind ViewModel, Mode=OneWay}"
-            ShowsScrollingPlaceholders="False" 
             RefreshRequested="{x:Bind ViewModel.FetchAsync, Mode=OneWay}"
-            IsItemClickEnabled="True"
-            SelectionMode="None">
+            ShowsScrollingPlaceholders="False" IsItemClickEnabled="True">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -60,7 +58,7 @@
             </toolkit:PullToRefreshListView.ReleaseToRefreshContent>
             <toolkit:PullToRefreshListView.ItemTemplate>
                 <DataTemplate x:DataType="local:FeedItemViewModel">
-                    <Grid Margin="0 12" Background="Transparent"
+                    <Grid Padding="0 12" Background="Transparent"
                         RightTapped="ShowFlyout" Holding="ShowFlyout"
                         Tapped="OpenArticleUsingXamlWeeds"
                         Opacity="{x:Bind ReadStateOpacity, Mode=OneWay}">

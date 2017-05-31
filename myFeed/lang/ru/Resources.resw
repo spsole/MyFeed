@@ -222,9 +222,6 @@
   <data name="Personalization.Header" xml:space="preserve">
     <value>Персонализация</value>
   </data>
-  <data name="Reset.Header" xml:space="preserve">
-    <value>Сброс</value>
-  </data>
   <data name="ResetButton.Content" xml:space="preserve">
     <value>Сброс</value>
   </data>
@@ -521,5 +518,38 @@
   </data>
   <data name="SourceBarCancel.Label" xml:space="preserve">
     <value>Отменить</value>
+  </data>
+  <data name="OpmlExportTitle.Text" xml:space="preserve">
+    <value>Экспорт источников</value>
+  </data>
+  <data name="OpmlExportDesc.Text" xml:space="preserve">
+    <value>myFeed предоставляет пользователям возможность экспортировать список источников в популярном формате хранения RSS данных OPML.</value>
+  </data>
+  <data name="OpmlExport.Content" xml:space="preserve">
+    <value>Экспортировать</value>
+  </data>
+  <data name="OpmlImportTitle.Text" xml:space="preserve">
+    <value>Импорт источников</value>
+  </data>
+  <data name="OpmlImportDesc.Text" xml:space="preserve">
+    <value>Импортируйте в myFeed источники из других RSS-читалок и наслаждайтесь чтением любимых каналов в удобном приложении!</value>
+  </data>
+  <data name="OpmlImport.Content" xml:space="preserve">
+    <value>Импортировать</value>
+  </data>
+  <data name="ExportFeedsSuccess" xml:space="preserve">
+    <value>RSS каналы были успешно экспортированы!</value>
+  </data>
+  <data name="ImportFeedsSuccess" xml:space="preserve">
+    <value>RSS каналы были успешно импортированы и сохранены!</value>
+  </data>
+  <data name="ResetSection.Header" xml:space="preserve">
+    <value>Специальные</value>
+  </data>
+  <data name="NotifyBannersTitle.Text" xml:space="preserve">
+    <value>Баннеры</value>
+  </data>
+  <data name="NotifyBannersText.Text" xml:space="preserve">
+    <value>Должна ли служба уведомлений myFeed отправлять вам баннеры и звуковые уведомления?</value>
   </data>
 </root>

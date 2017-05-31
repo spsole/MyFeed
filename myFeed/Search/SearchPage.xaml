@@ -42,7 +42,9 @@
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
                 <TextBox x:Uid="SearchInput" InputScope="Search" Margin="12 0"
-                    Text="{x:Bind ViewModel.SearchQuery.Value, Mode=TwoWay}"/>
+                    Text="{x:Bind ViewModel.SearchQuery.Value, Mode=TwoWay}">
+                    
+                </TextBox>
             </StackPanel>
             <Button Grid.Column="1" Click="{x:Bind ViewModel.FetchAsync}" 
                 Margin="0 0 12 0" Background="{ThemeResource SystemControlBackgroundAccentBrush}">

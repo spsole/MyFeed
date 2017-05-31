@@ -7,7 +7,6 @@
     xmlns:usercontrols="using:myFeed.Extensions.UserControls"
     xmlns:controls="using:myFeed.Extensions.Controls"
     xmlns:converters="using:myFeed.Extensions.Converters"
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Unloaded="Page_Unloaded"
@@ -55,12 +54,10 @@
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid>
-                <usercontrols:TitleUserControl x:Uid="Favorites" Count="{x:Bind ViewModel.Count, Mode=OneWay}"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <controls:TransparentButton Symbol="Pin" Click="{x:Bind ViewModel.PinToStart}"/>
-                </StackPanel>
-            </Grid>
+            <usercontrols:TitleUserControl x:Uid="Favorites" Count="{x:Bind ViewModel.Count, Mode=OneWay}"/>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <controls:TransparentButton Symbol="Pin" Click="{x:Bind ViewModel.PinToStart}"/>
+            </StackPanel>
             <Grid Grid.Row="1">
                 <usercontrols:LoadingUserControl Canvas.ZIndex="1" IsActive="{x:Bind ViewModel.IsLoading.Value, Mode=OneWay}" />
                 <localcontrols:WelcomeControl Visibility="{x:Bind ViewModel.IsEmpty.Value, Mode=OneWay, Converter={StaticResource TrueToVisible}}" />
@@ -81,7 +78,7 @@
                     </ListView.ItemContainerStyle>
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:FaveItemViewModel">
-                            <Grid Margin="0 12" Background="Transparent"
+                            <Grid Padding="0 12" Background="Transparent"
                                 RightTapped="ShowFlyout" Holding="ShowFlyout" 
                                 Tapped="OpenArticleUsingXamlWeeds"
                                 Opacity="{x:Bind ReadStateOpacity, Mode=OneWay}">

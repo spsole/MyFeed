@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -32,8 +34,8 @@ namespace myFeed.Extensions
         {
             var story = new Storyboard();
             var daukf = new DoubleAnimationUsingKeyFrames();
-            daukf.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = new TimeSpan(0, 0, 0, 0, 0), Value = 0 });
-            daukf.KeyFrames.Add(new EasingDoubleKeyFrame() { KeyTime = new TimeSpan(0, 0, 0, 0, 300), Value = 1 });
+            daukf.KeyFrames.Add(new EasingDoubleKeyFrame() {KeyTime = new TimeSpan(0, 0, 0, 0, 0), Value = 0});
+            daukf.KeyFrames.Add(new EasingDoubleKeyFrame() {KeyTime = new TimeSpan(0, 0, 0, 0, 300), Value = 1});
             Storyboard.SetTarget(daukf, o);
             Storyboard.SetTargetProperty(daukf, "(UIElement.Opacity)");
             story.Children.Add(daukf);
@@ -63,7 +65,14 @@ namespace myFeed.Extensions
         /// <returns></returns>
         public static async Task<TResult> TryAsync<TResult>(Task<TResult> task, TResult defaultResult)
         {
-            try { return await task; } catch (Exception) { return defaultResult; }
+            try
+            {
+                return await task;
+            }
+            catch (Exception)
+            {
+                return defaultResult;
+            }
         }
 
         /// <summary>
@@ -74,11 +83,53 @@ namespace myFeed.Extensions
         public static Color GetColorFromHex(string hex)
         {
             hex = hex.Replace("#", string.Empty);
-            var a = (byte)(Convert.ToUInt32(hex.Substring(0, 2), 16));
-            var r = (byte)(Convert.ToUInt32(hex.Substring(2, 2), 16));
-            var g = (byte)(Convert.ToUInt32(hex.Substring(4, 2), 16));
-            var b = (byte)(Convert.ToUInt32(hex.Substring(6, 2), 16));
+            var a = (byte) (Convert.ToUInt32(hex.Substring(0, 2), 16));
+            var r = (byte) (Convert.ToUInt32(hex.Substring(2, 2), 16));
+            var g = (byte) (Convert.ToUInt32(hex.Substring(4, 2), 16));
+            var b = (byte) (Convert.ToUInt32(hex.Substring(6, 2), 16));
             return Color.FromArgb(a, r, g, b);
+        }
+
+        /// <summary>
+        /// Shows the simpliest message dialog.
+        /// </summary>
+        /// <param name="message">text</param>
+        public static async void ShowMessage(string message) =>
+            await new MessageDialog(message).ShowAsync();
+
+        /// <summary>
+        /// Simple DistinctBy LINQ extension.
+        /// </summary>
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(
+            this IEnumerable<TSource> source, Func<TSource, TKey> keySelector) => 
+            source.DistinctBy(keySelector, EqualityComparer<TKey>.Default);
+
+        /// <summary>
+        /// DistinctBy LINQ extension.
+        /// </summary>
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector,
+            IEqualityComparer<TKey> comparer
+        ) {
+            if (source == null) 
+                throw new ArgumentNullException(nameof(source));
+            if (keySelector == null)
+                throw new ArgumentNullException(nameof(keySelector));
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+            return DistinctByImpl(source, keySelector, comparer);
+        }
+
+        private static IEnumerable<TSource> DistinctByImpl<TSource, TKey>(
+            IEnumerable<TSource> source, 
+            Func<TSource, TKey> keySelector,
+            IEqualityComparer<TKey> comparer
+        ) {
+            var knownKeys = new HashSet<TKey>(comparer);
+            foreach (var element in source)
+                if (knownKeys.Add(keySelector(element)))
+                    yield return element;
         }
     }
 }

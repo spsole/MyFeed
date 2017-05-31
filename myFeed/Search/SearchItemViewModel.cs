@@ -3,8 +3,8 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Xaml.Media.Imaging;
 using myFeed.Extensions;
+using myFeed.FeedModels.Models.Feedly;
 using myFeed.Search.Controls;
-using myFeed.Search.Models;
 
 namespace myFeed.Search
 {

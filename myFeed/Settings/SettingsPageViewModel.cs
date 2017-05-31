@@ -35,6 +35,7 @@ namespace myFeed.Settings
                 }, 0);
             ThemeGroup = new RadioGroupViewModel<int>(new[] { 0, 1, 2 }, 0);
             ImagesSwitch = new SelectableProperty<bool>();
+            BannersSwitch = new SelectableProperty<bool>();
 
             // Load settings async.
             LoadSettingsAsync();
@@ -54,10 +55,12 @@ namespace myFeed.Settings
             ThemeGroup.SetSelectedItem( settings.ApplicationTheme );
             FontBox.SetSelectedItem( settings.ArticleFontSize );
             ImagesSwitch.SetSelectedItem( settings.DownloadImages );
+            BannersSwitch.SetSelectedItem( settings.BannersEnabled );
 
             // Subscribe to items changes and save settings when user makes decision.
             ImagesSwitch.SelectedValueChanged += (s, a) => manager.UpdateSettings(() => settings.DownloadImages = a);
             FontBox.SelectedValueChanged += (s, a) => manager.UpdateSettings(() => settings.ArticleFontSize = a);
+            BannersSwitch.SelectedValueChanged += (s, a) => manager.UpdateSettings(() => settings.BannersEnabled = a);
             NotificationsBox.SelectedValueChanged += (s, a) =>
             {
                 // Upd stngs nd rgstr ntfer.
@@ -104,6 +107,16 @@ namespace myFeed.Settings
         /// Radio group for requested theme view model.
         /// </summary>
         public RadioGroupViewModel<int> ThemeGroup { get; }
+
+        /// <summary>
+        /// ToggleSwitch for banners setting.
+        /// </summary>
+        public SelectableProperty<bool> BannersSwitch { get; }
+
+        /// <summary>
+        /// Returns application version info.
+        /// </summary>
+        public string AppVersion => SettingsManager.GetAppVersion();
 
         #endregion
 
@@ -164,6 +177,18 @@ namespace myFeed.Settings
         public async void SendFeedback() => 
             await Launcher.LaunchUriAsync(
                 new Uri("ms-windows-store://review/?ProductId=9nblggh4nw02"));
+
+        /// <summary>
+        /// Exports settings to OPML format.
+        /// </summary>
+        public void ExportSettingsToOpml() => 
+            OpmlManager.GetInstanse().ExportFeedsToOpml();
+
+        /// <summary>
+        /// Imports data from OPML format.
+        /// </summary>
+        public void ImportSettingsFromOpml() =>
+            OpmlManager.GetInstanse().ImportFeedsFromOpml();
 
         #endregion
     }

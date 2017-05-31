@@ -9,6 +9,19 @@ namespace myFeed.FeedModels.Models
     public sealed class ConfigModel
     {
         /// <summary>
+        /// Empty constructor for serializer.
+        /// </summary>
+        public ConfigModel() { }
+
+        /// <summary>
+        /// Initializes a new settings model instance.
+        /// </summary>
+        public ConfigModel(int articleFontSize, uint notificationServiceCheckTime, 
+            bool downloadImages, int applicationTheme, bool bannersEnabled) =>
+            (ArticleFontSize, NotificationServiceCheckTime, DownloadImages, ApplicationTheme, BannersEnabled) =
+            (articleFontSize, notificationServiceCheckTime, downloadImages, applicationTheme, bannersEnabled);
+
+        /// <summary>
         /// Font size in articles.
         /// </summary>
         [XmlElement("FontSize")]
@@ -33,14 +46,14 @@ namespace myFeed.FeedModels.Models
         public int ApplicationTheme { get; set; }
 
         /// <summary>
+        /// Are banners and sounds enabled or not.
+        /// </summary>
+        public bool BannersEnabled { get; set; }
+
+        /// <summary>
         /// Set defaults if manually created.
         /// </summary>
-        public static ConfigModel GetDefault() => new ConfigModel()
-        {
-            ArticleFontSize = 17,
-            NotificationServiceCheckTime = 60,
-            DownloadImages = true,
-            ApplicationTheme = 0
-        };  
+        public static ConfigModel GetDefault() =>
+            new ConfigModel(17, 60, true, 0, true);
     }
 }

@@ -225,9 +225,6 @@
   <data name="Personalization.Header" xml:space="preserve">
     <value>Personalization</value>
   </data>
-  <data name="Reset.Header" xml:space="preserve">
-    <value>Reset</value>
-  </data>
   <data name="ResetButton.Content" xml:space="preserve">
     <value>Reset</value>
   </data>
@@ -521,5 +518,38 @@
   </data>
   <data name="SourceBarCancel.Label" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="OpmlExportTitle.Text" xml:space="preserve">
+    <value>Export feeds</value>
+  </data>
+  <data name="OpmlExportDesc.Text" xml:space="preserve">
+    <value>myFeed gives you an ability to export settings in a popular Rss feeds storage formal named OPML.</value>
+  </data>
+  <data name="OpmlExport.Content" xml:space="preserve">
+    <value>Export feeds</value>
+  </data>
+  <data name="OpmlImportTitle.Text" xml:space="preserve">
+    <value>Import feeds</value>
+  </data>
+  <data name="OpmlImportDesc.Text" xml:space="preserve">
+    <value>Import feeds from other feed readers to myFeed and continue reading your favorite feeds!</value>
+  </data>
+  <data name="OpmlImport.Content" xml:space="preserve">
+    <value>Import feeds</value>
+  </data>
+  <data name="ExportFeedsSuccess" xml:space="preserve">
+    <value>RSS feeds were successfully exported!</value>
+  </data>
+  <data name="ImportFeedsSuccess" xml:space="preserve">
+    <value>RSS feeds were successfully imported and saved!</value>
+  </data>
+  <data name="ResetSection.Header" xml:space="preserve">
+    <value>Special</value>
+  </data>
+  <data name="NotifyBannersTitle.Text" xml:space="preserve">
+    <value>Banners</value>
+  </data>
+  <data name="NotifyBannersText.Text" xml:space="preserve">
+    <value>Should myFeed notification service use banners and sound?</value>
   </data>
 </root>

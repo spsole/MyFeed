@@ -22,15 +22,19 @@ namespace myFeed.FeedModels.Serialization
         {
             try
             {
+                // Deny file updates.
+                CachedFileManager.DeferUpdates(file);
+
                 // Clear the entire file.
                 await FileIO.WriteTextAsync(file, string.Empty);
 
                 // Serialize object to an empty file.
                 var serializer = new XmlSerializer(typeof(T));
                 using (var stream = await file.OpenStreamForWriteAsync())
-                {
                     serializer.Serialize(stream, serializableObject);
-                }
+
+                // Complete updates async.
+                await CachedFileManager.CompleteUpdatesAsync(file);
             }
             catch (Exception ex)
             {

@@ -15,8 +15,7 @@ namespace myFeed.Sources
         private readonly SourceCategoryViewModel _parent;
         public SourceItemViewModel(SourceItemModel model, SourceCategoryViewModel parent)
         {
-            _model = model;
-            _parent = parent;
+            (_model, _parent) = (model, parent);
             NotificationsEnabled.Value = _model.Notify;
             NotificationsEnabled.SelectedValueChanged += (s, a) => ToggleNotificationsAsync(a);
         }
