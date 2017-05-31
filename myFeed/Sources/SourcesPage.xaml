@@ -83,17 +83,17 @@
                                     <TextBlock Text="{x:Bind Items.Count, Mode=OneWay}" Opacity="0.5"/>
                                 </StackPanel>
                                 <Button Background="Transparent" Width="48" Height="48" 
-                                        Style="{StaticResource TextBlockButtonStyle}"
-                                        Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                                        Grid.Column="1" Click="{x:Bind RenameCategory}">
+                                    Style="{StaticResource TextBlockButtonStyle}"
+                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    Grid.Column="1" Click="{x:Bind RenameCategory}">
                                     <Button.Content>
                                         <SymbolIcon Symbol="Edit"/>
                                     </Button.Content>
                                 </Button>
                                 <Button Background="Transparent" Width="48" Height="48"
-                                        Style="{StaticResource TextBlockButtonStyle}" 
-                                        Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                                        Grid.Column="2" Click="{x:Bind RemoveCategory}">
+                                    Style="{StaticResource TextBlockButtonStyle}" 
+                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    Grid.Column="2" Click="{x:Bind RemoveCategory}">
                                     <Button.Content>
                                         <SymbolIcon Symbol="Delete"/>
                                     </Button.Content>
@@ -155,8 +155,8 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBox PlaceholderText="http://example.com/rss" Margin="0 3"
-                                        Text="{x:Bind NewSourceUri.Value, Mode=TwoWay}"/>
+                                    <TextBox PlaceholderText="http://example.com/rss" Margin="0 3" KeyDown="OnKeyDown"
+                                        Text="{Binding NewSourceUri.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                                     <Button Grid.Column="1" Margin="12 0 0 0"
                                         Foreground="White" Click="{x:Bind AddSource}"
                                         Background="{ThemeResource SystemControlBackgroundAccentBrush}">

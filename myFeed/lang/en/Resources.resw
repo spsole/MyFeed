@@ -552,4 +552,7 @@
   <data name="NotifyBannersText.Text" xml:space="preserve">
     <value>Should myFeed notification service use banners and sound?</value>
   </data>
+  <data name="SettingsNotification" xml:space="preserve">
+    <value>Notification</value>
+  </data>
 </root>

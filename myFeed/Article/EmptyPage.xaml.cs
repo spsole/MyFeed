@@ -1,6 +1,4 @@
-﻿using Windows.UI.Xaml.Controls;
-
-namespace myFeed.Article
+﻿namespace myFeed.Article
 {
     public sealed partial class EmptyPage
     {

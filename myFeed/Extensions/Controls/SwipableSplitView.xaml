@@ -424,7 +424,7 @@
                             <Border Child="{TemplateBinding Content}" />
                             <Rectangle x:Name="LightDismissLayer" Fill="Transparent" Visibility="Collapsed" />
                         </Grid>
-                        <Grid x:Name="PaneRoot" ManipulationMode="TranslateX,TranslateY" 
+                        <Grid Grid.Column="0" x:Name="PaneRoot" ManipulationMode="TranslateX,TranslateY" 
                               Grid.ColumnSpan="2" HorizontalAlignment="Left"
                               Background="{TemplateBinding PaneBackground}" 
                               Width="{Binding TemplateSettings.OpenPaneLength, 
@@ -447,7 +447,7 @@
                                 x:DeferLoadStrategy="Lazy"/>
                         </Grid>
                         <!-- A new layer here to handle all the gestures -->
-                        <Grid x:Name="OverlayRoot" Grid.ColumnSpan="2">
+                        <Grid Grid.Column="0" x:Name="OverlayRoot" Grid.ColumnSpan="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="{Binding TemplateSettings.OpenPaneGridLength, 
                                     RelativeSource={RelativeSource Mode=TemplatedParent}}" />

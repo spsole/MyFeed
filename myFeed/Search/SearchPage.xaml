@@ -10,6 +10,7 @@
     xmlns:converters="using:myFeed.Extensions.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="RootPage"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -41,10 +42,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
-                <TextBox x:Uid="SearchInput" InputScope="Search" Margin="12 0"
-                    Text="{x:Bind ViewModel.SearchQuery.Value, Mode=TwoWay}">
-                    
-                </TextBox>
+                <TextBox x:Uid="SearchInput" InputScope="Search" Margin="12 0" KeyDown="OnKeyDown"
+        Text="{Binding ViewModel.SearchQuery.Value, Mode=TwoWay, ElementName=RootPage, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
             <Button Grid.Column="1" Click="{x:Bind ViewModel.FetchAsync}" 
                 Margin="0 0 12 0" Background="{ThemeResource SystemControlBackgroundAccentBrush}">

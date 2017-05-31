@@ -20,13 +20,11 @@ namespace myFeed.Sources
         private readonly SourcesPageViewModel _parent;
         public SourceCategoryViewModel(FeedCategoryModel model, SourcesPageViewModel parent)
         {
-            _parent = parent;
-            _model = model;
+            (_parent, _model, Title.Value) = (parent, model, model.Title);
             _model.Websites
                 .Select(i => new SourceItemViewModel(i, this))
                 .ToList()
                 .ForEach(Items.Add);
-            Title.Value = _model.Title;
         }
 
         #region Properties
@@ -66,18 +64,18 @@ namespace myFeed.Sources
         {
             // Return if uri's invalid.
             var sourceUri = NewSourceUri.Value;
+            NewSourceUri.Value = string.Empty; 
             if (string.IsNullOrWhiteSpace(sourceUri) ||
                 !Uri.IsWellFormedUriString(sourceUri, UriKind.Absolute))
                 return;
 
             // Add model.
-            var model = new SourceItemModel { Notify = true, Uri = sourceUri };
+            var model = new SourceItemModel(sourceUri, true);
             var success = await SourcesManager.GetInstance().AddSource(model, Title.Value);
             if (!success) return;
 
             // Update UI.
             Items.Add(new SourceItemViewModel(model, this));
-            NewSourceUri.Value = string.Empty;
         }
 
         /// <summary>

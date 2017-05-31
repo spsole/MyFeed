@@ -36,7 +36,7 @@ namespace myFeed.Extensions
             };
 
             // Note: Time measures in minutes here, e.g. 30 = 30 minutes
-            builder.SetTrigger(new TimeTrigger((uint)checkTime, false)); 
+            builder.SetTrigger(new TimeTrigger(checkTime, false)); 
             builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
             builder.Register();
         }

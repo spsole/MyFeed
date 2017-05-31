@@ -1,6 +1,8 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 
 namespace myFeed.Search
 {
@@ -27,5 +29,11 @@ namespace myFeed.Search
         }
 
         private void ShowFlyout(object sender, RoutedEventArgs e) => FlyoutBase.ShowAttachedFlyout((Grid)sender);
+
+        private void OnKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key != VirtualKey.Enter) return;
+            ViewModel.FetchAsync();
+        }
     }
 }

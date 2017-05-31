@@ -87,7 +87,9 @@ namespace myFeed.Settings
                 category.Websites = category.Websites.DistinctBy(i => i.Uri).ToList();
             }
             await SourcesManager.GetInstance().SaveCategories(categories);
-            Tools.ShowMessage(new ResourceLoader().GetString("ImportFeedsSuccess"));
+            var resourceLoader = new ResourceLoader();
+            Tools.ShowMessage(resourceLoader.GetString("ImportFeedsSuccess"), 
+                resourceLoader.GetString("SettingsNotification"));
         }
 
         /// <summary>
@@ -134,7 +136,9 @@ namespace myFeed.Settings
 
             // Serialize if not null.
             GenericXmlSerializer.SerializeObject(opml, file);
-            Tools.ShowMessage(new ResourceLoader().GetString("ExportFeedsSuccess"));
+            var resourceLoader = new ResourceLoader();
+            Tools.ShowMessage(resourceLoader.GetString("ExportFeedsSuccess"),
+                resourceLoader.GetString("SettingsNotification"));
         }
 
         #endregion

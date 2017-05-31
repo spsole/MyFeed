@@ -94,8 +94,9 @@ namespace myFeed.Extensions
         /// Shows the simpliest message dialog.
         /// </summary>
         /// <param name="message">text</param>
-        public static async void ShowMessage(string message) =>
-            await new MessageDialog(message).ShowAsync();
+        /// <param name="title">Title</param>
+        public static async void ShowMessage(string message, string title) =>
+            await new MessageDialog(message, title).ShowAsync();
 
         /// <summary>
         /// Simple DistinctBy LINQ extension.

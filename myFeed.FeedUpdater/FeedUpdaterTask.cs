@@ -67,15 +67,17 @@ namespace myFeed.FeedUpdater
                     Log($"Got string for: {i.Uri}");
                     var responseString = await response.Content.ReadAsStringAsync();
                     var syndicationFeed = new SyndicationFeed();
-                    syndicationFeed.Load(responseString);
+
+                    // Try load feed, skip feed channel on failure.
+                    try { syndicationFeed.Load(responseString); } catch (Exception) { continue; }
                     Log($"Loaded feed for: {syndicationFeed.Title.Text}");
 
                     // Add only fresh data to collection.
                     feedModels.AddRange(
-                        syndicationFeed.Items
-                            .Where(x => x.PublishedDate > cutOffDate)
-                            .Select(x => FeedItemModel.FromSyndicationItem(x, syndicationFeed.Title.Text))
-                            .Select(x => { x.Content = category.Title; return x; })
+                    syndicationFeed.Items
+                        .Where(x => x.PublishedDate > cutOffDate)
+                        .Select(x => FeedItemModel.FromSyndicationItem(x, syndicationFeed.Title.Text))
+                        .Select(x => { x.Content = category.Title; return x; })
                     );
                     Log($"Added range for: {syndicationFeed.Title.Text}");
                 }
@@ -173,7 +175,14 @@ namespace myFeed.FeedUpdater
         /// <returns></returns>
         private static async Task<TResult> TryAsync<TResult>(Task<TResult> task, TResult defaultResult)
         {
-            try { return await task; } catch (Exception) { return defaultResult; }
+            try
+            {
+                return await task;
+            }
+            catch (Exception)
+            {
+                return defaultResult;
+            }
         }
     }
 }

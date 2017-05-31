@@ -1,6 +1,8 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 
 namespace myFeed.Sources
 {
@@ -40,5 +42,11 @@ namespace myFeed.Sources
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e) => 
             ((ListView)sender).SelectedItem = null;
+
+        private void OnKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key != VirtualKey.Enter) return;
+            ((SourceCategoryViewModel) ((FrameworkElement) sender).DataContext).AddSource();
+        }
     }
 }
