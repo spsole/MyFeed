@@ -38,18 +38,22 @@ namespace myFeed.Feed
         /// <summary>
         /// Is this Uri well formed or not.
         /// </summary>
-        public bool HasImage => Uri.IsWellFormedUriString(_model.ImageUri, UriKind.Absolute);
+        public bool HasImage => 
+            Uri.IsWellFormedUriString(_model.ImageUri, UriKind.Absolute) &&
+            Settings.SettingsManager.GetInstance().GetSettings().DownloadImages;
 
         /// <summary>
         /// Preview image.
         /// </summary>
-        public BitmapImage Image => HasImage
-        ? new BitmapImage(new Uri(_model.ImageUri))
-        {
-            DecodePixelWidth = 100,
-            DecodePixelType = DecodePixelType.Logical
-        }
-        : new BitmapImage();
+        public BitmapImage Image => 
+            HasImage && 
+            Settings.SettingsManager.GetInstance().GetSettings().DownloadImages
+            ? new BitmapImage(new Uri(_model.ImageUri))
+            {
+                DecodePixelWidth = 100,
+                DecodePixelType = DecodePixelType.Logical
+            }
+            : new BitmapImage();
 
         /// <summary>
         /// Human-readable date.

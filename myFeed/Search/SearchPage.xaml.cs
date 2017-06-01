@@ -33,6 +33,7 @@ namespace myFeed.Search
         private void OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key != VirtualKey.Enter) return;
+            Focus(FocusState.Programmatic);
             ViewModel.FetchAsync();
         }
     }

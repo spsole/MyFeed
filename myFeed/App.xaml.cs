@@ -122,9 +122,12 @@ namespace myFeed
             // Retrieve data for category.
             var orderedFeed = await manager.RetrieveFeedAsync(category);
             var targetItem = orderedFeed.FirstOrDefault(i => i.GetModel().GetTileId() == id);
-            if (targetItem != null)
-                FeedCategoriesPage.NavigationFrame.Navigate(
-                    typeof(ArticlePage), targetItem);
+            if (targetItem == null) return;
+
+            // Navigate and mark as read.
+            FeedCategoriesPage.NavigationFrame.Navigate(
+                typeof(ArticlePage), targetItem);
+            targetItem.MarkAsRead();
         }
 
         #region Helper methods

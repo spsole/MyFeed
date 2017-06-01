@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using Windows.Web.Syndication;
@@ -57,7 +58,7 @@ namespace myFeed.FeedModels.Models
             var model = new FeedItemModel
             {
                 FeedTitle = feedTitle,
-                Title = item.Title.Text,
+                Title = WebUtility.HtmlDecode(item.Title.Text),
                 Content = item.Summary?.Text ?? string.Empty,
                 Uri = item.Links.FirstOrDefault()?.Uri.ToString(),
                 PublishedDate = item.PublishedDate.ToString(@"yyyy-MM-dd HH:mm:ss")
