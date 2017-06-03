@@ -69,9 +69,11 @@ namespace myFeed.Search
         /// <summary>
         /// Opens link to website in default browser.
         /// </summary>
-        public async void OpenInEdge() => 
-            await Launcher.LaunchUriAsync(
-                new Uri(_model.Website));
+        public async void OpenInEdge()
+        {
+            if (Uri.IsWellFormedUriString(_model.Website, UriKind.Absolute))
+                await Launcher.LaunchUriAsync(new Uri(_model.Website));
+        }
 
         #endregion
     }

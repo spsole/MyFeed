@@ -45,9 +45,9 @@ namespace myFeed.Feed
         /// <summary>
         /// Preview image.
         /// </summary>
-        public BitmapImage Image => 
-            HasImage && 
-            Settings.SettingsManager.GetInstance().GetSettings().DownloadImages
+        public BitmapImage Image => HasImage 
+            && Uri.IsWellFormedUriString(_model.ImageUri, UriKind.Absolute) 
+            && Settings.SettingsManager.GetInstance().GetSettings().DownloadImages
             ? new BitmapImage(new Uri(_model.ImageUri))
             {
                 DecodePixelWidth = 100,
@@ -88,7 +88,11 @@ namespace myFeed.Feed
         /// <summary>
         /// Opens in Edge.
         /// </summary>
-        public async void OpenInEdge() => await Launcher.LaunchUriAsync(new Uri(_model.Uri));
+        public async void OpenInEdge()
+        {
+            if (Uri.IsWellFormedUriString(_model.Uri, UriKind.Absolute))
+                await Launcher.LaunchUriAsync(new Uri(_model.Uri));
+        }
 
         /// <summary>
         /// Marks item as read.

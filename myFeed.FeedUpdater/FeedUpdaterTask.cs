@@ -74,10 +74,10 @@ namespace myFeed.FeedUpdater
 
                     // Add only fresh data to collection.
                     feedModels.AddRange(
-                    syndicationFeed.Items
-                        .Where(x => x.PublishedDate > cutOffDate)
-                        .Select(x => FeedItemModel.FromSyndicationItem(x, syndicationFeed.Title.Text))
-                        .Select(x => { x.Content = category.Title; return x; })
+                        syndicationFeed.Items
+                            .Where(x => x.PublishedDate > cutOffDate)
+                            .Select(x => new FeedItemModel(x, syndicationFeed.Title.Text))
+                            .Select(x => { x.Content = category.Title; return x; })
                     );
                     Log($"Added range for: {syndicationFeed.Title.Text}");
                 }

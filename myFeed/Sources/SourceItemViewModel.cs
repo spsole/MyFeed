@@ -76,6 +76,7 @@ namespace myFeed.Sources
         /// </summary>
         public async void OpenInEdge()
         {
+            if (!Uri.IsWellFormedUriString(_model.Uri, UriKind.Absolute)) return;
             var uri = new Uri(_model.Uri);
             var plainFormat = string.Format("{0}://{1}", uri.Scheme, uri.Host);
             var plainUri = new Uri(plainFormat);

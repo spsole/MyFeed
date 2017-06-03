@@ -73,14 +73,12 @@ namespace myFeed
                 case "Favorites":
                     await Task.Delay(300);
                     if (NavigationPage.NavigationFrame.CurrentSourcePageType != typeof(Fave.FavePage))
-                        NavigationPage.NavigationFrame.Navigate(
-                            typeof(Fave.FavePage));
+                        NavigationPage.NavigationFrame.Navigate(typeof(Fave.FavePage));
                     break;
                 default:
                     await Task.Delay(300);
                     if (NavigationPage.NavigationFrame.CurrentSourcePageType != typeof(Fave.FavePage))
-                        NavigationPage.NavigationFrame.Navigate(
-                            typeof(Fave.FavePage));
+                        NavigationPage.NavigationFrame.Navigate(typeof(Fave.FavePage));
                     var articles = await Fave.FaveManager.GetInstance().LoadArticles();
                     var target = articles.FirstOrDefault(i => i.GetModel().GetTileId() == e.TileId);
                     if (target != null)

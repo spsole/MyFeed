@@ -26,14 +26,14 @@ namespace myFeed.Sources
         /// <summary>
         /// Is collection being loaded or not.
         /// </summary>
-        public ObservableProperty<bool> IsLoadingProperty { get; } = 
+        public ObservableProperty<bool> IsLoadingProperty { get; } =
             new ObservableProperty<bool>(true);
 
         /// <summary>
         /// A collection of inner models.
         /// </summary>
-        public ObservableCollection<SourceCategoryViewModel> Items { get; } = 
-            new DeeplyObservableCollection<SourceCategoryViewModel>();
+        public ObservableCollection<SourceCategoryViewModel> Items { get; } =
+            new ObservableCollection<SourceCategoryViewModel>();
 
         /// <summary>
         /// Indicates if welcome screen is visible.
@@ -77,7 +77,7 @@ namespace myFeed.Sources
             IsLoadingProperty.Value = false;
             IsWelcomeVisibleProperty.Value = Items.Count == 0;
             Items.CollectionChanged += (s, a) =>
-                IsWelcomeVisibleProperty.Value = 
+                IsWelcomeVisibleProperty.Value =
                     Items.Count == 0;
 
             // Save new seq.

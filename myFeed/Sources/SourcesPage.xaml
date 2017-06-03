@@ -69,7 +69,8 @@
                 <DataTemplate x:DataType="local:SourceCategoryViewModel">
                     <controls:Expander Margin="12 6 12 6" HorizontalContentAlignment="Stretch"
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                        IsExpanded="{x:Bind IsContentPresent.Value, Mode=TwoWay}"
+                        IsExpanded="{x:Bind IsContentPresent.Value, Mode=TwoWay}" 
+                        CanDrag="{Binding ViewModel.IsRearrangeEnabledProperty.Value, ElementName=Rootpage, Converter={StaticResource NegateBool}}"
                         IsEnabled="{Binding ViewModel.IsRearrangeEnabledProperty.Value, ElementName=Rootpage, Converter={StaticResource NegateBool}}">
                         <controls:Expander.HeaderContent>
                             <Grid>

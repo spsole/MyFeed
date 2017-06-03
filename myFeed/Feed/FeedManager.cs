@@ -124,7 +124,7 @@ namespace myFeed.Feed
                 // Add items if they exist.
                 unorderedViewModels.AddRange(
                     from item in syndicationFeed.Items
-                    select FeedItemModel.FromSyndicationItem(item, syndicationFeed.Title.Text)
+                    select new FeedItemModel(item, syndicationFeed.Title.Text)
                     into model
                     let isRead = readContents.Contains(model.GetTileId())
                     let isFave = faveContents.Contains(model.Uri)

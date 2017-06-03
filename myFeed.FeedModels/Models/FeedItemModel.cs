@@ -14,6 +14,11 @@ namespace myFeed.FeedModels.Models
     public sealed class FeedItemModel
     {
         /// <summary>
+        /// Parameterless constructor for serializer
+        /// </summary>
+        public FeedItemModel() { }
+
+        /// <summary>
         /// Article title.
         /// </summary>
         [XmlElement("title")] 
@@ -52,20 +57,17 @@ namespace myFeed.FeedModels.Models
         /// <summary>
         /// Creates news item view model from syndication item.
         /// </summary>
-        public static FeedItemModel FromSyndicationItem(SyndicationItem item, string feedTitle)
+        public FeedItemModel(SyndicationItem item, string feedTitle)
         {
-            // Init model with easy-get properties. 
-            var model = new FeedItemModel
-            {
-                FeedTitle = feedTitle,
-                Title = WebUtility.HtmlDecode(item.Title.Text),
-                Content = item.Summary?.Text ?? string.Empty,
-                Uri = item.Links.FirstOrDefault()?.Uri.ToString(),
-                PublishedDate = item.PublishedDate.ToString(@"yyyy-MM-dd HH:mm:ss")
-            };
+            // Assign properties.
+            FeedTitle = feedTitle;
+            Title = WebUtility.HtmlDecode(item.Title?.Text ?? string.Empty);
+            Content = item.Summary?.Text ?? string.Empty;
+            Uri = item.Links?.FirstOrDefault()?.Uri?.ToString();
+            PublishedDate = item.PublishedDate.ToString(@"yyyy-MM-dd HH:mm:ss");
 
             // Init image properties.
-            var match = Regex.Match(model.Content, @"<img(.*?)>", RegexOptions.Singleline);
+            var match = Regex.Match(Content, @"<img(.*?)>", RegexOptions.Singleline);
             if (match.Success)
             {
                 var val = match.Groups[1].Value;
@@ -75,11 +77,9 @@ namespace myFeed.FeedModels.Models
                     var uri = match2.Groups[1].Value;
                     if (uri.Length > 3 && uri[0] == '/' && uri[1] == '/')
                         uri = $"http:{uri}";
-                    model.ImageUri = uri;
+                    ImageUri = uri;
                 }
             }
-
-            return model;
         }
 
         /// <summary>
