@@ -67,9 +67,7 @@ Temporary Items
 *.resfiles
 *.ps1
 *.user
-*.appxmanifest
 *.appx
-*.json
 *.pfx
 myFeed/Package.StoreAssociation.xml
 myFeed/_pkginfo.txt
