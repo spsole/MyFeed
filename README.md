@@ -13,7 +13,7 @@ Read news from websites via <b>myFeed</b>, find interesting feeds in the interne
 
 myFeed is an RSS reader for <b>Universal Windows Platform</b> created using <b>C#</b> programming language. The app can collect news from websites, save them to your device and send toast notifications for you once new posts appear in your news feeds.
 
-myFeed is a <i>completely free</i> and <i>open-source</i> application. Forever. No ads, no subscription fees.
+myFeed is a completely free and open-source application. No ads, no subscription fees. Unlimited trial version contains all features of a full one, but if you appreciate my work and would like to support myFeed's future development, please, consider buying it. :3 
 
 ## Technologies and Tools used
 
