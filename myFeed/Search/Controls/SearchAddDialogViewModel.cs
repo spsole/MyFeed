@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.FeedModels.Models;
 using myFeed.FeedModels.Models.Feedly;
 using myFeed.Sources;

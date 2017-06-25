@@ -1,7 +1,5 @@
 ﻿using Windows.System;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace myFeed.Sources
@@ -20,12 +18,8 @@ namespace myFeed.Sources
                 a.Handled = true;
             });
         }
-
-        private void ShowFlyout(object sender, RoutedEventArgs e) => FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
-
+        
         private void OnUnloaded(object sender, RoutedEventArgs e) => ViewModel.IsRearrangeEnabledProperty.Value = false;
-
-        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e) => ((ListView)sender).SelectedItem = null;
 
         private void OnKeyDown(object sender, KeyRoutedEventArgs e)
         {

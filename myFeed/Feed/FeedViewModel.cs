@@ -1,7 +1,6 @@
 ﻿using System.Linq;
-using System.Threading.Tasks;
-using myFeed.Extensions;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm;
+using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.FeedModels.Models;
 
 namespace myFeed.Feed
@@ -19,13 +18,13 @@ namespace myFeed.Feed
         /// <summary>
         /// Indicates if fetcher is loading data right now.
         /// </summary>
-        public ObservableProperty<bool> IsLoading { get; } = 
+        public IObservableProperty<bool> IsLoading { get; } = 
             new ObservableProperty<bool>(true);
 
         /// <summary>
         /// Indicates if the collection is empty.
         /// </summary>
-        public ObservableProperty<bool> IsFeedEmpty { get; } = 
+        public IObservableProperty<bool> IsFeedEmpty { get; } = 
             new ObservableProperty<bool>(false);
 
         #endregion
@@ -54,13 +53,10 @@ namespace myFeed.Feed
         /// <summary>
         /// Navigates user to sources page if he is new to the app.
         /// </summary>
-        public void NavigateToSources()
-        {
-            // Navigate using inner nav frame.
+        public void NavigateToSources() => 
             Navigation.NavigationPage
-                .NavigationFrame
-                .Navigate(typeof(Sources.SourcesPage));
-        }
+            .NavigationFrame
+            .Navigate(typeof(Sources.SourcesPage));
 
         #endregion
     }

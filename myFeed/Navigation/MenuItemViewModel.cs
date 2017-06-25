@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Controls;
-using myFeed.Extensions;
+using myFeed.Extensions.Mvvm.Implementation;
 
 namespace myFeed.Navigation
 {

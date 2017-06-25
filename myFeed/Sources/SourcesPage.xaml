@@ -7,8 +7,11 @@
     xmlns:usercontrols="using:myFeed.Extensions.UserControls"
     xmlns:controls="using:myFeed.Extensions.Controls"
     xmlns:convverters="using:myFeed.Extensions.Converters"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:behaviors="using:myFeed.Extensions.Behaviors"
     Unloaded="OnUnloaded"
     x:Name="Rootpage"
     mc:Ignorable="d">
@@ -55,7 +58,7 @@
             <AppBarButton x:Uid="SourceBarCancel" Icon="Cancel" Click="{x:Bind ViewModel.ToggleRearrange}"
                 Visibility="{x:Bind ViewModel.IsRearrangeEnabledProperty.Value, Mode=OneWay, Converter={StaticResource TrueVisible}}"/>
         </CommandBar>
-        <ListView Grid.Row="1" AllowDrop="True" Padding="0 6 0 54" SelectionChanged="OnSelectionChanged"
+        <ListView Grid.Row="1" AllowDrop="True" Padding="0 6 0 54" IsItemClickEnabled="True" SelectionMode="None"
             CanReorderItems="{x:Bind ViewModel.IsRearrangeEnabledProperty.Value, Mode=OneWay}"
             ItemsSource="{x:Bind ViewModel.Items}" ShowsScrollingPlaceholders="False">
             <ListView.ItemContainerTransitions>
@@ -121,11 +124,19 @@
                                 </ListView.ItemContainerTransitions>
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="local:SourceItemViewModel">
-                                        <Grid Margin="0 6" RightTapped="ShowFlyout" Holding="ShowFlyout">
+                                        <Grid Margin="0 6">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition />
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
+                                            <i:Interaction.Behaviors>
+                                                <core:EventTriggerBehavior EventName="RightTapped">
+                                                    <behaviors:OpenFlyoutAction/>
+                                                </core:EventTriggerBehavior>
+                                                <core:EventTriggerBehavior EventName="Holding">
+                                                    <behaviors:OpenFlyoutAction/>
+                                                </core:EventTriggerBehavior>
+                                            </i:Interaction.Behaviors>
                                             <FlyoutBase.AttachedFlyout>
                                                 <MenuFlyout x:Name="NewsItemFlyout">
                                                     <controls:MenuFlyoutItemWithIcon x:Uid="CopyLink" Icon="Copy" Click="{x:Bind CopyLink}"/>
@@ -161,7 +172,8 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBox PlaceholderText="http://example.com/rss" Margin="0 3" KeyDown="OnKeyDown"
-                                        Text="{Binding NewSourceUri.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        Text="{Binding NewSourceUri.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    </TextBox>
                                     <Button Grid.Column="1" Margin="12 0 0 0"
                                         Foreground="White" Click="{x:Bind AddSource}"
                                         Background="{ThemeResource SystemControlBackgroundAccentBrush}">

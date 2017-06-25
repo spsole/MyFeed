@@ -3,8 +3,8 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml.Media.Imaging;
-using myFeed.Extensions;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm;
+using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.FeedModels.Models;
 
 namespace myFeed.Feed
@@ -59,27 +59,26 @@ namespace myFeed.Feed
         /// Human-readable date.
         /// </summary>
         public string HumanifiedDate => 
-            (DateTime.Now.Date == PublishedDate.Date) ? 
+            DateTime.Now.Date == PublishedDate.Date ? 
             PublishedDate.ToString("HH:mm") :
             PublishedDate.ToString("MM.dd");
 
         /// <summary>
         /// Read state opacity.
         /// </summary>
-        public float ReadStateOpacity => 
-            IsRead.Value ? 0.5f : 1.0f;
+        public float ReadStateOpacity => IsRead.Value ? 0.5f : 1.0f;
 
         /// <summary>
         /// Is article read or not?
         /// </summary>
-        public ObservableProperty<bool> IsRead { get; } = 
-            new ObservableProperty<bool>();
+        public IObservableProperty<bool> IsRead { get; } = 
+            new ObservableProperty<bool>(false);
 
         /// <summary>
         /// Is article added to favorites or not?
         /// </summary>
-        public ObservableProperty<bool> IsFavorite { get; } = 
-            new ObservableProperty<bool>();
+        public IObservableProperty<bool> IsFavorite { get; } = 
+            new ObservableProperty<bool>(false);
 
         #endregion
 

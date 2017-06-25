@@ -21,7 +21,6 @@ namespace myFeed.Extensions
             return new List<Block> { GenerateParagraph(doc.DocumentNode) };
         }
 
-
         private static Paragraph AddChildren(Paragraph paragraph, HtmlNode node)
         {
             var isAdded = false;

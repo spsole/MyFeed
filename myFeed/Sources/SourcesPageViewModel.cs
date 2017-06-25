@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using Windows.UI.Xaml.Controls;
-using myFeed.Extensions;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm;
+using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.FeedModels.Models;
 using myFeed.Sources.Controls;
 
@@ -26,7 +26,7 @@ namespace myFeed.Sources
         /// <summary>
         /// Is collection being loaded or not.
         /// </summary>
-        public ObservableProperty<bool> IsLoadingProperty { get; } =
+        public IObservableProperty<bool> IsLoadingProperty { get; } =
             new ObservableProperty<bool>(true);
 
         /// <summary>
@@ -38,13 +38,13 @@ namespace myFeed.Sources
         /// <summary>
         /// Indicates if welcome screen is visible.
         /// </summary>
-        public ObservableProperty<bool> IsWelcomeVisibleProperty { get; } =
+        public IObservableProperty<bool> IsWelcomeVisibleProperty { get; } =
             new ObservableProperty<bool>(false);
 
         /// <summary>
         /// Indicates if selection mode is toggled.
         /// </summary>
-        public ObservableProperty<bool> IsRearrangeEnabledProperty { get; } =
+        public IObservableProperty<bool> IsRearrangeEnabledProperty { get; } =
             new ObservableProperty<bool>(false);
 
         #endregion

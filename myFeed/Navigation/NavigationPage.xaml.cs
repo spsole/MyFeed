@@ -1,5 +1,4 @@
-﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 
 namespace myFeed.Navigation
 {
@@ -31,8 +30,5 @@ namespace myFeed.Navigation
                 args.Handled = true;
             });
         }
-
-        private void OpenMenu(object sender, RoutedEventArgs e) =>
-            SplitView.IsSwipeablePaneOpen = !SplitView.IsSwipeablePaneOpen;
     }
 }

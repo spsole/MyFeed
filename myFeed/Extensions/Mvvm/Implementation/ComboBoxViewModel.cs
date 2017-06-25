@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace myFeed.Extensions.ViewModels
+namespace myFeed.Extensions.Mvvm.Implementation
 {
     /// <summary>
     /// Represents ComboBox view model.
@@ -11,7 +11,7 @@ namespace myFeed.Extensions.ViewModels
     /// <typeparam name="TKey">Key</typeparam>
     /// <typeparam name="TValue">Value</typeparam>
     public class ComboBoxViewModel<TKey, TValue> : 
-        ViewModelBase, IUserSelectableProperty<TValue> 
+        ViewModelBase, ISelectableProperty<TValue> 
         where TValue : IComparable
     {
         private object _selectedItem;
@@ -29,12 +29,13 @@ namespace myFeed.Extensions.ViewModels
         public ComboBoxViewModel(IEnumerable<KeyValuePair<TKey, TValue>> items, int index)
         {
             // Assert that selected index is less than items count.
-            if (items.Count() <= index)
+            var keyValuePairs = items as IList<KeyValuePair<TKey, TValue>> ?? items.ToList();
+            if (keyValuePairs.Count <= index)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
             // Fill the items collection.
             Items = new ObservableCollection<KeyValuePair<TKey, TValue>>();
-            foreach (var item in items)
+            foreach (var item in keyValuePairs)
                 Items.Add(item);
 
             // Select needed item.
@@ -61,7 +62,7 @@ namespace myFeed.Extensions.ViewModels
                 OnPropertyChanged(nameof(SelectedItem));
 
                 // Raise ValueChanged.
-                SelectedValueChanged?.Invoke(this,
+                ValueChanged?.Invoke(this,
                     ((KeyValuePair<TKey, TValue>)SelectedItem).Value
                 );
             }
@@ -76,6 +77,6 @@ namespace myFeed.Extensions.ViewModels
         /// <summary>
         /// Invoked when user-selected value of binding ComboBox changes.
         /// </summary>
-        public event EventHandler<TValue> SelectedValueChanged;
+        public event EventHandler<TValue> ValueChanged;
     }
 }

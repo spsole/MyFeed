@@ -2,9 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.StartScreen;
-using myFeed.Extensions;
-using myFeed.Extensions.ViewModels;
-using myFeed.Feed;
+using myFeed.Extensions.Mvvm;
+using myFeed.Extensions.Mvvm.Implementation;
 
 namespace myFeed.Fave
 {
@@ -23,13 +22,13 @@ namespace myFeed.Fave
         /// <summary>
         /// Indicates if fetcher is loading data right now or not.
         /// </summary>
-        public ObservableProperty<bool> IsLoading { get; } = 
+        public IObservableProperty<bool> IsLoading { get; } = 
             new ObservableProperty<bool>(true);
 
         /// <summary>
         /// Indicates if the collection is empty.
         /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; } = 
+        public IObservableProperty<bool> IsEmpty { get; } = 
             new ObservableProperty<bool>(false);
 
         #endregion
@@ -63,7 +62,6 @@ namespace myFeed.Fave
             // Hide load screen.
             IsEmpty.Value = Count == 0;
             IsLoading.Value = false;
-            OnPropertyChanged(() => Count);
         }
 
         /// <summary>
@@ -80,7 +78,6 @@ namespace myFeed.Fave
 
             // Toggle empty control if needed.
             IsEmpty.Value = Count == 0;
-            OnPropertyChanged(() => Count);
         }
 
         #endregion

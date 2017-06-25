@@ -2,7 +2,7 @@
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Xaml.Media.Imaging;
-using myFeed.Extensions;
+using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.FeedModels.Models.Feedly;
 using myFeed.Search.Controls;
 

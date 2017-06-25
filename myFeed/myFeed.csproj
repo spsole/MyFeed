@@ -119,6 +119,7 @@
       <DependentUpon>EmptyPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Extensions\BackgroundTasksManager.cs" />
+    <Compile Include="Extensions\Behaviors\OpenFlyoutAction.cs" />
     <Compile Include="Extensions\Controls\Expander.cs" />
     <Compile Include="Extensions\Controls\MenuFlyoutItemWithIcon.cs" />
     <Compile Include="Extensions\Controls\SwipableSplitView.cs" />
@@ -127,8 +128,11 @@
     <Compile Include="Extensions\Converters\NegateBoolConverter.cs" />
     <Compile Include="Extensions\Converters\TrueToVisibleConverter.cs" />
     <Compile Include="Extensions\Converters\UpperStringConverter.cs" />
-    <Compile Include="Extensions\DeeplyObservableCollection.cs" />
+    <Compile Include="Extensions\Mvvm\IDeeplyObservableCollection.cs" />
     <Compile Include="Extensions\HtmlToRichTextBlock.cs" />
+    <Compile Include="Extensions\Mvvm\Implementation\DeeplyObservableCollection.cs" />
+    <Compile Include="Extensions\Mvvm\IObservableProperty.cs" />
+    <Compile Include="Extensions\Mvvm\ISelectableProperty.cs" />
     <Compile Include="Extensions\SyndicationConverter.cs" />
     <Compile Include="Extensions\Tools.cs" />
     <Compile Include="Extensions\UserControls\EllipticImageUserControl.xaml.cs">
@@ -140,12 +144,11 @@
     <Compile Include="Extensions\UserControls\TitleUserControl.xaml.cs">
       <DependentUpon>TitleUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extensions\ViewModelBase.cs" />
-    <Compile Include="Extensions\ViewModels\ComboBoxViewModel.cs" />
-    <Compile Include="Extensions\ViewModels\IUserSelectableProperty.cs" />
-    <Compile Include="Extensions\ViewModels\ObservableProperty.cs" />
-    <Compile Include="Extensions\ViewModels\RadioGroupViewModel.cs" />
-    <Compile Include="Extensions\ViewModels\SelectableProperty.cs" />
+    <Compile Include="Extensions\Mvvm\Implementation\ViewModelBase.cs" />
+    <Compile Include="Extensions\Mvvm\Implementation\ComboBoxViewModel.cs" />
+    <Compile Include="Extensions\Mvvm\Implementation\ObservableProperty.cs" />
+    <Compile Include="Extensions\Mvvm\Implementation\RadioGroupViewModel.cs" />
+    <Compile Include="Extensions\Mvvm\Implementation\SelectableProperty.cs" />
     <Compile Include="Fave\Controls\WelcomeControl.xaml.cs">
       <DependentUpon>WelcomeControl.xaml</DependentUpon>
     </Compile>

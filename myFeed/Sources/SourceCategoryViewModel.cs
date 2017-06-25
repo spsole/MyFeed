@@ -4,8 +4,8 @@ using System.Linq;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
-using myFeed.Extensions;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm;
+using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.FeedModels.Models;
 using myFeed.Sources.Controls;
 
@@ -32,14 +32,14 @@ namespace myFeed.Sources
         /// <summary>
         /// Grouping title.
         /// </summary>
-        public ObservableProperty<string> Title { get; } = 
-            new ObservableProperty<string>();
+        public IObservableProperty<string> Title { get; } = 
+            new ObservableProperty<string>(string.Empty);
 
         /// <summary>
         /// New source Uri for 2-way binding TextBox.
         /// </summary>
-        public ObservableProperty<string> NewSourceUri { get; } =
-            new ObservableProperty<string>();
+        public IObservableProperty<string> NewSourceUri { get; } =
+            new ObservableProperty<string>(string.Empty);
 
         /// <summary>
         /// Inner items collection.
@@ -50,7 +50,7 @@ namespace myFeed.Sources
         /// <summary>
         /// Is category showing?
         /// </summary>
-        public ObservableProperty<bool> IsContentPresent { get; } =
+        public IObservableProperty<bool> IsContentPresent { get; } =
             new ObservableProperty<bool>(false);
 
         #endregion

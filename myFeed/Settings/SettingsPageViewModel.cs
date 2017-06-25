@@ -7,7 +7,7 @@ using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using myFeed.Extensions;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm.Implementation;
 
 namespace myFeed.Settings
 {
@@ -58,10 +58,10 @@ namespace myFeed.Settings
             BannersSwitch.SetSelectedItem( settings.BannersEnabled );
 
             // Subscribe to items changes and save settings when user makes decision.
-            ImagesSwitch.SelectedValueChanged += (s, a) => manager.UpdateSettings(() => settings.DownloadImages = a);
-            FontBox.SelectedValueChanged += (s, a) => manager.UpdateSettings(() => settings.ArticleFontSize = a);
-            BannersSwitch.SelectedValueChanged += (s, a) => manager.UpdateSettings(() => settings.BannersEnabled = a);
-            NotificationsBox.SelectedValueChanged += (s, a) =>
+            ImagesSwitch.ValueChanged += (s, a) => manager.UpdateSettings(() => settings.DownloadImages = a);
+            FontBox.ValueChanged += (s, a) => manager.UpdateSettings(() => settings.ArticleFontSize = a);
+            BannersSwitch.ValueChanged += (s, a) => manager.UpdateSettings(() => settings.BannersEnabled = a);
+            NotificationsBox.ValueChanged += (s, a) =>
             {
                 // Upd stngs nd rgstr ntfer.
                 manager.UpdateSettings(() => settings.NotificationServiceCheckTime = a);
@@ -70,7 +70,7 @@ namespace myFeed.Settings
 
             // Listen to event and save, propose restart.
             var resourceLoader = new ResourceLoader();
-            ThemeGroup.SelectedValueChanged += async (s, a) =>
+            ThemeGroup.ValueChanged += async (s, a) =>
             {
                 manager.UpdateSettings(() => settings.ApplicationTheme = a);
                 var messageDialog = new MessageDialog(

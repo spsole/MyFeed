@@ -1,7 +1,8 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using myFeed.Extensions;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm;
+using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.FeedModels.Models.Feedly;
 using Newtonsoft.Json;
 
@@ -17,25 +18,25 @@ namespace myFeed.Search
         /// <summary>
         /// Is collection being loaded or not.
         /// </summary>
-        public ObservableProperty<bool> IsLoading { get; } = 
-            new ObservableProperty<bool>();
+        public IObservableProperty<bool> IsLoading { get; } = 
+            new ObservableProperty<bool>(false);
 
         /// <summary>
         /// Is welcome screen visible or not?
         /// </summary>
-        public ObservableProperty<bool> IsWelcomeVisible { get; } = 
+        public IObservableProperty<bool> IsWelcomeVisible { get; } = 
             new ObservableProperty<bool>(true);
 
         /// <summary>
         /// Is collection empty or not?
         /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; } = 
-            new ObservableProperty<bool>();
+        public IObservableProperty<bool> IsEmpty { get; } = 
+            new ObservableProperty<bool>(false);
 
         /// <summary>
         /// Contains search query.
         /// </summary>
-        public ObservableProperty<string> SearchQuery { get; } = 
+        public IObservableProperty<string> SearchQuery { get; } = 
             new ObservableProperty<string>(string.Empty);
 
         #endregion

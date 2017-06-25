@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.ApplicationModel.DataTransfer;
 using myFeed.Extensions;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.FeedModels.Models;
 
 namespace myFeed.Sources
@@ -17,7 +17,7 @@ namespace myFeed.Sources
         {
             (_model, _parent) = (model, parent);
             NotificationsEnabled.Value = _model.Notify;
-            NotificationsEnabled.SelectedValueChanged += (s, a) => ToggleNotificationsAsync(a);
+            NotificationsEnabled.ValueChanged += (s, a) => ToggleNotificationsAsync(a);
         }
 
         #region Properties

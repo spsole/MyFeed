@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 
-namespace myFeed.Extensions
+namespace myFeed.Extensions.Mvvm.Implementation
 {
     /// <summary>
     /// View model's base class that can react on internal changes.

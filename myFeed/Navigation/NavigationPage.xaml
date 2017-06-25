@@ -52,7 +52,7 @@
                     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="ms-appx:///Images/Logo.png" 
-                                Height="36" Width="36" Tapped="OpenMenu" Margin="6 0"/>
+                                Height="36" Width="36" Tapped="{x:Bind ViewModel.ToggleMenu}" Margin="6 0"/>
                             <TextBlock Margin="12" Text="myFeed"
                                 FontWeight="SemiBold" Foreground="White"/>
                         </StackPanel>
@@ -94,7 +94,7 @@
                     <Button x:Name="MenuBtn" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
                         FontFamily="Segoe MDL2 Assets" Content="&#xE700;" 
                         Width="48" Height="48" Background="Transparent" FontSize="20"
-                        VerticalAlignment="Top" HorizontalAlignment="Left" Click="OpenMenu"/>
+                        VerticalAlignment="Top" HorizontalAlignment="Left" Click="{x:Bind ViewModel.ToggleMenu}"/>
                 </Grid>
             </controls:SwipeableSplitView.Content>
         </controls:SwipeableSplitView>

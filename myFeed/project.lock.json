@@ -440,7 +440,7 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Microsoft.Xaml.Behaviors.Uwp.Managed/1.1.0": {
+      "Microsoft.Xaml.Behaviors.Uwp.Managed/2.0.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Xaml.Interactions.dll": {},
@@ -500,7 +500,7 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
-      "Newtonsoft.Json/10.0.2": {
+      "Newtonsoft.Json/10.0.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0",
@@ -2654,7 +2654,7 @@
         "framework": "UAP,Version=v10.0",
         "dependencies": {
           "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
-          "Newtonsoft.Json": "10.0.2",
+          "Newtonsoft.Json": "10.0.3",
           "System.ValueTuple": "4.3.1"
         }
       },
@@ -2662,7 +2662,7 @@
         "type": "project",
         "framework": "UAP,Version=v10.0",
         "dependencies": {
-          "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
           "myFeed.FeedModels": "1.0.0"
         }
       }
@@ -3054,7 +3054,7 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Microsoft.Xaml.Behaviors.Uwp.Managed/1.1.0": {
+      "Microsoft.Xaml.Behaviors.Uwp.Managed/2.0.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Xaml.Interactions.dll": {},
@@ -3114,7 +3114,7 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
-      "Newtonsoft.Json/10.0.2": {
+      "Newtonsoft.Json/10.0.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0",
@@ -5317,7 +5317,7 @@
         "framework": "UAP,Version=v10.0",
         "dependencies": {
           "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
-          "Newtonsoft.Json": "10.0.2",
+          "Newtonsoft.Json": "10.0.3",
           "System.ValueTuple": "4.3.1"
         }
       },
@@ -5325,7 +5325,7 @@
         "type": "project",
         "framework": "UAP,Version=v10.0",
         "dependencies": {
-          "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
           "myFeed.FeedModels": "1.0.0"
         }
       }
@@ -5718,7 +5718,7 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Microsoft.Xaml.Behaviors.Uwp.Managed/1.1.0": {
+      "Microsoft.Xaml.Behaviors.Uwp.Managed/2.0.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Xaml.Interactions.dll": {},
@@ -5778,7 +5778,7 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
-      "Newtonsoft.Json/10.0.2": {
+      "Newtonsoft.Json/10.0.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0",
@@ -8019,7 +8019,7 @@
         "framework": "UAP,Version=v10.0",
         "dependencies": {
           "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
-          "Newtonsoft.Json": "10.0.2",
+          "Newtonsoft.Json": "10.0.3",
           "System.ValueTuple": "4.3.1"
         }
       },
@@ -8027,7 +8027,7 @@
         "type": "project",
         "framework": "UAP,Version=v10.0",
         "dependencies": {
-          "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
           "myFeed.FeedModels": "1.0.0"
         }
       }
@@ -8422,7 +8422,7 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Microsoft.Xaml.Behaviors.Uwp.Managed/1.1.0": {
+      "Microsoft.Xaml.Behaviors.Uwp.Managed/2.0.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Xaml.Interactions.dll": {},
@@ -8482,7 +8482,7 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
-      "Newtonsoft.Json/10.0.2": {
+      "Newtonsoft.Json/10.0.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0",
@@ -10691,7 +10691,7 @@
         "framework": "UAP,Version=v10.0",
         "dependencies": {
           "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
-          "Newtonsoft.Json": "10.0.2",
+          "Newtonsoft.Json": "10.0.3",
           "System.ValueTuple": "4.3.1"
         }
       },
@@ -10699,7 +10699,7 @@
         "type": "project",
         "framework": "UAP,Version=v10.0",
         "dependencies": {
-          "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
           "myFeed.FeedModels": "1.0.0"
         }
       }
@@ -11095,7 +11095,7 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Microsoft.Xaml.Behaviors.Uwp.Managed/1.1.0": {
+      "Microsoft.Xaml.Behaviors.Uwp.Managed/2.0.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Xaml.Interactions.dll": {},
@@ -11155,7 +11155,7 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
-      "Newtonsoft.Json/10.0.2": {
+      "Newtonsoft.Json/10.0.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0",
@@ -13402,7 +13402,7 @@
         "framework": "UAP,Version=v10.0",
         "dependencies": {
           "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
-          "Newtonsoft.Json": "10.0.2",
+          "Newtonsoft.Json": "10.0.3",
           "System.ValueTuple": "4.3.1"
         }
       },
@@ -13410,7 +13410,7 @@
         "type": "project",
         "framework": "UAP,Version=v10.0",
         "dependencies": {
-          "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
           "myFeed.FeedModels": "1.0.0"
         }
       }
@@ -13805,7 +13805,7 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Microsoft.Xaml.Behaviors.Uwp.Managed/1.1.0": {
+      "Microsoft.Xaml.Behaviors.Uwp.Managed/2.0.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Xaml.Interactions.dll": {},
@@ -13865,7 +13865,7 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
-      "Newtonsoft.Json/10.0.2": {
+      "Newtonsoft.Json/10.0.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0",
@@ -16074,7 +16074,7 @@
         "framework": "UAP,Version=v10.0",
         "dependencies": {
           "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
-          "Newtonsoft.Json": "10.0.2",
+          "Newtonsoft.Json": "10.0.3",
           "System.ValueTuple": "4.3.1"
         }
       },
@@ -16082,7 +16082,7 @@
         "type": "project",
         "framework": "UAP,Version=v10.0",
         "dependencies": {
-          "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
           "myFeed.FeedModels": "1.0.0"
         }
       }
@@ -16478,7 +16478,7 @@
           "ref/netstandard1.3/Microsoft.Win32.Primitives.dll": {}
         }
       },
-      "Microsoft.Xaml.Behaviors.Uwp.Managed/1.1.0": {
+      "Microsoft.Xaml.Behaviors.Uwp.Managed/2.0.0": {
         "type": "package",
         "compile": {
           "lib/uap10.0/Microsoft.Xaml.Interactions.dll": {},
@@ -16538,7 +16538,7 @@
           "System.Xml.XDocument": "4.3.0"
         }
       },
-      "Newtonsoft.Json/10.0.2": {
+      "Newtonsoft.Json/10.0.3": {
         "type": "package",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0",
@@ -18785,7 +18785,7 @@
         "framework": "UAP,Version=v10.0",
         "dependencies": {
           "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
-          "Newtonsoft.Json": "10.0.2",
+          "Newtonsoft.Json": "10.0.3",
           "System.ValueTuple": "4.3.1"
         }
       },
@@ -18793,7 +18793,7 @@
         "type": "project",
         "framework": "UAP,Version=v10.0",
         "dependencies": {
-          "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.3",
+          "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
           "myFeed.FeedModels": "1.0.0"
         }
       }
@@ -21354,10 +21354,10 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "Microsoft.Xaml.Behaviors.Uwp.Managed/1.1.0": {
-      "sha512": "Qxe4fblviCn2oFf7C4ahCsZHC0GzRa7Tz5z+L1QUHUljY3Oj/TMoT1O0jJ+ru6RcJ9qS8yFw/jIvstg2dxxpGA==",
+    "Microsoft.Xaml.Behaviors.Uwp.Managed/2.0.0": {
+      "sha512": "LfzU68PVP33nqsuSlO5xAYuoI/itVKz4VVJSIunrS7iqqxE3sy0Q+VvtoYnFcBAoGnY83ZVn8Mnc9HYqOBiPmg==",
       "type": "package",
-      "path": "microsoft.xaml.behaviors.uwp.managed/1.1.0",
+      "path": "microsoft.xaml.behaviors.uwp.managed/2.0.0",
       "files": [
         "lib/uap10.0/Design/Microsoft.Xaml.Interactions.Design.dll",
         "lib/uap10.0/Design/Microsoft.Xaml.Interactivity.Design.dll",
@@ -21367,7 +21367,7 @@
         "lib/uap10.0/Microsoft.Xaml.Interactivity.dll",
         "lib/uap10.0/Microsoft.Xaml.Interactivity.pri",
         "lib/uap10.0/Microsoft.Xaml.Interactivity.xml",
-        "microsoft.xaml.behaviors.uwp.managed.1.1.0.nupkg.sha512",
+        "microsoft.xaml.behaviors.uwp.managed.2.0.0.nupkg.sha512",
         "microsoft.xaml.behaviors.uwp.managed.nuspec"
       ]
     },
@@ -21382,10 +21382,10 @@
         "netstandard.library.nuspec"
       ]
     },
-    "Newtonsoft.Json/10.0.2": {
-      "sha512": "iwElSU2IXmwGvytJsezyDML2ZWDkG2JzTYzlU/BNlmzMdlmRvbnwITsGGY74gwVEpDli1UdOLkMT7/3jxWvXzA==",
+    "Newtonsoft.Json/10.0.3": {
+      "sha512": "wBM7i7i3U2WX0ecor4zdVGvgrwFUjuigBoHKiL+nH39fCOpCPjBY3RDqJM32edvdyTAVdjzlccHsg41+/+zpSA==",
       "type": "package",
-      "path": "newtonsoft.json/10.0.2",
+      "path": "newtonsoft.json/10.0.3",
       "files": [
         "LICENSE.md",
         "lib/net20/Newtonsoft.Json.dll",
@@ -21400,11 +21400,11 @@
         "lib/netstandard1.0/Newtonsoft.Json.xml",
         "lib/netstandard1.3/Newtonsoft.Json.dll",
         "lib/netstandard1.3/Newtonsoft.Json.xml",
-        "lib/portable-net40+sl5+win8+wpa81+wp8/Newtonsoft.Json.dll",
-        "lib/portable-net40+sl5+win8+wpa81+wp8/Newtonsoft.Json.xml",
-        "lib/portable-net45+win8+wpa81+wp8/Newtonsoft.Json.dll",
-        "lib/portable-net45+win8+wpa81+wp8/Newtonsoft.Json.xml",
-        "newtonsoft.json.10.0.2.nupkg.sha512",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wp8+wpa81/Newtonsoft.Json.xml",
+        "newtonsoft.json.10.0.3.nupkg.sha512",
         "newtonsoft.json.nuspec",
         "tools/install.ps1"
       ]
@@ -27777,6 +27777,7 @@
       "Microsoft.Toolkit.Uwp.UI >= 1.4.1",
       "Microsoft.Toolkit.Uwp.UI.Animations >= 1.4.1",
       "Microsoft.Toolkit.Uwp.UI.Controls >= 1.4.1",
+      "Microsoft.Xaml.Behaviors.Uwp.Managed >= 2.0.0",
       "System.ValueTuple >= 4.3.1"
     ],
     "UAP,Version=v10.0": []
@@ -27813,6 +27814,7 @@
       "Microsoft.Toolkit.Uwp.UI": "1.4.1",
       "Microsoft.Toolkit.Uwp.UI.Animations": "1.4.1",
       "Microsoft.Toolkit.Uwp.UI.Controls": "1.4.1",
+      "Microsoft.Xaml.Behaviors.Uwp.Managed": "2.0.0",
       "System.ValueTuple": "4.3.1"
     },
     "frameworks": {

@@ -1,7 +1,7 @@
-﻿using myFeed.Extensions;
-using System.Linq;
+﻿using System.Linq;
 using Windows.UI.Xaml.Controls;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm;
+using myFeed.Extensions.Mvvm.Implementation;
 
 namespace myFeed.Navigation
 {
@@ -40,13 +40,13 @@ namespace myFeed.Navigation
         /// <summary>
         /// Stores selected item.
         /// </summary>
-        public ObservableProperty<object> SelectedItem { get; } =
-            new ObservableProperty<object>();
+        public IObservableProperty<object> SelectedItem { get; } =
+            new ObservableProperty<object>(default(object));
 
         /// <summary>
         /// Indicates menu state.
         /// </summary>
-        public ObservableProperty<bool> IsMenuOpened { get; } =
+        public IObservableProperty<bool> IsMenuOpened { get; } =
             new ObservableProperty<bool>(false);
 
         /// <summary>
@@ -70,7 +70,13 @@ namespace myFeed.Navigation
         /// <summary>
         /// Handles navigation.
         /// </summary>
-        public void HandleNavigation() => SelectedItem.Value = this.FirstOrDefault(
-            i => i.PageType == NavigationPage.NavigationFrame?.SourcePageType);
+        public void HandleNavigation() => 
+            SelectedItem.Value = this.FirstOrDefault(
+                i => i.PageType == NavigationPage.NavigationFrame?.SourcePageType);
+
+        /// <summary>
+        /// Toggles menu state.
+        /// </summary>
+        public void ToggleMenu() => IsMenuOpened.Value = !IsMenuOpened.Value;
     }
 }

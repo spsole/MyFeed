@@ -1,5 +1,4 @@
 ﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Navigation;
 using myFeed.Article;
 using myFeed.FeedModels.Models;
@@ -19,9 +18,6 @@ namespace myFeed.Feed
             ViewModel.FetchAsync();
             base.OnNavigatedTo(e);
         }
-
-        private void ShowFlyout(object sender, RoutedEventArgs e) => 
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement) sender);
 
         private void OpenArticleUsingXamlWeeds(object sender, RoutedEventArgs e)
         {

@@ -256,7 +256,8 @@ namespace myFeed.Extensions.Controls
                     break;
             }
 
-            ((CompositeTransform) _paneRoot.RenderTransform).TranslateX = PanAreaInitialTranslateX;
+            if (_paneRoot.RenderTransform != null)
+                ((CompositeTransform) _paneRoot.RenderTransform).TranslateX = PanAreaInitialTranslateX;
         }
 
         private void OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
@@ -364,10 +365,13 @@ namespace myFeed.Extensions.Controls
             var border = (Border) PaneRoot.Children[0];
             _menuHost = border.FindDescendant<Selector>();
 
-            foreach (var item in _menuHost.Items)
+            if (_menuHost.Items != null)
             {
-                var container = (SelectorItem) _menuHost.ContainerFromItem(item);
-                _menuItems.Add(container);
+                foreach (var item in _menuHost.Items)
+                {
+                    var container = (SelectorItem)_menuHost.ContainerFromItem(item);
+                    _menuItems.Add(container);
+                }
             }
 
             _distancePerItem = TotalPanningDistance / _menuItems.Count;

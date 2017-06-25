@@ -10,6 +10,9 @@
     xmlns:converters="using:myFeed.Extensions.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:behaviors="using:myFeed.Extensions.Behaviors"
     x:Name="RootPage"
     mc:Ignorable="d">
     
@@ -91,7 +94,7 @@
                 </toolkit:PullToRefreshListView.ReleaseToRefreshContent>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:SearchItemViewModel">
-                        <Grid Margin="12" Holding="ShowFlyout" RightTapped="ShowFlyout">
+                        <Grid Margin="12">
                             <FlyoutBase.AttachedFlyout>
                                 <MenuFlyout>
                                     <controls:MenuFlyoutItemWithIcon Icon="Add" x:Uid="SearchItemAdd" Click="{x:Bind AddToSources}"/>
@@ -100,6 +103,14 @@
                                     <controls:MenuFlyoutItemWithIcon Icon="Copy" x:Uid="SearchItemCopy" Click="{x:Bind CopyLink}" />
                                 </MenuFlyout>
                             </FlyoutBase.AttachedFlyout>
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="RightTapped">
+                                    <behaviors:OpenFlyoutAction/>
+                                </core:EventTriggerBehavior>
+                                <core:EventTriggerBehavior EventName="Holding">
+                                    <behaviors:OpenFlyoutAction/>
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="42"/>

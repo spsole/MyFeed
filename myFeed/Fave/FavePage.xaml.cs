@@ -1,6 +1,5 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using myFeed.Article;
 using myFeed.Feed;
 using myFeed.Navigation;
@@ -29,9 +28,6 @@ namespace myFeed.Fave
             },
             EventPriority.High);
         }
-
-        private void ShowFlyout(object sender, RoutedEventArgs e) => 
-            FlyoutBase.ShowAttachedFlyout((FrameworkElement)sender);
 
         private void DeleteRequested(object sender, object e) => 
             ViewModel.DeleteItem((FaveItemViewModel)

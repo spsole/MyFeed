@@ -2,7 +2,8 @@
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm;
+using myFeed.Extensions.Mvvm.Implementation;
 
 namespace myFeed.Feed
 {
@@ -27,13 +28,13 @@ namespace myFeed.Feed
         /// <summary>
         /// Selected item in Pivot items.
         /// </summary>
-        public ObservableProperty<object> SelectedItem { get; } = 
+        public IObservableProperty<object> SelectedItem { get; } = 
             new ObservableProperty<object>(null);
 
         /// <summary>
         /// Indicates if received category hass no items inside.
         /// </summary>
-        public ObservableProperty<bool> IsCategoryEmpty { get; } =
+        public IObservableProperty<bool> IsCategoryEmpty { get; } =
             new ObservableProperty<bool>(false);
 
         #endregion

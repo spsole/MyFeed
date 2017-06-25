@@ -4,13 +4,13 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 
-namespace myFeed.Extensions.ViewModels
+namespace myFeed.Extensions.Mvvm.Implementation
 {
     /// <summary>
     /// Radio group view model.
     /// </summary>
     /// <typeparam name="T">Generic typedef</typeparam>
-    public class RadioGroupViewModel<T> : ViewModelBase, IUserSelectableProperty<T> where T : IComparable
+    public class RadioGroupViewModel<T> : ViewModelBase, ISelectableProperty<T> where T : IComparable
     {
         /// <summary>
         /// Initializes a new instance of ComboBox ViewModel.
@@ -58,7 +58,7 @@ namespace myFeed.Extensions.ViewModels
             if (e.PropertyName == nameof(button.IsSelected) &&
                 button.IsSelected == true)
             {
-                SelectedValueChanged?.Invoke(this, button.Data);
+                ValueChanged?.Invoke(this, button.Data);
             }
         }
 
@@ -75,7 +75,7 @@ namespace myFeed.Extensions.ViewModels
         /// <summary>
         /// Invoked when user-selected value of binding ComboBox changes.
         /// </summary>
-        public event EventHandler<T> SelectedValueChanged;
+        public event EventHandler<T> ValueChanged;
     }
 
     /// <summary>

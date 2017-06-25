@@ -1,6 +1,4 @@
-﻿using Windows.UI.Xaml;
-
-namespace myFeed
+﻿namespace myFeed
 {
     public sealed partial class AppTemplates
     {

@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace myFeed.Extensions.ViewModels
+namespace myFeed.Extensions.Mvvm.Implementation
 {
     /// <summary>
     /// Represents selectable property view model. 
     /// For example, it can be used for ToggleSwitch controls.
     /// </summary>
     /// <typeparam name="TValue">Property type</typeparam>
-    public class SelectableProperty<TValue> : ObservableProperty<TValue>, 
-        IUserSelectableProperty<TValue> where TValue : IComparable
+    public class SelectableProperty<TValue> : ViewModelBase, 
+          IObservableProperty<TValue>, ISelectableProperty<TValue> 
     {
+        private TValue _value;
+
         /// <summary>
         /// Initializes a new instance of selectable property.
         /// </summary>
@@ -18,24 +21,27 @@ namespace myFeed.Extensions.ViewModels
         /// <summary>
         /// Initializes a new instance of selectable property.
         /// </summary>
-        /// <param name="defaultValue">Default value.</param>
-        public SelectableProperty(TValue defaultValue) : base(defaultValue) { }
+        /// <param name="value">Default value.</param>
+        public SelectableProperty(TValue value) => _value = value;
 
         /// <summary>
         /// Value of the SelectableProperty instance.
         /// </summary>
-        public override TValue Value
+        public TValue Value
         {
             get => _value;
-            set
-            {
-                // Return if equals.
-                if (value.CompareTo(_value) == 0) return;
-                
-                // Update field and invoke methods.
-                SetField(ref _value, value, () => Value);
-                SelectedValueChanged?.Invoke(this, Value);
-            }
+            set => SetValue(value);
+        }
+
+        /// <summary>
+        /// Updates selectable property value.
+        /// </summary>
+        /// <param name="value">Value.</param>
+        private void SetValue(TValue value)
+        {
+            if (EqualityComparer<TValue>.Default.Equals(_value, value)) return;
+            SetField(ref _value, value, () => Value);
+            ValueChanged?.Invoke(this, value);
         }
 
         /// <summary>
@@ -47,6 +53,6 @@ namespace myFeed.Extensions.ViewModels
         /// <summary>
         /// Invoked when user-selected value of binding ComboBox changes.
         /// </summary>
-        public event EventHandler<TValue> SelectedValueChanged;
+        public event EventHandler<TValue> ValueChanged;
     }
 }

@@ -9,6 +9,9 @@
     xmlns:converters="using:myFeed.Extensions.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:behaviors="using:myFeed.Extensions.Behaviors"
     Unloaded="Page_Unloaded"
     mc:Ignorable="d">
     
@@ -83,9 +86,16 @@
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:FaveItemViewModel">
                             <Grid Padding="0 12" Background="Transparent"
-                                RightTapped="ShowFlyout" Holding="ShowFlyout" 
                                 Tapped="OpenArticleUsingXamlWeeds"
                                 Opacity="{x:Bind ReadStateOpacity, Mode=OneWay}">
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Holding">
+                                        <behaviors:OpenFlyoutAction/>
+                                    </core:EventTriggerBehavior>
+                                    <core:EventTriggerBehavior EventName="RightTapped">
+                                        <behaviors:OpenFlyoutAction/>
+                                    </core:EventTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
                                 <FlyoutBase.AttachedFlyout>
                                     <MenuFlyout x:Name="NewsItemFlyout">
                                         <controls:MenuFlyoutItemWithIcon x:Uid="MenuRead" Icon="PostUpdate" Click="OpenArticleUsingXamlWeeds"/>

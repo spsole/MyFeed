@@ -1,6 +1,4 @@
-﻿using Windows.UI.Xaml.Controls;
-
-namespace myFeed.Sources.Controls
+﻿namespace myFeed.Sources.Controls
 {
     public sealed partial class RenameDialog
     {

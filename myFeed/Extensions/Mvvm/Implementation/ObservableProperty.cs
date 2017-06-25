@@ -1,12 +1,12 @@
-﻿namespace myFeed.Extensions.ViewModels
+﻿namespace myFeed.Extensions.Mvvm.Implementation
 {
     /// <summary>
     /// Observable property that provides an easy way 
     /// of setting and updating it's value.
     /// </summary>
-    public class ObservableProperty<TValue> : ViewModelBase
+    public class ObservableProperty<TValue> : ViewModelBase, IObservableProperty<TValue>
     {
-        protected TValue _value;
+        private TValue _value;
 
         /// <summary>
         /// Initializes a new instance of observable property.

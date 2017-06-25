@@ -2,7 +2,8 @@
 using System.Linq;
 using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
-using myFeed.Extensions.ViewModels;
+using myFeed.Extensions.Mvvm;
+using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.Feed;
 using myFeed.FeedModels.Models;
 
@@ -24,7 +25,8 @@ namespace myFeed.Fave
         /// <summary>
         /// Indicates if the article is already pinned to start screen.
         /// </summary>
-        public ObservableProperty<bool> IsPinnedProperty { get; } = new ObservableProperty<bool>();
+        public IObservableProperty<bool> IsPinnedProperty { get; } =
+            new ObservableProperty<bool>(false);
 
         #endregion
 
