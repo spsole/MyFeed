@@ -8,7 +8,7 @@ namespace myFeed.Extensions.Mvvm.Implementation
     /// <summary>
     /// View model's base class that can react on internal changes.
     /// </summary>
-    public class ViewModelBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         /// <summary>
         /// Property changed event handler.
@@ -19,7 +19,7 @@ namespace myFeed.Extensions.Mvvm.Implementation
         /// Call this when some property changes.
         /// </summary>
         /// <param name="propertyName"></param>
-        protected void OnPropertyChanged(string propertyName = "") => 
+        protected void OnPropertyChanged(string propertyName) => 
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         /// <summary>
@@ -46,7 +46,6 @@ namespace myFeed.Extensions.Mvvm.Implementation
             if (selectorExpression == null)
                 throw new ArgumentNullException(nameof(selectorExpression));
             var body = selectorExpression.Body as MemberExpression;
-
             if (body == null)
                 throw new ArgumentException("The body must be a member expression");
             OnPropertyChanged(body.Member.Name);

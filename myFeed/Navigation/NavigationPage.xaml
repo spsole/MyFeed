@@ -51,7 +51,7 @@
                     </Grid.RowDefinitions>
                     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="ms-appx:///Images/Logo.png" 
+                            <Image Source="ms-appx:///Assets/Logo.png" 
                                 Height="36" Width="36" Tapped="{x:Bind ViewModel.ToggleMenu}" Margin="6 0"/>
                             <TextBlock Margin="12" Text="myFeed"
                                 FontWeight="SemiBold" Foreground="White"/>

@@ -40,7 +40,7 @@
                             <TextBlock x:Uid="ChangeTextSize" TextWrapping="Wrap" Margin="0 6"/>
                             <ComboBox Width="170" Margin="0 6" DisplayMemberPath="Key"
                                 ItemsSource="{x:Bind ViewModel.FontBox.Items}"
-                                SelectedItem="{x:Bind ViewModel.FontBox.SelectedItem, Mode=TwoWay}"/>
+                                SelectedItem="{x:Bind ViewModel.FontBox.Value, Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock x:Uid="DisableImgDescTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}"/>
@@ -52,7 +52,7 @@
                             <TextBlock x:Uid="NotifyCheckTime" TextWrapping="Wrap" Margin="0 6"/>
                             <ComboBox Width="170" Margin="0 6" DisplayMemberPath="Key"
                                 ItemsSource="{x:Bind ViewModel.NotificationsBox.Items}"
-                                SelectedItem="{x:Bind ViewModel.NotificationsBox.SelectedItem, Mode=TwoWay}"/>
+                                SelectedItem="{x:Bind ViewModel.NotificationsBox.Value, Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock x:Uid="NotifyBannersTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" />
@@ -62,9 +62,9 @@
                         <StackPanel Margin="0 6">
                             <TextBlock x:Uid="ChangeThemeTitle" Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}"/>
                             <TextBlock x:Uid="ChangeTheme" TextWrapping="Wrap" Margin="0 6"/>
-                            <RadioButton x:Uid="ChangeThemeDefault" IsChecked="{x:Bind ViewModel.ThemeGroup.Items[0].IsSelected, Mode=TwoWay}"/>
-                            <RadioButton x:Uid="ChangeThemeLight" IsChecked="{x:Bind ViewModel.ThemeGroup.Items[1].IsSelected, Mode=TwoWay}"/>
-                            <RadioButton x:Uid="ChangeThemeDark" IsChecked="{x:Bind ViewModel.ThemeGroup.Items[2].IsSelected, Mode=TwoWay}"/>
+                            <RadioButton x:Uid="ChangeThemeDefault" IsChecked="{x:Bind ViewModel.ThemeGroup.Items[0].IsSelected.Value, Mode=TwoWay}"/>
+                            <RadioButton x:Uid="ChangeThemeLight" IsChecked="{x:Bind ViewModel.ThemeGroup.Items[1].IsSelected.Value, Mode=TwoWay}"/>
+                            <RadioButton x:Uid="ChangeThemeDark" IsChecked="{x:Bind ViewModel.ThemeGroup.Items[2].IsSelected.Value, Mode=TwoWay}"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -99,7 +99,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}" MaxWidth="120" MaxHeight="120">
-                                <Image Source="ms-appx:///Images/Logo.png" Height="120" Width="120"/>
+                                <Image Source="ms-appx:///Assets/Logo.png" Height="120" Width="120"/>
                             </Grid>
                             <StackPanel Grid.Column="1" Margin="12 0">
                                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" 

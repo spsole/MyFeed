@@ -8,8 +8,7 @@ namespace myFeed.Extensions.Mvvm.Implementation
     /// For example, it can be used for ToggleSwitch controls.
     /// </summary>
     /// <typeparam name="TValue">Property type</typeparam>
-    public class SelectableProperty<TValue> : ViewModelBase, 
-          IObservableProperty<TValue>, ISelectableProperty<TValue> 
+    public class SelectableProperty<TValue> : ViewModelBase, ISelectableProperty<TValue> 
     {
         private TValue _value;
 
@@ -43,12 +42,6 @@ namespace myFeed.Extensions.Mvvm.Implementation
             SetField(ref _value, value, () => Value);
             ValueChanged?.Invoke(this, value);
         }
-
-        /// <summary>
-        /// Sets selected item as a known value.
-        /// </summary>
-        /// <param name="value">Value.</param>
-        public void SetSelectedItem(TValue value) => Value = value;
 
         /// <summary>
         /// Invoked when user-selected value of binding ComboBox changes.

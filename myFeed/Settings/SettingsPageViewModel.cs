@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Windows.ApplicationModel.Email;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
@@ -7,6 +8,7 @@ using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using myFeed.Extensions;
+using myFeed.Extensions.Mvvm;
 using myFeed.Extensions.Mvvm.Implementation;
 
 namespace myFeed.Settings
@@ -44,28 +46,28 @@ namespace myFeed.Settings
         /// <summary>
         /// Loads settings async.
         /// </summary>
-        public void LoadSettingsAsync()
+        private void LoadSettingsAsync()
         {
             // Read settings async.
             var manager = SettingsManager.GetInstance();
             var settings = manager.GetSettings();
 
             // Set actual values got from deserialized settings.
-            NotificationsBox.SetSelectedItem( settings.NotificationServiceCheckTime );
-            ThemeGroup.SetSelectedItem( settings.ApplicationTheme );
-            FontBox.SetSelectedItem( settings.ArticleFontSize );
-            ImagesSwitch.SetSelectedItem( settings.DownloadImages );
-            BannersSwitch.SetSelectedItem( settings.BannersEnabled );
+            NotificationsBox.Value = NotificationsBox.Items.First(i => i.Value == settings.NotificationServiceCheckTime);
+            FontBox.Value = FontBox.Items.First(i => i.Value == settings.ArticleFontSize);
+            ThemeGroup.Select(settings.ApplicationTheme);
+            BannersSwitch.Value = settings.BannersEnabled;
+            ImagesSwitch.Value = settings.DownloadImages;
 
             // Subscribe to items changes and save settings when user makes decision.
             ImagesSwitch.ValueChanged += (s, a) => manager.UpdateSettings(() => settings.DownloadImages = a);
-            FontBox.ValueChanged += (s, a) => manager.UpdateSettings(() => settings.ArticleFontSize = a);
+            FontBox.ValueChanged += (s, a) => manager.UpdateSettings(() => settings.ArticleFontSize = a.Value);
             BannersSwitch.ValueChanged += (s, a) => manager.UpdateSettings(() => settings.BannersEnabled = a);
             NotificationsBox.ValueChanged += (s, a) =>
             {
                 // Upd stngs nd rgstr ntfer.
-                manager.UpdateSettings(() => settings.NotificationServiceCheckTime = a);
-                BackgroundTasksManager.RegisterNotifier(a);
+                manager.UpdateSettings(() => settings.NotificationServiceCheckTime = a.Value);
+                BackgroundTasksManager.RegisterNotifier(a.Value);
             };
 
             // Listen to event and save, propose restart.
@@ -91,17 +93,17 @@ namespace myFeed.Settings
         /// <summary>
         /// ComboBox with check time variants.
         /// </summary>
-        public ComboBoxViewModel<string, uint> NotificationsBox { get; }
+        public IComboBoxViewModel<string, uint> NotificationsBox { get; }
 
         /// <summary>
         /// Font size ComboBox view model.
         /// </summary>
-        public ComboBoxViewModel<string, int> FontBox { get; }
+        public IComboBoxViewModel<string, int> FontBox { get; }
 
         /// <summary>
         /// Represents two-way binding value of ToggleSwitch control.
         /// </summary>
-        public SelectableProperty<bool> ImagesSwitch { get; }
+        public ISelectableProperty<bool> ImagesSwitch { get; }
 
         /// <summary>
         /// Radio group for requested theme view model.
@@ -111,7 +113,7 @@ namespace myFeed.Settings
         /// <summary>
         /// ToggleSwitch for banners setting.
         /// </summary>
-        public SelectableProperty<bool> BannersSwitch { get; }
+        public ISelectableProperty<bool> BannersSwitch { get; }
 
         /// <summary>
         /// Returns application version info.

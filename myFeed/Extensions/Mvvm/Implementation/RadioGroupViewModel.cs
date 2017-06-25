@@ -10,7 +10,7 @@ namespace myFeed.Extensions.Mvvm.Implementation
     /// Radio group view model.
     /// </summary>
     /// <typeparam name="T">Generic typedef</typeparam>
-    public class RadioGroupViewModel<T> : ViewModelBase, ISelectableProperty<T> where T : IComparable
+    public class RadioGroupViewModel<T> : ViewModelBase, IRadioGroupViewModel<T>
     {
         /// <summary>
         /// Initializes a new instance of ComboBox ViewModel.
@@ -33,12 +33,12 @@ namespace myFeed.Extensions.Mvvm.Implementation
             foreach (var item in list)
             {
                 var model = new RadioButtonViewModel<T>(item);
-                model.PropertyChanged += OnModelPropertyChanged;
+                model.IsSelected.PropertyChanged += OnModelPropertyChanged;
                 Items.Add(model);
             }
             
             // Select the item manually.
-            Items[index].IsSelected = true;
+            Items[index].IsSelected.Value = true;
         }
 
         /// <summary>
@@ -48,28 +48,27 @@ namespace myFeed.Extensions.Mvvm.Implementation
             new ObservableCollection<RadioButtonViewModel<T>>();
 
         /// <summary>
+        /// Selects an item.
+        /// </summary>
+        /// <param name="item">Item to select.</param>
+        public void Select(T item)
+        {
+            foreach (var button in Items)
+                button.IsSelected.Value = false;
+            Items.First(i => Equals(i.Value, item)).IsSelected.Value = true;
+        }
+
+        /// <summary>
         /// Invoked when Radio Button properties change.
         /// </summary>
         /// <param name="sender">Sender (RadioButton)</param>
         /// <param name="e">Args</param>
         private void OnModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var button = (RadioButtonViewModel<T>)sender;
-            if (e.PropertyName == nameof(button.IsSelected) &&
-                button.IsSelected == true)
-            {
-                ValueChanged?.Invoke(this, button.Data);
-            }
-        }
-
-        /// <summary>
-        /// Sets selected item by a known value, finds it in the collection.
-        /// </summary>
-        /// <param name="value">Known value</param>
-        public void SetSelectedItem(T value)
-        {
-            Items.ToList().ForEach(i => i.IsSelected = false);
-            Items.First(i => i.Data.CompareTo(value) >= 0).IsSelected = true;
+            var isSelected = (IObservableProperty<bool>)sender;
+            if (isSelected.Value)
+                ValueChanged?.Invoke(this, Items.First(
+                    i => i.IsSelected.Value).Value);
         }
 
         /// <summary>
@@ -82,33 +81,23 @@ namespace myFeed.Extensions.Mvvm.Implementation
     /// Radio button view model.
     /// </summary>
     /// <typeparam name="T">Generic typedef</typeparam>
-    public class RadioButtonViewModel<T> : ViewModelBase
+    public class RadioButtonViewModel<T> : ViewModelBase, IRadioButtonViewModel<T>
     {
-        private T _data;
-        private bool? _isSelected = false;
-
         /// <summary>
         /// Initializes a new instance of RadioButtonViewModel.
         /// </summary>
         /// <param name="value">Associated value.</param>
-        public RadioButtonViewModel(T value) => Data = value;
+        public RadioButtonViewModel(T value) => Value = value;
 
         /// <summary>
         /// Is this button selected or not.
         /// </summary>
-        public bool? IsSelected
-        {
-            get => _isSelected;
-            set => SetField(ref _isSelected, value, () => IsSelected);
-        }
+        public IObservableProperty<bool> IsSelected { get; } =
+            new ObservableProperty<bool>(false);
 
         /// <summary>
         /// Contains data related to this radioButton.
         /// </summary>
-        public T Data
-        {
-            get => _data;
-            set => SetField(ref _data, value, () => Data);
-        }
+        public T Value { get; }
     }
 }

@@ -10,16 +10,14 @@ namespace myFeed.Extensions.Mvvm.Implementation
     /// </summary>
     /// <typeparam name="TKey">Key</typeparam>
     /// <typeparam name="TValue">Value</typeparam>
-    public class ComboBoxViewModel<TKey, TValue> : 
-        ViewModelBase, ISelectableProperty<TValue> 
-        where TValue : IComparable
+    public class ComboBoxViewModel<TKey, TValue> : ViewModelBase, IComboBoxViewModel<TKey, TValue>
     {
-        private object _selectedItem;
+        private IComboBoxItemViewModel<TKey, TValue> _value;
 
         /// <summary>
         /// Initializes a new instance of ComboBox ViewModel.
         /// </summary>
-        public ComboBoxViewModel() => Items = new ObservableCollection<KeyValuePair<TKey, TValue>>();
+        public ComboBoxViewModel() { }
 
         /// <summary>
         /// Initializes a new instance of ComboBox ViewModel.
@@ -28,55 +26,72 @@ namespace myFeed.Extensions.Mvvm.Implementation
         /// <param name="index">Index of item that should be selected.</param>
         public ComboBoxViewModel(IEnumerable<KeyValuePair<TKey, TValue>> items, int index)
         {
-            // Assert that selected index is less than items count.
             var keyValuePairs = items as IList<KeyValuePair<TKey, TValue>> ?? items.ToList();
             if (keyValuePairs.Count <= index)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            // Fill the items collection.
-            Items = new ObservableCollection<KeyValuePair<TKey, TValue>>();
             foreach (var item in keyValuePairs)
-                Items.Add(item);
+                Items.Add(new ComboBoxItemViewModel<TKey, TValue>(
+                    item.Key, item.Value));
 
-            // Select needed item.
-            SelectedItem = Items[index];
+            Value = Items[index];
         }
 
         /// <summary>
         /// ComboBox items.
         /// </summary>
-        public ObservableCollection<KeyValuePair<TKey, TValue>> Items { get; }
+        public ObservableCollection<IComboBoxItemViewModel<TKey, TValue>> Items { get; } =
+            new ObservableCollection<IComboBoxItemViewModel<TKey, TValue>>();
 
         /// <summary>
-        /// Selected item.
+        /// Value of the SelectableProperty instance.
         /// </summary>
-        public object SelectedItem
+        public IComboBoxItemViewModel<TKey, TValue> Value
         {
-            get => _selectedItem;
-            set
-            {
-                if (EqualityComparer<object>.Default.Equals(_selectedItem, value)) return;
-
-                // Assign and raise property changed.
-                _selectedItem = value;
-                OnPropertyChanged(nameof(SelectedItem));
-
-                // Raise ValueChanged.
-                ValueChanged?.Invoke(this,
-                    ((KeyValuePair<TKey, TValue>)SelectedItem).Value
-                );
-            }
+            get => _value;
+            set => SetValue(value);
         }
 
         /// <summary>
-        /// Sets selected item by a known value, finds it in the collection.
+        /// Invoked when selected value changes.
         /// </summary>
-        /// <param name="value">Known value</param>
-        public void SetSelectedItem(TValue value) => SelectedItem = Items.First(i => i.Value.CompareTo(value) == 0);
+        public event EventHandler<IComboBoxItemViewModel<TKey, TValue>> ValueChanged;
 
         /// <summary>
-        /// Invoked when user-selected value of binding ComboBox changes.
+        /// Updates selectable property value.
         /// </summary>
-        public event EventHandler<TValue> ValueChanged;
+        /// <param name="value">Value.</param>
+        private void SetValue(IComboBoxItemViewModel<TKey, TValue> value)
+        {
+            if (EqualityComparer<IComboBoxItemViewModel<TKey, TValue>>.Default.Equals(_value, value)) return;
+            SetField(ref _value, value, () => Value);
+            RaiseValueChanged(value);
+        }
+
+        /// <summary>
+        /// Raises ValueChanged event.
+        /// </summary>
+        /// <param name="value">New value.</param>
+        private void RaiseValueChanged(IComboBoxItemViewModel<TKey, TValue> value) => ValueChanged?.Invoke(this, value);
+    }
+
+    /// <summary>
+    /// ComboBox item.
+    /// </summary>
+    /// <typeparam name="TKey">Key</typeparam>
+    /// <typeparam name="TValue">Value</typeparam>
+    public class ComboBoxItemViewModel<TKey, TValue> : IComboBoxItemViewModel<TKey, TValue>
+    {
+        public ComboBoxItemViewModel(TKey key, TValue value) => (Key, Value) = (key, value);
+
+        /// <summary>
+        /// Key.
+        /// </summary>
+        public TKey Key { get; }
+
+        /// <summary>
+        /// Value.
+        /// </summary>
+        public TValue Value { get; }
     }
 }

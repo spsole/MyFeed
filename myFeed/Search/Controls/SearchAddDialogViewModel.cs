@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using myFeed.Extensions.Mvvm;
 using myFeed.Extensions.Mvvm.Implementation;
 using myFeed.FeedModels.Models;
 using myFeed.FeedModels.Models.Feedly;
@@ -22,7 +23,7 @@ namespace myFeed.Search.Controls
         /// <summary>
         /// View model for categories selection.
         /// </summary>
-        public ComboBoxViewModel<string, string> CategoriesViewModel { get; } = 
+        public IComboBoxViewModel<string, string> CategoriesViewModel { get; } = 
             new ComboBoxViewModel<string, string>();
 
         #endregion
@@ -49,10 +50,11 @@ namespace myFeed.Search.Controls
             // Add all categories as choices for selection.
             categories.Categories.ForEach(i => 
                 CategoriesViewModel.Items.Add(
-                        new KeyValuePair<string, string>(i.Title, i.Title)));
+                        new ComboBoxItemViewModel<string, string>(
+                            i.Title, i.Title)));
 
             // Set selected item.
-            CategoriesViewModel.SelectedItem = CategoriesViewModel.Items.First();
+            CategoriesViewModel.Value = CategoriesViewModel.Items.First();
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace myFeed.Search.Controls
         public async void AddModel()
         {
             // Create source model.
-            var categoryName = ((KeyValuePair<string, string>)CategoriesViewModel.SelectedItem).Value;
+            var categoryName = CategoriesViewModel.Value.Value;
             var sourceModel = new SourceItemModel { Uri = _model.FeedId.Substring(5), Notify = true };
             await _manager.AddSource(sourceModel, categoryName);
         }

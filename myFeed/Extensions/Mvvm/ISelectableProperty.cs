@@ -1,15 +1,9 @@
-﻿using System;
-
-namespace myFeed.Extensions.Mvvm
+﻿namespace myFeed.Extensions.Mvvm
 {
     /// <summary>
-    /// Property that can be user-selected.
+    /// Selectable property.
     /// </summary>
-    public interface ISelectableProperty<T>
-    {
-        /// <summary>
-        /// Invoked when selected value changes.
-        /// </summary>
-        event EventHandler<T> ValueChanged;
-    }
+    /// <typeparam name="T"></typeparam>
+    public interface ISelectableProperty<T> 
+        : IObservableProperty<T>, ISelectable<T> { }
 }

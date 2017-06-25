@@ -128,10 +128,13 @@
     <Compile Include="Extensions\Converters\NegateBoolConverter.cs" />
     <Compile Include="Extensions\Converters\TrueToVisibleConverter.cs" />
     <Compile Include="Extensions\Converters\UpperStringConverter.cs" />
+    <Compile Include="Extensions\Mvvm\IComboBoxViewModel.cs" />
     <Compile Include="Extensions\Mvvm\IDeeplyObservableCollection.cs" />
     <Compile Include="Extensions\HtmlToRichTextBlock.cs" />
     <Compile Include="Extensions\Mvvm\Implementation\DeeplyObservableCollection.cs" />
+    <Compile Include="Extensions\Mvvm\IRadioGroupViewModel.cs" />
     <Compile Include="Extensions\Mvvm\IObservableProperty.cs" />
+    <Compile Include="Extensions\Mvvm\ISelectable.cs" />
     <Compile Include="Extensions\Mvvm\ISelectableProperty.cs" />
     <Compile Include="Extensions\SyndicationConverter.cs" />
     <Compile Include="Extensions\Tools.cs" />
@@ -236,7 +239,7 @@
     <Content Include="Assets\StoreLogo.scale-200.png" />
     <Content Include="Assets\StoreLogo.scale-400.png" />
     <None Include="Package.StoreAssociation.xml" />
-    <Content Include="Images\Logo.png" />
+    <Content Include="Assets\Logo.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -370,6 +373,7 @@
       <Name>myFeed.FeedUpdater</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
