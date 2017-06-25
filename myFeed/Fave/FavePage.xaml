@@ -11,6 +11,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Unloaded="Page_Unloaded"
     mc:Ignorable="d">
+    
+    <Page.DataContext>
+        <local:FavePageViewModel/>
+    </Page.DataContext>
 
     <Page.Transitions>
         <TransitionCollection>

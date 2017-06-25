@@ -12,6 +12,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="RootPage"
     mc:Ignorable="d">
+    
+    <Page.DataContext>
+        <local:SearchPageViewModel/>
+    </Page.DataContext>
 
     <Page.Transitions>
         <TransitionCollection>

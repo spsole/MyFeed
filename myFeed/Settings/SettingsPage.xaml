@@ -5,8 +5,13 @@
     xmlns:usercontrols="using:myFeed.Extensions.UserControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:settings="using:myFeed.Settings"
     x:Name="RootPage"
     mc:Ignorable="d">
+    
+    <Page.DataContext>
+        <settings:SettingsPageViewModel/>
+    </Page.DataContext>
 
     <Page.Transitions>
         <TransitionCollection>

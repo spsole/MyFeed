@@ -5,26 +5,13 @@ namespace myFeed.Navigation
 {
     public sealed partial class NavigationPage
     {
-        public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(
-                nameof(ViewModel),
-                typeof(MenuViewModel),
-                typeof(NavigationPage),
-                new PropertyMetadata(null)
-            );
-
-        public MenuViewModel ViewModel
-        {
-            get => (MenuViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
-        }
+        public MenuViewModel ViewModel => DataContext as MenuViewModel;
 
         public static Frame NavigationFrame { get; private set; }
 
         public NavigationPage()
         {
             // Init page.
-            ViewModel = new MenuViewModel();
             InitializeComponent();
             NavigationFrame = MainFrame;
             

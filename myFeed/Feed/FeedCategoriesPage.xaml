@@ -8,9 +8,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:localcontrols="using:myFeed.Feed.Controls"
     xmlns:converters="using:myFeed.Extensions.Converters"
+    xmlns:feed="using:myFeed.Feed"
     NavigationCacheMode="Required"
     Unloaded="PageUnloaded"
     mc:Ignorable="d">
+    
+    <Page.DataContext>
+        <feed:FeedCategoriesViewModel/>
+    </Page.DataContext>
 
     <Page.Transitions>
         <TransitionCollection>

@@ -9,25 +9,12 @@ namespace myFeed.Fave
 {
     public sealed partial class FavePage
     {
-        public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(
-                nameof(ViewModel),
-                typeof(FavePageViewModel),
-                typeof(FavePage),
-                new PropertyMetadata(null)
-            );
-
-        public FavePageViewModel ViewModel
-        {
-            get => (FavePageViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
-        }
+        public FavePageViewModel ViewModel => DataContext as FavePageViewModel;
 
         public static Frame NavigationFrame { get; private set; }
 
         public FavePage()
         {
-            ViewModel = new FavePageViewModel();
             InitializeComponent();
             NavigationFrame = ArticleFrame;
             ArticleFrame.Navigate(typeof(EmptyPage));

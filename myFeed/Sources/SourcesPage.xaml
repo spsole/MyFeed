@@ -12,6 +12,10 @@
     Unloaded="OnUnloaded"
     x:Name="Rootpage"
     mc:Ignorable="d">
+    
+    <Page.DataContext>
+        <local:SourcesPageViewModel/>
+    </Page.DataContext>
 
     <Page.Transitions>
         <TransitionCollection>

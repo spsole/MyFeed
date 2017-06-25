@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Text.RegularExpressions;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 using myFeed.Extensions;
 using myFeed.Feed;
@@ -10,25 +9,13 @@ namespace myFeed.Article
 {
     public sealed partial class ArticlePage
     {
-        public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(
-                nameof(ViewModel),
-                typeof(FeedItemViewModel),
-                typeof(ArticlePage),
-                new PropertyMetadata(null)
-            );
-
-        public FeedItemViewModel ViewModel
-        {
-            get => (FeedItemViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
-        }
-
         public ArticlePage() => InitializeComponent();
+        
+        public FeedItemViewModel ViewModel => DataContext as FeedItemViewModel;
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            ViewModel = (FeedItemViewModel) e.Parameter ?? throw new ArgumentNullException();
+            DataContext = (FeedItemViewModel) e.Parameter ?? throw new ArgumentNullException();
             var content = WebUtility.HtmlDecode(ViewModel.GetModel().Content);
                 content = Regex.Replace(content, @"([\r\n]+)|([\n]+)", string.Empty);
 

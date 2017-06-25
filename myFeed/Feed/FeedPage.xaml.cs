@@ -8,26 +8,14 @@ namespace myFeed.Feed
 {
     public sealed partial class FeedPage
     {
-        public static readonly DependencyProperty ViewModelProperty =
-            DependencyProperty.Register(
-                nameof(ViewModel),
-                typeof(FeedViewModel),
-                typeof(FeedPage),
-                new PropertyMetadata(null)
-            );
-
-        public FeedViewModel ViewModel
-        {
-            get => (FeedViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
-        }
+        public FeedViewModel ViewModel => DataContext as FeedViewModel;
 
         public FeedPage() => InitializeComponent();
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var category = (FeedCategoryModel)e.Parameter;
-            ViewModel = new FeedViewModel(category);
+            DataContext = new FeedViewModel(category);
             ViewModel.FetchAsync();
             base.OnNavigatedTo(e);
         }
