@@ -21,20 +21,21 @@ $RECYCLE.BIN/
 # =========================
 # Operating System Files
 # =========================
-myFeed/AppPackages/
-myFeed/Assets
-myFeed.FeedUpdater/obj
-myFeed.FeedUpdater/bin
-myFeed.FeedModels/obj
-myFeed.FeedModels/bin
-myFeed/myFeed_StoreKey.pfx
-myFeed/bin
-myFeed/obj
-myFeed/BundleArtifacts
-myFeed/project.lock.json
-myFeed.FeedUpdater/project.lock.json
-myFeed.FeedModels/project.lock.json
 .vs/
+.vscode/
+myFeed.Repositories/Migrations
+myFeed.Repositories/obj
+myFeed.Repositories/bin
+myFeed.Tests/obj
+myFeed.Tests/bin
+myFeed.ViewModels/obj
+myFeed.ViewModels/bin
+myFeed.Services/obj
+myFeed.Services/bin
+myFeed.Views.Uwp/Assets
+myFeed.Views.Uwp/obj
+myFeed.Views.Uwp/bin
+myFeed.Views.Uwp/BundleArtifacts
 
 # OSX
 # =========================
@@ -45,6 +46,12 @@ myFeed.FeedModels/project.lock.json
 
 # Thumbnails
 ._*
+.user
+*.lock.json
+*.pfx
+*.txt
+*.suo
+*.user
 
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
@@ -69,6 +76,4 @@ Temporary Items
 *.user
 *.appx
 *.pfx
-myFeed/Package.StoreAssociation.xml
-myFeed/_pkginfo.txt
-myFeed.VC.db
+*.appxmanifest
