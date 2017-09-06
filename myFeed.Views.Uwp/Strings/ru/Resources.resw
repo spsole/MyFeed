@@ -153,6 +153,9 @@
   <data name="Read">
     <value>Читать</value>
   </data>
+  <data name="Ok">
+    <value>Ок</value>
+  </data>
   <data name="MarkAsRead">
     <value>Пометить как прочитанное</value>
   </data>
@@ -284,5 +287,17 @@
   </data>
   <data name="ResetText">
     <value>Удаление всех данных приложения и сброс настроек к значениям по умолчанию. После применения настройки произойдет перезапуск приложения.</value>
+  </data>
+  <data name="EnterNameOfNewCategoryTitle">
+    <value>Редактирование категории</value>
+  </data>
+  <data name="EnterNameOfNewCategory">
+    <value>Введите новое название категории:</value>
+  </data>
+  <data name="DeleteCategory">
+    <value>Категория будет удалена вместе со всеми источниками. Это действите будет невозможно отменить.</value>
+  </data>
+  <data name="DeleteElement">
+    <value>Удаление элемента</value>
   </data>
 </root>

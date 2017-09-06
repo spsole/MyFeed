@@ -109,8 +109,8 @@ module SearchViewModelsTests =
         let fakeDialogService =
             let mockService = Mock<IPlatformProvider>()
             mockService
-                .Setup(fun i -> i.ShowDialogForCategorySelection(It.IsAny<ISourcesRepository>()))
-                .Returns(fakeEntity |> Task.FromResult)
+                .Setup(fun i -> i.ShowDialogForSelection(It.IsAny<seq<obj>>()))
+                .Returns(fakeEntity :> obj |> Task.FromResult)
                 |> ignore
             mockService.Object
 

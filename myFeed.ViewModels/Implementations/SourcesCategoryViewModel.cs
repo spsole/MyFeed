@@ -27,8 +27,8 @@ namespace myFeed.ViewModels.Implementations {
 
             RenameCategory = new ActionCommand(async () => {
                 var name = await platformProvider.ShowDialogForResults(
-                    translationsService.Resolve("EnterNameOfNewCategoryTitle"),
-                    translationsService.Resolve("EnterNameOfNewCategory"));
+                    translationsService.Resolve("EnterNameOfNewCategory"),
+                    translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
                 await sourcesRepository.RenameCategoryAsync(entity, name);
                 entity.Title = Title.Value = name;

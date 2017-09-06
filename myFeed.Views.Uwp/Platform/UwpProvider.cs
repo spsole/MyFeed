@@ -2,21 +2,39 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.Resources;
 using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Popups;
-using myFeed.Repositories.Abstractions;
+using Windows.UI.Xaml.Controls;
 using myFeed.Repositories.Entities.Local;
 using myFeed.Services.Abstractions;
+using myFeed.Views.Uwp.Controls;
 
 namespace myFeed.Views.Uwp.Platform {
     public sealed class UwpProvider : IPlatformProvider {
         public async Task LaunchUri(Uri uri) => await Launcher.LaunchUriAsync(uri);
-        public Task Share(string content) => Task.Delay(1);
-        public Task CopyTextToClipboard(string text) => Task.Delay(1);
-        public Task RegisterBackgroundTask(int freq) => Task.Delay(1);
-        public Task RegisterBanners(bool needBanners) => Task.Delay(1);
-        public Task RegisterTheme(string theme) => Task.Delay(1);
+
+        public Task Share(string content) {
+            var dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += (sender, args) => {
+                var request = args.Request;
+                request.Data.SetText(content);
+                request.Data.Properties.Title = "myFeed";
+            };
+            DataTransferManager.ShowShareUI();
+            return Task.CompletedTask;
+        }
+
+        public Task CopyTextToClipboard(string text) {
+            var dataPackage = new DataPackage {
+                RequestedOperation = DataPackageOperation.Copy
+            };
+            dataPackage.SetText(text);
+            Clipboard.SetContent(dataPackage);
+            return Task.CompletedTask;
+        }
 
         public async Task<Stream> PickFileForReadAsync() {
             var picker = new FileOpenPicker();
@@ -39,17 +57,30 @@ namespace myFeed.Views.Uwp.Platform {
             await new MessageDialog(message, title).ShowAsync();
         }
 
-        public Task<bool> ShowDialogForConfirmation(string message, string title) {
-            return Task.FromResult(true);
+        public async Task<bool> ShowDialogForConfirmation(string message, string title) {
+            var resourceLoader = new ResourceLoader();
+            var messageDialog = new MessageDialog(message, title);
+            var okString = resourceLoader.GetString("Ok");
+            var cancelString = resourceLoader.GetString("Cancel");
+            messageDialog.Commands.Add(new UICommand(okString, x => { }, true));
+            messageDialog.Commands.Add(new UICommand(cancelString, x => { }, false));
+            var result = await messageDialog.ShowAsync();
+            return (bool)result.Id;
         }
 
-        public Task<string> ShowDialogForResults(string message, string title) {
-            return Task.FromResult("hey");
+        public async Task<string> ShowDialogForResults(string message, string title) {
+            var inputDialog = new InputDialog(message, title);
+            var result = await inputDialog.ShowAsync();
+            return result == ContentDialogResult.Primary ? inputDialog.Value : string.Empty;
         }
 
-        public Task<SourceCategoryEntity> ShowDialogForCategorySelection(ISourcesRepository sourcesRepository) {
-            var e = new SourceCategoryEntity();
+        public Task<object> ShowDialogForSelection(IEnumerable<object> sourcesRepository) {
+            var e = new SourceCategoryEntity() as object;
             return Task.FromResult(e);
         }
+
+        public Task RegisterBackgroundTask(int freq) => Task.Delay(1);
+        public Task RegisterBanners(bool needBanners) => Task.Delay(1);
+        public Task RegisterTheme(string theme) => Task.Delay(1);
     }
 }

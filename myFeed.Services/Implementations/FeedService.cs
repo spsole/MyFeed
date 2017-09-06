@@ -33,17 +33,17 @@ namespace myFeed.Services.Implementations {
                     .ToDictionary(i => (i.Title, i.PublishedDate));
 
                 // Retrieve feed based on single fetcher implementation.
+                var distinctArticles = new List<ArticleEntity>();
                 var grouppedArticles = await Task.WhenAll(sourceEntities.Select(RetrieveFeedAsync));
-                var distinctArticles = grouppedArticles
-                    .Select(i => {
-                        foreach (var article in i.Item2)
-                            article.Source = i.Item1;
-                        return i;
-                    })
-                    .SelectMany(i => i.Item2)
-                    .Where(i => !dictionary.ContainsKey((i.Title, i.PublishedDate)))
-                    .ToList();
-
+                foreach (var grouping in grouppedArticles) {
+                    foreach (var article in grouping.Item2) {
+                        if (!dictionary.ContainsKey((article.Title, article.PublishedDate))) {
+                            grouping.Item1.Articles.Add(article);
+                            distinctArticles.Add(article);
+                        }
+                    }
+                }
+                
                 // Write new articles into database and return global join.
                 await _articlesRepository.InsertRangeAsync(distinctArticles);
                 return dictionary.Values

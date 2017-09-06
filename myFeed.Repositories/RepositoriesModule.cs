@@ -9,7 +9,7 @@ namespace myFeed.Repositories {
             builder.RegisterType<ConfigurationRepository>().As<IConfigurationRepository>();
             builder.RegisterType<ArticlesRepository>().As<IArticlesRepository>();
             builder.RegisterType<SourcesRepository>().As<ISourcesRepository>();
-            builder.RegisterType<EntityContext>().AsSelf();
+            builder.RegisterType<EntityContext>().AsSelf().InstancePerLifetimeScope();
             base.Load(builder);
         }
     }

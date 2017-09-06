@@ -65,11 +65,11 @@ module ArticlesRepositoryTests =
 
     let repository = buildRepo<ArticleEntity, IArticlesRepository>()
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should return all items enumerable``() =
         Assert.Equal(0, count repository)   
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should be able to insert and remove items``() =
         let entity = ArticleEntity()
         entity |> insert repository
@@ -101,11 +101,11 @@ module ConfigurationRepositoryTests =
 
     let repository = buildRepo<ConfigurationEntity, IConfigurationRepository>()
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should return all items``() = 
         Assert.Equal(0, count repository)
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should be able to insert and remove items``() =
         let entity = ConfigurationEntity(Key="Foo", Value="Bar")
         entity |> insert repository
@@ -115,7 +115,7 @@ module ConfigurationRepositoryTests =
         Assert.Equal(0, count repository)
         clear repository 
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should return value using name``() = 
         [ ConfigurationEntity(Key="Foo", Value="0");
           ConfigurationEntity(Key="Bar", Value="1") ]
@@ -127,7 +127,7 @@ module ConfigurationRepositoryTests =
         |> fun value -> Assert.Equal("1", value)
         clear repository
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should set pair value using pair name``() =    
         repository.SetByNameAsync("Foo", "Bar") |> awaitTask
         let value = await <| repository.GetByNameAsync("Foo")
@@ -144,11 +144,11 @@ module SourcesRepositoryTests =
 
     let repository = buildRepo<SourceCategoryEntity, ISourcesRepository>()
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should return all items enumerable``() = 
         Assert.Equal(0, count repository)
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should insert items into table``() =
         let categories = 
             [ SourceCategoryEntity(); 
@@ -161,7 +161,7 @@ module SourcesRepositoryTests =
         Assert.Equal(2, categories.[1].Order)
         clear repository
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should be able to remove entities``() =
         let entry = 
             SourceCategoryEntity(
@@ -175,7 +175,7 @@ module SourcesRepositoryTests =
         Assert.Equal(0, count repository)
         clear repository
         
-    [<Fact; Log>]    
+    [<Fact>]    
     let ``should be able to rename category in table``() = 
         let entry = SourceCategoryEntity()
         entry |> insert repository
@@ -187,7 +187,7 @@ module SourcesRepositoryTests =
         Assert.Equal("Foo", entry.Title)
         clear repository
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should add entity to table``() = 
         let category = SourceCategoryEntity(Sources=([] |> collection))
         category |> insert repository
@@ -199,7 +199,7 @@ module SourcesRepositoryTests =
         Assert.Equal(1, category.Sources |> Seq.length)
         clear repository
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should remove source entity from table``() =
         let category = SourceCategoryEntity()
         let source = SourceEntity()
@@ -214,7 +214,7 @@ module SourcesRepositoryTests =
         Assert.Equal(0, category.Sources |> Seq.length)
         clear repository
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should return all categories ordered``() = 
         let sequence =
             [ SourceCategoryEntity(Title="Foo");
@@ -243,7 +243,7 @@ module SourcesRepositoryTests =
         |> fun item -> Assert.Equal(item.Title, "Bar")
         clear repository
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should rearrange categories``() = 
         let sequence =
             [ SourceCategoryEntity(Title="Foo");
@@ -271,7 +271,7 @@ module SourcesRepositoryTests =
         |> fun i -> Assert.Equal(i.Title, "Bar")
         clear repository
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should save entities to their tables``() =
         let category = SourceCategoryEntity(Title="Foo")
         let source = SourceEntity(Uri="http://foo.bar")
@@ -294,7 +294,7 @@ module SourcesRepositoryTests =
         Assert.Equal("http://foo.bar", entry.Uri)
         clear repository
 
-    [<Fact; Log>]
+    [<Fact>]
     let ``should save entities and be able to read them AFTER reload``() =    
         let category = SourceCategoryEntity(Title="Foo")
         let source = SourceEntity(Uri="http://foo.bar")

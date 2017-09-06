@@ -43,8 +43,8 @@ namespace myFeed.ViewModels.Implementations {
             });
             AddCategory = new ActionCommand(async () => {
                 var name = await platformProvider.ShowDialogForResults(
-                    translationsService.Resolve("EnterNameOfNewCategoryTitle"),
-                    translationsService.Resolve("EnterNameOfNewCategory"));
+                    translationsService.Resolve("EnterNameOfNewCategory"),
+                    translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new SourceCategoryEntity { Title = name };
                 await sourcesRepository.InsertAsync(category);

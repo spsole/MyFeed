@@ -13,9 +13,7 @@ namespace myFeed.ViewModels.Extensions {
     public abstract class AbstractLocator<TTranslationsService, TPlatformProvider> : IDisposable 
         where TTranslationsService : ITranslationsService 
         where TPlatformProvider : IPlatformProvider {
-        private readonly ILifetimeScope _lifetimeScope;
-
-        R G<T, R>(Func<T, dynamic> f, T x) => (R)f(x) * f(x);
+        private readonly IContainer _lifetimeScope;
 
         /// <summary>
         /// Initializes new ViewModels abstract locator.
@@ -29,10 +27,11 @@ namespace myFeed.ViewModels.Extensions {
         }
 
         /// <summary>
-        /// Resolves components from Autofac.
+        /// Resolves components from Autofac container in a separate 
+        /// ILifetimeScope for each ViewModel.
         /// </summary>
         /// <typeparam name="T">Type to resolve.</typeparam>
-        private T Resolve<T>() where T : class => _lifetimeScope.Resolve<T>();
+        private T Resolve<T>() where T : class => _lifetimeScope.BeginLifetimeScope().Resolve<T>();
 
         /// <summary>
         /// Disposes internally stored lifetime scope.

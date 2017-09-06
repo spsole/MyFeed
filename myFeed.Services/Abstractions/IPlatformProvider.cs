@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Entities.Local;
 
 namespace myFeed.Services.Abstractions {
     /// <summary>
@@ -76,9 +75,9 @@ namespace myFeed.Services.Abstractions {
         Task<string> ShowDialogForResults(string message, string title);
 
         /// <summary>
-        /// Shows search dialog for category selection.
+        /// Shows search dialog for selection.
         /// </summary>
-        /// <param name="sourcesRepository">Repository to read.</param>
-        Task<SourceCategoryEntity> ShowDialogForCategorySelection(ISourcesRepository sourcesRepository);
+        /// <param name="options">Options to select from.</param>
+        Task<object> ShowDialogForSelection(IEnumerable<object> options);
     }
 }

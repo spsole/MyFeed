@@ -31,9 +31,14 @@ namespace myFeed.ViewModels.Implementations {
             });
             AddToSources = new ActionCommand(async () => {
                 if (!Uri.IsWellFormedUriString(FeedUrl.Value, UriKind.Absolute)) return;
-                var category = await platformProvider.ShowDialogForCategorySelection(sourcesRepository);
-                category.Sources.Add(new SourceEntity { Notify = true, Uri = FeedUrl.Value });
-                await sourcesRepository.UpdateAsync(category);
+                var categories = await sourcesRepository.GetAllOrderedAsync();
+                var response = await platformProvider.ShowDialogForSelection(categories);
+                if (response is SourceCategoryEntity sourceCategoryEntity) {
+                    sourceCategoryEntity.Sources.Add(new SourceEntity {
+                        Notify = true, Uri = FeedUrl.Value
+                    });
+                    await sourcesRepository.UpdateAsync(sourceCategoryEntity);
+                }
             });
         }
 
