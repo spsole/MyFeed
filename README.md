@@ -17,10 +17,9 @@ Application is completely free and open-source. No ads, no subscription fees. Un
 
 ## Application architecture
 
-myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architectural pattern. <b>ViewModels</b> provide Views abstractions, exposing public properties and commands. <b>Views</b> are specific for each platform supported by myFeed (currently UWP Views only); ViewModels and Models do not rely on Views. <b>Models</b> represent real state content and logic; this part of MVVM pattern is implemented as <b>Services</b> and <b>Repositories</b> layers. There is a dependencies graph below to make these points clear:
+myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architectural pattern. <b>ViewModels</b> provide Views abstractions, exposing public properties and commands. <b>Views</b> are specific for each platform supported by myFeed (currently UWP Views only); ViewModels and Models do not rely on Views. <b>Models</b> represent real state content and logic; this part of MVVM pattern is implemented as <b>Services</b> and <b>Repositories</b> layers. There is a dependencies graph below to make all these points clear:
 
-![myFeed MVVM architecture](DependenciesGraph/.png)
-<img src="/">
+<img src="/DependenciesGraph.png" width="400px">
 
 ## Technologies and Tools used
 
