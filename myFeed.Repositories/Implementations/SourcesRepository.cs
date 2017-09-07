@@ -25,6 +25,7 @@ namespace myFeed.Repositories.Implementations {
             var queryable = GetAllQueryable();
             var enumerable = queryable
                 .Include(i => i.Sources)
+                .ThenInclude(i => i.Articles)
                 .ToList()
                 .AsEnumerable();
             return Task.FromResult(enumerable);
@@ -37,6 +38,7 @@ namespace myFeed.Repositories.Implementations {
             var queryable = GetAllQueryable();
             var enumerable = queryable
                 .Include(i => i.Sources)
+                .ThenInclude(i => i.Articles)
                 .ToList()
                 .OrderBy(i => i.Order);
             return Task.FromResult(enumerable);

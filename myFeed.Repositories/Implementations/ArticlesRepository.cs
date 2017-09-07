@@ -22,6 +22,8 @@ namespace myFeed.Repositories.Implementations {
         public override Task<IEnumerable<ArticleEntity>> GetAllAsync() {
             var enumerable = GetAllQueryable()
                 .Include(i => i.Source)
+                .ThenInclude(i => i.Category)
+                .ToList()
                 .AsEnumerable();
             return Task.FromResult(enumerable);
         }

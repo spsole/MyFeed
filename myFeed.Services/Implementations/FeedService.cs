@@ -22,22 +22,24 @@ namespace myFeed.Services.Implementations {
         public Task<IOrderedEnumerable<ArticleEntity>> RetrieveFeedsAsync(IEnumerable<SourceEntity> sourceEntities) {
             return Task.Run(async () => {
 
-                // Get all articles and remove uncategorized ones.
-                var articles = new List<ArticleEntity>(await _articlesRepository.GetAllAsync());
+                // Remove articles not referenced by any source and not starred.
+                var articles = await _articlesRepository.GetAllAsync();
                 var outdated = articles.Where(i => i.Source == null && !i.Fave);
                 await _articlesRepository.RemoveRangeAsync(outdated);
 
                 // Read items into dict using title and date fields as keys.
-                var dictionary = articles
-                    .Where(i => i.Source != null)
+                var sourcesList = sourceEntities.ToList();
+                var dictionary = sourcesList
+                    .SelectMany(i => i.Articles)
                     .ToDictionary(i => (i.Title, i.PublishedDate));
 
                 // Retrieve feed based on single fetcher implementation.
                 var distinctArticles = new List<ArticleEntity>();
-                var grouppedArticles = await Task.WhenAll(sourceEntities.Select(RetrieveFeedAsync));
+                var grouppedArticles = await Task.WhenAll(sourcesList.Select(RetrieveFeedAsync));
                 foreach (var grouping in grouppedArticles) {
                     foreach (var article in grouping.Item2) {
-                        if (!dictionary.ContainsKey((article.Title, article.PublishedDate))) {
+                        var compositeKey = (article.Title, article.PublishedDate);
+                        if (!dictionary.ContainsKey(compositeKey)) {
                             grouping.Item1.Articles.Add(article);
                             distinctArticles.Add(article);
                         }
