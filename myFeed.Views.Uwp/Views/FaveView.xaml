@@ -86,7 +86,7 @@
                                         <MenuFlyoutItem Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
                                         <MenuFlyoutItem Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
                                         <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem Icon="Delete" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
+                                        <MenuFlyoutItem Icon="Delete" Command="{Binding MarkFavorite}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
                                     </MenuFlyout>
                                 </FlyoutBase.AttachedFlyout>
                                 <Grid.ColumnDefinitions>
@@ -101,7 +101,7 @@
                                         VerticalAlignment="Center" HorizontalAlignment="Center" Symbol="PostUpdate"/>
                                     <Ellipse Width="70" Height="70" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Ellipse.Fill>
-                                            <ImageBrush ImageSource="{Binding Image.Value}"/>
+                                            <ImageBrush ImageSource="{Binding Image.Value}" Stretch="Uniform"/>
                                         </Ellipse.Fill>
                                     </Ellipse>
                                 </Grid>

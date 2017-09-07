@@ -7,27 +7,14 @@ namespace myFeed.Repositories.Entities {
     public class EntityContext : DbContext {
         private readonly ILoggerFactory _loggerFactory;
 
-        public EntityContext() {}
-        public EntityContext(ILoggerFactory loggerFactory) {
-            _loggerFactory = loggerFactory;
-        }
+        public EntityContext() { }
 
-        public DbSet<ArticleEntity> Articles { get; set; }
+        public EntityContext(ILoggerFactory loggerFactory) => _loggerFactory = loggerFactory;
+
         public DbSet<SourceCategoryEntity> SourceCategories { get; set; }
         public DbSet<ConfigurationEntity> Configuration { get; set; }
         public DbSet<SourceEntity> SourceEntities { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder.UseSqlite("Filename=MyFeed.db;");
-            if (_loggerFactory != null) 
-                optionsBuilder.UseLoggerFactory(_loggerFactory);
-            base.OnConfiguring(optionsBuilder);
-        }
-
-        public override void Dispose() {
-            base.Dispose();
-            _loggerFactory?.Dispose();
-        }
+        public DbSet<ArticleEntity> Articles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             var article = modelBuilder.Entity<ArticleEntity>();
@@ -54,6 +41,18 @@ namespace myFeed.Repositories.Entities {
                 .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+            optionsBuilder.UseSqlite("Filename=MyFeed.db;");
+            if (_loggerFactory != null)
+                optionsBuilder.UseLoggerFactory(_loggerFactory);
+            base.OnConfiguring(optionsBuilder);
+        }
+
+        public override void Dispose() {
+            base.Dispose();
+            _loggerFactory?.Dispose();
         }
     }
 }

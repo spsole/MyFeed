@@ -2,7 +2,7 @@
     /// <summary>
     /// Represents read only property.
     /// </summary>
-    public class ReadOnlyProperty<T> {
+    public struct ReadOnlyProperty<T> {
         /// <summary>
         /// Inits new readonly property holding value.
         /// </summary>
@@ -12,6 +12,6 @@
         /// <summary>
         /// Read only property value.
         /// </summary>
-        public T Value { get; set; }
+        public T Value { get; }
     }
 }

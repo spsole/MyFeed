@@ -408,7 +408,7 @@ module FaveViewModelsTests =
             |> buildScope
 
         let viewModel = resolve<FeedItemViewModel> scope
-        viewModel.AddToFavorites.Execute(null)
+        viewModel.MarkFavorite.Execute(null)
         Assert.Equal(true, article.Fave)
 
 // Tests for sources ViewModel.

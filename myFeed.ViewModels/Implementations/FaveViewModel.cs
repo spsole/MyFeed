@@ -1,3 +1,4 @@
+using System;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 using System.Collections.ObjectModel;
@@ -28,6 +29,12 @@ namespace myFeed.ViewModels.Implementations {
                     var viewModel = new FeedItemViewModel(
                         article, platformProvider, articlesRepository);
                     Items.Add(viewModel);
+                    viewModel.IsFavorite.PropertyChanged += (o, args) => {
+                        if (!viewModel.IsFavorite.Value) {
+                            Items.Remove(viewModel);
+                            IsEmpty.Value = Items.Count == 0;
+                        }
+                    };
                 }
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;

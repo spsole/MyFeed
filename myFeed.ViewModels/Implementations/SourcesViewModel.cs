@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using myFeed.Repositories.Abstractions;
 using myFeed.Repositories.Entities.Local;

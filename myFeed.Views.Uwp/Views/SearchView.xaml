@@ -110,7 +110,7 @@
                                     <Image Source="{Binding ImageUri.Value}" Width="16" Height="16"/>
                                     <TextBlock Text="{Binding Title.Value}" FontWeight="SemiBold" Margin="6 0 0 0"/>
                                 </StackPanel>
-                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" 
+                                <TextBlock Text="{Binding Description.Value}" TextWrapping="Wrap" 
                                     Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                                 <TextBlock Text="{Binding Url.Value}" TextTrimming="CharacterEllipsis" 
                                     Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>

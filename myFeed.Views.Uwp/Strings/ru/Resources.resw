@@ -165,6 +165,9 @@
   <data name="AddToFavorites">
     <value>Добавить в избранное</value>
   </data>
+  <data name="RemoveFromFavorites">
+    <value>Удалить из избранного</value>
+  </data>
   <data name="Add">
     <value>Добавить</value>
   </data>

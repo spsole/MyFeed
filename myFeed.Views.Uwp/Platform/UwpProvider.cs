@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
@@ -75,8 +76,8 @@ namespace myFeed.Views.Uwp.Platform {
         }
 
         public Task<object> ShowDialogForSelection(IEnumerable<object> sourcesRepository) {
-            var e = new SourceCategoryEntity() as object;
-            return Task.FromResult(e);
+            if (!sourcesRepository.Any()) return null;
+            return Task.FromResult(sourcesRepository.First());
         }
 
         public Task RegisterBackgroundTask(int freq) => Task.Delay(1);

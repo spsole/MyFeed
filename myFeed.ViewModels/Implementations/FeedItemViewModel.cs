@@ -34,9 +34,8 @@ namespace myFeed.ViewModels.Implementations {
                 IsRead.Value = entity.Read = !IsRead.Value;
                 await articlesRepository.UpdateAsync(entity);
             });
-            AddToFavorites = new ActionCommand(async () => {
-                if (IsFavorite.Value) return;
-                IsFavorite.Value = entity.Fave = true;
+            MarkFavorite = new ActionCommand(async () => {
+                IsFavorite.Value = entity.Fave = !IsFavorite.Value;
                 await articlesRepository.UpdateAsync(entity);
             });
         }
@@ -74,7 +73,7 @@ namespace myFeed.ViewModels.Implementations {
         /// <summary>
         /// Adds article to favorites.
         /// </summary>
-        public ActionCommand AddToFavorites { get; }
+        public ActionCommand MarkFavorite { get; }
 
         /// <summary>
         /// Opens article in web browser.

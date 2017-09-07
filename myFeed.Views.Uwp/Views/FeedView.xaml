@@ -131,7 +131,10 @@
                                                     <MenuFlyoutItem Icon="Mail" Command="{Binding MarkRead}" 
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=MarkAsUnread}"
                                                         Visibility="{Binding IsRead.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
-                                                    <MenuFlyoutItem Icon="SolidStar" Command="{Binding AddToFavorites}" 
+                                                    <MenuFlyoutItem Icon="OutlineStar" Command="{Binding MarkFavorite}"
+                                                        Text="{Binding Converter={StaticResource Locale}, ConverterParameter=RemoveFromFavorites}"
+                                                        Visibility="{Binding IsFavorite.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
+                                                    <MenuFlyoutItem Icon="SolidStar" Command="{Binding MarkFavorite}" 
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=AddToFavorites}"
                                                         Visibility="{Binding IsFavorite.Value, Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
                                                 </MenuFlyout>
@@ -150,7 +153,7 @@
                                                 <Ellipse VerticalAlignment="Center" Width="70" 
                                                     Height="70" HorizontalAlignment="Center">
                                                     <Ellipse.Fill>
-                                                        <ImageBrush ImageSource="{Binding Image.Value}"/>
+                                                        <ImageBrush ImageSource="{Binding Image.Value}" Stretch="Uniform"/>
                                                     </Ellipse.Fill>
                                                 </Ellipse>
                                             </Grid>
