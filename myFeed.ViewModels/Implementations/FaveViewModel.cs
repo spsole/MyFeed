@@ -1,39 +1,41 @@
-using System;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 using System.Collections.ObjectModel;
 using myFeed.Repositories.Abstractions;
 
-namespace myFeed.ViewModels.Implementations {
+namespace myFeed.ViewModels.Implementations
+{
     /// <summary>
     /// Favorites collection view model.
     /// </summary>
-    public sealed class FaveViewModel {
+    public sealed class FaveViewModel
+    {
         /// <summary>
         /// Instantiates ViewModel.
         /// </summary>
         public FaveViewModel(
             IPlatformProvider platformProvider,
-            IArticlesRepository articlesRepository) {
-
+            IArticlesRepository articlesRepository)
+        {
             Items = new ObservableCollection<FeedItemViewModel>();
             IsLoading = new ObservableProperty<bool>(true);
             IsEmpty = new ObservableProperty<bool>(true);
-
-            Load = new ActionCommand(async () => {
+            Load = new ActionCommand(async () =>
+            {
                 IsLoading.Value = true;
                 var articles = await articlesRepository.GetAllAsync();
                 Items.Clear();
-                foreach (var article in articles) {
+                foreach (var article in articles)
+                {
                     if (!article.Fave) continue;
-                    var viewModel = new FeedItemViewModel(
-                        article, platformProvider, articlesRepository);
+                    var viewModel = new FeedItemViewModel(article,
+                        platformProvider, articlesRepository);
                     Items.Add(viewModel);
-                    viewModel.IsFavorite.PropertyChanged += (o, args) => {
-                        if (!viewModel.IsFavorite.Value) {
-                            Items.Remove(viewModel);
-                            IsEmpty.Value = Items.Count == 0;
-                        }
+                    viewModel.IsFavorite.PropertyChanged += (o, args) =>
+                    {
+                        if (viewModel.IsFavorite.Value) return;
+                        Items.Remove(viewModel);
+                        IsEmpty.Value = Items.Count == 0;
                     };
                 }
                 IsEmpty.Value = Items.Count == 0;

@@ -5,11 +5,13 @@ using myFeed.Repositories.Entities.Local;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
-namespace myFeed.ViewModels.Implementations {
+namespace myFeed.ViewModels.Implementations
+{
     /// <summary>
     /// Sources category ViewModel.
     /// </summary>
-    public sealed class SourcesCategoryViewModel {
+    public sealed class SourcesCategoryViewModel
+    {
         /// <summary>
         /// Instantiates new ViewModel.
         /// </summary>
@@ -18,22 +20,24 @@ namespace myFeed.ViewModels.Implementations {
             SourcesViewModel parentViewModel,
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService,
-            IPlatformProvider platformProvider) {
-
+            IPlatformProvider platformProvider)
+        {
             Title = new ObservableProperty<string>(entity.Title);
             SourceUri = new ObservableProperty<string>(string.Empty);
             Items = new ObservableCollection<SourcesItemViewModel>();
             Category = new ReadOnlyProperty<SourceCategoryEntity>(entity);
 
-            RenameCategory = new ActionCommand(async () => {
+            RenameCategory = new ActionCommand(async () =>
+            {
                 var name = await platformProvider.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
                     translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
-                await sourcesRepository.RenameCategoryAsync(entity, name);
+                await sourcesRepository.RenameAsync(entity, name);
                 entity.Title = Title.Value = name;
             });
-            RemoveCategory = new ActionCommand(async () => {
+            RemoveCategory = new ActionCommand(async () =>
+            {
                 var shouldDelete = await platformProvider.ShowDialogForConfirmation(
                     translationsService.Resolve("DeleteCategory"),
                     translationsService.Resolve("DeleteElement"));
@@ -41,22 +45,25 @@ namespace myFeed.ViewModels.Implementations {
                 await sourcesRepository.RemoveAsync(entity);
                 parentViewModel.Items.Remove(this);
             });
-            AddSource = new ActionCommand(async () => {
+            AddSource = new ActionCommand(async () =>
+            {
                 var sourceUri = SourceUri.Value;
                 if (string.IsNullOrWhiteSpace(sourceUri) ||
                     !Uri.IsWellFormedUriString(sourceUri, UriKind.Absolute))
                     return;
                 SourceUri.Value = string.Empty;
-                var model = new SourceEntity { Uri = sourceUri, Notify = true };
+                var model = new SourceEntity {Uri = sourceUri, Notify = true};
                 await sourcesRepository.AddSourceAsync(entity, model);
-                var viewModel = new SourcesItemViewModel(model, 
+                var viewModel = new SourcesItemViewModel(model,
                     this, sourcesRepository, platformProvider);
                 Items.Add(viewModel);
             });
-            Load = new ActionCommand(() => {
+            Load = new ActionCommand(() =>
+            {
                 Items.Clear();
-                foreach (var source in entity.Sources) {
-                    var viewModel = new SourcesItemViewModel(source, 
+                foreach (var source in entity.Sources)
+                {
+                    var viewModel = new SourcesItemViewModel(source,
                         this, sourcesRepository, platformProvider);
                     Items.Add(viewModel);
                 }
@@ -82,7 +89,7 @@ namespace myFeed.ViewModels.Implementations {
         /// Grouping title.
         /// </summary>
         public ObservableProperty<string> Title { get; }
-        
+
         /// <summary>
         /// Removes the entire category.
         /// </summary>

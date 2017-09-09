@@ -4,30 +4,33 @@ using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
-namespace myFeed.ViewModels.Implementations {
+namespace myFeed.ViewModels.Implementations
+{
     /// <summary>
     /// Search page ViewModel.
     /// </summary>
-    public sealed class SearchViewModel {
+    public sealed class SearchViewModel
+    {
         /// <summary>
         /// Instantiates new ViewModel.
         /// </summary>
         public SearchViewModel(
             ISourcesRepository sourcesRepository,
             IPlatformProvider platformProvider,
-            ISearchService searchService) {
-
+            ISearchService searchService)
+        {
             Items = new ObservableCollection<SearchItemViewModel>();
             SearchQuery = new ObservableProperty<string>(string.Empty);
             IsLoading = new ObservableProperty<bool>(false);
             IsEmpty = new ObservableProperty<bool>(true);
-
-            Fetch = new ActionCommand(async () => {
+            Fetch = new ActionCommand(async () =>
+            {
                 IsLoading.Value = true;
                 var query = SearchQuery.Value;
                 var searchResults = await searchService.Search(query);
                 Items.Clear();
-                foreach (var result in searchResults.Results) {
+                foreach (var result in searchResults.Results)
+                {
                     var viewModel = new SearchItemViewModel(
                         result, platformProvider, sourcesRepository);
                     Items.Add(viewModel);

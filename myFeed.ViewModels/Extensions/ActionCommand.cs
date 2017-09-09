@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace myFeed.ViewModels.Extensions {
+namespace myFeed.ViewModels.Extensions
+{
     /// <summary>
     /// Command that dispatches task-actions.
     /// </summary>
-    public class ActionCommand : ICommand {
+    public class ActionCommand : ICommand
+    {
         private readonly Func<Task> _task;
         private bool _canExecute = true;
 
@@ -20,7 +22,8 @@ namespace myFeed.ViewModels.Extensions {
         /// Creates new instance using action lambda expression as a command.
         /// </summary>
         /// <param name="action">Task to execute.</param>
-        public ActionCommand(Action action) => _task = () => {
+        public ActionCommand(Action action) => _task = () =>
+        {
             action.Invoke();
             return Task.CompletedTask;
         };
@@ -38,15 +41,16 @@ namespace myFeed.ViewModels.Extensions {
         /// <summary>
         /// Execute a command.
         /// </summary>
-        public async void Execute(object parameter) {
+        public async void Execute(object parameter)
+        {
             UpdateCanExecute(false);
             await _task.Invoke();
             UpdateCanExecute(true);
-        }
-
-        private void UpdateCanExecute(bool value) {
-            _canExecute = value;
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            void UpdateCanExecute(bool value)
+            {
+                _canExecute = value;
+                CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 }

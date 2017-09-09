@@ -4,19 +4,21 @@ using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
-namespace myFeed.ViewModels.Implementations {
+namespace myFeed.ViewModels.Implementations
+{
     /// <summary>
     /// Settings ViewModel.
     /// </summary>
-    public sealed class SettingsViewModel {
+    public sealed class SettingsViewModel
+    {
         /// <summary>
         /// Instantiates new ViewModel.
         /// </summary>
         public SettingsViewModel(
             IOpmlService opmlService,
             IPlatformProvider platformProvider,
-            IConfigurationRepository configRepository) {
-
+            IConfigurationRepository configRepository)
+        {
             Theme = new ObservableProperty<string>();
             FontSize = new ObservableProperty<int>();
             LoadImages = new ObservableProperty<bool>();
@@ -26,8 +28,8 @@ namespace myFeed.ViewModels.Implementations {
             ImportOpml = new ActionCommand(opmlService.ImportOpmlFeeds);
             ExportOpml = new ActionCommand(opmlService.ExportOpmlFeeds);
             OpenCredits = new ActionCommand(() => platformProvider.LaunchUri(new Uri("https://worldbeater.github.io")));
-            Load = new ActionCommand(async () => {
-                
+            Load = new ActionCommand(async () =>
+            {
                 // Resolve all default settings.
                 FontSize.Value = int.Parse(await Get("FontSize"));
                 LoadImages.Value = bool.Parse(await Get("LoadImages"));
@@ -43,14 +45,17 @@ namespace myFeed.ViewModels.Implementations {
                 Subscribe(Theme, "Theme", platformProvider.RegisterTheme);
             });
 
-            void Subscribe<T>(ObservableProperty<T> property, string key, Func<T, Task> updater = null) {
-                property.PropertyChanged += async (_, __) => {
+            void Subscribe<T>(ObservableProperty<T> property, string key, Func<T, Task> updater = null)
+            {
+                property.PropertyChanged += async (_, __) =>
+                {
                     var value = property.Value;
                     var task = updater?.Invoke(value);
                     if (task != null) await task;
                     await configRepository.SetByNameAsync(key, value.ToString());
                 };
             }
+
             Task<string> Get(string name) => configRepository.GetByNameAsync(name);
         }
 

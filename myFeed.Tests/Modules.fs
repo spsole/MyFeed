@@ -29,7 +29,6 @@ module RegistrationsTestsModule =
         ContainerBuilder() 
         |> tee registerModule<RepositoriesModule>
         |> buildScope
-        |> tee assertResolve<EntityContext> 
         |> tee assertResolve<IArticlesRepository>
         |> tee assertResolve<ISourcesRepository>
         |> tee assertResolve<IConfigurationRepository>
@@ -42,7 +41,6 @@ module RegistrationsTestsModule =
         |> tee registerMockInstance<IPlatformProvider>
         |> tee registerMockInstance<ITranslationsService>
         |> buildScope
-        |> tee assertResolve<EntityContext> 
         |> tee assertResolve<ISourcesRepository>
         |> tee assertResolve<IConfigurationRepository>
         |> tee assertResolve<IArticlesRepository>

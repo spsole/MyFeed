@@ -1,8 +1,10 @@
-namespace myFeed.Services.Abstractions {
+namespace myFeed.Services.Abstractions
+{
     /// <summary>
     /// Parses Html for feed content.
     /// </summary>
-    public interface IHtmlParsingService {
+    public interface IHtmlParsingService
+    {
         /// <summary>
         /// Extracts image url for html content.
         /// </summary>

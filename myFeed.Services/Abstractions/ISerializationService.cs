@@ -1,10 +1,12 @@
 using System.IO;
 
-namespace myFeed.Services.Abstractions {
+namespace myFeed.Services.Abstractions
+{
     /// <summary>
     /// Provides xml serialization mechanics.
     /// </summary>
-    public interface ISerializationService {
+    public interface ISerializationService
+    {
         /// <summary>
         /// Serializes object into Stream.
         /// </summary> 

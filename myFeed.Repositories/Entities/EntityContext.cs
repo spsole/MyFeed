@@ -3,8 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
 
-namespace myFeed.Repositories.Entities {
-    public class EntityContext : DbContext {
+namespace myFeed.Repositories.Entities
+{
+    public class EntityContext : DbContext
+    {
         private readonly ILoggerFactory _loggerFactory;
 
         public EntityContext() { }
@@ -16,7 +18,8 @@ namespace myFeed.Repositories.Entities {
         public DbSet<SourceEntity> SourceEntities { get; set; }
         public DbSet<ArticleEntity> Articles { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
             var article = modelBuilder.Entity<ArticleEntity>();
             article.HasKey(i => i.Id);
 
@@ -43,14 +46,16 @@ namespace myFeed.Repositories.Entities {
             base.OnModelCreating(modelBuilder);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
             optionsBuilder.UseSqlite("Filename=MyFeed.db;");
             if (_loggerFactory != null)
                 optionsBuilder.UseLoggerFactory(_loggerFactory);
             base.OnConfiguring(optionsBuilder);
         }
 
-        public override void Dispose() {
+        public override void Dispose()
+        {
             base.Dispose();
             _loggerFactory?.Dispose();
         }

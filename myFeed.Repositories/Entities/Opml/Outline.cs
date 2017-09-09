@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace myFeed.Repositories.Entities.Opml {
+namespace myFeed.Repositories.Entities.Opml
+{
     [XmlType("outline")]
-    public sealed class Outline {
+    public sealed class Outline
+    {
         [XmlAttribute("title")]
         public string Title { get; set; }
 

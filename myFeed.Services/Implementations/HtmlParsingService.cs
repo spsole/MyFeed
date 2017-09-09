@@ -2,10 +2,12 @@ using System;
 using System.Text.RegularExpressions;
 using myFeed.Services.Abstractions;
 
-namespace myFeed.Services.Implementations {
-    public class HtmlParsingService : IHtmlParsingService {
-        public string ExtractImageUrl(string html) {
-
+namespace myFeed.Services.Implementations
+{
+    public class HtmlParsingService : IHtmlParsingService
+    {
+        public string ExtractImageUrl(string html)
+        {
             // Match first image tag.
             if (string.IsNullOrWhiteSpace(html)) return null;
             var match = Regex.Match(html, @"<img(.*?)>", RegexOptions.Compiled);

@@ -4,11 +4,13 @@ using myFeed.Repositories.Entities.Local;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
-namespace myFeed.ViewModels.Implementations {
+namespace myFeed.ViewModels.Implementations
+{
     /// <summary>
     /// Single source ViewModel.
     /// </summary>
-    public sealed class SourcesItemViewModel {
+    public sealed class SourcesItemViewModel
+    {
         /// <summary>
         /// Instantiates new ViewModel.
         /// </summary>
@@ -16,23 +18,25 @@ namespace myFeed.ViewModels.Implementations {
             SourceEntity entity,
             SourcesCategoryViewModel parentViewModel,
             ISourcesRepository sourcesRepository,
-            IPlatformProvider platformProvider) {
-
+            IPlatformProvider platformProvider)
+        {
             Url = new ReadOnlyProperty<string>(entity.Uri);
             Name = new ReadOnlyProperty<string>(new Uri(entity.Uri).Host);
             Notify = new ObservableProperty<bool>(entity.Notify);
-
-            Notify.PropertyChanged += async (sender, args) => {
+            Notify.PropertyChanged += async (sender, args) =>
+            {
                 entity.Notify = Notify.Value;
                 await sourcesRepository.UpdateAsync(entity.Category);
             };
 
             CopyLink = new ActionCommand(() => platformProvider.CopyTextToClipboard(entity.Uri));
-            DeleteSource = new ActionCommand(async () => {
+            DeleteSource = new ActionCommand(async () =>
+            {
                 await sourcesRepository.RemoveSourceAsync(entity.Category, entity);
                 parentViewModel.Items.Remove(this);
             });
-            OpenInBrowser = new ActionCommand(async () => {
+            OpenInBrowser = new ActionCommand(async () =>
+            {
                 if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;
                 var uri = new Uri(entity.Uri);
                 var plainUri = new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host));

@@ -1,7 +1,9 @@
 ﻿using System;
 
-namespace myFeed.Repositories.Entities.Local {
-    public class ArticleEntity {
+namespace myFeed.Repositories.Entities.Local
+{
+    public class ArticleEntity
+    {
         public Guid Id { get; set; }
         public DateTime PublishedDate { get; set; }
         public string FeedTitle { get; set; }

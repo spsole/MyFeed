@@ -3,11 +3,13 @@ using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
-namespace myFeed.ViewModels.Implementations {
+namespace myFeed.ViewModels.Implementations
+{
     /// <summary>
     /// All feeds ViewModel.
     /// </summary>
-    public sealed class FeedViewModel {
+    public sealed class FeedViewModel
+    {
         /// <summary>
         /// Instantiates ViewModel.
         /// </summary>
@@ -15,14 +17,16 @@ namespace myFeed.ViewModels.Implementations {
             IFeedService feedService,
             IPlatformProvider platformProvider,
             ISourcesRepository sourcesRepository,
-            IArticlesRepository articlesRepository) {
-
+            IArticlesRepository articlesRepository)
+        {
             Items = new ObservableCollection<FeedCategoryViewModel>();
-            Load = new ActionCommand(async () => {
-                var sources = await sourcesRepository.GetAllOrderedAsync();
+            Load = new ActionCommand(async () =>
+            {
+                var sources = await sourcesRepository.GetAllAsync();
                 Items.Clear();
-                foreach (var source in sources) {
-                    var viewModel = new FeedCategoryViewModel(source, 
+                foreach (var source in sources)
+                {
+                    var viewModel = new FeedCategoryViewModel(source,
                         feedService, platformProvider, articlesRepository);
                     Items.Add(viewModel);
                 }

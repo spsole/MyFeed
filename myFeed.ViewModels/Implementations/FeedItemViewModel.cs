@@ -4,19 +4,21 @@ using myFeed.Repositories.Entities.Local;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
-namespace myFeed.ViewModels.Implementations {
+namespace myFeed.ViewModels.Implementations
+{
     /// <summary>
     /// Represents feed item view model.
     /// </summary>
-    public sealed class FeedItemViewModel {
+    public sealed class FeedItemViewModel
+    {
         /// <summary>
         /// Instantiates ViewModel.
         /// </summary>
         public FeedItemViewModel(
             ArticleEntity entity,
             IPlatformProvider platformProvider,
-            IArticlesRepository articlesRepository) {
-
+            IArticlesRepository articlesRepository)
+        {
             PublishedDate = new ReadOnlyProperty<DateTime>(entity.PublishedDate);
             IsFavorite = new ObservableProperty<bool>(entity.Fave);
             Feed = new ReadOnlyProperty<string>(entity.FeedTitle);
@@ -26,29 +28,32 @@ namespace myFeed.ViewModels.Implementations {
 
             Share = new ActionCommand(() => platformProvider.Share($"{entity.Title}\r\n{entity.Uri}"));
             CopyLink = new ActionCommand(() => platformProvider.CopyTextToClipboard(entity.Uri));
-            LaunchUri = new ActionCommand(async () => {
-                if (Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute))
-                    await platformProvider.LaunchUri(new Uri(entity.Uri));
+            LaunchUri = new ActionCommand(async () =>
+            {
+                if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;
+                await platformProvider.LaunchUri(new Uri(entity.Uri));
             });
-            MarkRead = new ActionCommand(async () => {
+            MarkRead = new ActionCommand(async () =>
+            {
                 IsRead.Value = entity.Read = !IsRead.Value;
                 await articlesRepository.UpdateAsync(entity);
             });
-            MarkFavorite = new ActionCommand(async () => {
+            MarkFavorite = new ActionCommand(async () =>
+            {
                 IsFavorite.Value = entity.Fave = !IsFavorite.Value;
                 await articlesRepository.UpdateAsync(entity);
             });
         }
+        
+        /// <summary>
+        /// Is article read or not?
+        /// </summary>
+        public ObservableProperty<bool> IsRead { get; }
 
         /// <summary>
         /// Is article added to favorites or not?
         /// </summary>
         public ObservableProperty<bool> IsFavorite { get; }
-
-        /// <summary>
-        /// Is article read or not?
-        /// </summary>
-        public ObservableProperty<bool> IsRead { get; }
 
         /// <summary>
         /// Human-readable date.

@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace myFeed.ViewModels.Extensions {
+namespace myFeed.ViewModels.Extensions
+{
     /// <summary>
     /// Observable property that provides an easy way 
     /// of setting and updating values.
     /// </summary>
-    public class ObservableProperty<T> : INotifyPropertyChanged {
+    public class ObservableProperty<T> : INotifyPropertyChanged
+    {
         private T _value;
 
         /// <summary>
@@ -29,9 +31,11 @@ namespace myFeed.ViewModels.Extensions {
         /// <summary>
         /// Value of the ObservableProperty instance.
         /// </summary>
-        public T Value {
+        public T Value
+        {
             get => _value;
-            set {
+            set
+            {
                 if (EqualityComparer<T>.Default.Equals(_value, value)) return;
                 _value = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));

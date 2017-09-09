@@ -3,11 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using myFeed.Repositories.Entities.Local;
 
-namespace myFeed.Services.Abstractions {
+namespace myFeed.Services.Abstractions
+{
     /// <summary>
     /// Retrieves feeds and saves them locally.
     /// </summary>
-    public interface IFeedService {
+    public interface IFeedService
+    {
         /// <summary>
         /// Retrieves single feed for passed multiple uris.
         /// </summary>

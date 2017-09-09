@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using myFeed.Repositories.Abstractions;
@@ -6,57 +7,106 @@ using myFeed.Repositories.Entities;
 using myFeed.Repositories.Entities.Local;
 using Microsoft.EntityFrameworkCore;
 
-namespace myFeed.Repositories.Implementations {
-    public class SourcesRepository : AbstractRepository<SourceCategoryEntity>, ISourcesRepository {
-        private readonly DbContext _context;
-        public SourcesRepository(EntityContext context) : base(context) => _context = context;
-
-        public override Task<IEnumerable<SourceCategoryEntity>> GetAllAsync() {
-            var queryable = GetAllQueryable();
-            var enumerable = queryable
-                .Include(i => i.Sources)
-                .ThenInclude(i => i.Articles)
-                .ToList()
-                .AsEnumerable();
-            return Task.FromResult(enumerable);
+namespace myFeed.Repositories.Implementations
+{
+    public class SourcesRepository : ISourcesRepository
+    {
+        public SourcesRepository()
+        {
+            using (var context = new EntityContext())
+                if (!context.Database.GetAppliedMigrations().Any())
+                    context.Database.Migrate();
+        }
+        
+        public Task<IOrderedEnumerable<SourceCategoryEntity>> GetAllAsync()
+        {
+            using (var context = new EntityContext())
+            {
+                var enumerable = context
+                    .Set<SourceCategoryEntity>()
+                    .Include(i => i.Sources)
+                    .ThenInclude(i => i.Articles)
+                    .AsNoTracking()
+                    .ToList()
+                    .OrderBy(i => i.Order);
+                return Task.FromResult(enumerable);
+            }
         }
 
-        public Task<IOrderedEnumerable<SourceCategoryEntity>> GetAllOrderedAsync() {
-            var queryable = GetAllQueryable();
-            var enumerable = queryable
-                .Include(i => i.Sources)
-                .ThenInclude(i => i.Articles)
-                .ToList()
-                .OrderBy(i => i.Order);
-            return Task.FromResult(enumerable);
+        public async Task InsertAsync(params SourceCategoryEntity[] entities)
+        {
+            using (var context = new EntityContext())
+            {
+                var queryable = context.Set<SourceCategoryEntity>();
+                var max = queryable.Max(i => i.Order);
+                foreach (var entity in entities) 
+                    entity.Order = ++max;
+                queryable.AddRange(entities);
+                await context.SaveChangesAsync();
+            }
         }
 
-        public override async Task InsertAsync(SourceCategoryEntity entity) {
-            var queryable = GetAllQueryable();
-            var maxOrder = queryable.Max(i => i.Order);
-            entity.Order = ++maxOrder;
-            await base.InsertAsync(entity).ConfigureAwait(false);
+        public async Task RemoveAsync(params SourceCategoryEntity[] entities)
+        {
+            using (var context = new EntityContext())
+            {
+                context.AttachRange(entities.AsEnumerable());
+                context.Set<SourceCategoryEntity>().RemoveRange(entities);
+                await context.SaveChangesAsync();
+            }
         }
 
-        public async Task RearrangeCategoriesAsync(IEnumerable<SourceCategoryEntity> categories) {
-            var index = 0;
-            foreach (var category in categories) category.Order = index++;
-            await _context.SaveChangesAsync();
+        public async Task RearrangeAsync(IEnumerable<SourceCategoryEntity> categories)
+        {
+            using (var context = new EntityContext())
+            {
+                var categoriesList = categories.ToList();
+                var index = 0;
+                context.AttachRange(categoriesList);
+                foreach (var category in categoriesList) 
+                    category.Order = index++;
+                await context.SaveChangesAsync();
+            }
         }
 
-        public async Task RenameCategoryAsync(SourceCategoryEntity category, string name) {
-            category.Title = name;
-            await _context.SaveChangesAsync();
+        public async Task RenameAsync(SourceCategoryEntity category, string name)
+        {
+            using (var context = new EntityContext())
+            {
+                context.Attach(category);
+                category.Title = name;
+                await context.SaveChangesAsync();
+            }
         }
 
-        public async Task AddSourceAsync(SourceCategoryEntity category, SourceEntity source) {
-            category.Sources.Add(source);
-            await _context.SaveChangesAsync();
+        public async Task AddSourceAsync(SourceCategoryEntity category, SourceEntity source) 
+        {
+            using (var context = new EntityContext())
+            {
+                context.Attach(category);
+                category.Sources.Add(source);
+                await context.SaveChangesAsync();
+            }
         }
 
-        public async Task RemoveSourceAsync(SourceCategoryEntity category, SourceEntity source) {
-            category.Sources.Remove(source);
-            await _context.SaveChangesAsync();
+        public async Task RemoveSourceAsync(SourceCategoryEntity category, SourceEntity source)
+        {
+            using (var context = new EntityContext())
+            {
+                context.Attach(category);
+                context.Attach(source);
+                category.Sources.Remove(source);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateAsync(SourceCategoryEntity entity)
+        {
+            using (var context = new EntityContext())
+            {
+                context.Entry(entity).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

@@ -1,11 +1,13 @@
-﻿using System.Threading.Tasks;
-using myFeed.Repositories.Entities.Local;
+﻿using System;
+using System.Threading.Tasks;
 
-namespace myFeed.Repositories.Abstractions {
+namespace myFeed.Repositories.Abstractions
+{
     /// <summary>
     /// Configuration repository.
     /// </summary>
-    public interface IConfigurationRepository : IAbstractRepository<ConfigurationEntity> {
+    public interface IConfigurationRepository
+    {
         /// <summary>
         /// Finds resource with given name in database and returns it.
         /// </summary>

@@ -23,6 +23,7 @@ $RECYCLE.BIN/
 # =========================
 .vs/
 .vscode/
+.idea/
 myFeed.Repositories/Migrations
 myFeed.Repositories/obj
 myFeed.Repositories/bin

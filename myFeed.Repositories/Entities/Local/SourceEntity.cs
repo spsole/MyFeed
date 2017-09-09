@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace myFeed.Repositories.Entities.Local {
-    public class SourceEntity {
+namespace myFeed.Repositories.Entities.Local
+{
+    public class SourceEntity
+    {
         public Guid Id { get; set; }
         public string Uri { get; set; }
         public bool Notify { get; set; }

@@ -1,30 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using myFeed.Repositories.Entities.Local;
 
-namespace myFeed.Repositories.Abstractions {
+namespace myFeed.Repositories.Abstractions
+{
     /// <summary>
     /// Represents sources repository.
     /// </summary>
-    public interface ISourcesRepository : IAbstractRepository<SourceCategoryEntity> {
+    public interface ISourcesRepository
+    {
         /// <summary>
         /// Returns all elements ordered by Order field.
         /// </summary>
-        Task<IOrderedEnumerable<SourceCategoryEntity>> GetAllOrderedAsync();
+        Task<IOrderedEnumerable<SourceCategoryEntity>> GetAllAsync();
 
+        /// <summary>
+        /// Inserts item into database table.
+        /// </summary>
+        /// <param name="entities">Entity to insert.</param>
+        Task InsertAsync(params SourceCategoryEntity[] entities);
+
+        /// <summary>
+        /// Removes category from db set.
+        /// </summary>
+        /// <param name="entities">Entity to remove.</param>
+        Task RemoveAsync(params SourceCategoryEntity[] entities);
+        
+        /// <summary>
+        /// Updates category entity.
+        /// </summary>
+        /// <param name="entity">Category entity to update.</param>
+        Task UpdateAsync(SourceCategoryEntity entity);
+        
         /// <summary>
         /// Renames specified category.
         /// </summary>
         /// <param name="category">Category to rename.</param>
         /// <param name="name">Desired name.</param>
-        Task RenameCategoryAsync(SourceCategoryEntity category, string name);
+        Task RenameAsync(SourceCategoryEntity category, string name);
 
         /// <summary>
         /// Rearranges categories by changing their Order indexes.
         /// </summary>
         /// <param name="categories">Categories order.</param>
-        Task RearrangeCategoriesAsync(IEnumerable<SourceCategoryEntity> categories);
+        Task RearrangeAsync(IEnumerable<SourceCategoryEntity> categories);
 
         /// <summary>
         /// Adds source entity to specified category.

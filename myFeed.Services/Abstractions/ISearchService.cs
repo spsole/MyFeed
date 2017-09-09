@@ -1,11 +1,13 @@
 ﻿using System.Threading.Tasks;
 using myFeed.Repositories.Entities.Feedly;
 
-namespace myFeed.Services.Abstractions {
+namespace myFeed.Services.Abstractions
+{
     /// <summary>
     /// Searches for feeds.
     /// </summary>
-    public interface ISearchService {
+    public interface ISearchService
+    {
         /// <summary>
         /// Performs search.
         /// </summary>

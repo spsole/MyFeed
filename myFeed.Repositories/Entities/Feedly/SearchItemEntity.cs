@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace myFeed.Repositories.Entities.Feedly {
-    public sealed class SearchItemEntity {
+namespace myFeed.Repositories.Entities.Feedly
+{
+    public sealed class SearchItemEntity
+    {
         [JsonProperty("deleciousTags")]
         public List<string> DeliciousTags { get; set; }
 

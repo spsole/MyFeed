@@ -35,6 +35,9 @@ module Tools =
             return result 
         } |> Async.RunSynchronously
 
+    /// Pipe for asynchronious operations.
+    let inline (|@>) t f = t |> await |> f 
+
     /// Function for better piping and chaining support.
     let tee f x = f <| x; x  
 
@@ -50,8 +53,8 @@ module Tools =
 
     /// Awaits generic task and returns non generic one.
     let taskAsAwaitableFunc (task: Task<_>) =
-        task |> await |> ignore
-        Func<Task>(fun () -> Task.CompletedTask)
+        task |@> ignore
+        Func<Task>(fun () -> Task.CompletedTask)    
 
 module DependencyInjection =
 

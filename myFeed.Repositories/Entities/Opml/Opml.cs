@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace myFeed.Repositories.Entities.Opml {
+namespace myFeed.Repositories.Entities.Opml
+{
     [XmlType("opml")]
-    public sealed class Opml {
+    public sealed class Opml
+    {
         [XmlElement("head")]
         public Head Head { get; set; }
 

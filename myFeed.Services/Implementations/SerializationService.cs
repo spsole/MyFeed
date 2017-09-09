@@ -3,27 +3,42 @@ using System.IO;
 using System.Xml.Serialization;
 using myFeed.Services.Abstractions;
 
-namespace myFeed.Services.Implementations {
-    public class SerializationService : ISerializationService {
-        public void Serialize<T>(T instance, Stream stream) {
-            try {
+namespace myFeed.Services.Implementations
+{
+    public class SerializationService : ISerializationService
+    {
+        public void Serialize<T>(T instance, Stream stream)
+        {
+            try
+            {
                 var serializer = new XmlSerializer(typeof(T));
                 using (stream) serializer.Serialize(stream, instance);
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // ignore
-            } finally {
+            }
+            finally
+            {
                 stream.Dispose();
             }
         }
-        public T Deserialize<T>(Stream stream) {
-            try {
+
+        public T Deserialize<T>(Stream stream)
+        {
+            try
+            {
                 T objectOut;
                 var serializer = new XmlSerializer(typeof(T));
-                using (stream) objectOut = (T)serializer.Deserialize(stream);
+                using (stream) objectOut = (T) serializer.Deserialize(stream);
                 return objectOut;
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 return default(T);
-            } finally {
+            }
+            finally
+            {
                 stream.Dispose();
             }
         }

@@ -44,12 +44,12 @@ module SearchViewModelsTests =
 
     [<Fact>]
     let ``should create instance of search viewmodel``() =
-        use scope =
-            ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<SearchViewModel>
-            |> buildScope
-        assertResolve<SearchViewModel> scope
+        ContainerBuilder()
+        |> tee registerDefaults
+        |> tee registerAsSelf<SearchViewModel>
+        |> buildScope
+        |> tee assertResolve<SearchViewModel>
+        |> dispose
 
     [<Fact>]
     let ``should create instance of search item viewmodel``() =    
@@ -302,7 +302,7 @@ module FeedViewModelsTests =
         
         let mockRepository = Mock<ISourcesRepository>()
         mockRepository
-            .Setup(fun i -> i.GetAllOrderedAsync())
+            .Setup(fun i -> i.GetAllAsync())
             .Returns(response) |> ignore
 
         use scope =
@@ -434,7 +434,7 @@ module SourcesViewModelsTests =
                 |> Task.FromResult
             let repositoryMock = Mock<ISourcesRepository>()
             repositoryMock
-                .Setup(fun i -> i.GetAllOrderedAsync())
+                .Setup(fun i -> i.GetAllAsync())
                 .Returns(sourceCategoryEntities)
                 |> ignore
             repositoryMock.Object            
@@ -504,7 +504,7 @@ module SourcesViewModelsTests =
             |> buildScope
 
         let sourcesRepository = resolve<ISourcesRepository> scope  
-        category |> sourcesRepository.InsertAsync |> awaitTask
+        sourcesRepository.InsertAsync category |> awaitTask
 
         let sourcesCategoryViewModel = resolve<SourcesCategoryViewModel> scope
         sourcesCategoryViewModel.SourceUri.Value <- "http://foo.bar"
@@ -517,4 +517,4 @@ module SourcesViewModelsTests =
         Assert.Equal(1, first.Sources |> Seq.length)
         Assert.Equal("http://foo.bar", first.Sources |> Seq.item 0 |> fun i -> i.Uri)
 
-        first |> sourcesRepository.RemoveAsync |> awaitTask
+        sourcesRepository.RemoveAsync first |> awaitTask

@@ -4,11 +4,13 @@ using myFeed.Repositories.Entities.Local;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
-namespace myFeed.ViewModels.Implementations {
+namespace myFeed.ViewModels.Implementations
+{
     /// <summary>
     /// Represents feed items collection view model.
     /// </summary>
-    public sealed class FeedCategoryViewModel {
+    public sealed class FeedCategoryViewModel
+    {
         /// <summary>
         /// Instantiates ViewModel.
         /// </summary>
@@ -16,18 +18,20 @@ namespace myFeed.ViewModels.Implementations {
             SourceCategoryEntity entity,
             IFeedService feedService,
             IPlatformProvider platformProvider,
-            IArticlesRepository articlesRepository) {
-
+            IArticlesRepository articlesRepository)
+        {
             Items = new ObservableCollection<FeedItemViewModel>();
             Title = new ReadOnlyProperty<string>(entity.Title);
             IsLoading = new ObservableProperty<bool>(true);
             IsEmpty = new ObservableProperty<bool>(false);
-
-            Fetch = new ActionCommand(async () => {
+            Fetch = new ActionCommand(async () =>
+            {
                 IsLoading.Value = true;
-                var orderedArticles = await feedService.RetrieveFeedsAsync(entity.Sources);
+                var sources = entity.Sources;
+                var orderedArticles = await feedService.RetrieveFeedsAsync(sources);
                 Items.Clear();
-                foreach (var article in orderedArticles) {
+                foreach (var article in orderedArticles)
+                {
                     var viewModel = new FeedItemViewModel(
                         article, platformProvider, articlesRepository);
                     Items.Add(viewModel);

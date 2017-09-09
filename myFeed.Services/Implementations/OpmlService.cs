@@ -7,8 +7,10 @@ using myFeed.Repositories.Entities.Local;
 using myFeed.Repositories.Entities.Opml;
 using myFeed.Services.Abstractions;
 
-namespace myFeed.Services.Implementations {
-    public class OpmlService : IOpmlService {
+namespace myFeed.Services.Implementations
+{
+    public class OpmlService : IOpmlService
+    {
         private readonly ISerializationService _serializationService;
         private readonly ITranslationsService _translationsService;
         private readonly ISourcesRepository _sourcesRepository;
@@ -18,22 +20,25 @@ namespace myFeed.Services.Implementations {
             IPlatformProvider platformProvider,
             ITranslationsService translationsService,
             ISerializationService serializationService,
-            ISourcesRepository sourcesRepository) {
+            ISourcesRepository sourcesRepository)
+        {
             _platformProvider = platformProvider;
             _sourcesRepository = sourcesRepository;
             _translationsService = translationsService;
             _serializationService = serializationService;
         }
 
-        public async Task ExportOpmlFeeds() {
-
+        public async Task ExportOpmlFeeds()
+        {
             // Init new Opml instance and read categories from db.
-            var opml = new Opml { Head = new Head { Title = "Feeds from myFeed App" } };
-            var categories = await _sourcesRepository.GetAllOrderedAsync();
-            var outlines = categories.Select(x => new Outline {
+            var opml = new Opml {Head = new Head {Title = "Feeds from myFeed App"}};
+            var categories = await _sourcesRepository.GetAllAsync();
+            var outlines = categories.Select(x => new Outline
+            {
                 ChildOutlines = x.Sources
-                    .Select(i => new { Entity = i, Uri = new Uri(i.Uri) })
-                    .Select(y => new Outline {
+                    .Select(i => new {Entity = i, Uri = new Uri(i.Uri)})
+                    .Select(y => new Outline
+                    {
                         HtmlUrl = $"{y.Uri.Scheme}://{y.Uri.Host}",
                         XmlUrl = y.Uri.ToString(),
                         Title = y.Uri.Host,
@@ -58,8 +63,8 @@ namespace myFeed.Services.Implementations {
                 _translationsService.Resolve("SettingsNotification"));
         }
 
-        public async Task ImportOpmlFeeds() {
-
+        public async Task ImportOpmlFeeds()
+        {
             // Deserialize opml.
             var stream = await _platformProvider.PickFileForReadAsync();
             var opml = _serializationService.Deserialize<Opml>(stream);
@@ -69,11 +74,13 @@ namespace myFeed.Services.Implementations {
             var categories = new List<SourceCategoryEntity>();
             opml.Body
                 .Where(i => i.XmlUrl == null && i.HtmlUrl == null)
-                .Select(i => new { Title = i.Title ?? i.Text, Outline = i })
+                .Select(i => new {Title = i.Title ?? i.Text, Outline = i})
                 .Where(i => i.Title != null)
-                .Select(i => new SourceCategoryEntity {
+                .Select(i => new SourceCategoryEntity
+                {
                     Sources = i.Outline.ChildOutlines
-                        .Select(o => new SourceEntity {
+                        .Select(o => new SourceEntity
+                        {
                             Uri = o.XmlUrl,
                             Notify = true
                         })
@@ -84,11 +91,12 @@ namespace myFeed.Services.Implementations {
                 .ForEach(i => categories.Add(i));
 
             // Process plain feeds.
-            var uncategorized = new SourceCategoryEntity {
+            var uncategorized = new SourceCategoryEntity
+            {
                 Title = "Unknown category",
                 Sources = opml.Body
                     .Where(i => Uri.IsWellFormedUriString(i.XmlUrl, UriKind.Absolute))
-                    .Select(i => new SourceEntity { Uri = i.XmlUrl, Notify = true })
+                    .Select(i => new SourceEntity {Uri = i.XmlUrl, Notify = true})
                     .ToList()
             };
             if (uncategorized.Sources.Any()) categories.Add(uncategorized);

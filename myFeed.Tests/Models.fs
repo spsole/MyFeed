@@ -121,7 +121,7 @@ module ConfigurationTableTests =
         |> ignore
 
         save context
-        Assert.Equal(1, count set)
+        Assert.NotEqual(0, count set)
         clear context set
 
     [<Fact; Log>]

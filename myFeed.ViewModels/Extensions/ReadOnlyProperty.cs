@@ -1,8 +1,10 @@
-﻿namespace myFeed.ViewModels.Extensions {
+﻿namespace myFeed.ViewModels.Extensions
+{
     /// <summary>
     /// Represents read only property.
     /// </summary>
-    public struct ReadOnlyProperty<T> {
+    public struct ReadOnlyProperty<T>
+    {
         /// <summary>
         /// Inits new readonly property holding value.
         /// </summary>

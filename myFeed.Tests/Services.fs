@@ -133,7 +133,7 @@ module FeedServiceTests =
             .Setup(fun i -> i.GetAllAsync())
             .Returns(fakeStoredArticles |> Task.FromResult) |> ignore 
         mockRepository
-            .Setup(fun i -> i.RemoveRangeAsync(It.IsAny<seq<ArticleEntity>>()))
+            .Setup(fun i -> i.RemoveAsync(It.IsAny<ArticleEntity[]>()))
             .Returns(Task.CompletedTask)
             .Callback<seq<ArticleEntity>>(fun i -> 
                Assert.Equal(1, Seq.length i)) // Make sure that only one row is deleted.
@@ -197,7 +197,7 @@ module OpmlServiceTests =
 
         let mockRepository = Mock<ISourcesRepository>()
         mockRepository
-            .Setup(fun i -> i.GetAllOrderedAsync())
+            .Setup(fun i -> i.GetAllAsync())
             .Returns(fakeResponse) |> ignore
 
         let mockPicker = Mock<IPlatformProvider>()
@@ -246,12 +246,13 @@ module OpmlServiceTests =
 
         let mockRepository = Mock<ISourcesRepository>()
         mockRepository
-            .Setup(fun i -> i.InsertAsync(It.IsAny<SourceCategoryEntity>()))
+            .Setup(fun i -> i.InsertAsync(It.IsAny<SourceCategoryEntity[]>()))
             .Returns(Task.CompletedTask)
-            .Callback<SourceCategoryEntity>(fun e -> 
-                match e.Sources.Count with 
-                | 1 -> Assert.Equal("http://foo.com", e.Sources |> Seq.item 0 |> fun i -> i.Uri)
-                | 2 -> Assert.Equal("https://bar.com", e.Sources |> Seq.item 1 |> fun i -> i.Uri)
+            .Callback<SourceCategoryEntity[]>(fun e -> 
+                let entity = e |> Seq.item 0
+                match entity.Sources.Count with 
+                | 1 -> Assert.Equal("http://foo.com", entity.Sources |> Seq.item 0 |> fun i -> i.Uri)
+                | 2 -> Assert.Equal("https://bar.com", entity.Sources |> Seq.item 1 |> fun i -> i.Uri)
                 | _ -> failwith "Index out of range!"
             ) |> ignore
         
