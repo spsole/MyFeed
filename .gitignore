@@ -37,6 +37,8 @@ myFeed.Views.Uwp/Assets
 myFeed.Views.Uwp/obj
 myFeed.Views.Uwp/bin
 myFeed.Views.Uwp/BundleArtifacts
+myFeed.Views.Uwp.Notifications/obj
+myFeed.Views.Uwp.Notifications/bin
 
 # OSX
 # =========================

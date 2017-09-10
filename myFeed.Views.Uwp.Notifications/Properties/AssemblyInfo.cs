@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("myFeed.Views.Uwp")]
+[assembly: AssemblyTitle("myFeed.Views.Uwp.Notifications")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("myFeed.Views.Uwp")]
-[assembly: AssemblyCopyright("Copyright © Artjom Graf 2017")]
+[assembly: AssemblyProduct("myFeed.Views.Uwp.Notifications")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
