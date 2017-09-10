@@ -27,7 +27,8 @@
             <RowDefinition Height="48"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesViewTitle}"/>
+        <controls:TitleBlock Count="{Binding Items.Count, Mode=OneWay}" Text="{Binding 
+            Converter={StaticResource Locale}, ConverterParameter=SourcesViewTitle}"/>
         <controls:TransparentButton Grid.Row="0" HorizontalAlignment="Right" Symbol="Zoom">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="Click">
@@ -38,7 +39,6 @@
                 <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Find}"/>
             </ToolTipService.ToolTip>
         </controls:TransparentButton>
-        <controls:LoadingScreen Canvas.ZIndex="1" Grid.Row="1" IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
         <ListView x:Name="SourcesListView" Grid.Row="1" AllowDrop="True" Padding="0 6 0 54" 
             IsItemClickEnabled="True" SelectionMode="None" CanReorderItems="False"
             ItemsSource="{Binding Items}" ShowsScrollingPlaceholders="False">
@@ -224,5 +224,6 @@
                 </interactivity:Interaction.Behaviors>
             </AppBarButton>
         </CommandBar>
+        <controls:LoadingScreen Grid.Row="1" IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
     </Grid>
 </Page>

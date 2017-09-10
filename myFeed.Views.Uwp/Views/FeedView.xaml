@@ -49,10 +49,13 @@
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <controls:TitleBlock Grid.Row="0" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedViewTitle}"/>
-            <controls:TransparentButton HorizontalAlignment="Right" Grid.Row="0" Symbol="Sync" Command="{Binding Load}">
+            <controls:TitleBlock Text="{Binding Converter={StaticResource 
+                Locale}, ConverterParameter=FeedViewTitle}"/>
+            <controls:TransparentButton HorizontalAlignment="Right" 
+                Grid.Row="0" Symbol="Sync" Command="{Binding Load}">
                 <ToolTipService.ToolTip>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}" />
+                    <TextBlock Text="{Binding Converter={StaticResource 
+                        Locale}, ConverterParameter=Refresh}" />
                 </ToolTipService.ToolTip>
             </controls:TransparentButton>
             <Grid Grid.Row="1" Height="48" VerticalAlignment="Top" Background="{

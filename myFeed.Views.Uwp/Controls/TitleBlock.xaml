@@ -25,9 +25,8 @@
         <StackPanel Orientation="Horizontal" Padding="60 14 0 0" Canvas.ZIndex="1">
             <TextBlock Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                 FontSize="15" FontWeight="Bold" Text="{Binding ElementName=TitleControl, Path=Text}"/>
-            <TextBlock Text="{Binding ElementName=TitleControl, Path=Count}" 
-                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                FontSize="15" FontWeight="SemiBold" Margin="6 0 0 0" />
+            <TextBlock Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                x:Name="CountBlock" FontSize="15" FontWeight="SemiBold" Margin="6 0 0 0" />
         </StackPanel>
     </Grid>
 </UserControl>

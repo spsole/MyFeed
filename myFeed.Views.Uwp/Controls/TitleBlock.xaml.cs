@@ -14,12 +14,12 @@ namespace myFeed.Views.Uwp.Controls {
         }
 
         public static readonly DependencyProperty CountProperty =
-            DependencyProperty.Register(nameof(Count), typeof(string),
-                typeof(TitleBlock), new PropertyMetadata(null, (o, args) =>
-                    ((TitleBlock)o).Count = (string)args.NewValue));
+            DependencyProperty.Register(nameof(Count), typeof(int),
+                typeof(TitleBlock), new PropertyMetadata(null, (o, args) => 
+                    ((TitleBlock)o).CountBlock.Text = args.NewValue.ToString()));
 
-        public string Count {
-            get => (string)GetValue(CountProperty);
+        public int Count {
+            get => (int)GetValue(CountProperty);
             set => SetValue(CountProperty, value);
         }
     }
