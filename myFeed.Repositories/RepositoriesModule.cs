@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Entities;
 using myFeed.Repositories.Implementations;
 
 namespace myFeed.Repositories
