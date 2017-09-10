@@ -14,7 +14,7 @@ namespace myFeed.ViewModels.Implementations
         /// Instantiates ViewModel.
         /// </summary>
         public FaveViewModel(
-            IPlatformProvider platformProvider,
+            IPlatformService platformService,
             IArticlesRepository articlesRepository)
         {
             Items = new ObservableCollection<FeedItemViewModel>();
@@ -29,7 +29,7 @@ namespace myFeed.ViewModels.Implementations
                 {
                     if (!article.Fave) continue;
                     var viewModel = new FeedItemViewModel(article,
-                        platformProvider, articlesRepository);
+                        platformService, articlesRepository);
                     Items.Add(viewModel);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
                     {

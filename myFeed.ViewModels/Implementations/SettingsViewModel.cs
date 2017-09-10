@@ -16,7 +16,7 @@ namespace myFeed.ViewModels.Implementations
         /// </summary>
         public SettingsViewModel(
             IOpmlService opmlService,
-            IPlatformProvider platformProvider,
+            IPlatformService platformService,
             IConfigurationRepository configRepository)
         {
             Theme = new ObservableProperty<string>();
@@ -27,7 +27,7 @@ namespace myFeed.ViewModels.Implementations
 
             ImportOpml = new ActionCommand(opmlService.ImportOpmlFeeds);
             ExportOpml = new ActionCommand(opmlService.ExportOpmlFeeds);
-            OpenCredits = new ActionCommand(() => platformProvider.LaunchUri(new Uri("https://worldbeater.github.io")));
+            OpenCredits = new ActionCommand(() => platformService.LaunchUri(new Uri("https://worldbeater.github.io")));
             Load = new ActionCommand(async () =>
             {
                 // Resolve all default settings.
@@ -40,9 +40,9 @@ namespace myFeed.ViewModels.Implementations
                 // Subscribe on property change.
                 Subscribe(FontSize, "FontSize");
                 Subscribe(LoadImages, "LoadImages");
-                Subscribe(NotifyPeriod, "NotifyPeriod", platformProvider.RegisterBackgroundTask);
-                Subscribe(NeedBanners, "NeedBanners", platformProvider.RegisterBanners);
-                Subscribe(Theme, "Theme", platformProvider.RegisterTheme);
+                Subscribe(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask);
+                Subscribe(NeedBanners, "NeedBanners", platformService.RegisterBanners);
+                Subscribe(Theme, "Theme", platformService.RegisterTheme);
             });
 
             void Subscribe<T>(ObservableProperty<T> property, string key, Func<T, Task> updater = null)

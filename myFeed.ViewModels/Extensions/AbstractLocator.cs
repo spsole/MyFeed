@@ -13,7 +13,7 @@ namespace myFeed.ViewModels.Extensions
     /// </summary>
     public abstract class AbstractLocator<TTranslationsService, TPlatformProvider> : IDisposable
         where TTranslationsService : ITranslationsService
-        where TPlatformProvider : IPlatformProvider
+        where TPlatformProvider : IPlatformService
     {
         private readonly IContainer _lifetimeScope;
 
@@ -25,7 +25,7 @@ namespace myFeed.ViewModels.Extensions
             var builder = new ContainerBuilder();
             builder.RegisterModule<ViewModelsModule>();
             builder.RegisterType<TTranslationsService>().As<ITranslationsService>();
-            builder.RegisterType<TPlatformProvider>().As<IPlatformProvider>();
+            builder.RegisterType<TPlatformProvider>().As<IPlatformService>();
             _lifetimeScope = builder.Build();
         }
 

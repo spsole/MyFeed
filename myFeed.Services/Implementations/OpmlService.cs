@@ -14,15 +14,15 @@ namespace myFeed.Services.Implementations
         private readonly ISerializationService _serializationService;
         private readonly ITranslationsService _translationsService;
         private readonly ISourcesRepository _sourcesRepository;
-        private readonly IPlatformProvider _platformProvider;
+        private readonly IPlatformService _platformProvider;
 
         public OpmlService(
-            IPlatformProvider platformProvider,
+            IPlatformService platformService,
             ITranslationsService translationsService,
             ISerializationService serializationService,
             ISourcesRepository sourcesRepository)
         {
-            _platformProvider = platformProvider;
+            _platformProvider = platformService;
             _sourcesRepository = sourcesRepository;
             _translationsService = translationsService;
             _serializationService = serializationService;

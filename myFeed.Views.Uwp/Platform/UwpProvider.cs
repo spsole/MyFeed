@@ -14,7 +14,7 @@ using myFeed.Views.Uwp.Controls;
 
 namespace myFeed.Views.Uwp.Platform
 {
-    public sealed class UwpProvider : IPlatformProvider
+    public sealed class UwpProvider : IPlatformService
     {
         public async Task LaunchUri(Uri uri) => await Launcher.LaunchUriAsync(uri);
 

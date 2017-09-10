@@ -15,7 +15,7 @@ namespace myFeed.ViewModels.Implementations
         /// </summary>
         public FeedViewModel(
             IFeedService feedService,
-            IPlatformProvider platformProvider,
+            IPlatformService platformService,
             ISourcesRepository sourcesRepository,
             IArticlesRepository articlesRepository)
         {
@@ -29,7 +29,7 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var source in sources)
                 {
                     var viewModel = new FeedCategoryViewModel(source,
-                        feedService, platformProvider, articlesRepository);
+                        feedService, platformService, articlesRepository);
                     Items.Add(viewModel);
                 }
                 IsLoading.Value = false;

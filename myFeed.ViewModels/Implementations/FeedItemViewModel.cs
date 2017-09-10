@@ -16,7 +16,7 @@ namespace myFeed.ViewModels.Implementations
         /// </summary>
         public FeedItemViewModel(
             ArticleEntity entity,
-            IPlatformProvider platformProvider,
+            IPlatformService platformService,
             IArticlesRepository articlesRepository)
         {
             PublishedDate = new ReadOnlyProperty<DateTime>(entity.PublishedDate);
@@ -26,12 +26,12 @@ namespace myFeed.ViewModels.Implementations
             Title = new ReadOnlyProperty<string>(entity.Title);
             IsRead = new ObservableProperty<bool>(entity.Read);
 
-            Share = new ActionCommand(() => platformProvider.Share($"{entity.Title}\r\n{entity.Uri}"));
-            CopyLink = new ActionCommand(() => platformProvider.CopyTextToClipboard(entity.Uri));
+            Share = new ActionCommand(() => platformService.Share($"{entity.Title}\r\n{entity.Uri}"));
+            CopyLink = new ActionCommand(() => platformService.CopyTextToClipboard(entity.Uri));
             LaunchUri = new ActionCommand(async () =>
             {
                 if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;
-                await platformProvider.LaunchUri(new Uri(entity.Uri));
+                await platformService.LaunchUri(new Uri(entity.Uri));
             });
             MarkRead = new ActionCommand(async () =>
             {

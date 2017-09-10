@@ -17,7 +17,7 @@ namespace myFeed.ViewModels.Implementations
         /// </summary>
         public SearchItemViewModel(
             SearchItemEntity entity,
-            IPlatformProvider platformProvider,
+            IPlatformService platformService,
             ISourcesRepository sourcesRepository)
         {
             Url = new ReadOnlyProperty<string>(entity.Website);
@@ -26,17 +26,17 @@ namespace myFeed.ViewModels.Implementations
             Description = new ReadOnlyProperty<string>(entity.Description);
             FeedUrl = new ReadOnlyProperty<string>(entity.FeedId?.Substring(5));
 
-            CopyLink = new ActionCommand(() => platformProvider.CopyTextToClipboard(entity.Website));
+            CopyLink = new ActionCommand(() => platformService.CopyTextToClipboard(entity.Website));
             OpenInEdge = new ActionCommand(async () =>
             {
                 if (Uri.IsWellFormedUriString(entity.Website, UriKind.Absolute))
-                    await platformProvider.LaunchUri(new Uri(entity.Website));
+                    await platformService.LaunchUri(new Uri(entity.Website));
             });
             AddToSources = new ActionCommand(async () =>
             {
                 if (!Uri.IsWellFormedUriString(FeedUrl.Value, UriKind.Absolute)) return;
                 var categories = await sourcesRepository.GetAllAsync();
-                var response = await platformProvider.ShowDialogForSelection(categories);
+                var response = await platformService.ShowDialogForSelection(categories);
                 if (response is SourceCategoryEntity sourceCategoryEntity)
                 {
                     sourceCategoryEntity.Sources.Add(new SourceEntity

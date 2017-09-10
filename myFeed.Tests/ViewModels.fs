@@ -31,7 +31,7 @@ module ViewModelsModule =
     /// Registers default empty mocks.
     let registerDefaults (builder: ContainerBuilder) =
         builder
-        |> tee registerMockInstance<IPlatformProvider>
+        |> tee registerMockInstance<IPlatformService>
         |> tee registerMockInstance<ISourcesRepository>
         |> tee registerMockInstance<ITranslationsService>
         |> tee registerMockInstance<ISearchService>
@@ -107,7 +107,7 @@ module SearchViewModelsTests =
                 Title="Foo", Sources=List<SourceEntity>())
             
         let fakeDialogService =
-            let mockService = Mock<IPlatformProvider>()
+            let mockService = Mock<IPlatformService>()
             mockService
                 .Setup(fun i -> i.ShowDialogForSelection(It.IsAny<seq<obj>>()))
                 .Returns(fakeEntity :> obj |> Task.FromResult)
@@ -119,7 +119,7 @@ module SearchViewModelsTests =
             |> tee registerDefaults
             |> tee registerAsSelf<SearchItemViewModel>
             |> tee (registerInstanceAs<SearchItemEntity> searchEntity)
-            |> tee (registerInstanceAs<IPlatformProvider> fakeDialogService)
+            |> tee (registerInstanceAs<IPlatformService> fakeDialogService)
             |> buildScope
 
         let viewModel = resolve<SearchItemViewModel> scope
@@ -139,7 +139,7 @@ module SettingsViewModelsTests =
     let registerSettingsDefaults (builder: ContainerBuilder) =
         builder
         |> tee registerMockInstance<IConfigurationRepository>
-        |> tee registerMockInstance<IPlatformProvider>
+        |> tee registerMockInstance<IPlatformService>
         |> tee registerMockInstance<IOpmlService>
         |> tee registerAsSelf<SettingsViewModel>
         |> ignore
@@ -191,7 +191,7 @@ module SettingsViewModelsTests =
         let mutable invoked = false
 
         let fakeService =
-            let mockService = Mock<IPlatformProvider>()
+            let mockService = Mock<IPlatformService>()
             mockService
                 .Setup(fun i -> i.RegisterTheme("Foo"))
                 .Callback(fun i -> invoked <- true)
@@ -202,7 +202,7 @@ module SettingsViewModelsTests =
             ContainerBuilder()
             |> tee registerSettingsDefaults
             |> tee (registerInstanceAs<IConfigurationRepository> fakeRepository)
-            |> tee (registerInstanceAs<IPlatformProvider> fakeService)
+            |> tee (registerInstanceAs<IPlatformService> fakeService)
             |> buildScope
 
         let viewModel = resolve<SettingsViewModel> scope
@@ -497,7 +497,7 @@ module SourcesViewModelsTests =
             ContainerBuilder()
             |> tee registerModule<ViewModelsModule>
             |> tee registerMockInstance<ITranslationsService>
-            |> tee registerMockInstance<IPlatformProvider>
+            |> tee registerMockInstance<IPlatformService>
             |> tee registerAsSelf<SourcesViewModel>
             |> tee registerAsSelf<SourcesCategoryViewModel>
             |> tee (registerInstanceAs<SourceCategoryEntity> <| category)

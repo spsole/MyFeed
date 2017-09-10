@@ -20,7 +20,7 @@ namespace myFeed.ViewModels.Implementations
             SourcesViewModel parentViewModel,
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService,
-            IPlatformProvider platformProvider)
+            IPlatformService platformService)
         {
             Title = new ObservableProperty<string>(entity.Title);
             SourceUri = new ObservableProperty<string>(string.Empty);
@@ -29,7 +29,7 @@ namespace myFeed.ViewModels.Implementations
 
             RenameCategory = new ActionCommand(async () =>
             {
-                var name = await platformProvider.ShowDialogForResults(
+                var name = await platformService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
                     translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
@@ -38,7 +38,7 @@ namespace myFeed.ViewModels.Implementations
             });
             RemoveCategory = new ActionCommand(async () =>
             {
-                var shouldDelete = await platformProvider.ShowDialogForConfirmation(
+                var shouldDelete = await platformService.ShowDialogForConfirmation(
                     translationsService.Resolve("DeleteCategory"),
                     translationsService.Resolve("DeleteElement"));
                 if (!shouldDelete) return;
@@ -55,7 +55,7 @@ namespace myFeed.ViewModels.Implementations
                 var model = new SourceEntity {Uri = sourceUri, Notify = true};
                 await sourcesRepository.AddSourceAsync(entity, model);
                 var viewModel = new SourcesItemViewModel(model,
-                    this, sourcesRepository, platformProvider);
+                    this, sourcesRepository, platformService);
                 Items.Add(viewModel);
             });
             Load = new ActionCommand(() =>
@@ -64,7 +64,7 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var source in entity.Sources)
                 {
                     var viewModel = new SourcesItemViewModel(source,
-                        this, sourcesRepository, platformProvider);
+                        this, sourcesRepository, platformService);
                     Items.Add(viewModel);
                 }
             });

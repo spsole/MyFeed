@@ -8,7 +8,7 @@ namespace myFeed.Services.Abstractions
     /// <summary>
     /// Provides platform-specific behavior.
     /// </summary>
-    public interface IPlatformProvider
+    public interface IPlatformService
     {
         /// <summary>
         /// Shows share UI to share provided string.

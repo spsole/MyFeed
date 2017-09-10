@@ -16,7 +16,7 @@ namespace myFeed.ViewModels.Implementations
         /// Instantiates new ViewModel.
         /// </summary>
         public SourcesViewModel(
-            IPlatformProvider platformProvider,
+            IPlatformService platformService,
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService)
         {
@@ -38,7 +38,7 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var category in categories)
                 {
                     var viewModel = new SourcesCategoryViewModel(category, this,
-                        sourcesRepository, translationsService, platformProvider);
+                        sourcesRepository, translationsService, platformService);
                     Items.Add(viewModel);
                 }
                 IsEmpty.Value = Items.Count == 0;
@@ -46,14 +46,14 @@ namespace myFeed.ViewModels.Implementations
             });
             AddCategory = new ActionCommand(async () =>
             {
-                var name = await platformProvider.ShowDialogForResults(
+                var name = await platformService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
                     translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new SourceCategoryEntity {Title = name};
                 await sourcesRepository.InsertAsync(category);
                 var viewModel = new SourcesCategoryViewModel(category, this,
-                    sourcesRepository, translationsService, platformProvider);
+                    sourcesRepository, translationsService, platformService);
                 Items.Add(viewModel);
             });
         }

@@ -38,7 +38,7 @@ module RegistrationsTestsModule =
     let ``all default services should be registered``() = 
         ContainerBuilder()
         |> tee registerModule<ServicesModule> 
-        |> tee registerMockInstance<IPlatformProvider>
+        |> tee registerMockInstance<IPlatformService>
         |> tee registerMockInstance<ITranslationsService>
         |> buildScope
         |> tee assertResolve<ISourcesRepository>
@@ -54,7 +54,7 @@ module RegistrationsTestsModule =
     let ``all default viewmodels should be registered``() =
         ContainerBuilder()
         |> tee registerModule<ViewModelsModule>
-        |> tee registerMockInstance<IPlatformProvider>
+        |> tee registerMockInstance<IPlatformService>
         |> tee registerMockInstance<ITranslationsService>
         |> buildScope
         |> tee assertResolve<FaveViewModel>

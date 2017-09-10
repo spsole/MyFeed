@@ -16,7 +16,7 @@ namespace myFeed.ViewModels.Implementations
         /// </summary>
         public SearchViewModel(
             ISourcesRepository sourcesRepository,
-            IPlatformProvider platformProvider,
+            IPlatformService platformService,
             ISearchService searchService)
         {
             Items = new ObservableCollection<SearchItemViewModel>();
@@ -32,7 +32,7 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var result in searchResults.Results)
                 {
                     var viewModel = new SearchItemViewModel(
-                        result, platformProvider, sourcesRepository);
+                        result, platformService, sourcesRepository);
                     Items.Add(viewModel);
                 }
                 await Task.Delay(500);

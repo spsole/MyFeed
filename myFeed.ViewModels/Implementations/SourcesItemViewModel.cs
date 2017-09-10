@@ -18,7 +18,7 @@ namespace myFeed.ViewModels.Implementations
             SourceEntity entity,
             SourcesCategoryViewModel parentViewModel,
             ISourcesRepository sourcesRepository,
-            IPlatformProvider platformProvider)
+            IPlatformService platformService)
         {
             Url = new ReadOnlyProperty<string>(entity.Uri);
             Name = new ReadOnlyProperty<string>(new Uri(entity.Uri).Host);
@@ -29,7 +29,7 @@ namespace myFeed.ViewModels.Implementations
                 await sourcesRepository.UpdateAsync(entity.Category);
             };
 
-            CopyLink = new ActionCommand(() => platformProvider.CopyTextToClipboard(entity.Uri));
+            CopyLink = new ActionCommand(() => platformService.CopyTextToClipboard(entity.Uri));
             DeleteSource = new ActionCommand(async () =>
             {
                 await sourcesRepository.RemoveSourceAsync(entity.Category, entity);
@@ -40,7 +40,7 @@ namespace myFeed.ViewModels.Implementations
                 if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;
                 var uri = new Uri(entity.Uri);
                 var plainUri = new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host));
-                await platformProvider.LaunchUri(plainUri);
+                await platformService.LaunchUri(plainUri);
             });
         }
 

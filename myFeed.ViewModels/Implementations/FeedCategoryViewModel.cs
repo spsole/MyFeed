@@ -17,7 +17,7 @@ namespace myFeed.ViewModels.Implementations
         public FeedCategoryViewModel(
             SourceCategoryEntity entity,
             IFeedService feedService,
-            IPlatformProvider platformProvider,
+            IPlatformService platformService,
             IArticlesRepository articlesRepository)
         {
             Items = new ObservableCollection<FeedItemViewModel>();
@@ -33,7 +33,7 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var article in orderedArticles)
                 {
                     var viewModel = new FeedItemViewModel(
-                        article, platformProvider, articlesRepository);
+                        article, platformService, articlesRepository);
                     Items.Add(viewModel);
                 }
                 IsEmpty.Value = Items.Count == 0;
