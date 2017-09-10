@@ -1,7 +1,9 @@
 ﻿using Windows.UI.Xaml.Controls;
 
-namespace myFeed.Views.Uwp.Views {
-    public sealed partial class SourcesView : Page {
+namespace myFeed.Views.Uwp.Views
+{
+    public sealed partial class SourcesView : Page
+    {
         public SourcesView() => InitializeComponent();
     }
 }

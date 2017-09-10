@@ -6,11 +6,15 @@ using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace myFeed.Views.Uwp.Views {
-    public sealed partial class MenuView : Page {
-        public MenuView() {
+namespace myFeed.Views.Uwp.Views
+{
+    public sealed partial class MenuView : Page
+    {
+        public MenuView()
+        {
             var loader = new ResourceLoader();
-            DataContext = new[] {
+            DataContext = new[]
+            {
                 (Symbol.PostUpdate, loader.GetString("FeedViewMenuItem"), typeof(FeedView)),
                 (Symbol.OutlineStar, loader.GetString("FaveViewMenuItem"), typeof(FaveView)),
                 (Symbol.List, loader.GetString("SourcesViewMenuItem"), typeof(SourcesView)),
@@ -21,13 +25,17 @@ namespace myFeed.Views.Uwp.Views {
             InitializeComponent();
         }
 
-        private async void OnNavigated(object sender, NavigationEventArgs e) {
-            var items = ((IEnumerable<Tuple<Symbol, string, Type>>)DataContext).ToList();
+        private async void OnNavigated(object sender, NavigationEventArgs e)
+        {
+            var items = ((IEnumerable<Tuple<Symbol, string, Type>>) DataContext).ToList();
             var item = items.First(i => i.Item3 == NavigationFrame.SourcePageType);
             var index = items.IndexOf(item);
-            try {
+            try
+            {
                 MenuListView.SelectedIndex = index;
-            } catch (ArgumentException) {
+            }
+            catch (ArgumentException)
+            {
                 await Task.Delay(500);
                 MenuListView.SelectedIndex = index;
             }

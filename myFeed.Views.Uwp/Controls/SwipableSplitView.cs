@@ -10,8 +10,10 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Shapes;
 using Microsoft.Toolkit.Uwp.UI.Extensions;
 
-namespace myFeed.Views.Uwp.Controls {
-    public sealed class SwipeableSplitView : SplitView {
+namespace myFeed.Views.Uwp.Controls
+{
+    public sealed class SwipeableSplitView : SplitView
+    {
         private Grid _paneRoot;
         private Grid _overlayRoot;
         private Rectangle _panArea;
@@ -31,10 +33,13 @@ namespace myFeed.Views.Uwp.Controls {
 
         public SwipeableSplitView() => DefaultStyleKey = typeof(SwipeableSplitView);
 
-        private Grid PaneRoot {
+        private Grid PaneRoot
+        {
             get => _paneRoot;
-            set {
-                if (_paneRoot != null) {
+            set
+            {
+                if (_paneRoot != null)
+                {
                     _paneRoot.Loaded -= OnPaneRootLoaded;
                     _paneRoot.ManipulationStarted -= OnManipulationStarted;
                     _paneRoot.ManipulationDelta -= OnManipulationDelta;
@@ -51,10 +56,13 @@ namespace myFeed.Views.Uwp.Controls {
             }
         }
 
-        private Rectangle PanArea {
+        private Rectangle PanArea
+        {
             get => _panArea;
-            set {
-                if (_panArea != null) {
+            set
+            {
+                if (_panArea != null)
+                {
                     _panArea.ManipulationStarted -= OnManipulationStarted;
                     _panArea.ManipulationDelta -= OnManipulationDelta;
                     _panArea.ManipulationCompleted -= OnManipulationCompleted;
@@ -71,9 +79,11 @@ namespace myFeed.Views.Uwp.Controls {
             }
         }
 
-        private Rectangle DismissLayer {
+        private Rectangle DismissLayer
+        {
             get => _dismissLayer;
-            set {
+            set
+            {
                 if (_dismissLayer != null)
                     _dismissLayer.Tapped -= OnDismissLayerTapped;
 
@@ -84,9 +94,11 @@ namespace myFeed.Views.Uwp.Controls {
             }
         }
 
-        private Storyboard OpenSwipeablePaneAnimation {
+        private Storyboard OpenSwipeablePaneAnimation
+        {
             get => _openSwipeablePane;
-            set {
+            set
+            {
                 if (_openSwipeablePane != null)
                     _openSwipeablePane.Completed -= OnOpenSwipeablePaneCompleted;
 
@@ -97,9 +109,11 @@ namespace myFeed.Views.Uwp.Controls {
             }
         }
 
-        private Storyboard CloseSwipeablePaneAnimation {
+        private Storyboard CloseSwipeablePaneAnimation
+        {
             get => _closeSwipeablePane;
-            set {
+            set
+            {
                 if (_closeSwipeablePane != null)
                     _closeSwipeablePane.Completed -= OnCloseSwipeablePaneCompleted;
 
@@ -114,24 +128,27 @@ namespace myFeed.Views.Uwp.Controls {
             DependencyProperty.Register(nameof(IsSwipeablePaneOpen), typeof(bool),
                 typeof(SwipeableSplitView), new PropertyMetadata(false, OnIsSwipeablePaneOpenChanged));
 
-        public bool IsSwipeablePaneOpen {
-            get => (bool)GetValue(IsSwipeablePaneOpenProperty);
+        public bool IsSwipeablePaneOpen
+        {
+            get => (bool) GetValue(IsSwipeablePaneOpenProperty);
             set => SetValue(IsSwipeablePaneOpenProperty, value);
         }
 
-        private static void OnIsSwipeablePaneOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-            var splitView = (SwipeableSplitView)d;
-            switch (splitView.DisplayMode) {
+        private static void OnIsSwipeablePaneOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var splitView = (SwipeableSplitView) d;
+            switch (splitView.DisplayMode)
+            {
                 case SplitViewDisplayMode.Inline:
                 case SplitViewDisplayMode.CompactOverlay:
                 case SplitViewDisplayMode.CompactInline:
-                    splitView.IsPaneOpen = (bool)e.NewValue;
+                    splitView.IsPaneOpen = (bool) e.NewValue;
                     break;
 
                 case SplitViewDisplayMode.Overlay:
                     if (splitView.OpenSwipeablePaneAnimation == null ||
                         splitView.CloseSwipeablePaneAnimation == null) return;
-                    if ((bool)e.NewValue)
+                    if ((bool) e.NewValue)
                         splitView.OpenSwipeablePane();
                     else
                         splitView.CloseSwipeablePane();
@@ -143,8 +160,9 @@ namespace myFeed.Views.Uwp.Controls {
             DependencyProperty.Register(nameof(PanAreaInitialTranslateX), typeof(double),
                 typeof(SwipeableSplitView), new PropertyMetadata(0d));
 
-        public double PanAreaInitialTranslateX {
-            get => (double)GetValue(PanAreaInitialTranslateXProperty);
+        public double PanAreaInitialTranslateX
+        {
+            get => (double) GetValue(PanAreaInitialTranslateXProperty);
             set => SetValue(PanAreaInitialTranslateXProperty, value);
         }
 
@@ -152,8 +170,9 @@ namespace myFeed.Views.Uwp.Controls {
             DependencyProperty.Register(nameof(PanAreaThreshold), typeof(double),
                 typeof(SwipeableSplitView), new PropertyMetadata(18d));
 
-        public double PanAreaThreshold {
-            get => (double)GetValue(PanAreaThresholdProperty);
+        public double PanAreaThreshold
+        {
+            get => (double) GetValue(PanAreaThresholdProperty);
             set => SetValue(PanAreaThresholdProperty, value);
         }
 
@@ -161,12 +180,14 @@ namespace myFeed.Views.Uwp.Controls {
             DependencyProperty.Register(nameof(IsPanSelectorEnabled), typeof(bool),
                 typeof(SwipeableSplitView), new PropertyMetadata(false));
 
-        public bool IsPanSelectorEnabled {
-            get => (bool)GetValue(IsPanSelectorEnabledProperty);
+        public bool IsPanSelectorEnabled
+        {
+            get => (bool) GetValue(IsPanSelectorEnabledProperty);
             set => SetValue(IsPanSelectorEnabledProperty, value);
         }
 
-        protected override void OnApplyTemplate() {
+        protected override void OnApplyTemplate()
+        {
             base.OnApplyTemplate();
 
             PaneRoot = GetTemplateChild<Grid>("PaneRoot");
@@ -183,8 +204,10 @@ namespace myFeed.Views.Uwp.Controls {
             RegisterPropertyChangedCallback(DisplayModeProperty, OnDisplayModeChanged);
         }
 
-        private void OnDisplayModeChanged(DependencyObject sender, DependencyProperty dp) {
-            switch (DisplayMode) {
+        private void OnDisplayModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            switch (DisplayMode)
+            {
                 case SplitViewDisplayMode.Inline:
                 case SplitViewDisplayMode.CompactOverlay:
                 case SplitViewDisplayMode.CompactInline:
@@ -199,25 +222,28 @@ namespace myFeed.Views.Uwp.Controls {
             }
 
             if (_paneRoot.RenderTransform != null)
-                ((CompositeTransform)_paneRoot.RenderTransform).TranslateX = PanAreaInitialTranslateX;
+                ((CompositeTransform) _paneRoot.RenderTransform).TranslateX = PanAreaInitialTranslateX;
         }
 
-        private void OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e) {
-            _panAreaTransform = (CompositeTransform)PanArea.RenderTransform;
-            _paneRootTransform = (CompositeTransform)PaneRoot.RenderTransform;
+        private void OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            _panAreaTransform = (CompositeTransform) PanArea.RenderTransform;
+            _paneRootTransform = (CompositeTransform) PaneRoot.RenderTransform;
         }
 
-        private void OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e) {
+        private void OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
             var x = _panAreaTransform.TranslateX + e.Delta.Translation.X;
             if (x < PanAreaInitialTranslateX || x > 0) return;
 
             _paneRootTransform.TranslateX = _panAreaTransform.TranslateX = x;
 
-            if (sender == _paneRoot && IsPanSelectorEnabled) {
+            if (sender == _paneRoot && IsPanSelectorEnabled)
+            {
                 foreach (var item in _menuItems)
                     VisualStateManager.GoToState(item, "Normal", true);
 
-                _toBeSelectedIndex = (int)Math.Round(
+                _toBeSelectedIndex = (int) Math.Round(
                     (e.Cumulative.Translation.Y + _startingDistance) / _distancePerItem,
                     MidpointRounding.AwayFromZero);
 
@@ -231,24 +257,36 @@ namespace myFeed.Views.Uwp.Controls {
             }
         }
 
-        private async void OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e) {
+        private async void OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
             var x = e.Velocities.Linear.X;
-            if (x <= -0.1) {
+            if (x <= -0.1)
+            {
                 CloseSwipeablePane();
-            } else if (x > -0.1 && x < 0.1) {
-                if (Math.Abs(_panAreaTransform.TranslateX) > Math.Abs(PanAreaInitialTranslateX) / 2) {
+            }
+            else if (x > -0.1 && x < 0.1)
+            {
+                if (Math.Abs(_panAreaTransform.TranslateX) > Math.Abs(PanAreaInitialTranslateX) / 2)
+                {
                     CloseSwipeablePane();
-                } else {
+                }
+                else
+                {
                     OpenSwipeablePane();
                 }
-            } else {
+            }
+            else
+            {
                 OpenSwipeablePane();
             }
 
-            if (IsPanSelectorEnabled) {
-                if (sender == _paneRoot) {
+            if (IsPanSelectorEnabled)
+            {
+                if (sender == _paneRoot)
+                {
                     if (Math.Abs(e.Velocities.Linear.Y) >= 2 ||
-                        Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y)) {
+                        Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y))
+                    {
                         foreach (var item in _menuItems)
                             VisualStateManager.GoToState(item, "Normal", true);
 
@@ -263,21 +301,26 @@ namespace myFeed.Views.Uwp.Controls {
 
                     await Task.Delay(250);
                     _menuHost.SelectedIndex = _toBeSelectedIndex;
-                } else {
+                }
+                else
+                {
                     _startingDistance = _distancePerItem * _menuHost.SelectedIndex;
                 }
             }
         }
 
-        private void OnPaneRootLoaded(object sender, RoutedEventArgs e) {
+        private void OnPaneRootLoaded(object sender, RoutedEventArgs e)
+        {
             if (!IsPanSelectorEnabled) return;
 
-            var border = (Border)PaneRoot.Children[0];
+            var border = (Border) PaneRoot.Children[0];
             _menuHost = border.FindDescendant<Selector>();
 
-            if (_menuHost.Items != null) {
-                foreach (var item in _menuHost.Items) {
-                    var container = (SelectorItem)_menuHost.ContainerFromItem(item);
+            if (_menuHost.Items != null)
+            {
+                foreach (var item in _menuHost.Items)
+                {
+                    var container = (SelectorItem) _menuHost.ContainerFromItem(item);
                     _menuItems.Add(container);
                 }
             }
@@ -286,12 +329,14 @@ namespace myFeed.Views.Uwp.Controls {
             _startingDistance = _distancePerItem * _menuHost.SelectedIndex;
         }
 
-        private void OpenSwipeablePane() {
+        private void OpenSwipeablePane()
+        {
             if (IsSwipeablePaneOpen) OpenSwipeablePaneAnimation.Begin();
             else IsSwipeablePaneOpen = true;
         }
 
-        private void CloseSwipeablePane() {
+        private void CloseSwipeablePane()
+        {
             if (!IsSwipeablePaneOpen) CloseSwipeablePaneAnimation.Begin();
             else IsSwipeablePaneOpen = false;
         }
@@ -302,8 +347,8 @@ namespace myFeed.Views.Uwp.Controls {
 
         private void OnCloseSwipeablePaneCompleted(object sender, object e) => DismissLayer.IsHitTestVisible = false;
 
-        private T GetTemplateChild<T>(string name) where T : DependencyObject => (T)GetTemplateChild(name);
+        private T GetTemplateChild<T>(string name) where T : DependencyObject => (T) GetTemplateChild(name);
 
-        private static Storyboard GetStoryboard(FrameworkElement e, string name) => (Storyboard)e.Resources[name];
+        private static Storyboard GetStoryboard(FrameworkElement e, string name) => (Storyboard) e.Resources[name];
     }
 }

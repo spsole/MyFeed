@@ -5,14 +5,18 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Views.Uwp.Views;
 
-namespace myFeed.Views.Uwp {
-    public sealed partial class App : Application {
-        public App() {
+namespace myFeed.Views.Uwp
+{
+    public sealed partial class App : Application
+    {
+        public App()
+        {
             UnhandledException += (_, args) => Debug.WriteLine(args.Message);
             InitializeComponent();
         }
 
-        protected override async void OnLaunched(LaunchActivatedEventArgs e) {
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        {
             var rootFrame = await CreateRootFrameAsync();
             if (rootFrame.Content == null) rootFrame.Navigate(typeof(MenuView));
 
@@ -45,7 +49,8 @@ namespace myFeed.Views.Uwp {
             */
         }
 
-        protected override async void OnActivated(IActivatedEventArgs args) {
+        protected override async void OnActivated(IActivatedEventArgs args)
+        {
             /*
             if (args.Kind != ActivationKind.ToastNotification) return;
             var arraySplit = ((ToastNotificationActivatedEventArgs)args).Argument.Split(';');
@@ -78,7 +83,8 @@ namespace myFeed.Views.Uwp {
             */
         }
 
-        private static Task<Frame> CreateRootFrameAsync() {
+        private static Task<Frame> CreateRootFrameAsync()
+        {
             if (Window.Current.Content is Frame rootFrame) return Task.FromResult(rootFrame);
             rootFrame = new Frame();
             Window.Current.Content = rootFrame;
@@ -106,7 +112,8 @@ namespace myFeed.Views.Uwp {
             */
         }
 
-        private static async Task ProcessFilesAsync() {
+        private static async Task ProcessFilesAsync()
+        {
             /*
             // Get dummy files.
             const CreationCollisionOption op = CreationCollisionOption.OpenIfExists;
@@ -132,7 +139,6 @@ namespace myFeed.Views.Uwp {
                 await FileIO.WriteTextAsync(readFile, string.Join(";", readSplit));
             }
             */
-
         }
     }
 }
