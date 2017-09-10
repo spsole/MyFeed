@@ -208,7 +208,7 @@ module ArticlesTableTests =
 
         fun (i: ArticleEntity) -> i.Content.Length = 3
         |> context.Articles.AllAsync
-        |> await     
+        |> await
         |> Assert.True
         clear context set    
 

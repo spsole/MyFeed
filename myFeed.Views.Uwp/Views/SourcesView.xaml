@@ -153,7 +153,7 @@
                                                     Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                                             </StackPanel>
                                             <StackPanel Grid.Column="1" Margin="9 0 0 0" Width="100">
-                                                <ToggleSwitch IsOn="{Binding Notify.Value, Mode=TwoWay}" />
+                                                <ToggleSwitch IsOn="{Binding Notify.Value, Mode=TwoWay}"/>
                                                 <TextBlock FontSize="12" Margin="0 -3 0 0" Text="{Binding 
                                                     Converter={StaticResource Locale}, 
                                                     ConverterParameter=Notifications}"/>
@@ -196,8 +196,40 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <CommandBar VerticalAlignment="Bottom" Grid.Row="1" Background="{
-            ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Visibility="{Binding Items.Count, Converter={StaticResource FalsyToVisible}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -50 0 0">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE71B;" TextAlignment="Center" 
+                    FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                <TextBlock TextAlignment="Center" FontSize="24" FontWeight="SemiLight" TextWrapping="Wrap" 
+                    Margin="12 6" Text="{Binding Converter={StaticResource Locale}, 
+                    ConverterParameter=SourcesWelcomeTitle}"/>
+                <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="17" Text="{Binding 
+                    Converter={StaticResource Locale}, ConverterParameter=SourcesWelcome}"
+                    Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                <Button HorizontalAlignment="Center" Margin="12" Background="{ThemeResource 
+                    SystemControlBackgroundAccentBrush}" Command="{Binding AddCategory}">
+                    <Button.Content>
+                        <TextBlock Foreground="White">
+                            <Run FontSize="12" FontFamily="Segoe MDL2 Assets" Text="&#xE8F4; "/>
+                            <Run FontSize="15" Text="{Binding 
+                                Converter={StaticResource Locale}, 
+                                ConverterParameter=AddCategory}"/>
+                        </TextBlock>
+                    </Button.Content>
+                </Button>
+                <Button HorizontalAlignment="Center" HorizontalContentAlignment="Center"
+                    Style="{ThemeResource TextBlockButtonStyle}" FontSize="13" Content="{Binding 
+                    Converter={StaticResource Locale}, ConverterParameter=AddFromSearch}">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Click">
+                            <behaviors:NavigateAction TargetPage="views:SearchView"/>
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>    
+                </Button>
+            </StackPanel>
+        </Grid>
+        <CommandBar VerticalAlignment="Bottom" Grid.Row="1" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
             <AppBarButton Icon="Add" Command="{Binding AddCategory}" Label="{Binding Converter={StaticResource Locale}, 
                 ConverterParameter=Add}" Visibility="{Binding ElementName=SourcesListView, Path=CanReorderItems, 
                 Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>

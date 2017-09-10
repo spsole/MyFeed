@@ -73,7 +73,8 @@ module ArticlesRepositoryTests =
                         Title="Bar")))
         repository.InsertAsync article |> awaitTask
         repository.GetAllAsync() 
-        |@> Seq.item 0
+        |> await
+        |> Seq.item 0
         |> fun item -> 
             Assert.Equal("Foo", item.Title)
             Assert.Equal("Bar", item.Source.Category.Title)   

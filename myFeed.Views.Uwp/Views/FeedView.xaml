@@ -11,6 +11,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
     xmlns:behaviors="using:myFeed.Views.Uwp.Behaviors"
+    xmlns:views="using:myFeed.Views.Uwp.Views"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -22,7 +23,7 @@
             </NavigationThemeTransition>
         </TransitionCollection>
     </Page.Transitions>
-    
+
     <Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="WindowStates">
@@ -79,12 +80,9 @@
                 <Pivot.ItemTemplate>
                     <DataTemplate x:DataType="implementations:FeedCategoryViewModel">
                         <Grid>
-                            <toolkit:PullToRefreshListView 
-                                ShowsScrollingPlaceholders="False" 
-                                RefreshCommand="{Binding Fetch}"
-                                ItemsSource="{Binding Items}" 
-                                IsItemClickEnabled="True" 
-                                SelectionMode="None">
+                            <toolkit:PullToRefreshListView ShowsScrollingPlaceholders="False" 
+                                RefreshCommand="{Binding Fetch}" ItemsSource="{Binding Items}" 
+                                IsItemClickEnabled="True" SelectionMode="None">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Loaded">
                                         <core:InvokeCommandAction Command="{Binding Fetch}"/>
@@ -183,18 +181,53 @@
                                     </DataTemplate>
                                 </toolkit:PullToRefreshListView.ItemTemplate>
                             </toolkit:PullToRefreshListView>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Visibility="{Binding Items.Count, Converter={StaticResource FalsyToVisible}}">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEB5E;" TextAlignment="Center"
+                                    FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                                <TextBlock TextAlignment="Center" FontWeight="SemiLight" Margin="12 6" TextWrapping="Wrap" FontSize="24" 
+                                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedNothingTitle}"/>
+                                <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="17"
+                                    Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedNothing}"/>
+                                <Button Content="{Binding Converter={StaticResource Locale}, ConverterParameter=AddChannel}"
+                                    Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                                    Foreground="White" Margin="12" HorizontalAlignment="Center">
+                                    <interactivity:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="Click">
+                                            <behaviors:NavigateAction TargetPage="views:SourcesView"/>
+                                        </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
+                                </Button>
+                            </StackPanel>
                             <controls:LoadingScreen IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
                         </Grid>
                     </DataTemplate>
                 </Pivot.ItemTemplate>
             </Pivot>
+            <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                Visibility="{Binding Items.Count, Converter={StaticResource FalsyToVisible}}">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -48 0 0">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE897;" TextAlignment="Center"
+                        FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                    <TextBlock TextAlignment="Center" FontWeight="SemiLight" Margin="12 6" TextWrapping="Wrap" FontSize="24" 
+                       Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedWelcomeTitle}"/>
+                    <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="17"
+                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                        Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedWelcome}"/>
+                    <Button Content="{Binding Converter={StaticResource Locale}, ConverterParameter=AddChannel}"
+                        Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                        Foreground="White" Margin="12" HorizontalAlignment="Center">
+                        <interactivity:Interaction.Behaviors>
+                            <core:EventTriggerBehavior EventName="Click">
+                                <behaviors:NavigateAction TargetPage="views:SourcesView"/>
+                            </core:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <controls:LoadingScreen Grid.Row="1" IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
         </Grid>
     </Grid>
 </Page>
-
-
-
-
-
-
-
+    

@@ -192,6 +192,12 @@
   <data name="AddChannel">
     <value>Добавить источник</value>
   </data>
+  <data name="AddCategory">
+    <value>Добавить категорию</value>
+  </data>
+  <data name="AddFromSearch">
+    <value>Добавить из поиска</value>
+  </data>
   <data name="OpenInBrowser">
     <value>Открыть в браузере</value>
   </data>
@@ -302,5 +308,23 @@
   </data>
   <data name="DeleteElement">
     <value>Удаление элемента</value>
+  </data>
+  <data name="FeedWelcomeTitle">
+    <value>Здесь будут отображаться ваши новости.</value>
+  </data>
+  <data name="FeedWelcome">
+    <value>Добавьте новый RSS канал!</value>
+  </data>
+  <data name="FeedNothingTitle">
+    <value>Здесь ничего нет!</value>
+  </data>
+  <data name="FeedNothing">
+    <value>Проверьте соединение с интернетом или добавьте новый источник.</value>
+  </data>
+  <data name="SourcesWelcomeTitle">
+    <value>Здесь будут храниться ваши поставщики новостей.</value>
+  </data>
+  <data name="SourcesWelcome">
+    <value>Добавьте новую категорию!</value>
   </data>
 </root>
