@@ -2,5 +2,5 @@
 
 namespace myFeed.Views.Uwp.Platform
 {
-    public class UwpLocator : AbstractLocator<UwpTranslator, UwpProvider> { }
+    public class UwpLocator : Locator<UwpTranslator, UwpProvider> { }
 }

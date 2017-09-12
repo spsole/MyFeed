@@ -5,6 +5,6 @@ namespace myFeed.Views.Uwp.Platform
 {
     public class UwpTranslator : ITranslationsService
     {
-        public string Resolve(string name) => new ResourceLoader().GetString(name);
+        public string Resolve(string name) => ResourceLoader.GetForViewIndependentUse().GetString(name);
     }
 }

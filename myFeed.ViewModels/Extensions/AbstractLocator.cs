@@ -11,7 +11,7 @@ namespace myFeed.ViewModels.Extensions
     /// application contains. Usage: "{Binding Path=., Source={StaticResource Locator}}"
     /// Remember to declare this as a singleton resource in App.xaml or similar.
     /// </summary>
-    public abstract class AbstractLocator<TTranslationsService, TPlatformProvider> : IDisposable
+    public abstract class Locator<TTranslationsService, TPlatformProvider> : IDisposable
         where TTranslationsService : ITranslationsService
         where TPlatformProvider : IPlatformService
     {
@@ -20,7 +20,7 @@ namespace myFeed.ViewModels.Extensions
         /// <summary>
         /// Initializes new ViewModels abstract locator.
         /// </summary>
-        protected AbstractLocator()
+        protected Locator()
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule<ViewModelsModule>();
