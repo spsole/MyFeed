@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:platform="using:myFeed.Views.Uwp.Platform"
-    xmlns:converters="using:myFeed.Views.Uwp.Converters">
+    xmlns:extensions="using:myFeed.Views.Uwp.Extensions">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -13,12 +13,12 @@
                 <ResourceDictionary Source="Controls/Expander.xaml" />
                 <ResourceDictionary>
                     <platform:UwpLocator x:Key="Locator"/>
-                    <converters:LocaleConverter x:Key="Locale"/>
-                    <converters:NegateBoolConverter x:Key="NegateBool"/>
-                    <converters:FalsyToVisibleConverter x:Key="FalsyToVisible" />
-                    <converters:TruthyToVisibleConverter x:Key="TruthyToVisible"/>
-                    <converters:UpperStringConverter x:Key="StrToUpper"/>
-                    <converters:TruthyToTransparentConverter x:Key="TruthyToTransparent"/>
+                    <extensions:LocaleConverter x:Key="Locale"/>
+                    <extensions:NegateBoolConverter x:Key="NegateBool"/>
+                    <extensions:FalsyToVisibleConverter x:Key="FalsyToVisible" />
+                    <extensions:TruthyToVisibleConverter x:Key="TruthyToVisible"/>
+                    <extensions:UpperStringConverter x:Key="StrToUpper"/>
+                    <extensions:TruthyToTransparentConverter x:Key="TruthyToTransparent"/>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

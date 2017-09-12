@@ -7,14 +7,8 @@ using myFeed.ViewModels.Extensions;
 
 namespace myFeed.ViewModels.Implementations
 {
-    /// <summary>
-    /// Sources category ViewModel.
-    /// </summary>
     public sealed class SourcesCategoryViewModel
     {
-        /// <summary>
-        /// Instantiates new ViewModel.
-        /// </summary>
         public SourcesCategoryViewModel(
             SourceCategoryEntity entity,
             SourcesViewModel parentViewModel,
@@ -63,8 +57,7 @@ namespace myFeed.ViewModels.Implementations
                 Items.Clear();
                 foreach (var source in entity.Sources)
                 {
-                    var viewModel = new SourcesItemViewModel(source,
-                        this, sourcesRepository, platformService);
+                    var viewModel = new SourcesItemViewModel(source, this, sourcesRepository, platformService);
                     Items.Add(viewModel);
                 }
             });

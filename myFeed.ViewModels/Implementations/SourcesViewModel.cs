@@ -7,14 +7,8 @@ using myFeed.ViewModels.Extensions;
 
 namespace myFeed.ViewModels.Implementations
 {
-    /// <summary>
-    /// Sources page ViewModel.
-    /// </summary>
     public sealed class SourcesViewModel
     {
-        /// <summary>
-        /// Instantiates new ViewModel.
-        /// </summary>
         public SourcesViewModel(
             IPlatformService platformService,
             ISourcesRepository sourcesRepository,

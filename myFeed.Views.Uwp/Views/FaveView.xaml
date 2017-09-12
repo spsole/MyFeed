@@ -8,7 +8,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
-    xmlns:behaviors="using:myFeed.Views.Uwp.Behaviors"
+    xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -73,10 +73,10 @@
                             <Grid Padding="0 12" Background="Transparent">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Holding">
-                                        <behaviors:OpenFlyoutAction/>
+                                        <extensions:OpenFlyoutAction/>
                                     </core:EventTriggerBehavior>
                                     <core:EventTriggerBehavior EventName="RightTapped">
-                                        <behaviors:OpenFlyoutAction/>
+                                        <extensions:OpenFlyoutAction/>
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                                 <FlyoutBase.AttachedFlyout>
@@ -109,7 +109,7 @@
                                     <TextBlock Text="{Binding Feed.Value, Converter={StaticResource StrToUpper}}"
                                         FontSize="11" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" 
                                         Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-                                    <TextBlock Text="{Binding Title.Value}" TextWrapping="Wrap" Margin="30 0 0 0"/>
+                                    <TextBlock Text="{Binding Title.Value}" TextWrapping="Wrap"/>
                                 </StackPanel>
                                 <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top"
                                     Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="0 0 12 0"

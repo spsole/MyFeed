@@ -8,8 +8,8 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
-    xmlns:behaviors="using:myFeed.Views.Uwp.Behaviors"
     xmlns:views="using:myFeed.Views.Uwp.Views"
+    xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -32,7 +32,7 @@
         <controls:TransparentButton Grid.Row="0" HorizontalAlignment="Right" Symbol="Zoom">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="Click">
-                    <behaviors:NavigateAction TargetPage="views:SearchView"/>
+                    <extensions:NavigateAction TargetPage="views:SearchView"/>
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
             <ToolTipService.ToolTip>
@@ -130,10 +130,10 @@
                                             </Grid.ColumnDefinitions>
                                             <interactivity:Interaction.Behaviors>
                                                 <core:EventTriggerBehavior EventName="RightTapped">
-                                                    <behaviors:OpenFlyoutAction/>
+                                                    <extensions:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
                                                 <core:EventTriggerBehavior EventName="Holding">
-                                                    <behaviors:OpenFlyoutAction/>
+                                                    <extensions:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
                                             </interactivity:Interaction.Behaviors>
                                             <FlyoutBase.AttachedFlyout>
@@ -223,7 +223,7 @@
                     Converter={StaticResource Locale}, ConverterParameter=AddFromSearch}">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">
-                            <behaviors:NavigateAction TargetPage="views:SearchView"/>
+                            <extensions:NavigateAction TargetPage="views:SearchView"/>
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>    
                 </Button>

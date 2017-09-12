@@ -7,8 +7,8 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
-    xmlns:behaviors="using:myFeed.Views.Uwp.Behaviors"
     xmlns:views="using:myFeed.Views.Uwp.Views"
+    xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -63,7 +63,7 @@
                                 <Grid Background="Transparent" Width="270" Height="48">
                                     <interactivity:Interaction.Behaviors>
                                         <core:EventTriggerBehavior EventName="Tapped">
-                                            <behaviors:NavigateAction TargetPage="{Binding Item3}"/>
+                                            <extensions:NavigateAction TargetPage="{Binding Item3}"/>
                                             <core:ChangePropertyAction Value="False"
                                                 TargetObject="{Binding ElementName=Menu}" 
                                                 PropertyName="IsSwipeablePaneOpen"/>

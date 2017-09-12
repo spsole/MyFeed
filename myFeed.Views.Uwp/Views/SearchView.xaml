@@ -9,7 +9,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
-    xmlns:behaviors="using:myFeed.Views.Uwp.Behaviors"
+    xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -95,10 +95,10 @@
                             </FlyoutBase.AttachedFlyout>
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="RightTapped">
-                                    <behaviors:OpenFlyoutAction/>
+                                    <extensions:OpenFlyoutAction/>
                                 </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="Holding">
-                                    <behaviors:OpenFlyoutAction/>
+                                    <extensions:OpenFlyoutAction/>
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                             <Grid.ColumnDefinitions>

@@ -6,14 +6,8 @@ using myFeed.ViewModels.Extensions;
 
 namespace myFeed.ViewModels.Implementations
 {
-    /// <summary>
-    /// Single source ViewModel.
-    /// </summary>
     public sealed class SourcesItemViewModel
     {
-        /// <summary>
-        /// Instantiates new ViewModel.
-        /// </summary>
         public SourcesItemViewModel(
             SourceEntity entity,
             SourcesCategoryViewModel parentViewModel,

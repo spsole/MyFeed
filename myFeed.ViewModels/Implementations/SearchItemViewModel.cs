@@ -7,14 +7,8 @@ using myFeed.ViewModels.Extensions;
 
 namespace myFeed.ViewModels.Implementations
 {
-    /// <summary>
-    /// Represents search item view model.
-    /// </summary>
     public sealed class SearchItemViewModel
     {
-        /// <summary>
-        /// Instantiates new ViewModel.
-        /// </summary>
         public SearchItemViewModel(
             SearchItemEntity entity,
             IPlatformService platformService,

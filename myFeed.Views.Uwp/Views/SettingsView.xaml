@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -19,6 +21,11 @@
     </Page.Transitions>
 
     <Grid>
+        <interactivity:Interaction.Behaviors>
+            <core:EventTriggerBehavior EventName="Loaded">
+                <core:InvokeCommandAction Command="{Binding Load}"/>
+            </core:EventTriggerBehavior>
+        </interactivity:Interaction.Behaviors>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
             <RowDefinition Height="*" />
@@ -34,9 +41,8 @@
                                 ConverterParameter=ChangeTextSizeTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding ConverterParameter=
                                 ChangeTextSize, Converter={StaticResource Locale}}"/>
-                            <!--<ComboBox Width="170" Margin="0 6"
-                                ItemsSource="{Binding FontBox.Items}"
-                                SelectedItem="{Binding FontBox.Value, Mode=TwoWay}"/>-->
+                            <Slider Value="{Binding FontSize.Value, Mode=TwoWay}" 
+                                Minimum="0" Maximum="30" Width="300" HorizontalAlignment="Left"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
@@ -50,9 +56,8 @@
                                 ConverterParameter=NotifyCheckTimeTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=NotifyCheckTime}"/>
-                            <!--<ComboBox Width="170" Margin="0 6" DisplayMemberPath="Key"
-                                ItemsSource="{Binding NotificationsBox.Items}"
-                                SelectedItem="{Binding NotificationsBox.Value, Mode=TwoWay}"/>-->
+                            <Slider Value="{Binding NotifyPeriod.Value, Mode=TwoWay}" Minimum="0" 
+                                Maximum="5" Width="300" HorizontalAlignment="Left"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding
@@ -66,10 +71,52 @@
                                 Converter={StaticResource Locale}, ConverterParameter=ChangeThemeTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=ChangeTheme}"/>
-                            <!--<RadioButton x:Uid="ChangeThemeDefault" IsChecked="{Binding ThemeGroup.Items[0].IsSelected.Value, Mode=TwoWay}"/>
-                            <RadioButton x:Uid="ChangeThemeLight" IsChecked="{Binding ThemeGroup.Items[1].IsSelected.Value, Mode=TwoWay}"/>
-                            <RadioButton x:Uid="ChangeThemeDark" IsChecked="{Binding ThemeGroup.Items[2].IsSelected.Value, Mode=TwoWay}"/>
-                            -->
+                            <RadioButton x:Name="DefaultRadioButton" Content="{Binding Converter=
+                                {StaticResource Locale}, ConverterParameter=DefaultThemeOption}">
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Checked">
+                                        <core:ChangePropertyAction TargetObject="{Binding Theme}" PropertyName="Value" Value="default"/>
+                                    </core:EventTriggerBehavior>
+                                    <core:DataTriggerBehavior Binding="{Binding Theme.Value}" ComparisonCondition="Equal" Value="default">
+                                        <core:ChangePropertyAction TargetObject="{Binding ElementName=DefaultRadioButton}" PropertyName="IsChecked">
+                                            <core:ChangePropertyAction.Value>
+                                                <x:Boolean>True</x:Boolean>
+                                            </core:ChangePropertyAction.Value>
+                                        </core:ChangePropertyAction>
+                                    </core:DataTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
+                            </RadioButton>
+                            <RadioButton x:Name="DarkRadioButton" Content="{Binding Converter=
+                                {StaticResource Locale}, ConverterParameter=DarkThemeOption}">
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Checked">
+                                        <core:ChangePropertyAction TargetObject="{Binding Theme}" PropertyName="Value" Value="dark"/>
+                                    </core:EventTriggerBehavior>
+                                    <core:DataTriggerBehavior Binding="{Binding Theme.Value}" ComparisonCondition="Equal" Value="dark">
+                                        <core:ChangePropertyAction TargetObject="{Binding ElementName=DarkRadioButton}" PropertyName="IsChecked">
+                                            <core:ChangePropertyAction.Value>
+                                                <x:Boolean>True</x:Boolean>
+                                            </core:ChangePropertyAction.Value>
+                                        </core:ChangePropertyAction>
+                                    </core:DataTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
+                            </RadioButton>
+                            <RadioButton x:Name="LightRadioButton" Content="{Binding Converter=
+                                {StaticResource Locale}, ConverterParameter=LightThemeOption}">
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Checked">
+                                        <core:ChangePropertyAction TargetObject="{Binding 
+                                            Theme}" PropertyName="Value" Value="light"/>
+                                    </core:EventTriggerBehavior>
+                                    <core:DataTriggerBehavior Binding="{Binding Theme.Value}" ComparisonCondition="Equal" Value="light">
+                                        <core:ChangePropertyAction TargetObject="{Binding ElementName=LightRadioButton}" PropertyName="IsChecked">
+                                            <core:ChangePropertyAction.Value>
+                                                <x:Boolean>True</x:Boolean>
+                                            </core:ChangePropertyAction.Value>
+                                        </core:ChangePropertyAction>
+                                    </core:DataTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
+                            </RadioButton>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -120,7 +167,6 @@
                                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" 
                                     Margin="0 6" Text="myFeed" TextWrapping="Wrap" />
                                 <TextBlock Text="© Artjom Graf 2017" TextWrapping="NoWrap" Margin="0 0 0 3" />
-                                <!--<TextBlock Text="{Binding AppVersion}" TextWrapping="NoWrap" />-->
                                 <Button Content="worldbeater.github.io" Margin="0 6"
                                     Style="{StaticResource TextBlockButtonStyle}" 
                                     Padding="0" Command="{Binding OpenCredits}"/>

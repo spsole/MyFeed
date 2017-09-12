@@ -5,14 +5,8 @@ using myFeed.ViewModels.Extensions;
 
 namespace myFeed.ViewModels.Implementations
 {
-    /// <summary>
-    /// All feeds ViewModel.
-    /// </summary>
     public sealed class FeedViewModel
     {
-        /// <summary>
-        /// Instantiates ViewModel.
-        /// </summary>
         public FeedViewModel(
             IFeedService feedService,
             IPlatformService platformService,

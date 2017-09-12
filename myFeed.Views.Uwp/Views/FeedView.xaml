@@ -10,8 +10,8 @@
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
-    xmlns:behaviors="using:myFeed.Views.Uwp.Behaviors"
     xmlns:views="using:myFeed.Views.Uwp.Views"
+    xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -113,10 +113,10 @@
                                             Mode=OneWay, Converter={StaticResource TruthyToTransparent}}">
                                             <interactivity:Interaction.Behaviors>
                                                 <core:EventTriggerBehavior EventName="Holding">
-                                                    <behaviors:OpenFlyoutAction/>
+                                                    <extensions:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
                                                 <core:EventTriggerBehavior EventName="RightTapped">
-                                                    <behaviors:OpenFlyoutAction/>
+                                                    <extensions:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
                                             </interactivity:Interaction.Behaviors>
                                             <FlyoutBase.AttachedFlyout>
@@ -195,7 +195,7 @@
                                     Foreground="White" Margin="12" HorizontalAlignment="Center">
                                     <interactivity:Interaction.Behaviors>
                                         <core:EventTriggerBehavior EventName="Click">
-                                            <behaviors:NavigateAction TargetPage="views:SourcesView"/>
+                                            <extensions:NavigateAction TargetPage="views:SourcesView"/>
                                         </core:EventTriggerBehavior>
                                     </interactivity:Interaction.Behaviors>
                                 </Button>
@@ -220,7 +220,7 @@
                         Foreground="White" Margin="12" HorizontalAlignment="Center">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Click">
-                                <behaviors:NavigateAction TargetPage="views:SourcesView"/>
+                                <extensions:NavigateAction TargetPage="views:SourcesView"/>
                             </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                     </Button>

@@ -327,4 +327,13 @@
   <data name="SourcesWelcome">
     <value>Добавьте новую категорию!</value>
   </data>
+  <data name="DefaultThemeOption">
+    <value>Использовать настройки системы</value>
+  </data>
+  <data name="DarkThemeOption">
+    <value>Тёмная тема</value>
+  </data>
+  <data name="LightThemeOption">
+    <value>Светлая тема</value>
+  </data>
 </root>

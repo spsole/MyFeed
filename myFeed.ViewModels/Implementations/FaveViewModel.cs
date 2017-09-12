@@ -5,14 +5,8 @@ using myFeed.Repositories.Abstractions;
 
 namespace myFeed.ViewModels.Implementations
 {
-    /// <summary>
-    /// Favorites collection view model.
-    /// </summary>
     public sealed class FaveViewModel
     {
-        /// <summary>
-        /// Instantiates ViewModel.
-        /// </summary>
         public FaveViewModel(
             IPlatformService platformService,
             IArticlesRepository articlesRepository)
@@ -28,8 +22,7 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var article in articles)
                 {
                     if (!article.Fave) continue;
-                    var viewModel = new FeedItemViewModel(article,
-                        platformService, articlesRepository);
+                    var viewModel = new FeedItemViewModel(article, platformService, articlesRepository);
                     Items.Add(viewModel);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
                     {

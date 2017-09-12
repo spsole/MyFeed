@@ -6,14 +6,8 @@ using myFeed.ViewModels.Extensions;
 
 namespace myFeed.ViewModels.Implementations
 {
-    /// <summary>
-    /// Represents feed items collection view model.
-    /// </summary>
     public sealed class FeedCategoryViewModel
     {
-        /// <summary>
-        /// Instantiates ViewModel.
-        /// </summary>
         public FeedCategoryViewModel(
             SourceCategoryEntity entity,
             IFeedService feedService,
@@ -32,8 +26,7 @@ namespace myFeed.ViewModels.Implementations
                 Items.Clear();
                 foreach (var article in orderedArticles)
                 {
-                    var viewModel = new FeedItemViewModel(
-                        article, platformService, articlesRepository);
+                    var viewModel = new FeedItemViewModel(article, platformService, articlesRepository);
                     Items.Add(viewModel);
                 }
                 IsEmpty.Value = Items.Count == 0;

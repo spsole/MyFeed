@@ -6,14 +6,8 @@ using myFeed.ViewModels.Extensions;
 
 namespace myFeed.ViewModels.Implementations
 {
-    /// <summary>
-    /// Search page ViewModel.
-    /// </summary>
     public sealed class SearchViewModel
     {
-        /// <summary>
-        /// Instantiates new ViewModel.
-        /// </summary>
         public SearchViewModel(
             ISourcesRepository sourcesRepository,
             IPlatformService platformService,
@@ -31,8 +25,7 @@ namespace myFeed.ViewModels.Implementations
                 Items.Clear();
                 foreach (var result in searchResults.Results)
                 {
-                    var viewModel = new SearchItemViewModel(
-                        result, platformService, sourcesRepository);
+                    var viewModel = new SearchItemViewModel(result, platformService, sourcesRepository);
                     Items.Add(viewModel);
                 }
                 await Task.Delay(500);

@@ -23,7 +23,7 @@ namespace myFeed.Repositories.Implementations
                 var entity = await context
                     .Set<ConfigurationEntity>()
                     .FirstOrDefaultAsync(i => i.Key == name);
-                return entity.Value;
+                return entity?.Value;
             }
         }
 

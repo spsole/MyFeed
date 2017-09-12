@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Microsoft.Xaml.Interactivity;
 
-namespace myFeed.Views.Uwp.Behaviors
+namespace myFeed.Views.Uwp.Extensions
 {
     public class NavigateAction : DependencyObject, IAction
     {

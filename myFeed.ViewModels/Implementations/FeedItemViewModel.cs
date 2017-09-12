@@ -6,14 +6,8 @@ using myFeed.ViewModels.Extensions;
 
 namespace myFeed.ViewModels.Implementations
 {
-    /// <summary>
-    /// Represents feed item view model.
-    /// </summary>
     public sealed class FeedItemViewModel
     {
-        /// <summary>
-        /// Instantiates ViewModel.
-        /// </summary>
         public FeedItemViewModel(
             ArticleEntity entity,
             IPlatformService platformService,

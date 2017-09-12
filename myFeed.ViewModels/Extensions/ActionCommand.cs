@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -44,7 +45,14 @@ namespace myFeed.ViewModels.Extensions
         public async void Execute(object parameter)
         {
             UpdateCanExecute(false);
-            await _task.Invoke();
+            try
+            {
+                await _task.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.InnerException);
+            }
             UpdateCanExecute(true);
             void UpdateCanExecute(bool value)
             {
