@@ -38,23 +38,20 @@ namespace myFeed.Services.Implementations
                     .ToDictionary(i => (i.Title, i.PublishedDate));
 
                 // Retrieve feed based on single fetcher implementation.
-                var distinctArticles = new List<ArticleEntity>();
                 var grouppedArticles = await Task.WhenAll(sourcesList.Select(RetrieveFeedAsync));
-                foreach (var grouping in grouppedArticles)
-                {
-                    foreach (var article in grouping.Item2)
-                    {
-                        var compositeKey = (article.Title, article.PublishedDate);
-                        if (dictionary.ContainsKey(compositeKey)) continue;
-                        grouping.Item1.Articles.Add(article);
-                        distinctArticles.Add(article);
-                    }
-                }
+                var distinctGroupping = grouppedArticles.Select(i => (i.Item1, i.Item2
+                    .Where(x => !dictionary.ContainsKey((x.Title, x.PublishedDate)))
+                    .ToArray()));
+                
+                // Save received distinct items into database.
+                foreach (var grouping in distinctGroupping) 
+                    await _articlesRepository.InsertAsync(
+                        grouping.Item1, grouping.Item2);
 
-                // Write new articles into database and return global join.
-                await _articlesRepository.InsertAsync(distinctArticles.ToArray());
+                // Return global join with both old and new articles.
+                var flatternedArticles = distinctGroupping.SelectMany(i => i.Item2);
                 return dictionary.Values
-                    .Concat(distinctArticles)
+                    .Concat(flatternedArticles)
                     .OrderByDescending(i => i.PublishedDate);
             });
         }
@@ -64,7 +61,7 @@ namespace myFeed.Services.Implementations
         /// Github: https://github.com/CodeHollow/FeedReader
         /// </summary>
         /// <param name="e">Uri to obtain.</param>
-        protected virtual async Task<Tuple<SourceEntity, IEnumerable<ArticleEntity>>> RetrieveFeedAsync(SourceEntity e)
+        protected virtual async Task<(SourceEntity, IEnumerable<ArticleEntity>)> RetrieveFeedAsync(SourceEntity e)
         {
             try
             {
@@ -80,11 +77,11 @@ namespace myFeed.Services.Implementations
                     Read = false,
                     Fave = false
                 });
-                return Tuple.Create(e, items);
+                return (e, items);
             }
             catch (Exception)
             {
-                return Tuple.Create(e, new List<ArticleEntity>().AsEnumerable());
+                return (e, new List<ArticleEntity>());
             }
         }
     }

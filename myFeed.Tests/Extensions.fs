@@ -42,6 +42,10 @@ module Tools =
     let inline (+=) (event: IEvent<'a, 'b>) (handler: 'b -> unit) =
         event.Add handler
 
+    /// Task for results awaiter operator.
+    let inline (|@>) (task: Task<'a>) (fn: 'a -> 'b) = 
+        task |> await |> fn   
+
     /// Invokes action adn returns completed task.
     let actionAsAwaitableFunc (action: unit -> unit) =
         Func<Task>(fun () -> 

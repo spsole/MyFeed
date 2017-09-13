@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using myFeed.Repositories.Entities.Local;
+using Remotion.Linq.Clauses.Expressions;
 
 namespace myFeed.Repositories.Abstractions
 {
@@ -18,7 +19,8 @@ namespace myFeed.Repositories.Abstractions
         /// Inserts item into database table.
         /// </summary>
         /// <param name="entities">Entity to insert.</param>
-        Task InsertAsync(params ArticleEntity[] entities);
+        /// <param name="source">Source to attach article entities to.</param>
+        Task InsertAsync(SourceEntity source, params ArticleEntity[] entities);
 
         /// <summary>
         /// Removes category from db set.

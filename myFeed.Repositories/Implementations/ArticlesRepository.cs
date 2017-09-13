@@ -32,11 +32,12 @@ namespace myFeed.Repositories.Implementations
             }
         }
 
-        public async Task InsertAsync(params ArticleEntity[] entities)
+        public async Task UpdateAsync(ArticleEntity entity)
         {
             using (var context = new EntityContext())
             {
-                context.Set<ArticleEntity>().AddRange(entities);
+                context.Attach(entity);
+                context.Entry(entity).State = EntityState.Modified;
                 await context.SaveChangesAsync();
             }
         }
@@ -51,12 +52,14 @@ namespace myFeed.Repositories.Implementations
             }
         }
 
-        public async Task UpdateAsync(ArticleEntity entity)
+        public async Task InsertAsync(SourceEntity source, params ArticleEntity[] entities)
         {
             using (var context = new EntityContext())
             {
-                context.Attach(entity);
-                context.Entry(entity).State = EntityState.Modified;
+                context.Attach(source);
+                context.Attach(source.Category);
+                foreach (var entity in entities)
+                    source.Articles.Add(entity);
                 await context.SaveChangesAsync();
             }
         }

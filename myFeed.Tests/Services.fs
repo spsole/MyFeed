@@ -31,7 +31,7 @@ module FeedServiceTests =
     // Mocks feed service using provided repository instance and 
     let mockService (stored: seq<ArticleEntity>) (resp: SourceEntity * seq<ArticleEntity>) =
         let storedTask = stored |> Task.FromResult
-        let respTask = resp |> Task.FromResult
+        let respTask = resp.ToValueTuple() |> Task.FromResult
 
         // Mock repository.
         let mockRepository = Mock<IArticlesRepository>()
@@ -47,7 +47,7 @@ module FeedServiceTests =
                 mockRepository.Object :> obj)
         mockFeedService.CallBase <- true
         mockFeedService.Protected()
-            .Setup<Task<SourceEntity * IEnumerable<ArticleEntity>>>(
+            .Setup<Task<struct (SourceEntity * IEnumerable<ArticleEntity>)>>(
                 "RetrieveFeedAsync", ItExpr.IsAny<SourceEntity>())
             .Returns(respTask) |> ignore          
         mockFeedService.Object      
