@@ -39,9 +39,11 @@ namespace myFeed.Services.Implementations
 
                 // Retrieve feed based on single fetcher implementation.
                 var grouppedArticles = await Task.WhenAll(sourcesList.Select(RetrieveFeedAsync));
-                var distinctGroupping = grouppedArticles.Select(i => (i.Item1, i.Item2
-                    .Where(x => !dictionary.ContainsKey((x.Title, x.PublishedDate)))
-                    .ToArray()));
+                var distinctGroupping = grouppedArticles
+                    .Select(i => (i.Item1, i.Item2
+                        .Where(x => !dictionary.ContainsKey((x.Title, x.PublishedDate)))
+                        .ToArray()))
+                    .ToList();
                 
                 // Save received distinct items into database.
                 foreach (var grouping in distinctGroupping) 
