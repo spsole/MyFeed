@@ -23,18 +23,14 @@ namespace myFeed.ViewModels.Implementations
                 var items = Items.Select(i => i.Category.Value);
                 sourcesRepository.RearrangeAsync(items);
             };
-
             Load = new ActionCommand(async () =>
             {
                 IsLoading.Value = true;
                 var categories = await sourcesRepository.GetAllAsync();
                 Items.Clear();
                 foreach (var category in categories)
-                {
-                    var viewModel = new SourcesCategoryViewModel(category, this,
-                        sourcesRepository, translationsService, platformService);
-                    Items.Add(viewModel);
-                }
+                    Items.Add(new SourcesCategoryViewModel(category, this,
+                        platformService, sourcesRepository, translationsService));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
@@ -46,9 +42,8 @@ namespace myFeed.ViewModels.Implementations
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new SourceCategoryEntity {Title = name};
                 await sourcesRepository.InsertAsync(category);
-                var viewModel = new SourcesCategoryViewModel(category, this,
-                    sourcesRepository, translationsService, platformService);
-                Items.Add(viewModel);
+                Items.Add(new SourcesCategoryViewModel(category, this,
+                    platformService, sourcesRepository, translationsService));
             });
         }
 

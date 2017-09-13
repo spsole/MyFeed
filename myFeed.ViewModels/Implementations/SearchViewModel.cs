@@ -24,10 +24,8 @@ namespace myFeed.ViewModels.Implementations
                 var searchResults = await searchService.Search(query);
                 Items.Clear();
                 foreach (var result in searchResults.Results)
-                {
-                    var viewModel = new SearchItemViewModel(result, platformService, sourcesRepository);
-                    Items.Add(viewModel);
-                }
+                    Items.Add(new SearchItemViewModel(result,
+                        platformService, sourcesRepository));
                 await Task.Delay(500);
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;

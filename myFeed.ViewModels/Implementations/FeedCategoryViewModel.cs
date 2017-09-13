@@ -25,10 +25,8 @@ namespace myFeed.ViewModels.Implementations
                 var orderedArticles = await feedService.RetrieveFeedsAsync(sources);
                 Items.Clear();
                 foreach (var article in orderedArticles)
-                {
-                    var viewModel = new FeedItemViewModel(article, platformService, articlesRepository);
-                    Items.Add(viewModel);
-                }
+                    Items.Add(new FeedItemViewModel(article, 
+                        platformService, articlesRepository));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });

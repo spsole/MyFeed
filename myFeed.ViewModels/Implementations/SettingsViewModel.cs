@@ -18,10 +18,10 @@ namespace myFeed.ViewModels.Implementations
             LoadImages = new ObservableProperty<bool>();
             NotifyPeriod = new ObservableProperty<int>();
             NeedBanners = new ObservableProperty<bool>();
-
             ImportOpml = new ActionCommand(opmlService.ImportOpmlFeeds);
             ExportOpml = new ActionCommand(opmlService.ExportOpmlFeeds);
-            OpenCredits = new ActionCommand(() => platformService.LaunchUri(new Uri("https://worldbeater.github.io")));
+            OpenCredits = new ActionCommand(() => platformService.LaunchUri(
+                new Uri("https://worldbeater.github.io")));
 
             Load = new ActionCommand(async () =>
             {
@@ -39,7 +39,7 @@ namespace myFeed.ViewModels.Implementations
                 Subscribe(NeedBanners, "NeedBanners", platformService.RegisterBanners);
                 Subscribe(Theme, "Theme", platformService.RegisterTheme);
             });
-
+            
             void Subscribe<T>(ObservableProperty<T> property, string key, Func<T, Task> updater = null)
             {
                 property.PropertyChanged += async (o, args) =>
@@ -50,7 +50,7 @@ namespace myFeed.ViewModels.Implementations
                     await configRepository.SetByNameAsync(key, value.ToString());
                 };
             }
-
+            
             async Task<string> Get(string key, string fallback)
             {
                 var value = await configRepository.GetByNameAsync(key);
@@ -84,6 +84,11 @@ namespace myFeed.ViewModels.Implementations
         /// Selected font size.
         /// </summary>
         public ObservableProperty<int> FontSize { get; }
+        
+        /// <summary>
+        /// Opens webpage with credits.
+        /// </summary>
+        public ActionCommand OpenCredits { get; }
 
         /// <summary>
         /// Imports feeds from Opml.
@@ -94,11 +99,6 @@ namespace myFeed.ViewModels.Implementations
         /// Exports feeds to Opml.
         /// </summary>
         public ActionCommand ExportOpml { get; }
-
-        /// <summary>
-        /// Opens webpage with credits.
-        /// </summary>
-        public ActionCommand OpenCredits { get; }
 
         /// <summary>
         /// Loads settings into UI.

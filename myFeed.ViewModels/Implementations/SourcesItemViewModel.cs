@@ -22,7 +22,6 @@ namespace myFeed.ViewModels.Implementations
                 entity.Notify = Notify.Value;
                 await sourcesRepository.UpdateAsync(entity.Category);
             };
-
             CopyLink = new ActionCommand(() => platformService.CopyTextToClipboard(entity.Uri));
             DeleteSource = new ActionCommand(async () =>
             {

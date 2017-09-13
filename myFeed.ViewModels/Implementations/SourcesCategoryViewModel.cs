@@ -12,15 +12,14 @@ namespace myFeed.ViewModels.Implementations
         public SourcesCategoryViewModel(
             SourceCategoryEntity entity,
             SourcesViewModel parentViewModel,
+            IPlatformService platformService,
             ISourcesRepository sourcesRepository,
-            ITranslationsService translationsService,
-            IPlatformService platformService)
+            ITranslationsService translationsService)
         {
-            Title = new ObservableProperty<string>(entity.Title);
+            Category = new ReadOnlyProperty<SourceCategoryEntity>(entity);
             SourceUri = new ObservableProperty<string>(string.Empty);
             Items = new ObservableCollection<SourcesItemViewModel>();
-            Category = new ReadOnlyProperty<SourceCategoryEntity>(entity);
-
+            Title = new ObservableProperty<string>(entity.Title);
             RenameCategory = new ActionCommand(async () =>
             {
                 var name = await platformService.ShowDialogForResults(
@@ -48,18 +47,15 @@ namespace myFeed.ViewModels.Implementations
                 SourceUri.Value = string.Empty;
                 var model = new SourceEntity {Uri = sourceUri, Notify = true};
                 await sourcesRepository.AddSourceAsync(entity, model);
-                var viewModel = new SourcesItemViewModel(model,
-                    this, sourcesRepository, platformService);
-                Items.Add(viewModel);
+                Items.Add(new SourcesItemViewModel(model, this,
+                    sourcesRepository, platformService));
             });
             Load = new ActionCommand(() =>
             {
                 Items.Clear();
                 foreach (var source in entity.Sources)
-                {
-                    var viewModel = new SourcesItemViewModel(source, this, sourcesRepository, platformService);
-                    Items.Add(viewModel);
-                }
+                    Items.Add(new SourcesItemViewModel(source,
+                        this, sourcesRepository, platformService));
             });
         }
 

@@ -22,7 +22,8 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var article in articles)
                 {
                     if (!article.Fave) continue;
-                    var viewModel = new FeedItemViewModel(article, platformService, articlesRepository);
+                    var viewModel = new FeedItemViewModel(article, 
+                        platformService, articlesRepository);
                     Items.Add(viewModel);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
                     {
