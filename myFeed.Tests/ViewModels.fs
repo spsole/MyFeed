@@ -90,10 +90,9 @@ module SearchViewModelsTests =
         let searchViewModel = resolve<SearchViewModel> scope
         searchViewModel.Fetch.CanExecuteChanged += fun _ ->
             if (searchViewModel.Fetch.CanExecute()) then
-                let items = searchViewModel.Items
 
-                Assert.Equal("Foo", items.[0].Title.Value)
-                Assert.Equal("Bar", items.[1].Title.Value)
+                Assert.Equal("Foo", searchViewModel.Items.[0].Title.Value)
+                Assert.Equal("Bar", searchViewModel.Items.[1].Title.Value)
                 Assert.Equal(false, searchViewModel.IsEmpty.Value)
                 Assert.Equal(false, searchViewModel.IsLoading.Value)
                 
@@ -102,9 +101,7 @@ module SearchViewModelsTests =
     [<Fact>]
     let ``should add feed url to sources``() =
         let searchEntity = SearchItemEntity(FeedId="_____http://example.com")
-        let fakeEntity = 
-            SourceCategoryEntity(
-                Title="Foo", Sources=List<SourceEntity>())
+        let fakeEntity = SourceCategoryEntity(Title="Foo")
             
         let fakeDialogService =
             let mockService = Mock<IPlatformService>()
@@ -127,7 +124,6 @@ module SearchViewModelsTests =
             if (viewModel.AddToSources.CanExecute()) then
 
                 Assert.Equal(1, fakeEntity.Sources.Count)
-
                 let first = fakeEntity.Sources |> Seq.item 0
                 Assert.Equal("http://example.com", first.Uri)
 
@@ -148,16 +144,13 @@ module SettingsViewModelsTests =
         let mockRepository = Mock<IConfigurationRepository>()
         mockRepository
             .Setup(fun i -> i.GetByNameAsync(It.IsAny<string>()))
-            .Returns("42" |> Task.FromResult) 
-            |> ignore
+            .Returns("42" |> Task.FromResult) |> ignore
         mockRepository
             .Setup(fun i -> i.GetByNameAsync(It.IsIn<string>("LoadImages", "NeedBanners")))
-            .Returns("true" |> Task.FromResult) 
-            |> ignore
+            .Returns("true" |> Task.FromResult) |> ignore
         mockRepository
             .Setup(fun i -> i.SetByNameAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .Returns(Task.CompletedTask)
-            |> ignore        
+            .Returns(Task.CompletedTask)|> ignore        
         mockRepository.Object
     
     [<Fact>]
@@ -221,46 +214,38 @@ module FeedViewModelsTests =
 
     [<Fact>]
     let ``should create instance of feed viewmodel``() =
-        use scope =
-            ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<FeedViewModel>
-            |> buildScope
-        assertResolve<FeedViewModel> scope
+        ContainerBuilder()
+        |> tee registerDefaults
+        |> tee registerAsSelf<FeedViewModel>
+        |> buildScope
+        |> tee assertResolve<FeedViewModel>
+        |> dispose
 
     [<Fact>]
     let ``should create instance of feed category viewmodel``() =
-        use scope = 
-            ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<FeedCategoryViewModel>
-            |> tee registerAsSelf<SourceCategoryEntity>
-            |> buildScope
-        assertResolve<FeedCategoryViewModel> scope
+        ContainerBuilder()
+        |> tee registerDefaults
+        |> tee registerAsSelf<FeedCategoryViewModel>
+        |> tee registerAsSelf<SourceCategoryEntity>
+        |> buildScope
+        |> tee assertResolve<FeedCategoryViewModel>
+        |> dispose
 
     [<Fact>]
     let ``should populate feed category with received articles``() =
-        let fakeSources = 
-            [ SourceEntity(Uri="http://example.com") ] 
-            |> collection
-
-        let fakeEntity = 
-            SourceCategoryEntity(
-                Title="Foo", 
-                Sources=fakeSources)
+        let fakeSources = [| SourceEntity(Uri="http://example.com") |] 
+        let fakeEntity = SourceCategoryEntity(Title="Foo", Sources=fakeSources)
 
         let fakeFeedService =
             let response = 
                 [ ArticleEntity(Title="Foo");
                   ArticleEntity(Title="Bar") ]
-                |> collection
                 |> fun s -> s.OrderBy(fun i -> i.Title) 
                 |> Task.FromResult               
             let mockService = Mock<IFeedService>()
             mockService
                 .Setup(fun i -> i.RetrieveFeedsAsync(It.IsAny<IEnumerable<SourceEntity>>()))
-                .Returns(response)
-                |> ignore
+                .Returns(response) |> ignore
             mockService.Object     
         
         use scope = 
@@ -276,27 +261,21 @@ module FeedViewModelsTests =
         viewModel.Fetch.CanExecuteChanged += fun _ ->
             if (viewModel.Fetch.CanExecute()) then
                 
-                let items = viewModel.Items
-                Assert.Equal("Foo", viewModel.Title.Value)
-                Assert.Equal(2, items.Count)
-
-                Assert.Equal(false, viewModel.IsEmpty.Value)
+                Assert.Equal(2, viewModel.Items.Count)
+                Assert.Equal("Bar", viewModel.Items.[0].Title.Value)
+                Assert.Equal("Foo", viewModel.Items.[1].Title.Value)
                 Assert.Equal(false, viewModel.IsLoading.Value)
-
-                Assert.Equal("Bar", items.[0].Title.Value)
-                Assert.Equal("Foo", items.[1].Title.Value)
+                Assert.Equal(false, viewModel.IsEmpty.Value)
+                Assert.Equal("Foo", viewModel.Title.Value)
 
         viewModel.Fetch.Execute(null)  
 
     [<Fact>]
     let ``should populate feed viewmodel with items from db``() =
         let response = 
-            let entities = 
-                [ SourceEntity(Uri="http://example.com") ]
-                |> collection
+            let entities = [| SourceEntity(Uri="http://example.com") |]
             [ SourceCategoryEntity(Title="Foo", Sources=entities);
               SourceCategoryEntity(Title="Bar") ]
-            |> seq
             |> fun s -> s.OrderBy(fun i -> i.Title)
             |> Task.FromResult
         
@@ -328,22 +307,22 @@ module FaveViewModelsTests =
 
     [<Fact>]
     let ``should create instance of fave viewmodel``() =
-        use scope =
-            ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<FaveViewModel>
-            |> buildScope
-        assertResolve<FaveViewModel> scope
+        ContainerBuilder()
+        |> tee registerDefaults
+        |> tee registerAsSelf<FaveViewModel>
+        |> buildScope
+        |> tee assertResolve<FaveViewModel> 
+        |> dispose
 
     [<Fact>]
     let ``should create instance of fave item viewmodel``() =
-        use scope =
-            ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<ArticleEntity>
-            |> tee registerAsSelf<FeedItemViewModel>     
-            |> buildScope
-        assertResolve<FeedItemViewModel> scope   
+        ContainerBuilder()
+        |> tee registerDefaults
+        |> tee registerAsSelf<ArticleEntity>
+        |> tee registerAsSelf<FeedItemViewModel>     
+        |> buildScope
+        |> tee assertResolve<FeedItemViewModel> 
+        |> dispose
 
     [<Fact>]
     let ``should populate fave viewmodel with items from repo``() =
@@ -416,12 +395,12 @@ module SourcesViewModelsTests =
 
     [<Fact>]
     let ``should resolve instance of sources viewmodel``() =
-        use scope =
-            ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<SourcesViewModel>
-            |> buildScope
-        assertResolve<SourcesViewModel> scope
+        ContainerBuilder()
+        |> tee registerDefaults
+        |> tee registerAsSelf<SourcesViewModel>
+        |> buildScope
+        |> tee assertResolve<SourcesViewModel>
+        |> dispose
 
     [<Fact>]
     let ``child viewmodels should load properly``() =        
@@ -429,13 +408,12 @@ module SourcesViewModelsTests =
             let sourceCategoryEntities = 
                 [ SourceCategoryEntity(Title="Foo");
                   SourceCategoryEntity(Title="Bar") ]
-                |> seq
                 |> fun s -> s.OrderBy(fun i -> i.Title)
                 |> Task.FromResult
             let repositoryMock = Mock<ISourcesRepository>()
             repositoryMock
                 .Setup(fun i -> i.GetAllAsync())
-                .Returns(sourceCategoryEntities)
+                .Returns(sourceCategoryEntities) 
                 |> ignore
             repositoryMock.Object            
     

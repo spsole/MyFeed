@@ -57,19 +57,17 @@ module FeedServiceTests =
         let fakeFetchedEntities = 
             [ ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue);
               ArticleEntity(Title="Bar", PublishedDate=DateTime.MaxValue);
-              ArticleEntity(Title="Abc", PublishedDate=DateTime.Now); ] :> seq<_>
+              ArticleEntity(Title="Abc", PublishedDate=DateTime.Now); ] 
 
-        // Create entities linked using both foreign keys:
-        // ICollection and reference.
+        // Create entities linked using both foreign keys: ICollection and reference.
         let fakeSourceEntity = SourceEntity(Uri="http://foo.com")
         let fakeStoredEntities =
             [ ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue, Source=fakeSourceEntity);
-              ArticleEntity(Title="Kek", PublishedDate=DateTime.Now, Source=fakeSourceEntity)] :> seq<_>
+              ArticleEntity(Title="Kek", PublishedDate=DateTime.Now, Source=fakeSourceEntity)]
         fakeStoredEntities |> Seq.iter fakeSourceEntity.Articles.Add          
 
         let service = mockService fakeStoredEntities (fakeSourceEntity, fakeFetchedEntities)
-        let articles = await <| service.RetrieveFeedsAsync([ fakeSourceEntity ] :> seq<_>)
-        let feed = articles |> List.ofSeq
+        let feed = service.RetrieveFeedsAsync([ fakeSourceEntity ]) |@> List.ofSeq
 
         Assert.Equal(4, feed.Count())
         Assert.Equal("Bar", feed.[0].Title)
@@ -80,19 +78,15 @@ module FeedServiceTests =
     [<Fact>]
     let ``should filter articles not related to any source``() =
     
-        // Create entities linked using both foreign keys:
-        // ICollection and reference.
+        // Create entities linked using both foreign keys: ICollection and reference.
         let fakeSource = SourceEntity(Uri="http://foo.bar")
         let fakeStoredArticles =
             [ ArticleEntity(Title="Foo", PublishedDate = DateTime.Now, Source=fakeSource);
-              ArticleEntity(Title="Bar", PublishedDate = DateTime.Now) ] :> seq<_>
-        fakeStoredArticles 
-        |> Seq.item 0 
-        |> fakeSource.Articles.Add   
+              ArticleEntity(Title="Bar", PublishedDate = DateTime.Now) ]
+        fakeSource.Articles.Add fakeStoredArticles.[0]    
 
         let service = mockService fakeStoredArticles (fakeSource, Seq.empty)     
-        let articles = await <| service.RetrieveFeedsAsync([ fakeSource ] :> seq<_>) 
-        let feed = articles |> List.ofSeq         
+        let feed = service.RetrieveFeedsAsync([ fakeSource ]) |@> List.ofSeq
 
         Assert.Equal(1, feed.Count())
         Assert.Equal("Foo", feed.[0].Title)
@@ -101,21 +95,17 @@ module FeedServiceTests =
     let ``should fetch new articles and remove not related to any source``() =    
         let fakeFetchedArticles = 
             [ ArticleEntity(Title="FooBar", PublishedDate = DateTime.Now);
-              ArticleEntity(Title="Jumba") ] :> seq<_>   
+              ArticleEntity(Title="Jumba") ]
 
-        // Create entities linked using both foreign keys:
-        // ICollection and reference.
+        // Create entities linked using both foreign keys: ICollection and reference.
         let fakeSource = SourceEntity(Uri="http://foo.bar")
         let fakeStoredArticles =
             [ ArticleEntity(Title="Foo", Source = fakeSource);
-              ArticleEntity(Title="Bar", PublishedDate = DateTime.Now) ] :> seq<_>
-        fakeStoredArticles 
-        |> Seq.item 0 
-        |> fakeSource.Articles.Add       
+              ArticleEntity(Title="Bar", PublishedDate = DateTime.Now) ]
+        fakeSource.Articles.Add fakeStoredArticles.[0]    
 
         let service = mockService fakeStoredArticles (fakeSource, fakeFetchedArticles)
-        let articles = await <| service.RetrieveFeedsAsync([ fakeSource ] :> seq<_>)
-        let feed = articles |> List.ofSeq
+        let feed = service.RetrieveFeedsAsync([ fakeSource ]) |@> List.ofSeq
 
         Assert.Equal(3, feed.Count())
         Assert.Equal("FooBar", feed.[0].Title)
@@ -126,12 +116,13 @@ module FeedServiceTests =
     let ``favorite articles should never be removed but not included into feed``() =
         let fakeStoredArticles =
             [ ArticleEntity(Title="Foo", Fave=false);
-              ArticleEntity(Title="Bar", Fave=true) ] :> seq<_>          
+              ArticleEntity(Title="Bar", Fave=true) ]        
         
         let mockRepository = Mock<IArticlesRepository>()
         mockRepository
             .Setup(fun i -> i.GetAllAsync())
-            .Returns(fakeStoredArticles |> Task.FromResult) |> ignore 
+            .Returns(fakeStoredArticles :> seq<_> |> Task.FromResult) 
+            |> ignore 
         mockRepository
             .Setup(fun i -> i.RemoveAsync(It.IsAny<ArticleEntity[]>()))
             .Returns(Task.CompletedTask)
@@ -146,9 +137,7 @@ module FeedServiceTests =
                 mockRepository.Object :> obj)
 
         let service = mockFeedService.Object
-        let articles = await <| service.RetrieveFeedsAsync(Seq.empty)   
-        let feed = articles |> List.ofSeq
-
+        let feed = service.RetrieveFeedsAsync(Seq.empty) |@> List.ofSeq
         Assert.Equal(0, feed.Count())
 
 // Tests for html parsing service.
@@ -176,12 +165,12 @@ module OpmlServiceTests =
 
     [<Fact>]
     let ``should create instance of opml service``() =
-        use scope =
-            ContainerBuilder()
-            |> tee registerOpmlDefaults
-            |> tee registerAs<OpmlService, IOpmlService>
-            |> buildScope
-        scope |> assertResolve<IOpmlService> 
+        ContainerBuilder()
+        |> tee registerOpmlDefaults
+        |> tee registerAs<OpmlService, IOpmlService>
+        |> buildScope
+        |> tee assertResolve<IOpmlService>
+        |> dispose
 
     [<Fact>]
     let ``should be able to export opml feeds``() =
@@ -191,8 +180,7 @@ module OpmlServiceTests =
                 |> collection
             [ SourceCategoryEntity(Title="Foo", Sources=([] |> collection));
               SourceCategoryEntity(Title="Bar", Sources=fakeSourceEntities) ]
-            |> seq
-            |> fun s -> s.OrderBy(fun i -> i.Title)
+            |> fun ls -> ls.OrderBy(fun i -> i.Title)
             |> Task.FromResult
 
         let mockRepository = Mock<ISourcesRepository>()
@@ -272,11 +260,11 @@ module XmlSerializerTests =
 
     [<Fact>]
     let ``should resolve instance of xml serializer``() =
-        use scope =
-            ContainerBuilder()
-            |> tee registerAs<SerializationService, ISerializationService>
-            |> buildScope
-        assertResolve<ISerializationService> scope
+        ContainerBuilder()
+        |> tee registerAs<SerializationService, ISerializationService>
+        |> buildScope
+        |> tee assertResolve<ISerializationService>
+        |> dispose
 
     [<Fact>]
     let ``should serialize typed objects into xml``() =
@@ -287,9 +275,9 @@ module XmlSerializerTests =
         instance.Head <- Head()
         instance.Head.Title <- "Foo"
 
-        serializer.Serialize<Opml>(instance, File.OpenWrite(filename))
-        Assert.Contains("Foo", File.ReadAllText(filename))
-        File.Delete(filename)
+        serializer.Serialize<Opml>(instance, File.OpenWrite filename)
+        Assert.Contains("Foo", File.ReadAllText filename)
+        File.Delete filename
 
     [<Fact>]
     let ``should deserialize typed objects from xml``() =
@@ -300,20 +288,18 @@ module XmlSerializerTests =
         instance.Head <- Head()
         instance.Head.Title <- "Bar"
 
-        serializer.Serialize<Opml>(instance, File.OpenWrite(filename))
-        let opml = serializer.Deserialize<Opml>(File.OpenRead(filename))
+        serializer.Serialize<Opml>(instance, File.OpenWrite filename)
+        let opml = serializer.Deserialize<Opml>(File.OpenRead filename)
         Assert.Equal("Bar", opml.Head.Title)
-        File.Delete(filename)
+        File.Delete filename
 
 // Tests for feed search engine based on Feedly API.
 module FeedlySearchServiceTests =
 
     [<Fact>]
     let ``should find something on feedly``() =
-        let service = FeedlySearchService()
-        service.Search("feedly")
-        |> await
-        |> Assert.NotNull
+        FeedlySearchService().Search("feedly")
+        |@> Assert.NotNull
 
 // Tests for observable properties!
 module ObservablePropertyTests =
