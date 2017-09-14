@@ -12,14 +12,14 @@ namespace myFeed.Services.Implementations
     public class FeedService : IFeedService
     {
         private readonly IArticlesRepository _articlesRepository;
-        private readonly IHtmlParsingService _htmlParsingService;
+        private readonly IHtmlService _htmlService;
 
         public FeedService(
-            IHtmlParsingService htmlParsingService,
+            IHtmlService htmlService,
             IArticlesRepository articlesRepository)
         {
             _articlesRepository = articlesRepository;
-            _htmlParsingService = htmlParsingService;
+            _htmlService = htmlService;
         }
 
         public Task<IOrderedEnumerable<ArticleEntity>> RetrieveFeedsAsync(IEnumerable<SourceEntity> sourceEntities)
@@ -70,7 +70,7 @@ namespace myFeed.Services.Implementations
                 var feed = await FeedReader.ReadAsync(e.Uri).ConfigureAwait(false);
                 var items = feed.Items.Select(i => new ArticleEntity
                 {
-                    ImageUri = _htmlParsingService.ExtractImageUrl(i.Content),
+                    ImageUri = _htmlService.ExtractImage(i.Content),
                     PublishedDate = i.PublishingDate ?? DateTime.MinValue,
                     FeedTitle = feed.Title,
                     Content = i.Content,

@@ -43,7 +43,7 @@ module FeedServiceTests =
         let mockFeedService = 
             Mock<FeedService>( 
                 MockBehavior.Loose, // Params order matters!
-                Mock<IHtmlParsingService>().Object :> obj,
+                Mock<IHtmlService>().Object :> obj,
                 mockRepository.Object :> obj)
         mockFeedService.CallBase <- true
         mockFeedService.Protected()
@@ -133,7 +133,7 @@ module FeedServiceTests =
         let mockFeedService = 
             Mock<FeedService>( 
                 MockBehavior.Loose, // Params order matters!
-                Mock<IHtmlParsingService>().Object :> obj,
+                Mock<IHtmlService>().Object :> obj,
                 mockRepository.Object :> obj)
 
         let service = mockFeedService.Object
@@ -141,16 +141,23 @@ module FeedServiceTests =
         Assert.Equal(0, feed.Count())
 
 // Tests for html parsing service.
-module HtmlParsingServiceTests =
+module AngleSharpHtmlServiceTests =
 
     [<Fact>]
     let ``should extract first image url from plain text``() =
         let sample = 
             """ Foo bar <bla a="42"></bla> hello test
                 <img foo="bar" src="http://example.com" /> """
-        let service = HtmlParsingService()
-        let extractedUrl = service.ExtractImageUrl(sample)
-        Assert.Equal("http://example.com", extractedUrl)
+        let service = AngleSharpHtmlService()
+        let extractedUrl = service.ExtractImage sample
+        Assert.Equal("http://example.com/", extractedUrl)
+
+    [<Fact>]
+    let ``should return null if there are no images``() =
+        let sample = """No images!"""
+        let service = AngleSharpHtmlService()
+        service.ExtractImage sample
+        |> Assert.Null
 
 // Tests for opml service.
 module OpmlServiceTests =

@@ -47,7 +47,7 @@ module RegistrationsTestsModule =
         |> tee assertResolve<ISearchService>
         |> tee assertResolve<IOpmlService>
         |> tee assertResolve<ISerializationService>
-        |> tee assertResolve<IHtmlParsingService>
+        |> tee assertResolve<IHtmlService>
         |> tee assertResolve<IFeedService>
         |> dispose
 

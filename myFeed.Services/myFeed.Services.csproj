@@ -1,21 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <ApplicationIcon />
     <Win32Resource />
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile></DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.9.9" />
     <PackageReference Include="CodeHollow.FeedReader" Version="1.1.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj" />
   </ItemGroup>
-
 </Project>

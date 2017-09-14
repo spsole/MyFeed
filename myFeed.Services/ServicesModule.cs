@@ -12,7 +12,7 @@ namespace myFeed.Services
             builder.RegisterModule<RepositoriesModule>();
             builder.RegisterType<SerializationService>().As<ISerializationService>();
             builder.RegisterType<FeedlySearchService>().As<ISearchService>();
-            builder.RegisterType<HtmlParsingService>().As<IHtmlParsingService>();
+            builder.RegisterType<AngleSharpHtmlService>().As<IHtmlService>();
             builder.RegisterType<OpmlService>().As<IOpmlService>();
             builder.RegisterType<FeedService>().As<IFeedService>();
             base.Load(builder);
