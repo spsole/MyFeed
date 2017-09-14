@@ -9,6 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
     xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
+    xmlns:views="using:myFeed.Views.Uwp.Views"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -41,8 +42,8 @@
             <ColumnDefinition Width="4*" />
             <ColumnDefinition Width="9*"/>
         </Grid.ColumnDefinitions>
-        <Frame Grid.ColumnSpan="2" Canvas.ZIndex="1"/>
-        <Grid Grid.ColumnSpan="2" Grid.Column="0">
+        <Frame x:Name="ArticleFrame" Grid.ColumnSpan="2" Canvas.ZIndex="1" SourcePageType="views:EmptyView"/>
+        <Grid x:Name="FeedGrid" Grid.ColumnSpan="2" Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*" />

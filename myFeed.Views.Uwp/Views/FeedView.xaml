@@ -44,7 +44,7 @@
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="9*"/>
         </Grid.ColumnDefinitions>
-        <Frame x:Name="ArticleFrame" Grid.ColumnSpan="2" Canvas.ZIndex="1"/>
+        <Frame x:Name="ArticleFrame" Grid.ColumnSpan="2" Canvas.ZIndex="1" SourcePageType="views:EmptyView"/>
         <Grid x:Name="FeedGrid" Grid.Column="0" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="48"/>

@@ -336,4 +336,10 @@
   <data name="LightThemeOption">
     <value>Светлая тема</value>
   </data>
+  <data name="ChooseArticleTitle">
+    <value>Выберите статью из списка слева!</value>
+  </data>
+  <data name="ChooseArticle">
+    <value>И приступайте к чтению.</value>
+  </data>
 </root>
