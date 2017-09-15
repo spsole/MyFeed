@@ -159,7 +159,7 @@
                                                 <Ellipse VerticalAlignment="Center" Width="70" 
                                                     Height="70" HorizontalAlignment="Center">
                                                     <Ellipse.Fill>
-                                                        <ImageBrush ImageSource="{Binding Image.Value}" Stretch="Uniform"/>
+                                                        <ImageBrush ImageSource="{Binding Image.Value}" Stretch="UniformToFill"/>
                                                     </Ellipse.Fill>
                                                 </Ellipse>
                                             </Grid>

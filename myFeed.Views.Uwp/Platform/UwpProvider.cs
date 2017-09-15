@@ -18,6 +18,8 @@ namespace myFeed.Views.Uwp.Platform
     {
         public async Task LaunchUri(Uri uri) => await Launcher.LaunchUriAsync(uri);
 
+        public async Task ShowDialog(string msg, string title) => await new MessageDialog(msg, title).ShowAsync();
+
         public Task Share(string content)
         {
             var dataTransferManager = DataTransferManager.GetForCurrentView();
@@ -33,10 +35,7 @@ namespace myFeed.Views.Uwp.Platform
 
         public Task CopyTextToClipboard(string text)
         {
-            var dataPackage = new DataPackage
-            {
-                RequestedOperation = DataPackageOperation.Copy
-            };
+            var dataPackage = new DataPackage {RequestedOperation = DataPackageOperation.Copy};
             dataPackage.SetText(text);
             Clipboard.SetContent(dataPackage);
             return Task.CompletedTask;
@@ -60,8 +59,6 @@ namespace myFeed.Views.Uwp.Platform
             var stream = await file.OpenStreamForWriteAsync();
             return stream;
         }
-
-        public async Task ShowDialog(string msg, string title) => await new MessageDialog(msg, title).ShowAsync();
 
         public async Task<bool> ShowDialogForConfirmation(string message, string title)
         {

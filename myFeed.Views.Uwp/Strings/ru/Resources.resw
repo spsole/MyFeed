@@ -342,4 +342,13 @@
   <data name="ChooseArticle">
     <value>И приступайте к чтению.</value>
   </data>
+  <data name="SettingsNotification">
+    <value>Уведомление</value>
+  </data>
+  <data name="ExportFeedsSuccess">
+    <value>Источники были успешно экспортированы!</value>
+  </data>
+  <data name="ImportFeedsSuccess">
+    <value>Источники были успешно импортированы!</value>
+  </data>
 </root>

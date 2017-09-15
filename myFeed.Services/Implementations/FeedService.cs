@@ -73,7 +73,7 @@ namespace myFeed.Services.Implementations
                     let content = feedItem.Content
                     let contents = string.IsNullOrWhiteSpace(content) ? feedItem.Description : content
                     let publishedDate = feedItem.PublishingDate ?? DateTime.MinValue
-                    let imageUri = _htmlService.ExtractImage(content)
+                    let imageUri = _htmlService.ExtractImage(contents)
                     select new ArticleEntity
                     {
                         ImageUri = imageUri,

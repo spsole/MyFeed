@@ -107,7 +107,7 @@
                                         VerticalAlignment="Center" HorizontalAlignment="Center" Symbol="PostUpdate"/>
                                     <Ellipse Width="70" Height="70" HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Ellipse.Fill>
-                                            <ImageBrush ImageSource="{Binding Image.Value}" Stretch="Uniform"/>
+                                            <ImageBrush ImageSource="{Binding Image.Value}" Stretch="UniformToFill"/>
                                         </Ellipse.Fill>
                                     </Ellipse>
                                 </Grid>
