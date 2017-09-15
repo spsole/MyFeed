@@ -95,6 +95,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Extensions\HtmlToXamlAction.cs" />
     <Compile Include="Extensions\NavigateAction.cs" />
     <Compile Include="Extensions\OpenFlyoutAction.cs" />
     <Compile Include="Controls\Expander.cs" />
@@ -119,6 +120,9 @@
     <Compile Include="Platform\UwpProvider.cs" />
     <Compile Include="Platform\UwpTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\ArticleView.xaml.cs">
+      <DependentUpon>ArticleView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EmptyView.xaml.cs">
       <DependentUpon>EmptyView.xaml</DependentUpon>
     </Compile>
@@ -216,6 +220,10 @@
     <Page Include="Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ArticleView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EmptyView.xaml">
       <SubType>Designer</SubType>

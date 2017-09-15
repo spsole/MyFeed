@@ -14,6 +14,7 @@ namespace myFeed.ViewModels.Implementations
             IArticlesRepository articlesRepository)
         {
             PublishedDate = new ReadOnlyProperty<DateTime>(entity.PublishedDate);
+            Content = new ReadOnlyProperty<string>(entity.Content);
             IsFavorite = new ObservableProperty<bool>(entity.Fave);
             Feed = new ReadOnlyProperty<string>(entity.FeedTitle);
             Image = new ReadOnlyProperty<string>(entity.ImageUri);
@@ -53,6 +54,11 @@ namespace myFeed.ViewModels.Implementations
         /// Human-readable date.
         /// </summary>
         public ReadOnlyProperty<DateTime> PublishedDate { get; }
+
+        /// <summary>
+        /// Contains article content.
+        /// </summary>
+        public ReadOnlyProperty<string> Content { get; }
 
         /// <summary>
         /// Image url.

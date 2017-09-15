@@ -118,6 +118,11 @@
                                                 <core:EventTriggerBehavior EventName="RightTapped">
                                                     <extensions:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
+                                                <core:EventTriggerBehavior EventName="Tapped">
+                                                    <extensions:NavigateAction 
+                                                        Frame="{Binding ElementName=ArticleFrame}"
+                                                        Parameter="{Binding}" TargetPage="views:ArticleView"/>
+                                                </core:EventTriggerBehavior>
                                             </interactivity:Interaction.Behaviors>
                                             <FlyoutBase.AttachedFlyout>
                                                 <MenuFlyout>

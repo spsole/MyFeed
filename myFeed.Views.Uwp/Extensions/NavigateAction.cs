@@ -18,10 +18,31 @@ namespace myFeed.Views.Uwp.Extensions
             set => SetValue(TargetPageProperty, value);
         }
 
+        public static readonly DependencyProperty ParameterProperty =
+            DependencyProperty.Register(nameof(Parameter), typeof(object),
+                typeof(NavigateAction), new PropertyMetadata(null));
+
+        public object Parameter
+        {
+            get => (Type) GetValue(ParameterProperty);
+            set => SetValue(ParameterProperty, value);
+        }
+
+        public static readonly DependencyProperty FrameProperty =
+            DependencyProperty.Register(nameof(Frame), typeof(Frame),
+                typeof(NavigateAction), new PropertyMetadata(null));
+
+        public Frame Frame
+        {
+            get => (Frame)GetValue(FrameProperty);
+            set => SetValue(FrameProperty, value);
+        }
+
         public object Execute(object sender, object parameter)
         {
             var root = Window.Current.Content as Frame;
-            GetNavigationFrame(root).Navigate(TargetPage);
+            var frame = Frame ?? GetNavigationFrame(root);
+            frame.Navigate(TargetPage);
             return null;
         }
 

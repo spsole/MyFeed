@@ -29,6 +29,7 @@ myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architectural pattern. <b>Vie
 - <a href="https://autofac.org/">Autofac</a> for <a href="https://en.wikipedia.org/wiki/Dependency_injection">Dependency Injection</a>
 - <a href="https://github.com/aspnet/EntityFrameworkCore">Entity Framework Core</a> to work with data
 - <a href="http://www.sqlite.org/">SQLite</a> as a database engine
+- <a href="https://github.com/AngleSharp/AngleSharp">AngleSharp</a> to parse html
 - <a href="https://www.newtonsoft.com/json">Newtonsoft.JSON</a> to parse JSON objects
 - <a href="https://github.com/codehollow/FeedReader">CodeHollow.FeedReader</a> to parse feeds
 - <a href="https://developer.microsoft.com/en-us/windows/apps">Universal Windows Platform</a>
