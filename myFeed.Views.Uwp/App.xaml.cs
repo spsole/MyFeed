@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Views.Uwp.Views;
@@ -19,6 +20,8 @@ namespace myFeed.Views.Uwp
         {
             var rootFrame = await CreateRootFrameAsync();
             if (rootFrame.Content == null) rootFrame.Navigate(typeof(MenuView));
+            var systemManager = SystemNavigationManager.GetForCurrentView();
+            systemManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             /*
             // Register notifications.

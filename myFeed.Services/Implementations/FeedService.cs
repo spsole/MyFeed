@@ -68,18 +68,24 @@ namespace myFeed.Services.Implementations
             try
             {
                 var feed = await FeedReader.ReadAsync(e.Uri).ConfigureAwait(false);
-                var items = feed.Items.Select(i => new ArticleEntity
-                {
-                    ImageUri = _htmlService.ExtractImage(i.Content),
-                    PublishedDate = i.PublishingDate ?? DateTime.MinValue,
-                    FeedTitle = feed.Title,
-                    Content = i.Content,
-                    Title = i.Title,
-                    Uri = i.Link,
-                    Read = false,
-                    Fave = false
-                });
-                return (e, items);
+                var articles = 
+                    from feedItem in feed.Items
+                    let content = feedItem.Content
+                    let contents = string.IsNullOrWhiteSpace(content) ? feedItem.Description : content
+                    let publishedDate = feedItem.PublishingDate ?? DateTime.MinValue
+                    let imageUri = _htmlService.ExtractImage(content)
+                    select new ArticleEntity
+                    {
+                        ImageUri = imageUri,
+                        PublishedDate = publishedDate,
+                        FeedTitle = feed.Title,
+                        Content = contents,
+                        Title = feedItem.Title,
+                        Uri = feedItem.Link,
+                        Read = false,
+                        Fave = false
+                    };
+                return (e, articles);
             }
             catch (Exception)
             {

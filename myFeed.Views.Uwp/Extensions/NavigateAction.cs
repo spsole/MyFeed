@@ -24,7 +24,7 @@ namespace myFeed.Views.Uwp.Extensions
 
         public object Parameter
         {
-            get => (Type) GetValue(ParameterProperty);
+            get => GetValue(ParameterProperty);
             set => SetValue(ParameterProperty, value);
         }
 
@@ -42,7 +42,7 @@ namespace myFeed.Views.Uwp.Extensions
         {
             var root = Window.Current.Content as Frame;
             var frame = Frame ?? GetNavigationFrame(root);
-            frame.Navigate(TargetPage);
+            frame.Navigate(TargetPage, Parameter);
             return null;
         }
 
