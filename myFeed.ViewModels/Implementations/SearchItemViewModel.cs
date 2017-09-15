@@ -33,8 +33,8 @@ namespace myFeed.ViewModels.Implementations
                 var response = await platformService.ShowDialogForSelection(categories);
                 if (response is SourceCategoryEntity sourceCategoryEntity)
                 {
-                    sourceCategoryEntity.Sources.Add(new SourceEntity {Notify = true, Uri = FeedUrl.Value});
-                    await sourcesRepository.UpdateAsync(sourceCategoryEntity);
+                    var source = new SourceEntity {Notify = true, Uri = FeedUrl.Value};
+                    await sourcesRepository.AddSourceAsync(sourceCategoryEntity, source);
                 }
             });
         }

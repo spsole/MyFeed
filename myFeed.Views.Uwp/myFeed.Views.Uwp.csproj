@@ -95,9 +95,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Expander.cs" />
+    <Compile Include="Controls\SelectCategoryDialog.xaml.cs">
+      <DependentUpon>SelectCategoryDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\NavigateAction.cs" />
     <Compile Include="Extensions\OpenFlyoutAction.cs" />
-    <Compile Include="Controls\Expander.cs" />
     <Compile Include="Controls\InputDialog.xaml.cs">
       <DependentUpon>InputDialog.xaml</DependentUpon>
     </Compile>
@@ -204,6 +207,10 @@
     <Page Include="Controls\LoadingScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\SelectCategoryDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\SwipableSplitView.xaml">
       <Generator>MSBuild:Compile</Generator>

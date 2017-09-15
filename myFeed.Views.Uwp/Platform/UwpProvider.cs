@@ -79,10 +79,11 @@ namespace myFeed.Views.Uwp.Platform
             return result == ContentDialogResult.Primary ? inputDialog.Value : string.Empty;
         }
 
-        public Task<object> ShowDialogForSelection(IEnumerable<object> sourcesRepository)
+        public async Task<object> ShowDialogForSelection(IEnumerable<object> items)
         {
-            if (!sourcesRepository.Any()) return null;
-            return Task.FromResult(sourcesRepository.First());
+            var selectionDialog = new SelectCategoryDialog(items, "YOBA");
+            var result = await selectionDialog.ShowAsync();
+            return result != ContentDialogResult.Primary ? null : selectionDialog.Value;
         }
 
         public Task RegisterBackgroundTask(int freq) => Task.Delay(1);
