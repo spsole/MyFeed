@@ -95,7 +95,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extensions\HtmlToXamlAction.cs" />
     <Compile Include="Extensions\NavigateAction.cs" />
     <Compile Include="Extensions\OpenFlyoutAction.cs" />
     <Compile Include="Controls\Expander.cs" />
@@ -117,6 +116,7 @@
     <Compile Include="Extensions\TruthyToVisibleConverter.cs" />
     <Compile Include="Extensions\UpperStringConverter.cs" />
     <Compile Include="Platform\UwpLocator.cs" />
+    <Compile Include="Platform\UwpParser.cs" />
     <Compile Include="Platform\UwpProvider.cs" />
     <Compile Include="Platform\UwpTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
