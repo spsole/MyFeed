@@ -16,8 +16,9 @@ open myFeed.Tests.Modules
 
 open myFeed.Repositories.Abstractions
 open myFeed.Repositories.Implementations
-open myFeed.Repositories.Entities.Local
-open myFeed.Repositories.Entities
+
+open myFeed.Entities.Local
+open myFeed.Entities
 
 [<AutoOpen>]
 module RepositoryHelpers =

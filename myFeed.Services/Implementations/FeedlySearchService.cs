@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using myFeed.Repositories.Entities.Feedly;
+using myFeed.Entities.Feedly;
 using myFeed.Services.Abstractions;
 using Newtonsoft.Json;
 

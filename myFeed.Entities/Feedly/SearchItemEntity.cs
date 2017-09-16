@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace myFeed.Repositories.Entities.Feedly
+namespace myFeed.Entities.Feedly
 {
     public sealed class SearchItemEntity
     {

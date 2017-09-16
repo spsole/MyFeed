@@ -24,7 +24,9 @@ $RECYCLE.BIN/
 .vs/
 .vscode/
 .idea/
-myFeed.Repositories/Migrations
+myFeed.Entities/obj
+myFeed.Entities/bin
+myFeed.Entities/Migrations
 myFeed.Repositories/obj
 myFeed.Repositories/bin
 myFeed.Tests/obj

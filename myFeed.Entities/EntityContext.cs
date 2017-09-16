@@ -1,9 +1,9 @@
-﻿using myFeed.Repositories.Entities.Local;
+﻿using myFeed.Entities.Local;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Logging;
 
-namespace myFeed.Repositories.Entities
+namespace myFeed.Entities
 {
     public class EntityContext : DbContext
     {

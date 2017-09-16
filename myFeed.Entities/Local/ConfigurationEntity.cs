@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace myFeed.Repositories.Entities.Local
+namespace myFeed.Entities.Local
 {
     public class ConfigurationEntity
     {

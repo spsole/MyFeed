@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using myFeed.Repositories.Entities.Feedly;
+using myFeed.Entities.Feedly;
 
 namespace myFeed.Services.Abstractions
 {

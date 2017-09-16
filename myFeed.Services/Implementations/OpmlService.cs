@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using myFeed.Entities.Local;
+using myFeed.Entities.Opml;
 using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Entities.Local;
-using myFeed.Repositories.Entities.Opml;
 using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations

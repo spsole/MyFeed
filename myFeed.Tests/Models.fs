@@ -8,8 +8,9 @@ open System.Linq
 open Microsoft.EntityFrameworkCore
 open Microsoft.Extensions.Logging
 
-open myFeed.Repositories.Entities
-open myFeed.Repositories.Entities.Local
+open myFeed.Entities
+open myFeed.Entities.Local
+
 open myFeed.Repositories.Abstractions
 
 open myFeed.Tests.Extensions

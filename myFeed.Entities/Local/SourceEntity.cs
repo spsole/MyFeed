@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace myFeed.Repositories.Entities.Local
+namespace myFeed.Entities.Local
 {
     public class SourceEntity
     {

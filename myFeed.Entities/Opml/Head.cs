@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace myFeed.Repositories.Entities.Opml
+namespace myFeed.Entities.Opml
 {
     [XmlType("head")]
     public sealed class Head

@@ -1,7 +1,5 @@
 # myFeed
-Read news from websites via <b>myFeed</b>, find interesting feeds in the internet and group them by categories, save favorite articles to your device with an ability to read them offline, share interesting posts with friends.
-
-<b>myFeed</b> has an intuitive interface and works fast, this makes the process of reading RSS feeds ever more convenient. 
+Read news from websites via <b>myFeed</b>, find interesting feeds in the internet and group them by categories, save favorite articles to your device with an ability to read them offline, share interesting posts with friends. myFeed has an intuitive interface and works fast, this makes the process of reading RSS feeds ever more convenient. 
 
 <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get myFeed from Windows Store for your mobile or desktop Windows 10 device right now!</a>
 
@@ -9,15 +7,15 @@ Read news from websites via <b>myFeed</b>, find interesting feeds in the interne
   <img src="https://worldbeater.github.io/mockups/myFeed.png" width="670"/>
 </a>
 
-## About
+## About app
 
-myFeed is an RSS reader for <b>Universal Windows Platform</b> (also planned support for Android and Linux). This app can collect news from websites, save them to your device and send toast notifications for you once new posts appear in your news feeds.
+myFeed is an RSS reader for <b>Universal Windows Platform</b> (also planned support for Android and Linux). This app can collect news from websites, save them to your device and send toast notifications once new posts appear in your news feeds.
 
-Application is completely free and open-source. No ads, no subscription fees. Unlimited trial version contains all features of a full one, but if you appreciate my work and would like to support myFeed's future development, please, consider donating.
+Application is completely free and open-source. No ads, no mandatory subscription fees. Unlimited trial version contains all features of a full one.
 
 ## Application architecture
 
-myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architectural pattern. <b>ViewModels</b> provide Views abstractions, exposing public properties and commands. <b>Views</b> are specific for each platform supported by myFeed (currently UWP Views only); ViewModels and Models do not rely on Views. <b>Models</b> represent real state content and logic; this part of MVVM pattern is implemented as <b>Services</b> and <b>Repositories</b> layers. There is a dependencies graph below to make all these points clear:
+myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architectural pattern. <b>ViewModels</b> provide Views abstractions, exposing public properties and commands. <b>Views</b> are specific for each platform supported by myFeed (currently UWP Views only); ViewModels and Models do not rely on Views. <b>Models</b> represent real state content and logic; this part of MVVM pattern is implemented as <b>Entities</b>, <b>Services</b> and <b>Repositories</b> layers. There is a dependencies graph below to make all these points clear:
 
 <img src="/DependenciesGraph.png" width="400px">
 

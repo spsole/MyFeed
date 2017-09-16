@@ -6,8 +6,9 @@ open Moq
 
 open System
 
+open myFeed.Entities
+
 open myFeed.Repositories
-open myFeed.Repositories.Entities
 open myFeed.Repositories.Abstractions
 
 open myFeed.Tests.Extensions

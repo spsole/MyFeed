@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CodeHollow.FeedReader;
+using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Entities.Local;
 using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations

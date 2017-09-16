@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using myFeed.Repositories.Entities.Local;
+using myFeed.Entities.Local;
 
 namespace myFeed.Services.Abstractions
 {

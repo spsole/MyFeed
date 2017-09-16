@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using myFeed.Entities;
+using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Entities;
-using myFeed.Repositories.Entities.Local;
 using Microsoft.EntityFrameworkCore;
 
 namespace myFeed.Repositories.Implementations

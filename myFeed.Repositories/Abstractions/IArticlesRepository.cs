@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using myFeed.Repositories.Entities.Local;
-using Remotion.Linq.Clauses.Expressions;
+using myFeed.Entities.Local;
 
 namespace myFeed.Repositories.Abstractions
 {

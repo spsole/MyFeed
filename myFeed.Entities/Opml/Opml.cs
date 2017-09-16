@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace myFeed.Repositories.Entities.Opml
+namespace myFeed.Entities.Opml
 {
     [XmlType("opml")]
     public sealed class Opml

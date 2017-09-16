@@ -20,10 +20,11 @@ open myFeed.ViewModels.Extensions
 open myFeed.Services.Abstractions
 open myFeed.Services.Implementations
 
-open myFeed.Repositories.Entities
-open myFeed.Repositories.Entities.Feedly
-open myFeed.Repositories.Entities.Local
 open myFeed.Repositories.Abstractions
+
+open myFeed.Entities
+open myFeed.Entities.Feedly
+open myFeed.Entities.Local
 
 [<AutoOpen>]
 module ViewModelsModule =
@@ -103,30 +104,26 @@ module SearchViewModelsTests =
         let searchEntity = SearchItemEntity(FeedId="_____http://example.com")
         let fakeEntity = SourceCategoryEntity(Title="Foo")
             
-        let fakeDialogService =
-            let mockService = Mock<IPlatformService>()
-            mockService
-                .Setup(fun i -> i.ShowDialogForSelection(It.IsAny<seq<obj>>()))
-                .Returns(fakeEntity :> obj |> Task.FromResult)
-                |> ignore
-            mockService.Object
+        let mockService = Mock<IPlatformService>()
+        mockService
+            .Setup(fun i -> i.ShowDialogForSelection(It.IsAny<seq<obj>>()))
+            .Returns(fakeEntity :> obj |> Task.FromResult) |> ignore
+
+        let mockRepository = Mock<ISourcesRepository>()
+        mockRepository
+            .Setup(fun i -> i.AddSourceAsync(It.IsAny(), It.IsAny())) 
+            .Callback<SourceCategoryEntity, SourceEntity>(fun c e -> 
+                Assert.Equal("http://example.com", e.Uri)) |> ignore               
 
         use scope = 
             ContainerBuilder()
             |> tee registerDefaults
             |> tee registerAsSelf<SearchItemViewModel>
             |> tee (registerInstanceAs<SearchItemEntity> searchEntity)
-            |> tee (registerInstanceAs<IPlatformService> fakeDialogService)
+            |> tee (registerInstanceAs<IPlatformService> mockService.Object)
             |> buildScope
 
         let viewModel = resolve<SearchItemViewModel> scope
-        viewModel.AddToSources.CanExecuteChanged += fun _ ->
-            if (viewModel.AddToSources.CanExecute()) then
-
-                Assert.Equal(1, fakeEntity.Sources.Count)
-                let first = fakeEntity.Sources |> Seq.item 0
-                Assert.Equal("http://example.com", first.Uri)
-
         viewModel.AddToSources.Execute(null)            
 
 // Tests for settings ViewModel.

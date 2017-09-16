@@ -22,8 +22,9 @@ open myFeed.Services.Abstractions
 open myFeed.Services.Implementations
 
 open myFeed.Repositories.Abstractions
-open myFeed.Repositories.Entities.Opml
-open myFeed.Repositories.Entities.Local
+
+open myFeed.Entities.Opml
+open myFeed.Entities.Local
 
 // Tests for service responsible for retrieving feeds.
 module FeedServiceTests = 

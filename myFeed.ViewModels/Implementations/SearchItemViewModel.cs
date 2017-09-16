@@ -1,7 +1,7 @@
 ﻿using System;
+using myFeed.Entities.Feedly;
+using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Entities.Feedly;
-using myFeed.Repositories.Entities.Local;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
