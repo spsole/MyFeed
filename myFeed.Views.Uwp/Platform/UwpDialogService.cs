@@ -5,7 +5,6 @@ using Windows.ApplicationModel.Resources;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using myFeed.Services.Abstractions;
-using myFeed.Views.Uwp.Controls;
 
 namespace myFeed.Views.Uwp.Platform
 {
@@ -30,16 +29,26 @@ namespace myFeed.Views.Uwp.Platform
 
         public async Task<string> ShowDialogForResults(string message, string title)
         {
-            var inputDialog = new InputDialog(message, title);
+            var resourceLoader = ResourceLoader.GetForViewIndependentUse();
+            var inputDialog = new ContentDialog {Title = title};
+            var contentBox = new TextBox {PlaceholderText = message};
+            inputDialog.PrimaryButtonText = resourceLoader.GetString("Ok");
+            inputDialog.SecondaryButtonText = resourceLoader.GetString("Cancel");
+            inputDialog.Content = new StackPanel {Children = {contentBox}};
             var result = await inputDialog.ShowAsync();
-            return result == ContentDialogResult.Primary ? inputDialog.Value : string.Empty;
+            return result == ContentDialogResult.Primary ? contentBox.Text : string.Empty;
         }
 
         public async Task<object> ShowDialogForSelection(IEnumerable<object> items)
         {
-            var selectionDialog = new SelectCategoryDialog(items, "YOBA");
+            var resourceLoader = ResourceLoader.GetForViewIndependentUse();
+            var selectionDialog = new ContentDialog {Title = resourceLoader.GetString("AddIntoCategory")};
+            var selectBox = new ComboBox {DisplayMemberPath = "Title", ItemsSource = items};
+            selectionDialog.PrimaryButtonText = resourceLoader.GetString("Ok");
+            selectionDialog.SecondaryButtonText = resourceLoader.GetString("Cancel");
+            selectionDialog.Content = selectBox;
             var result = await selectionDialog.ShowAsync();
-            return result != ContentDialogResult.Primary ? null : selectionDialog.Value;
+            return result != ContentDialogResult.Primary ? null : selectBox.SelectedItem;
         }
     }
 }

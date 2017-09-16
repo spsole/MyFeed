@@ -195,6 +195,9 @@
   <data name="AddCategory">
     <value>Добавить категорию</value>
   </data>
+  <data name="AddIntoCategory">
+    <value>Добавить в категорию</value>
+  </data>
   <data name="AddFromSearch">
     <value>Добавить из поиска</value>
   </data>
