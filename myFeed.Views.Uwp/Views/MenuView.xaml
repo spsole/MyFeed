@@ -29,7 +29,7 @@
                         <AdaptiveTrigger MinWindowWidth="600" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="SplitView.DisplayMode" Value="CompactOverlay" />
+                        <Setter Target="Menu.DisplayMode" Value="CompactOverlay" />
                         <Setter Target="MenuBtn.Visibility" Value="Collapsed"/>
                         <Setter Target="ColoredGrid.Background" Value="{ThemeResource 
                             SystemControlBackgroundChromeMediumBrush}"/>
@@ -41,7 +41,8 @@
             x:Name="Menu" DisplayMode="Overlay" 
             CompactPaneLength="48" OpenPaneLength="270">
             <controls:SwipeableSplitView.Pane>
-                <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+                <Grid x:Name="ColoredGrid" Background="{ThemeResource 
+                    SystemControlPageBackgroundChromeLowBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="48"/>
                         <RowDefinition Height="*"/>
@@ -88,7 +89,7 @@
                     <StackPanel Height="48" VerticalAlignment="Top" Background="{ThemeResource 
                         SystemControlPageBackgroundChromeLowBrush}"/>
                     <Frame x:Name="NavigationFrame" Navigated="OnNavigated" SourcePageType="views:FeedView"/>
-                    <Button Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
+                    <Button x:Name="MenuBtn" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
                         FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" 
                         VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent"
                         Width="48" Height="48">

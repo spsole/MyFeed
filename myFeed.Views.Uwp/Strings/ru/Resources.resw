@@ -354,4 +354,16 @@
   <data name="ImportFeedsSuccess">
     <value>Источники были успешно импортированы!</value>
   </data>
+  <data name="SendMailButton">
+    <value>Сообщить о проблеме</value>
+  </data>
+  <data name="SendMail">
+    <value>Если Вы столкнулись с какой-либо проблемой при использовании myFeed, сообщите об этом!</value>
+  </data>
+  <data name="SendFeedbackButton">
+    <value>Оценить приложение</value>
+  </data>
+  <data name="SendFeedback">
+    <value>Если Вам нравится myFeed, пожалуйста, оцените приложение в магазине Windows!</value>
+  </data>
 </root>

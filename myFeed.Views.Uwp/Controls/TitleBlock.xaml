@@ -17,12 +17,12 @@
                         <AdaptiveTrigger MinWindowWidth="600"/>
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="TitleBlock.Padding" Value="12 14 0 0"/>
+                        <Setter Target="Panel.Padding" Value="12 14 0 0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <StackPanel Orientation="Horizontal" Padding="60 14 0 0" Canvas.ZIndex="1">
+        <StackPanel x:Name="Panel" Orientation="Horizontal" Padding="60 14 0 0" Canvas.ZIndex="1">
             <TextBlock Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                 FontSize="15" FontWeight="Bold" Text="{Binding ElementName=TitleControl, Path=Text}"/>
             <TextBlock Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"

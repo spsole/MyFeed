@@ -172,6 +172,10 @@
                                     Padding="0" Command="{Binding OpenCredits}"/>
                             </StackPanel>
                         </Grid>
+                        <TextBlock TextWrapping="Wrap" Margin="0 6 0 12" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMail}"/>
+                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMailButton}"/>
+                        <TextBlock TextWrapping="Wrap" Margin="0 6 0 12" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedback}"/>
+                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedbackButton}"/>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
