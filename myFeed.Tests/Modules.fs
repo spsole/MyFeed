@@ -41,6 +41,8 @@ module RegistrationsTestsModule =
         |> tee registerModule<ServicesModule> 
         |> tee registerMockInstance<IPlatformService>
         |> tee registerMockInstance<ITranslationsService>
+        |> tee registerMockInstance<IFilePickerService>
+        |> tee registerMockInstance<IDialogService>
         |> buildScope
         |> tee assertResolve<ISourcesRepository>
         |> tee assertResolve<IConfigurationRepository>
@@ -57,6 +59,8 @@ module RegistrationsTestsModule =
         |> tee registerModule<ViewModelsModule>
         |> tee registerMockInstance<IPlatformService>
         |> tee registerMockInstance<ITranslationsService>
+        |> tee registerMockInstance<IFilePickerService>
+        |> tee registerMockInstance<IDialogService>
         |> buildScope
         |> tee assertResolve<FaveViewModel>
         |> tee assertResolve<FeedViewModel>

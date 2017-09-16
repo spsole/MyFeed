@@ -12,6 +12,7 @@ namespace myFeed.ViewModels.Implementations
         public SourcesCategoryViewModel(
             SourceCategoryEntity entity,
             SourcesViewModel parentViewModel,
+            IDialogService dialogService,
             IPlatformService platformService,
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService)
@@ -22,7 +23,7 @@ namespace myFeed.ViewModels.Implementations
             Title = new ObservableProperty<string>(entity.Title);
             RenameCategory = new ActionCommand(async () =>
             {
-                var name = await platformService.ShowDialogForResults(
+                var name = await dialogService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
                     translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
@@ -31,7 +32,7 @@ namespace myFeed.ViewModels.Implementations
             });
             RemoveCategory = new ActionCommand(async () =>
             {
-                var shouldDelete = await platformService.ShowDialogForConfirmation(
+                var shouldDelete = await dialogService.ShowDialogForConfirmation(
                     translationsService.Resolve("DeleteCategory"),
                     translationsService.Resolve("DeleteElement"));
                 if (!shouldDelete) return;

@@ -20,9 +20,15 @@ namespace myFeed.ViewModels.Implementations
             Image = new ReadOnlyProperty<string>(entity.ImageUri);
             Title = new ReadOnlyProperty<string>(entity.Title);
             IsRead = new ObservableProperty<bool>(entity.Read);
-
-            Share = new ActionCommand(() => platformService.Share($"{entity.Title}\r\n{entity.Uri}"));
-            CopyLink = new ActionCommand(() => platformService.CopyTextToClipboard(entity.Uri));
+            Share = new ActionCommand(async () =>
+            {
+                var shareText = $"{entity.Title}\r\n{entity.Uri}";
+                await platformService.Share(shareText);
+            });
+            CopyLink = new ActionCommand(async () =>
+            {
+                await platformService.CopyTextToClipboard(entity.Uri);
+            });
             LaunchUri = new ActionCommand(async () =>
             {
                 if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;

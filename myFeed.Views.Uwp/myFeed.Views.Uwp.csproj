@@ -118,10 +118,11 @@
     <Compile Include="Extensions\TruthyToTransparentConverter.cs" />
     <Compile Include="Extensions\TruthyToVisibleConverter.cs" />
     <Compile Include="Extensions\UpperStringConverter.cs" />
+    <Compile Include="Platform\UwpDialogService.cs" />
+    <Compile Include="Platform\UwpFilePickerService.cs" />
     <Compile Include="Platform\UwpLocator.cs" />
-    <Compile Include="Platform\UwpParser.cs" />
-    <Compile Include="Platform\UwpProvider.cs" />
-    <Compile Include="Platform\UwpTranslator.cs" />
+    <Compile Include="Platform\UwpPlatformService.cs" />
+    <Compile Include="Platform\UwpTranslationsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\ArticleView.xaml.cs">
       <DependentUpon>ArticleView.xaml</DependentUpon>

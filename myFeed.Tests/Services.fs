@@ -169,6 +169,8 @@ module OpmlServiceTests =
         |> tee registerMockInstance<ITranslationsService>
         |> tee registerMockInstance<ISourcesRepository>
         |> tee registerMockInstance<ISerializationService>
+        |> tee registerMockInstance<IDialogService>
+        |> tee registerMockInstance<IFilePickerService>
         |> ignore
 
     [<Fact>]
@@ -196,7 +198,7 @@ module OpmlServiceTests =
             .Setup(fun i -> i.GetAllAsync())
             .Returns(fakeResponse) |> ignore
 
-        let mockPicker = Mock<IPlatformService>()
+        let mockPicker = Mock<IFilePickerService>()
         mockPicker
             .Setup(fun i -> i.PickFileForWriteAsync())
             .Returns(new MemoryStream() :> Stream |> Task.FromResult) |> ignore                 
@@ -221,7 +223,7 @@ module OpmlServiceTests =
             |> tee registerAsSelf<OpmlService>
             |> tee (registerInstanceAs<ISourcesRepository> mockRepository.Object)
             |> tee (registerInstanceAs<ISerializationService> mockSerializer.Object)
-            |> tee (registerInstanceAs<IPlatformService> mockPicker.Object)
+            |> tee (registerInstanceAs<IFilePickerService> mockPicker.Object)
             |> buildScope
 
         let service = resolve<OpmlService> scope

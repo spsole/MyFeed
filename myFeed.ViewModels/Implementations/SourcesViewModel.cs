@@ -10,13 +10,14 @@ namespace myFeed.ViewModels.Implementations
     public sealed class SourcesViewModel
     {
         public SourcesViewModel(
+            IDialogService dialogService,
             IPlatformService platformService,
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService)
         {
-            Items = new ObservableCollection<SourcesCategoryViewModel>();
             IsEmpty = new ObservableProperty<bool>(false);
             IsLoading = new ObservableProperty<bool>(true);
+            Items = new ObservableCollection<SourcesCategoryViewModel>();
             Items.CollectionChanged += (s, a) =>
             {
                 IsEmpty.Value = Items.Count == 0;
@@ -29,21 +30,23 @@ namespace myFeed.ViewModels.Implementations
                 var categories = await sourcesRepository.GetAllAsync();
                 Items.Clear();
                 foreach (var category in categories)
-                    Items.Add(new SourcesCategoryViewModel(category, this,
-                        platformService, sourcesRepository, translationsService));
+                    Items.Add(new SourcesCategoryViewModel(category, 
+                        this, dialogService, platformService, 
+                        sourcesRepository, translationsService));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
             AddCategory = new ActionCommand(async () =>
             {
-                var name = await platformService.ShowDialogForResults(
+                var name = await dialogService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
                     translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new SourceCategoryEntity {Title = name};
                 await sourcesRepository.InsertAsync(category);
-                Items.Add(new SourcesCategoryViewModel(category, this,
-                    platformService, sourcesRepository, translationsService));
+                Items.Add(new SourcesCategoryViewModel(category, 
+                    this, dialogService, platformService, 
+                    sourcesRepository, translationsService));
             });
         }
 

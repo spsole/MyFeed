@@ -2,5 +2,9 @@
 
 namespace myFeed.Views.Uwp.Platform
 {
-    public sealed class UwpLocator : Locator<UwpTranslator, UwpProvider> { }
+    public sealed class UwpLocator : Locator<
+        UwpTranslationsService,
+        UwpPlatformService,
+        UwpDialogService,
+        UwpFilePickerService> {}
 }

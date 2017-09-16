@@ -11,6 +11,7 @@ namespace myFeed.ViewModels.Implementations
         public SearchViewModel(
             ISourcesRepository sourcesRepository,
             IPlatformService platformService,
+            IDialogService dialogService,
             ISearchService searchService)
         {
             Items = new ObservableCollection<SearchItemViewModel>();
@@ -24,8 +25,8 @@ namespace myFeed.ViewModels.Implementations
                 var searchResults = await searchService.Search(query);
                 Items.Clear();
                 foreach (var result in searchResults.Results)
-                    Items.Add(new SearchItemViewModel(result,
-                        platformService, sourcesRepository));
+                    Items.Add(new SearchItemViewModel(result, 
+                        dialogService, platformService, sourcesRepository));
                 await Task.Delay(500);
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;

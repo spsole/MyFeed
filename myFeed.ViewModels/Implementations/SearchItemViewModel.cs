@@ -11,6 +11,7 @@ namespace myFeed.ViewModels.Implementations
     {
         public SearchItemViewModel(
             SearchItemEntity entity,
+            IDialogService dialogService,
             IPlatformService platformService,
             ISourcesRepository sourcesRepository)
         {
@@ -19,8 +20,10 @@ namespace myFeed.ViewModels.Implementations
             ImageUri = new ReadOnlyProperty<string>(entity.IconUrl);
             Description = new ReadOnlyProperty<string>(entity.Description);
             FeedUrl = new ReadOnlyProperty<string>(entity.FeedId?.Substring(5));
-
-            CopyLink = new ActionCommand(() => platformService.CopyTextToClipboard(entity.Website));
+            CopyLink = new ActionCommand(async () =>
+            {
+                await platformService.CopyTextToClipboard(entity.Website);
+            });
             OpenInEdge = new ActionCommand(async () =>
             {
                 if (Uri.IsWellFormedUriString(entity.Website, UriKind.Absolute))
@@ -30,7 +33,7 @@ namespace myFeed.ViewModels.Implementations
             {
                 if (!Uri.IsWellFormedUriString(FeedUrl.Value, UriKind.Absolute)) return;
                 var categories = await sourcesRepository.GetAllAsync();
-                var response = await platformService.ShowDialogForSelection(categories);
+                var response = await dialogService.ShowDialogForSelection(categories);
                 if (response is SourceCategoryEntity sourceCategoryEntity)
                 {
                     var source = new SourceEntity {Notify = true, Uri = FeedUrl.Value};

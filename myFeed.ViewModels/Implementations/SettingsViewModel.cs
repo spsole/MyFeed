@@ -20,9 +20,6 @@ namespace myFeed.ViewModels.Implementations
             NeedBanners = new ObservableProperty<bool>();
             ImportOpml = new ActionCommand(opmlService.ImportOpmlFeeds);
             ExportOpml = new ActionCommand(opmlService.ExportOpmlFeeds);
-            OpenCredits = new ActionCommand(() => platformService.LaunchUri(
-                new Uri("https://worldbeater.github.io")));
-
             Load = new ActionCommand(async () =>
             {
                 // Resolve all default settings.
@@ -38,6 +35,10 @@ namespace myFeed.ViewModels.Implementations
                 Subscribe(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask);
                 Subscribe(NeedBanners, "NeedBanners", platformService.RegisterBanners);
                 Subscribe(Theme, "Theme", platformService.RegisterTheme);
+            });
+            OpenCredits = new ActionCommand(async () =>
+            {
+                await platformService.LaunchUri(new Uri("https://worldbeater.github.io"));
             });
             
             void Subscribe<T>(ObservableProperty<T> property, string key, Func<T, Task> updater = null)

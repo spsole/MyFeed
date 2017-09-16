@@ -32,6 +32,8 @@ module ViewModelsModule =
     /// Registers default empty mocks.
     let registerDefaults (builder: ContainerBuilder) =
         builder
+        |> tee registerMockInstance<IDialogService>
+        |> tee registerMockInstance<IFilePickerService>
         |> tee registerMockInstance<IPlatformService>
         |> tee registerMockInstance<ISourcesRepository>
         |> tee registerMockInstance<ITranslationsService>
@@ -104,7 +106,7 @@ module SearchViewModelsTests =
         let searchEntity = SearchItemEntity(FeedId="_____http://example.com")
         let fakeEntity = SourceCategoryEntity(Title="Foo")
             
-        let mockService = Mock<IPlatformService>()
+        let mockService = Mock<IDialogService>()
         mockService
             .Setup(fun i -> i.ShowDialogForSelection(It.IsAny<seq<obj>>()))
             .Returns(fakeEntity :> obj |> Task.FromResult) |> ignore
@@ -120,7 +122,7 @@ module SearchViewModelsTests =
             |> tee registerDefaults
             |> tee registerAsSelf<SearchItemViewModel>
             |> tee (registerInstanceAs<SearchItemEntity> searchEntity)
-            |> tee (registerInstanceAs<IPlatformService> mockService.Object)
+            |> tee (registerInstanceAs<IDialogService> mockService.Object)
             |> buildScope
 
         let viewModel = resolve<SearchItemViewModel> scope
@@ -470,9 +472,8 @@ module SourcesViewModelsTests =
         let category = SourceCategoryEntity(Title="Foo")
         use scope = 
             ContainerBuilder()
+            |> tee registerDefaults
             |> tee registerModule<ViewModelsModule>
-            |> tee registerMockInstance<ITranslationsService>
-            |> tee registerMockInstance<IPlatformService>
             |> tee registerAsSelf<SourcesViewModel>
             |> tee registerAsSelf<SourcesCategoryViewModel>
             |> tee (registerInstanceAs<SourceCategoryEntity> <| category)

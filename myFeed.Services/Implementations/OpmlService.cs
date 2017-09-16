@@ -14,15 +14,18 @@ namespace myFeed.Services.Implementations
         private readonly ISerializationService _serializationService;
         private readonly ITranslationsService _translationsService;
         private readonly ISourcesRepository _sourcesRepository;
-        private readonly IPlatformService _platformProvider;
+        private readonly IFilePickerService _filePickerService;
+        private readonly IDialogService _dialogService;
 
         public OpmlService(
-            IPlatformService platformService,
+            IDialogService dialogService,
+            IFilePickerService filePickerService,
             ITranslationsService translationsService,
             ISerializationService serializationService,
             ISourcesRepository sourcesRepository)
         {
-            _platformProvider = platformService;
+            _dialogService = dialogService;
+            _filePickerService = filePickerService;
             _sourcesRepository = sourcesRepository;
             _translationsService = translationsService;
             _serializationService = serializationService;
@@ -53,12 +56,12 @@ namespace myFeed.Services.Implementations
 
             // Fill opml with categories.
             opml.Body = new List<Outline>(outlines);
-            var stream = await _platformProvider.PickFileForWriteAsync();
+            var stream = await _filePickerService.PickFileForWriteAsync();
             if (stream == null) return;
 
             // Serialize data into file picked by user.
             _serializationService.Serialize(opml, stream);
-            await _platformProvider.ShowDialog(
+            await _dialogService.ShowDialog(
                 _translationsService.Resolve("ExportFeedsSuccess"),
                 _translationsService.Resolve("SettingsNotification"));
         }
@@ -66,7 +69,7 @@ namespace myFeed.Services.Implementations
         public async Task ImportOpmlFeeds()
         {
             // Deserialize opml.
-            var stream = await _platformProvider.PickFileForReadAsync();
+            var stream = await _filePickerService.PickFileForReadAsync();
             var opml = _serializationService.Deserialize<Opml>(stream);
             if (opml == null) return;
 
@@ -104,7 +107,7 @@ namespace myFeed.Services.Implementations
             // Insert into database and notify user.
             foreach (var category in categories)
                 await _sourcesRepository.InsertAsync(category);
-            await _platformProvider.ShowDialog(
+            await _dialogService.ShowDialog(
                 _translationsService.Resolve("ImportFeedsSuccess"),
                 _translationsService.Resolve("SettingsNotification"));
         }

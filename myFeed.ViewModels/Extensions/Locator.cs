@@ -11,9 +11,11 @@ namespace myFeed.ViewModels.Extensions
     /// application contains. Usage: "{Binding Path=., Source={StaticResource Locator}}"
     /// Remember to declare this as a singleton resource in App.xaml or similar.
     /// </summary>
-    public abstract class Locator<TTranslationsService, TPlatformProvider> : IDisposable
-        where TTranslationsService : ITranslationsService
-        where TPlatformProvider : IPlatformService
+    public abstract class Locator<TA, TB, TC, TD> : IDisposable
+        where TA : ITranslationsService
+        where TB : IPlatformService
+        where TC : IDialogService
+        where TD : IFilePickerService
     {
         private readonly IContainer _lifetimeScope;
 
@@ -24,8 +26,10 @@ namespace myFeed.ViewModels.Extensions
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule<ViewModelsModule>();
-            builder.RegisterType<TTranslationsService>().As<ITranslationsService>();
-            builder.RegisterType<TPlatformProvider>().As<IPlatformService>();
+            builder.RegisterType<TA>().As<ITranslationsService>();
+            builder.RegisterType<TB>().As<IPlatformService>();
+            builder.RegisterType<TC>().As<IDialogService>();
+            builder.RegisterType<TD>().As<IFilePickerService>();
             _lifetimeScope = builder.Build();
         }
 
