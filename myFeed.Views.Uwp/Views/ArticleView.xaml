@@ -5,6 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -44,6 +46,16 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
+            <interactivity:Interaction.Behaviors>
+                <core:DataTriggerBehavior Binding="{Binding IsRead.Value}">
+                    <core:DataTriggerBehavior.Value>
+                        <x:Boolean>False</x:Boolean>
+                    </core:DataTriggerBehavior.Value>
+                    <core:DataTriggerBehavior.Actions>
+                        <core:InvokeCommandAction Command="{Binding MarkRead}" />
+                    </core:DataTriggerBehavior.Actions>
+                </core:DataTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
             <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
             <controls:TitleBlock Text="артикль"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

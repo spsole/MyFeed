@@ -165,16 +165,16 @@
                             </Grid>
                             <StackPanel Grid.Column="1" Margin="12 0">
                                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" 
-                                    Margin="0 6" Text="myFeed" TextWrapping="Wrap" />
-                                <TextBlock Text="© Artjom Graf 2017" TextWrapping="NoWrap" Margin="0 0 0 3" />
+                                    Margin="0 6" Text="myFeed" TextWrapping="Wrap"/>
+                                <TextBlock Text="© Artjom Graf 2017" TextWrapping="NoWrap"/>
                                 <Button Content="worldbeater.github.io" Margin="0 6"
                                     Style="{StaticResource TextBlockButtonStyle}" 
                                     Padding="0" Command="{Binding OpenCredits}"/>
                             </StackPanel>
                         </Grid>
-                        <TextBlock TextWrapping="Wrap" Margin="0 6 0 12" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMail}"/>
+                        <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMail}"/>
                         <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMailButton}"/>
-                        <TextBlock TextWrapping="Wrap" Margin="0 6 0 12" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedback}"/>
+                        <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedback}"/>
                         <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedbackButton}"/>
                     </StackPanel>
                 </ScrollViewer>

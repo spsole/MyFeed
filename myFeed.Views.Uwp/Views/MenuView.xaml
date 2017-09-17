@@ -49,6 +49,15 @@
                     </Grid.RowDefinitions>
                     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}">
                         <StackPanel Orientation="Horizontal">
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="Tapped">
+                                    <core:ChangePropertyAction 
+                                        Value="{Binding ElementName=Menu, Path=IsSwipeablePaneOpen, 
+                                            Converter={StaticResource NegateBool}}"
+                                        TargetObject="{Binding ElementName=Menu}" 
+                                        PropertyName="IsSwipeablePaneOpen"/>
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
                             <Image Source="ms-appx:///Assets/StoreLogo.png" Margin="6 0" Height="36" Width="36"/>
                             <TextBlock Margin="12" Text="myFeed" FontWeight="SemiBold" Foreground="White"/>
                         </StackPanel>
