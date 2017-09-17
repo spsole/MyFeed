@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 
 namespace myFeed.Services.Abstractions
@@ -40,5 +42,10 @@ namespace myFeed.Services.Abstractions
         /// Registers application design theme.
         /// </summary>
         Task RegisterTheme(string theme);
+        
+        /// <summary>
+        /// Returns default settings specific for this platform.
+        /// </summary>
+        IReadOnlyDictionary<string, string> GetDefaultSettings();
     }
 }

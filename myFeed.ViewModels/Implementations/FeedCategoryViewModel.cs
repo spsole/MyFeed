@@ -11,11 +11,12 @@ namespace myFeed.ViewModels.Implementations
         public FeedCategoryViewModel(
             SourceCategoryEntity entity,
             IFeedService feedService,
+            ISettingsService settingsService,
             IPlatformService platformService,
             IArticlesRepository articlesRepository)
         {
             Items = new ObservableCollection<FeedItemViewModel>();
-            Title = new ReadOnlyProperty<string>(entity.Title);
+            Title = new ObservableProperty<string>(entity.Title);
             IsLoading = new ObservableProperty<bool>(true);
             IsEmpty = new ObservableProperty<bool>(false);
             Fetch = new ActionCommand(async () =>
@@ -26,7 +27,7 @@ namespace myFeed.ViewModels.Implementations
                 Items.Clear();
                 foreach (var article in orderedArticles)
                     Items.Add(new FeedItemViewModel(article, 
-                        platformService, articlesRepository));
+                        settingsService, platformService, articlesRepository));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
@@ -50,7 +51,7 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Feed category title.
         /// </summary>
-        public ReadOnlyProperty<string> Title { get; }
+        public ObservableProperty<string> Title { get; }
 
         /// <summary>
         /// Fetches data for current feed.

@@ -66,13 +66,13 @@ namespace myFeed.ViewModels.Implementations
         public ObservableProperty<bool> IsEmpty { get; }
 
         /// <summary>
-        /// Loads categories into view.
-        /// </summary>
-        public ActionCommand Load { get; }
-
-        /// <summary>
         /// Adds new category to list.
         /// </summary>
         public ActionCommand AddCategory { get; }
+
+        /// <summary>
+        /// Loads categories into view.
+        /// </summary>
+        public ActionCommand Load { get; }
     }
 }

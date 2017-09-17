@@ -83,6 +83,12 @@ module DependencyInjection =
     let resolve<'i> (scope: ILifetimeScope) = 
         scope.Resolve<'i>() 
 
+    /// Resolves instance from scope and disposes that scope.
+    let resolveDispose<'i> (scope: ILifetimeScope) =
+        let instance = resolve<'i> scope
+        dispose scope
+        instance    
+
     /// Tries to resolve and item and checks it for null.
     let assertResolve<'i> (scope: ILifetimeScope) =
         scope |> resolve<'i> |> Assert.NotNull

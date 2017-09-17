@@ -27,11 +27,12 @@ open myFeed.Entities.Feedly
 open myFeed.Entities.Local
 
 [<AutoOpen>]
-module ViewModelsModule =
+module ViewModelsHelpers =
 
     /// Registers default empty mocks.
     let registerDefaults (builder: ContainerBuilder) =
         builder
+        |> tee registerMockInstance<ISettingsService>
         |> tee registerMockInstance<IDialogService>
         |> tee registerMockInstance<IFilePickerService>
         |> tee registerMockInstance<IPlatformService>
@@ -133,78 +134,81 @@ module SettingsViewModelsTests =
 
     let registerSettingsDefaults (builder: ContainerBuilder) =
         builder
-        |> tee registerMockInstance<IConfigurationRepository>
+        |> tee registerMockInstance<ISettingsService>
         |> tee registerMockInstance<IPlatformService>
         |> tee registerMockInstance<IOpmlService>
         |> tee registerAsSelf<SettingsViewModel>
         |> ignore
 
-    let fakeRepository =
-        let mockRepository = Mock<IConfigurationRepository>()
-        mockRepository
-            .Setup(fun i -> i.GetByNameAsync(It.IsAny<string>()))
-            .Returns("42" |> Task.FromResult) |> ignore
-        mockRepository
-            .Setup(fun i -> i.GetByNameAsync(It.IsIn<string>("LoadImages", "NeedBanners")))
-            .Returns("true" |> Task.FromResult) |> ignore
-        mockRepository
-            .Setup(fun i -> i.SetByNameAsync(It.IsAny<string>(), It.IsAny<string>()))
-            .Returns(Task.CompletedTask)|> ignore        
-        mockRepository.Object
+    let fakeSettingsService =
+        let mock = Mock<ISettingsService>()
+        mock.Setup(fun i -> i.Get<_>(It.IsIn<string>("Theme")))
+            .Returns("Foo" |> Task.FromResult) |> ignore
+        mock.Setup(fun i -> i.Get<_>(It.IsIn<string>("LoadImages", "NeedBanners")))
+            .Returns(true |> Task.FromResult) |> ignore
+        mock.Setup(fun i -> i.Get<_>(It.IsIn<string>("FontSize", "NotifyPeriod")))
+            .Returns(42 |> Task.FromResult) |> ignore   
+        mock.Setup(fun i -> i.Set(It.IsAny<string>(), It.IsAny<string>()))
+            .Returns(Task.CompletedTask) |> ignore        
+        mock.Object
     
     [<Fact>]
     let ``should create instance of settings viewmodel``() =
-        use scope =
-            ContainerBuilder()
-            |> tee registerSettingsDefaults 
-            |> buildScope            
-        assertResolve<SettingsViewModel> scope
+        ContainerBuilder()
+        |> tee registerSettingsDefaults 
+        |> buildScope            
+        |> tee assertResolve<SettingsViewModel>
+        |> dispose
 
     [<Fact>]
     let ``should load data properly from repository``() =
-        use scope = 
+        let viewModel = 
             ContainerBuilder()    
             |> tee registerSettingsDefaults
-            |> tee (registerInstanceAs<IConfigurationRepository> fakeRepository)
+            |> tee (registerInstanceAs<ISettingsService> fakeSettingsService)
             |> buildScope
-
-        let viewModel = resolve<SettingsViewModel> scope
+            |> resolveDispose<SettingsViewModel>
         viewModel.Load.CanExecuteChanged += fun _ ->
             if (viewModel.Load.CanExecute()) then
 
                 Assert.Equal(42, viewModel.FontSize.Value)
-                Assert.Equal("42", viewModel.Theme.Value)
+                Assert.Equal("Foo", viewModel.Theme.Value)
                 Assert.Equal(true, viewModel.NeedBanners.Value)
 
         viewModel.Load.Execute(null)
 
     [<Fact>]
     let ``should watch for changes of property values``() =
-        let mutable invoked = false
+        let mutable count = 0
+        let mock = Mock<IPlatformService>()
+        mock.Setup(fun i -> i.RegisterTheme(It.IsAny()))
+            .Returns(Task.CompletedTask)
+            .Callback(fun i -> count <- count + 1) |> ignore
+        mock.Setup(fun i -> i.RegisterBackgroundTask(It.IsAny()))
+            .Returns(Task.CompletedTask) 
+            .Callback(fun i -> count <- count + 1) |> ignore
+        mock.Setup(fun i -> i.RegisterBanners(It.IsAny()))
+            .Returns(Task.CompletedTask) 
+            .Callback(fun i -> count <- count + 1) |> ignore
 
-        let fakeService =
-            let mockService = Mock<IPlatformService>()
-            mockService
-                .Setup(fun i -> i.RegisterTheme("Foo"))
-                .Callback(fun i -> invoked <- true)
-                |> ignore
-            mockService.Object            
-
-        use scope = 
+        let viewModel = 
             ContainerBuilder()
             |> tee registerSettingsDefaults
-            |> tee (registerInstanceAs<IConfigurationRepository> fakeRepository)
-            |> tee (registerInstanceAs<IPlatformService> fakeService)
+            |> tee (registerInstanceAs<ISettingsService> fakeSettingsService)
+            |> tee (registerInstanceAs<IPlatformService> mock.Object)
             |> buildScope
-
-        let viewModel = resolve<SettingsViewModel> scope
+            |> resolveDispose<SettingsViewModel>
         viewModel.Load.CanExecuteChanged += fun _ ->
             if (viewModel.Load.CanExecute()) then   
                 
-                Assert.Equal("42", viewModel.Theme.Value)
-                viewModel.Theme.Value <- "Foo"
                 Assert.Equal("Foo", viewModel.Theme.Value)
-                Assert.Equal(true, invoked)
+                viewModel.Theme.Value <- "Bar"
+                viewModel.NeedBanners.Value <- false
+                viewModel.NotifyPeriod.Value <- 0
+                Assert.Equal(false, viewModel.NeedBanners.Value)
+                Assert.Equal(0, viewModel.NotifyPeriod.Value)
+                Assert.Equal("Bar", viewModel.Theme.Value)
+                Assert.Equal(3, count)
 
         viewModel.Load.Execute(null)             
 

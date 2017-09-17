@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
@@ -29,6 +30,18 @@ namespace myFeed.Views.Uwp.Platform
             dataPackage.SetText(text);
             Clipboard.SetContent(dataPackage);
             return Task.CompletedTask;
+        }
+
+        public IReadOnlyDictionary<string, string> GetDefaultSettings()
+        {
+            return new Dictionary<string, string>
+            {
+                {"NeedBanners", "true"},
+                {"LoadImages", "true"},
+                {"NotifyPeriod", "14"},
+                {"Theme", "default"},
+                {"FontSize", "14"}
+            };
         }
 
         public Task RegisterBackgroundTask(int freq) => Task.Delay(1);

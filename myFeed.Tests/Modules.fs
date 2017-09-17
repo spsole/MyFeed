@@ -52,6 +52,7 @@ module RegistrationsTestsModule =
         |> tee assertResolve<ISerializationService>
         |> tee assertResolve<IHtmlService>
         |> tee assertResolve<IFeedService>
+        |> tee assertResolve<ISettingsService>
         |> dispose
 
     let ``all default viewmodels should be registered``() =

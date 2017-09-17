@@ -17,7 +17,7 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService)
         {
-            Category = new ReadOnlyProperty<SourceCategoryEntity>(entity);
+            Category = new ObservableProperty<SourceCategoryEntity>(entity);
             SourceUri = new ObservableProperty<string>(string.Empty);
             Items = new ObservableCollection<SourcesItemViewModel>();
             Title = new ObservableProperty<string>(entity.Title);
@@ -68,7 +68,7 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Read-only category entity.
         /// </summary>
-        public ReadOnlyProperty<SourceCategoryEntity> Category { get; }
+        public ObservableProperty<SourceCategoryEntity> Category { get; }
 
         /// <summary>
         /// Source Uri for new category user input.

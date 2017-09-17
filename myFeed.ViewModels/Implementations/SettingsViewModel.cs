@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
@@ -10,8 +9,8 @@ namespace myFeed.ViewModels.Implementations
     {
         public SettingsViewModel(
             IOpmlService opmlService,
-            IPlatformService platformService,
-            IConfigurationRepository configRepository)
+            ISettingsService settingsService,
+            IPlatformService platformService)
         {
             Theme = new ObservableProperty<string>();
             FontSize = new ObservableProperty<int>();
@@ -22,43 +21,27 @@ namespace myFeed.ViewModels.Implementations
             ExportOpml = new ActionCommand(opmlService.ExportOpmlFeeds);
             Load = new ActionCommand(async () =>
             {
-                // Resolve all default settings.
-                Theme.Value = await Get("Theme", "default");
-                FontSize.Value = int.Parse(await Get("FontSize", "14"));
-                NotifyPeriod.Value = int.Parse(await Get("NotifyPeriod", "1"));
-                LoadImages.Value = bool.Parse(await Get("LoadImages", "true"));
-                NeedBanners.Value = bool.Parse(await Get("NeedBanners", "true"));
-
-                // Subscribe on property change.
-                Subscribe(FontSize, "FontSize");
-                Subscribe(LoadImages, "LoadImages");
-                Subscribe(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask);
-                Subscribe(NeedBanners, "NeedBanners", platformService.RegisterBanners);
+                NotifyPeriod.Value = await settingsService.Get<int>("NotifyPeriod");
+                NeedBanners.Value = await settingsService.Get<bool>("NeedBanners"); 
+                LoadImages.Value = await settingsService.Get<bool>("LoadImages");
+                FontSize.Value = await settingsService.Get<int>("FontSize");
+                Theme.Value = await settingsService.Get<string>("Theme");
+                
                 Subscribe(Theme, "Theme", platformService.RegisterTheme);
-            });
-            OpenCredits = new ActionCommand(async () =>
-            {
-                await platformService.LaunchUri(new Uri("https://worldbeater.github.io"));
-            });
-            
-            void Subscribe<T>(ObservableProperty<T> property, string key, Func<T, Task> updater = null)
-            {
-                property.PropertyChanged += async (o, args) =>
+                Subscribe(FontSize, "FontSize", o => Task.CompletedTask);
+                Subscribe(LoadImages, "LoadImages", o => Task.CompletedTask);
+                Subscribe(NeedBanners, "NeedBanners", platformService.RegisterBanners);
+                Subscribe(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask);
+                
+                void Subscribe<T>(ObservableProperty<T> prop, string key, Func<T, Task> clb) where T : IConvertible
                 {
-                    var value = property.Value;
-                    var task = updater?.Invoke(value);
-                    if (task != null) await task;
-                    await configRepository.SetByNameAsync(key, value.ToString());
-                };
-            }
-            
-            async Task<string> Get(string key, string fallback)
-            {
-                var value = await configRepository.GetByNameAsync(key);
-                if (value != null) return value;
-                await configRepository.SetByNameAsync(key, fallback);
-                return fallback;
-            }
+                    prop.PropertyChanged += async (o, args) =>
+                    {
+                        await clb.Invoke(prop.Value);
+                        await settingsService.Set(key, prop.Value);
+                    };
+                }
+            });
         }
 
         /// <summary>
@@ -85,11 +68,6 @@ namespace myFeed.ViewModels.Implementations
         /// Selected font size.
         /// </summary>
         public ObservableProperty<int> FontSize { get; }
-        
-        /// <summary>
-        /// Opens webpage with credits.
-        /// </summary>
-        public ActionCommand OpenCredits { get; }
 
         /// <summary>
         /// Imports feeds from Opml.

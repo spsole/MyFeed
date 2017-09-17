@@ -14,8 +14,8 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             IPlatformService platformService)
         {
-            Url = new ReadOnlyProperty<string>(entity.Uri);
-            Name = new ReadOnlyProperty<string>(new Uri(entity.Uri).Host);
+            Url = new ObservableProperty<string>(entity.Uri);
+            Name = new ObservableProperty<string>(new Uri(entity.Uri).Host);
             Notify = new ObservableProperty<bool>(entity.Notify);
             Notify.PropertyChanged += async (sender, args) =>
             {
@@ -48,12 +48,12 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Model url.
         /// </summary>
-        public ReadOnlyProperty<string> Url { get; }
+        public ObservableProperty<string> Url { get; }
 
         /// <summary>
         /// Website name.
         /// </summary>
-        public ReadOnlyProperty<string> Name { get; }
+        public ObservableProperty<string> Name { get; }
 
         /// <summary>
         /// Deletes the source.

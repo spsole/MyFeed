@@ -31,17 +31,10 @@ namespace myFeed.Repositories.Implementations
         {
             using (var context = new EntityContext())
             {
-                var entity = await context
-                    .Set<ConfigurationEntity>()
-                    .FirstOrDefaultAsync(i => i.Key == name);
-                if (entity != null)
-                {
-                    entity.Value = value;
-                    await context.SaveChangesAsync();
-                    return;
-                }
-                entity = new ConfigurationEntity { Key = name, Value = value };
-                context.Set<ConfigurationEntity>().Add(entity);
+                var set = context.Set<ConfigurationEntity>();
+                var entity = await set.FirstOrDefaultAsync(i => i.Key == name);
+                if (entity != null) entity.Value = value;
+                else set.Add(new ConfigurationEntity {Key = name, Value = value});
                 await context.SaveChangesAsync();
             }
         }

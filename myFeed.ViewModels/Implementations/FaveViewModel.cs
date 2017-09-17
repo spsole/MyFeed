@@ -8,6 +8,7 @@ namespace myFeed.ViewModels.Implementations
     public sealed class FaveViewModel
     {
         public FaveViewModel(
+            ISettingsService settingsService,
             IPlatformService platformService,
             IArticlesRepository articlesRepository)
         {
@@ -23,7 +24,7 @@ namespace myFeed.ViewModels.Implementations
                 {
                     if (!article.Fave) continue;
                     var viewModel = new FeedItemViewModel(article, 
-                        platformService, articlesRepository);
+                        settingsService, platformService, articlesRepository);
                     Items.Add(viewModel);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
                     {

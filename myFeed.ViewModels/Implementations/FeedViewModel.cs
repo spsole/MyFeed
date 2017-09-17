@@ -9,6 +9,7 @@ namespace myFeed.ViewModels.Implementations
     {
         public FeedViewModel(
             IFeedService feedService,
+            ISettingsService settingsService,
             IPlatformService platformService,
             ISourcesRepository sourcesRepository,
             IArticlesRepository articlesRepository)
@@ -21,8 +22,8 @@ namespace myFeed.ViewModels.Implementations
                 var sources = await sourcesRepository.GetAllAsync();
                 Items.Clear();
                 foreach (var source in sources)
-                    Items.Add(new FeedCategoryViewModel(source, feedService,
-                        platformService, articlesRepository));
+                    Items.Add(new FeedCategoryViewModel(source, feedService, 
+                        settingsService, platformService, articlesRepository));
                 IsLoading.Value = false;
             });
         }

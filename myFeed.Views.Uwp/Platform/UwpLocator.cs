@@ -2,7 +2,7 @@
 
 namespace myFeed.Views.Uwp.Platform
 {
-    public sealed class UwpLocator : Locator<
+    public sealed class UwpLocator : ViewModelLocator<
         UwpTranslationsService,
         UwpPlatformService,
         UwpDialogService,

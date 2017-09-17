@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace myFeed.ViewModels.Extensions
 {
@@ -14,7 +16,7 @@ namespace myFeed.ViewModels.Extensions
         /// <summary>
         /// Initializes a new instance of observable property.
         /// </summary>
-        public ObservableProperty() => _value = default(T);
+        public ObservableProperty() : this(default(T)) {}
 
         /// <summary>
         /// Initializes a new instance of observable property
@@ -22,6 +24,18 @@ namespace myFeed.ViewModels.Extensions
         /// </summary>
         /// <param name="value">Default value.</param>
         public ObservableProperty(T value) => _value = value;
+    
+        /// <summary>
+        /// Initializes ObservableProperty from task result.
+        /// </summary>
+        /// <param name="function">Function returning value.</param>
+        public ObservableProperty(Func<Task<T>> function) => UpdateValue(function);
+
+        /// <summary>
+        /// Asynchroniously updates property value.
+        /// </summary>
+        /// <param name="function">Function to invoke to get task to await.</param>
+        private async void UpdateValue(Func<Task<T>> function) => _value = await function();
 
         /// <summary>
         /// Invoked when property changes.

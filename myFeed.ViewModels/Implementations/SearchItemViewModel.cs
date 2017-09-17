@@ -15,11 +15,11 @@ namespace myFeed.ViewModels.Implementations
             IPlatformService platformService,
             ISourcesRepository sourcesRepository)
         {
-            Url = new ReadOnlyProperty<string>(entity.Website);
-            Title = new ReadOnlyProperty<string>(entity.Title);
-            ImageUri = new ReadOnlyProperty<string>(entity.IconUrl);
-            Description = new ReadOnlyProperty<string>(entity.Description);
-            FeedUrl = new ReadOnlyProperty<string>(entity.FeedId?.Substring(5));
+            Url = new ObservableProperty<string>(entity.Website);
+            Title = new ObservableProperty<string>(entity.Title);
+            ImageUri = new ObservableProperty<string>(entity.IconUrl);
+            Description = new ObservableProperty<string>(entity.Description);
+            FeedUrl = new ObservableProperty<string>(entity.FeedId?.Substring(5));
             CopyLink = new ActionCommand(async () =>
             {
                 await platformService.CopyTextToClipboard(entity.Website);
@@ -45,27 +45,27 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Search result title.
         /// </summary>
-        public ReadOnlyProperty<string> Title { get; }
+        public ObservableProperty<string> Title { get; }
 
         /// <summary>
         /// Favicon.
         /// </summary>
-        public ReadOnlyProperty<string> ImageUri { get; }
+        public ObservableProperty<string> ImageUri { get; }
 
         /// <summary>
         /// Search result description.
         /// </summary>
-        public ReadOnlyProperty<string> Description { get; }
+        public ObservableProperty<string> Description { get; }
 
         /// <summary>
         /// Returns feed url.
         /// </summary>
-        public ReadOnlyProperty<string> FeedUrl { get; }
+        public ObservableProperty<string> FeedUrl { get; }
 
         /// <summary>
         /// Full website url.
         /// </summary>
-        public ReadOnlyProperty<string> Url { get; }
+        public ObservableProperty<string> Url { get; }
 
         /// <summary>
         /// Adds model to sources.

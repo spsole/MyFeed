@@ -3,6 +3,7 @@ namespace myFeed.Tests.Services
 open System
 open System.Threading.Tasks
 open System.Collections.Generic
+open System.Collections.Immutable
 open System.IO
 open System.Linq
 
@@ -25,6 +26,90 @@ open myFeed.Repositories.Abstractions
 
 open myFeed.Entities.Opml
 open myFeed.Entities.Local
+
+// Tests for default settings service which is responsible
+// for settings caching and setting defaults if not set.
+module SettingsServiceTests =
+
+    let get<'a when 'a :> IConvertible> (service: ISettingsService) = 
+        service.Get<'a> >> await
+
+    let createService(): ISettingsService =
+        ContainerBuilder()
+        |> tee registerMockInstance<IConfigurationRepository>
+        |> tee registerMockInstance<IPlatformService>
+        |> tee registerAs<SettingsService, ISettingsService>
+        |> buildScope
+        |> resolveDispose<ISettingsService>
+
+    [<Fact>]
+    let ``should be able to resolve strings``() = 
+        let service = createService()
+        service.Set<string>("FooStr", "Bar") |> awaitTask
+        Assert.Equal("Bar", get<string> service "FooStr")
+
+    [<Fact>]
+    let ``should be able to resolve booleans``() =
+        let service = createService()
+        service.Set<bool>("FooBool", true) |> awaitTask
+        Assert.Equal(true, get<bool> service "FooBool")
+
+    [<Fact>]
+    let ``should be able to resolve ints``() =
+        let service = createService()
+        service.Set<int>("FooInt", 42) |> awaitTask
+        Assert.Equal(42, get<int> service "FooInt") 
+
+    [<Fact>]
+    let ``should be able to resolve doubles``() =
+        let service = createService()
+        service.Set<double>("Foo", 42.) |> awaitTask
+        Assert.Equal(42., get<double> service "Foo")       
+
+    [<Fact>]
+    let ``should be able to resolve floats``() =
+        let service = createService()
+        service.Set<float>("Foo", 42.) |> awaitTask
+        Assert.Equal(42., get<float> service "Foo")
+
+    [<Fact>]
+    let ``should be able to resolve bytes``() =
+        let service = createService()
+        service.Set<byte>("Boo", 1uy) |> awaitTask
+        Assert.Equal(1uy, get<byte> service "Boo")  
+
+    [<Fact>]
+    let ``should resolve default settings``() =
+        let defaults = dict["Foo", "Bar"] |> Dictionary<string, string>
+        let mock = Mock<IPlatformService>()
+        mock.Setup(fun i -> i.GetDefaultSettings())
+            .Returns(defaults) |> ignore
+        let service = 
+            ContainerBuilder()
+            |> tee registerMockInstance<IConfigurationRepository>
+            |> tee (registerInstanceAs<IPlatformService> mock.Object) 
+            |> tee registerAs<SettingsService, ISettingsService>   
+            |> buildScope
+            |> resolveDispose<ISettingsService>   
+        Assert.Equal("Bar", get<string> service "Foo") 
+
+    [<Fact>]
+    let ``should store recently fetched entities in cache``() =  
+        let mutable counter = 0
+        let mock = Mock<IConfigurationRepository>()
+        mock.Setup(fun i -> i.GetByNameAsync(It.IsAny()))
+            .Returns("Foo" |> Task.FromResult) 
+            .Callback(fun () -> counter <- counter + 1) |> ignore
+        let service = 
+            ContainerBuilder()
+            |> tee registerMockInstance<IPlatformService>
+            |> tee (registerInstanceAs<IConfigurationRepository> mock.Object)  
+            |> tee registerAs<SettingsService, ISettingsService>   
+            |> buildScope
+            |> resolveDispose<ISettingsService> 
+        Assert.Equal("Foo", get<string> service "Any")       
+        Assert.Equal("Foo", get<string> service "Any")       
+        Assert.Equal(1, counter)
 
 // Tests for service responsible for retrieving feeds.
 module FeedServiceTests = 
@@ -334,13 +419,18 @@ module ObservablePropertyTests =
     let ``property name should be value``() =
         let property = ObservableProperty(42)
         property.PropertyChanged += fun e -> Assert.Equal("Value", e.PropertyName)
-        property.Value <- 3             
+        property.Value <- 3    
+        
+    [<Fact>]
+    let ``should slowly initialize value via fun of task``() =
+        let property = ObservableProperty<string>(fun () -> "Foo" |> Task.FromResult)
+        Assert.Equal("Foo", property.Value)
         
 // Tests for task-based ICommand implementation.
 module ActionCommandTests =
 
     [<Fact>]
-    let ``action command should execute passed actions``() =
+    let ``should execute passed actions``() =
         let mutable fired = 0
         let command =
             Func<Task>(fun () -> 
@@ -353,7 +443,7 @@ module ActionCommandTests =
         Assert.Equal(1, fired)
 
     [<Fact>]
-    let ``action command should await previous execution``() =
+    let ``should await previous execution``() =
         let command =
             Func<Task>(fun () -> Task.Delay(1000))
             |> ActionCommand
@@ -362,7 +452,7 @@ module ActionCommandTests =
         Assert.Equal(false, command.CanExecute())
 
     [<Fact>]
-    let ``action command should raise state change event``() =
+    let ``should raise state change event``() =
         let mutable fired = 0
         let command =
             Func<Task>(fun () -> Task.CompletedTask)
@@ -370,4 +460,4 @@ module ActionCommandTests =
         Assert.Equal(true, command.CanExecute())
         command.CanExecuteChanged += fun _ -> fired <- fired + 1
         command.Execute(null)
-        Assert.Equal(2, fired)      
+        Assert.Equal(2, fired)    

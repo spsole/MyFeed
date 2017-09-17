@@ -10,16 +10,21 @@ namespace myFeed.ViewModels.Implementations
     {
         public FeedItemViewModel(
             ArticleEntity entity,
+            ISettingsService settingsService,
             IPlatformService platformService,
             IArticlesRepository articlesRepository)
         {
-            PublishedDate = new ReadOnlyProperty<DateTime>(entity.PublishedDate);
-            Content = new ReadOnlyProperty<string>(entity.Content);
-            IsFavorite = new ObservableProperty<bool>(entity.Fave);
-            Feed = new ReadOnlyProperty<string>(entity.FeedTitle);
-            Image = new ReadOnlyProperty<string>(entity.ImageUri);
-            Title = new ReadOnlyProperty<string>(entity.Title);
             IsRead = new ObservableProperty<bool>(entity.Read);
+            IsFavorite = new ObservableProperty<bool>(entity.Fave);
+            PublishedDate = new ObservableProperty<DateTime>(entity.PublishedDate);
+            Content = new ObservableProperty<string>(entity.Content);
+            Feed = new ObservableProperty<string>(entity.FeedTitle);
+            Title = new ObservableProperty<string>(entity.Title);
+            Image = new ObservableProperty<string>(async () =>
+            {
+                var loadImages = await settingsService.Get<bool>("LoadImages");
+                return loadImages ? entity.ImageUri : null;
+            });
             Share = new ActionCommand(async () =>
             {
                 var shareText = $"{entity.Title}\r\n{entity.Uri}";
@@ -59,27 +64,27 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Human-readable date.
         /// </summary>
-        public ReadOnlyProperty<DateTime> PublishedDate { get; }
+        public ObservableProperty<DateTime> PublishedDate { get; }
 
         /// <summary>
         /// Contains article content.
         /// </summary>
-        public ReadOnlyProperty<string> Content { get; }
+        public ObservableProperty<string> Content { get; }
 
         /// <summary>
         /// Image url.
         /// </summary>
-        public ReadOnlyProperty<string> Image { get; }
+        public ObservableProperty<string> Image { get; }
 
         /// <summary>
         /// Article title.
         /// </summary>
-        public ReadOnlyProperty<string> Title { get; }
+        public ObservableProperty<string> Title { get; }
 
         /// <summary>
         /// Source feed title.
         /// </summary>
-        public ReadOnlyProperty<string> Feed { get; }
+        public ObservableProperty<string> Feed { get; }
 
         /// <summary>
         /// Adds article to favorites.
