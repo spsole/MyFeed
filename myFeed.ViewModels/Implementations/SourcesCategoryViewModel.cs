@@ -17,11 +17,11 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService)
         {
-            Category = new ObservableProperty<SourceCategoryEntity>(entity);
-            SourceUri = new ObservableProperty<string>(string.Empty);
             Items = new ObservableCollection<SourcesItemViewModel>();
-            Title = new ObservableProperty<string>(entity.Title);
-            RenameCategory = new ActionCommand(async () =>
+            SourceUri = ObservableProperty.Of(string.Empty);
+            Category = ObservableProperty.Of(entity);
+            Title = ObservableProperty.Of(entity.Title);
+            RenameCategory = ActionCommand.Of(async () =>
             {
                 var name = await dialogService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
@@ -30,7 +30,7 @@ namespace myFeed.ViewModels.Implementations
                 await sourcesRepository.RenameAsync(entity, name);
                 entity.Title = Title.Value = name;
             });
-            RemoveCategory = new ActionCommand(async () =>
+            RemoveCategory = ActionCommand.Of(async () =>
             {
                 var shouldDelete = await dialogService.ShowDialogForConfirmation(
                     translationsService.Resolve("DeleteCategory"),
@@ -39,7 +39,7 @@ namespace myFeed.ViewModels.Implementations
                 await sourcesRepository.RemoveAsync(entity);
                 parentViewModel.Items.Remove(this);
             });
-            AddSource = new ActionCommand(async () =>
+            AddSource = ActionCommand.Of(async () =>
             {
                 var sourceUri = SourceUri.Value;
                 if (string.IsNullOrWhiteSpace(sourceUri) ||
@@ -51,7 +51,7 @@ namespace myFeed.ViewModels.Implementations
                 Items.Add(new SourcesItemViewModel(model, this,
                     sourcesRepository, platformService));
             });
-            Load = new ActionCommand(() =>
+            Load = ActionCommand.Of(() =>
             {
                 Items.Clear();
                 foreach (var source in entity.Sources)

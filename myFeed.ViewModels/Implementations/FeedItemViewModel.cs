@@ -14,37 +14,37 @@ namespace myFeed.ViewModels.Implementations
             IPlatformService platformService,
             IArticlesRepository articlesRepository)
         {
-            IsRead = new ObservableProperty<bool>(entity.Read);
-            IsFavorite = new ObservableProperty<bool>(entity.Fave);
-            PublishedDate = new ObservableProperty<DateTime>(entity.PublishedDate);
-            Content = new ObservableProperty<string>(entity.Content);
-            Feed = new ObservableProperty<string>(entity.FeedTitle);
-            Title = new ObservableProperty<string>(entity.Title);
-            Image = new ObservableProperty<string>(async () =>
+            PublishedDate = ObservableProperty.Of(entity.PublishedDate);
+            IsFavorite = ObservableProperty.Of(entity.Fave);
+            Content = ObservableProperty.Of(entity.Content);
+            Feed = ObservableProperty.Of(entity.FeedTitle);
+            IsRead = ObservableProperty.Of(entity.Read);
+            Title = ObservableProperty.Of(entity.Title);
+            Image = ObservableProperty.Of(async () =>
             {
                 var loadImages = await settingsService.Get<bool>("LoadImages");
                 return loadImages ? entity.ImageUri : null;
             });
-            Share = new ActionCommand(async () =>
+            Share = ActionCommand.Of(async () =>
             {
                 var shareText = $"{entity.Title}\r\n{entity.Uri}";
                 await platformService.Share(shareText);
             });
-            CopyLink = new ActionCommand(async () =>
+            CopyLink = ActionCommand.Of(async () =>
             {
                 await platformService.CopyTextToClipboard(entity.Uri);
             });
-            LaunchUri = new ActionCommand(async () =>
+            LaunchUri = ActionCommand.Of(async () =>
             {
                 if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;
                 await platformService.LaunchUri(new Uri(entity.Uri));
             });
-            MarkRead = new ActionCommand(async () =>
+            MarkRead = ActionCommand.Of(async () =>
             {
                 IsRead.Value = entity.Read = !IsRead.Value;
                 await articlesRepository.UpdateAsync(entity);
             });
-            MarkFavorite = new ActionCommand(async () =>
+            MarkFavorite = ActionCommand.Of(async () =>
             {
                 IsFavorite.Value = entity.Fave = !IsFavorite.Value;
                 await articlesRepository.UpdateAsync(entity);

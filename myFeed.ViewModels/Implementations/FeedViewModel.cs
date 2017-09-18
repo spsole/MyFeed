@@ -14,9 +14,9 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             IArticlesRepository articlesRepository)
         {
-            IsLoading = new ObservableProperty<bool>(false);
             Items = new ObservableCollection<FeedCategoryViewModel>();
-            Load = new ActionCommand(async () =>
+            IsLoading = ObservableProperty.Of(false);
+            Load = ActionCommand.Of(async () =>
             {
                 IsLoading.Value = true;
                 var sources = await sourcesRepository.GetAllAsync();

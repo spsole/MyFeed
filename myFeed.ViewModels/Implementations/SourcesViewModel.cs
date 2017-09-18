@@ -15,16 +15,16 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService)
         {
-            IsEmpty = new ObservableProperty<bool>(false);
-            IsLoading = new ObservableProperty<bool>(true);
             Items = new ObservableCollection<SourcesCategoryViewModel>();
+            IsLoading = ObservableProperty.Of(true);
+            IsEmpty = ObservableProperty.Of(false);
             Items.CollectionChanged += (s, a) =>
             {
                 IsEmpty.Value = Items.Count == 0;
                 var items = Items.Select(i => i.Category.Value);
                 sourcesRepository.RearrangeAsync(items);
             };
-            Load = new ActionCommand(async () =>
+            Load = ActionCommand.Of(async () =>
             {
                 IsLoading.Value = true;
                 var categories = await sourcesRepository.GetAllAsync();
@@ -36,7 +36,7 @@ namespace myFeed.ViewModels.Implementations
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
-            AddCategory = new ActionCommand(async () =>
+            AddCategory = ActionCommand.Of(async () =>
             {
                 var name = await dialogService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),

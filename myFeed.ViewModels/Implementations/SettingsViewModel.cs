@@ -12,14 +12,14 @@ namespace myFeed.ViewModels.Implementations
             ISettingsService settingsService,
             IPlatformService platformService)
         {
-            Theme = new ObservableProperty<string>();
-            FontSize = new ObservableProperty<int>();
-            LoadImages = new ObservableProperty<bool>();
-            NotifyPeriod = new ObservableProperty<int>();
-            NeedBanners = new ObservableProperty<bool>();
-            ImportOpml = new ActionCommand(opmlService.ImportOpmlFeeds);
-            ExportOpml = new ActionCommand(opmlService.ExportOpmlFeeds);
-            Load = new ActionCommand(async () =>
+            Theme = ObservableProperty.Of<string>();
+            FontSize = ObservableProperty.Of<int>();
+            LoadImages = ObservableProperty.Of<bool>();
+            NotifyPeriod = ObservableProperty.Of<int>();
+            NeedBanners = ObservableProperty.Of<bool>();
+            ImportOpml = ActionCommand.Of(opmlService.ImportOpmlFeeds);
+            ExportOpml = ActionCommand.Of(opmlService.ExportOpmlFeeds);
+            Load = ActionCommand.Of(async () =>
             {
                 NotifyPeriod.Value = await settingsService.Get<int>("NotifyPeriod");
                 NeedBanners.Value = await settingsService.Get<bool>("NeedBanners"); 

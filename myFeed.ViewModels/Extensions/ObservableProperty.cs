@@ -7,35 +7,11 @@ namespace myFeed.ViewModels.Extensions
 {
     /// <summary>
     /// Observable property that provides an easy way 
-    /// of setting and updating values.
+    /// of setting and updating bindable values.
     /// </summary>
     public class ObservableProperty<T> : INotifyPropertyChanged
     {
         private T _value;
-
-        /// <summary>
-        /// Initializes a new instance of observable property.
-        /// </summary>
-        public ObservableProperty() : this(default(T)) {}
-
-        /// <summary>
-        /// Initializes a new instance of observable property
-        /// with custom default value.
-        /// </summary>
-        /// <param name="value">Default value.</param>
-        public ObservableProperty(T value) => _value = value;
-    
-        /// <summary>
-        /// Initializes ObservableProperty from task result.
-        /// </summary>
-        /// <param name="function">Function returning value.</param>
-        public ObservableProperty(Func<Task<T>> function) => UpdateValue(function);
-
-        /// <summary>
-        /// Asynchroniously updates property value.
-        /// </summary>
-        /// <param name="function">Function to invoke to get task to await.</param>
-        private async void UpdateValue(Func<Task<T>> function) => Value = await function();
 
         /// <summary>
         /// Invoked when property changes.
@@ -54,6 +30,34 @@ namespace myFeed.ViewModels.Extensions
                 _value = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
             }
+        }
+    }
+
+    /// <summary>
+    /// Observable Property extensions.
+    /// </summary>
+    public static class ObservableProperty
+    {
+        /// <summary>
+        /// Creates new ObservableProperty of T.
+        /// </summary>
+        public static ObservableProperty<T> Of<T>() => new ObservableProperty<T>();
+        
+        /// <summary>
+        /// Creates observable property from a value.
+        /// </summary>
+        public static ObservableProperty<T> Of<T>(T value) => new ObservableProperty<T> {Value = value};
+
+        /// <summary>
+        /// Creates observable property from function of task.
+        /// </summary>
+        public static ObservableProperty<T> Of<T>(Func<Task<T>> function)
+        {
+            var property = new ObservableProperty<T>();
+            UpdateProperty(); 
+            return property; 
+            
+            async void UpdateProperty() => property.Value = await function();
         }
     }
 }

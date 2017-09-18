@@ -16,10 +16,10 @@ namespace myFeed.ViewModels.Implementations
             IArticlesRepository articlesRepository)
         {
             Items = new ObservableCollection<FeedItemViewModel>();
-            Title = new ObservableProperty<string>(entity.Title);
-            IsLoading = new ObservableProperty<bool>(true);
-            IsEmpty = new ObservableProperty<bool>(false);
-            Fetch = new ActionCommand(async () =>
+            Title = ObservableProperty.Of(entity.Title);
+            IsLoading = ObservableProperty.Of(true);
+            IsEmpty = ObservableProperty.Of(false);
+            Fetch = ActionCommand.Of(async () =>
             {
                 IsLoading.Value = true;
                 var sources = entity.Sources;

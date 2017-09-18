@@ -15,21 +15,21 @@ namespace myFeed.ViewModels.Implementations
             IPlatformService platformService,
             ISourcesRepository sourcesRepository)
         {
-            Url = new ObservableProperty<string>(entity.Website);
-            Title = new ObservableProperty<string>(entity.Title);
-            ImageUri = new ObservableProperty<string>(entity.IconUrl);
-            Description = new ObservableProperty<string>(entity.Description);
-            FeedUrl = new ObservableProperty<string>(entity.FeedId?.Substring(5));
-            CopyLink = new ActionCommand(async () =>
+            Url = ObservableProperty.Of(entity.Website);
+            Title = ObservableProperty.Of(entity.Title);
+            ImageUri = ObservableProperty.Of(entity.IconUrl);
+            Description = ObservableProperty.Of(entity.Description);
+            FeedUrl = ObservableProperty.Of(entity.FeedId?.Substring(5));
+            CopyLink = ActionCommand.Of(async () =>
             {
                 await platformService.CopyTextToClipboard(entity.Website);
             });
-            OpenInEdge = new ActionCommand(async () =>
+            OpenInEdge = ActionCommand.Of(async () =>
             {
                 if (Uri.IsWellFormedUriString(entity.Website, UriKind.Absolute))
                     await platformService.LaunchUri(new Uri(entity.Website));
             });
-            AddToSources = new ActionCommand(async () =>
+            AddToSources = ActionCommand.Of(async () =>
             {
                 if (!Uri.IsWellFormedUriString(FeedUrl.Value, UriKind.Absolute)) return;
                 var categories = await sourcesRepository.GetAllAsync();
