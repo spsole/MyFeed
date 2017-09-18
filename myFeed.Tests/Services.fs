@@ -401,7 +401,7 @@ module ObservablePropertyTests =
 
     [<Fact>] 
     let ``property changed event should raise on value change``() =
-        let property = ObservableProperty.Of(42)
+        let property = ObservableProperty(42)
         let mutable fired = 0
         property.PropertyChanged += fun e -> fired <- fired + 1
         property.Value <- 3
@@ -409,7 +409,7 @@ module ObservablePropertyTests =
 
     [<Fact>]
     let ``property changed event should not fire if value is the same``() =
-        let property = ObservableProperty.Of(42)
+        let property = ObservableProperty(42)
         let mutable fired = 0
         property.PropertyChanged += fun _ -> fired <- fired + 1
         property.Value <- 42
@@ -417,13 +417,13 @@ module ObservablePropertyTests =
 
     [<Fact>]
     let ``property name should be value``() =
-        let property = ObservableProperty.Of(42)
+        let property = ObservableProperty(42)
         property.PropertyChanged += fun e -> Assert.Equal("Value", e.PropertyName)
         property.Value <- 3    
         
     [<Fact>]
     let ``should slowly initialize value via fun of task``() =
-        let property = ObservableProperty.Of<string>(fun () -> "Foo" |> Task.FromResult)
+        let property = ObservableProperty<string>(fun () -> "Foo" |> Task.FromResult)
         Assert.Equal("Foo", property.Value)
         
 // Tests for task-based ICommand implementation.
@@ -436,7 +436,7 @@ module ActionCommandTests =
             Func<Task>(fun () -> 
                 fired <- fired + 1
                 Task.CompletedTask)
-            |> ActionCommand.Of
+            |> ActionCommand
         Assert.Equal(true, command.CanExecute())    
         command.Execute(null)
         Assert.Equal(true, command.CanExecute()) 
@@ -446,7 +446,7 @@ module ActionCommandTests =
     let ``should await previous execution``() =
         let command =
             Func<Task>(fun () -> Task.Delay(1000))
-            |> ActionCommand.Of
+            |> ActionCommand
         Assert.Equal(true, command.CanExecute())
         command.Execute(null)
         Assert.Equal(false, command.CanExecute())
@@ -456,7 +456,7 @@ module ActionCommandTests =
         let mutable fired = 0
         let command =
             Func<Task>(fun () -> Task.CompletedTask)
-            |> ActionCommand.Of
+            |> ActionCommand
         Assert.Equal(true, command.CanExecute())
         command.CanExecuteChanged += fun _ -> fired <- fired + 1
         command.Execute(null)

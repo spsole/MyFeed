@@ -15,10 +15,10 @@ namespace myFeed.ViewModels.Implementations
             ISearchService searchService)
         {
             Items = new ObservableCollection<SearchItemViewModel>();
-            SearchQuery = ObservableProperty.Of(string.Empty);
-            IsLoading = ObservableProperty.Of(false);
-            IsEmpty = ObservableProperty.Of(true);
-            Fetch = ActionCommand.Of(async () =>
+            SearchQuery = new ObservableProperty<string>(string.Empty);
+            IsLoading = new ObservableProperty<bool>(false);
+            IsEmpty = new ObservableProperty<bool>(true);
+            Fetch = new ActionCommand(async () =>
             {
                 IsLoading.Value = true;
                 var query = SearchQuery.Value;

@@ -14,27 +14,30 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             IPlatformService platformService)
         {
-            Url = ObservableProperty.Of(entity.Uri);
-            Notify = ObservableProperty.Of(entity.Notify);
-            Name = ObservableProperty.Of(new Uri(entity.Uri).Host);
-            CopyLink = ActionCommand.Of(() => platformService.CopyTextToClipboard(entity.Uri));
-            DeleteSource = ActionCommand.Of(async () =>
+            Url = new ObservableProperty<string>(entity.Uri);
+            Name = new ObservableProperty<string>(new Uri(entity.Uri).Host);
+            Notify = new ObservableProperty<bool>(entity.Notify);
+            Notify.PropertyChanged += async (sender, args) =>
+            {
+                entity.Notify = Notify.Value;
+                await sourcesRepository.UpdateAsync(entity.Category);
+            };
+            CopyLink = new ActionCommand(async () =>
+            {
+                await platformService.CopyTextToClipboard(entity.Uri);
+            });
+            DeleteSource = new ActionCommand(async () =>
             {
                 await sourcesRepository.RemoveSourceAsync(entity.Category, entity);
                 parentViewModel.Items.Remove(this);
             });
-            OpenInBrowser = ActionCommand.Of(async () =>
+            OpenInBrowser = new ActionCommand(async () =>
             {
                 if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;
                 var uri = new Uri(entity.Uri);
                 var plainUri = new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host));
                 await platformService.LaunchUri(plainUri);
             });
-            Notify.PropertyChanged += async (sender, args) =>
-            {
-                entity.Notify = Notify.Value;
-                await sourcesRepository.UpdateAsync(entity.Category);
-            };
         }
 
         /// <summary>

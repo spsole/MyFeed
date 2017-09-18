@@ -10,10 +10,24 @@ namespace myFeed.ViewModels.Extensions
     /// </summary>
     public class ActionCommand : ICommand
     {
-        private bool _canExecute = true;
         private readonly Func<Task> _task;
-        
-        private ActionCommand(Func<Task> task) => _task = task;
+        private bool _canExecute = true;
+
+        /// <summary>
+        /// Creates new instance using task lambda expression as a command.
+        /// </summary>
+        /// <param name="task">Task to execute.</param>
+        public ActionCommand(Func<Task> task) => _task = task;
+
+        /// <summary>
+        /// Creates new instance using action lambda expression as a command.
+        /// </summary>
+        /// <param name="action">Task to execute.</param>
+        public ActionCommand(Action action) => _task = () =>
+        {
+            action.Invoke();
+            return Task.CompletedTask;
+        };
 
         /// <summary>
         /// True if queue is unlocked and command can be executed.
@@ -26,7 +40,7 @@ namespace myFeed.ViewModels.Extensions
         public event EventHandler CanExecuteChanged;
 
         /// <summary>
-        /// Executes a command.
+        /// Execute a command.
         /// </summary>
         public async void Execute(object parameter)
         {
@@ -39,27 +53,12 @@ namespace myFeed.ViewModels.Extensions
             {
                 Debug.WriteLine(ex.InnerException);
             }
-            UpdateCanExecute(true); 
-            
+            UpdateCanExecute(true);
             void UpdateCanExecute(bool value)
             {
                 _canExecute = value;
                 CanExecuteChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        
-        /// <summary>
-        /// Creates ActionCommand from Task.
-        /// </summary>
-        public static ActionCommand Of(Func<Task> task) => new ActionCommand(task);
-        
-        /// <summary>
-        /// Creates ActionCommand from Action.
-        /// </summary>
-        public static ActionCommand Of(Action action) => new ActionCommand(() =>
-        {
-            action.Invoke();
-            return Task.CompletedTask;
-        });
     }
 }
