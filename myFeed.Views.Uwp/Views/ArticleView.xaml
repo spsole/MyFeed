@@ -61,11 +61,41 @@
             <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
             <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Article}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <controls:TransparentButton Symbol="Link" Command="{Binding LaunchUri}"/>
-                <controls:TransparentButton Symbol="Copy" Command="{Binding CopyLink}"/>
-                <controls:TransparentButton Symbol="ReShare" Command="{Binding Share}"/>
+                <controls:TransparentButton Symbol="Link" Command="{Binding LaunchUri}">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding Converter={StaticResource 
+                            Locale}, ConverterParameter=Read}"/>
+                    </ToolTipService.ToolTip>
+                </controls:TransparentButton>
+                <controls:TransparentButton Symbol="Copy" Command="{Binding CopyLink}">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding Converter={StaticResource 
+                            Locale}, ConverterParameter=CopyLink}"/>
+                    </ToolTipService.ToolTip>
+                </controls:TransparentButton>
+                <controls:TransparentButton Symbol="ReShare" Command="{Binding Share}">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding Converter={StaticResource 
+                            Locale}, ConverterParameter=ReShare}"/>
+                    </ToolTipService.ToolTip>
+                </controls:TransparentButton>
                 <controls:TransparentButton Symbol="OutlineStar" Command="{Binding MarkFavorite}" 
-                    IsEnabled="{Binding IsFavorite.Value, Converter={StaticResource NegateBool}}"/>
+                    Visibility="{Binding IsFavorite.Value, Mode=OneWay, Converter=
+                        {StaticResource FalsyToVisible}}">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding Converter={StaticResource 
+                            Locale}, ConverterParameter=AddToFavorites}"/>
+                    </ToolTipService.ToolTip>
+                </controls:TransparentButton>
+                <controls:TransparentButton Symbol="OutlineStar" Command="{Binding MarkFavorite}" 
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    Visibility="{Binding IsFavorite.Value, Mode=OneWay, Converter=
+                        {StaticResource TruthyToVisible}}">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding Converter={StaticResource 
+                            Locale}, ConverterParameter=RemoveFromFavorites}"/>
+                    </ToolTipService.ToolTip>
+                </controls:TransparentButton>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

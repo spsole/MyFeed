@@ -68,6 +68,7 @@
                             ContentTransitions="{TemplateBinding ContentTransitions}" 
                             HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" 
                             Padding="{TemplateBinding Padding}" 
+                            Background="{TemplateBinding Background}"
                             VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}">
                             <ContentPresenter.Content>
                                 <SymbolIcon Symbol="{TemplateBinding Symbol}"/>

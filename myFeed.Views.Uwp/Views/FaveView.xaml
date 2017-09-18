@@ -87,7 +87,15 @@
                                 </interactivity:Interaction.Behaviors>
                                 <FlyoutBase.AttachedFlyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}"/>
+                                        <MenuFlyoutItem Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}">
+                                            <interactivity:Interaction.Behaviors>
+                                                <core:EventTriggerBehavior EventName="Tapped">
+                                                    <extensions:NavigateAction 
+                                                        Frame="{Binding ElementName=ArticleFrame}"
+                                                        Parameter="{Binding}" TargetPage="views:ArticleView"/>
+                                                </core:EventTriggerBehavior>
+                                            </interactivity:Interaction.Behaviors>
+                                        </MenuFlyoutItem>
                                         <MenuFlyoutItem Icon="Link" Command="{Binding LaunchUri}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
                                         <MenuFlyoutItem Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
                                         <MenuFlyoutItem Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>

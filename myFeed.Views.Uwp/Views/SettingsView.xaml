@@ -167,9 +167,9 @@
                                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" 
                                     Margin="0 6" Text="myFeed" TextWrapping="Wrap"/>
                                 <TextBlock Text="© Artjom Graf 2017" TextWrapping="NoWrap"/>
-                                <Button Content="worldbeater.github.io" Margin="0 6"
-                                    Style="{StaticResource TextBlockButtonStyle}" 
-                                    Padding="0" Command="{Binding OpenCredits}"/>
+                                <HyperlinkButton Content="worldbeater.github.io" Margin="0 6"
+                                    Style="{StaticResource TextBlockButtonStyle}" Padding="0"
+                                    NavigateUri="https://worldbeater.github.io"/>
                             </StackPanel>
                         </Grid>
                         <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMail}"/>
