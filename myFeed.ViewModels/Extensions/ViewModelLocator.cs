@@ -38,7 +38,7 @@ namespace myFeed.ViewModels.Extensions
         /// ILifetimeScope for each ViewModel.
         /// </summary>
         /// <typeparam name="T">Type to resolve.</typeparam>
-        private T Resolve<T>() where T : class => _lifetimeScope.Resolve<T>();
+        protected T Resolve<T>() where T : class => _lifetimeScope.Resolve<T>();
 
         /// <summary>
         /// Disposes internally stored lifetime scope.

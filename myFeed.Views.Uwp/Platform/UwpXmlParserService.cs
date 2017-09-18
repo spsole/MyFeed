@@ -1,0 +1,186 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Shapes;
+using AngleSharp.Dom;
+using AngleSharp.Dom.Html;
+using AngleSharp.Parser.Html;
+using HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment;
+using VerticalAlignment = Windows.UI.Xaml.VerticalAlignment;
+
+namespace myFeed.Views.Uwp.Platform
+{
+    public sealed class UwpXmlParserService
+    {
+        private readonly HtmlParser _htmlParser;
+        private readonly double _fontSize;
+
+        public UwpXmlParserService(double fontSize)
+        {
+            _htmlParser = new HtmlParser();
+            _fontSize = fontSize;
+        }
+
+        public async Task<IEnumerable<Block>> ParseAsync(string html)
+        {
+            var lineHeight = _fontSize * 1.5;
+            var document = await _htmlParser.ParseAsync(html);
+            var paragraph = new Paragraph {FontSize = _fontSize, LineHeight = lineHeight};
+            var node = GenerateNode(document.DocumentElement);
+            paragraph.Inlines.Add(node);
+            return new[] {paragraph};
+        }
+
+        private Inline GenerateHeader(IElement element)
+        {
+            var span = new Span();
+            var bold = GenerateBold(element);
+            bold.FontSize = _fontSize * 1.5;
+            span.Inlines.Add(new LineBreak());
+            span.Inlines.Add(new LineBreak());
+            span.Inlines.Add(bold);
+            span.Inlines.Add(new LineBreak());
+            span.Inlines.Add(new LineBreak());
+            return span;
+        }
+
+        private Inline GenerateImage(IElement element)
+        {
+            var span = new Span();
+            var inlineUiContainer = new InlineUIContainer();
+            var imageElement = (IHtmlImageElement)element;
+            if (!Uri.IsWellFormedUriString(
+                imageElement.Source, UriKind.Absolute))
+                return span;
+
+            var bitmap = new BitmapImage(new Uri(imageElement.Source));
+            var image = new Image
+            {
+                Source = bitmap,
+                Stretch = Stretch.Uniform,
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(-12, 12, -12, 12),
+                MaxHeight = 500
+            };
+            inlineUiContainer.Child = image;
+            span.Inlines.Add(inlineUiContainer);
+            return span;
+        }
+
+        private Inline GenerateHyperLink(IElement element)
+        {
+            var span = new Span();
+            var hyperlink = new Hyperlink();
+            var linkElement = (IHtmlAnchorElement)element;
+            if (Uri.IsWellFormedUriString(linkElement.Href, UriKind.Absolute))
+                hyperlink.NavigateUri = new Uri(linkElement.Href, UriKind.Absolute);
+            hyperlink.Inlines.Add(new Run { Text = element.TextContent });
+            span.Inlines.Add(hyperlink);
+            return span;
+        }
+
+        private Inline GenerateLi(IElement element)
+        {
+            var span = new Span();
+            var inlineUiContainer = new InlineUIContainer();
+            var brush = (SolidColorBrush)Application.Current
+                .Resources["SystemControlBackgroundAccentBrush"];
+            var ellipse = new Ellipse
+            {
+                Fill = brush,
+                Width = 6,
+                Height = 6,
+                Margin = new Thickness(0, 0, 9, 2)
+            };
+            inlineUiContainer.Child = ellipse;
+            span.Inlines.Add(new LineBreak());
+            span.Inlines.Add(inlineUiContainer);
+            AttachChildren(span.Inlines, element);
+            span.Inlines.Add(new LineBreak());
+            return span;
+        }
+
+        private Inline GenerateBlockQuote(IElement element)
+        {
+            var italic = new Italic();
+            italic.Inlines.Add(new LineBreak());
+            AttachChildren(italic.Inlines, element);
+            italic.Inlines.Add(new LineBreak());
+            return italic;
+        }
+
+        private Inline GenerateBold(IElement element)
+        {
+            var bold = new Bold();
+            AttachChildren(bold.Inlines, element);
+            return bold;
+        }
+
+        private Inline GenerateItalic(IElement element)
+        {
+            var italic = new Italic();
+            AttachChildren(italic.Inlines, element);
+            return italic;
+        }
+
+        private Inline GenerateSpan(IElement element)
+        {
+            var span = new Span();
+            AttachChildren(span.Inlines, element);
+            return span;
+        }
+
+        private void AttachChildren(InlineCollection collection, INode element)
+        {
+            foreach (var node in element.ChildNodes) collection.Add(GenerateNode(node));
+            if (!collection.Any()) collection.Add(new Run {Text = element.TextContent});
+        }
+
+        private Inline GenerateNode(INode node)
+        {
+            if (node is IElement element)
+                return GenerateElement(element);
+            return new Run {Text=node.TextContent};
+        }
+
+        private Inline GenerateElement(IElement element)
+        {
+            switch (element.TagName.ToLowerInvariant())
+            {
+                case "a":
+                    return GenerateHyperLink(element);
+                case "img":
+                    return GenerateImage(element);
+                case "br":
+                    return new LineBreak();
+                case "i":
+                case "em":
+                    return GenerateItalic(element);
+                case "blockquote":
+                    return GenerateBlockQuote(element);
+                case "b":
+                case "strong":
+                    return GenerateBold(element);
+                case "li":
+                case "dt":
+                    return GenerateLi(element);
+                case "h1":
+                case "h2":
+                case "h3":
+                case "h4":
+                case "h5":
+                case "h6":
+                    return GenerateHeader(element);
+                default:
+                    return GenerateSpan(element);
+            }
+        }
+    }
+}
