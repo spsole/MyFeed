@@ -35,7 +35,7 @@ namespace myFeed.ViewModels.Extensions
         /// Asynchroniously updates property value.
         /// </summary>
         /// <param name="function">Function to invoke to get task to await.</param>
-        private async void UpdateValue(Func<Task<T>> function) => _value = await function();
+        private async void UpdateValue(Func<Task<T>> function) => Value = await function();
 
         /// <summary>
         /// Invoked when property changes.

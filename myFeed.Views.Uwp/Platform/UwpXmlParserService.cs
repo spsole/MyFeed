@@ -103,7 +103,6 @@ namespace myFeed.Views.Uwp.Platform
             span.Inlines.Add(new LineBreak());
             span.Inlines.Add(inlineUiContainer);
             AttachChildren(span.Inlines, element);
-            span.Inlines.Add(new LineBreak());
             return span;
         }
 
@@ -134,6 +133,24 @@ namespace myFeed.Views.Uwp.Platform
         {
             var span = new Span();
             AttachChildren(span.Inlines, element);
+            return span;
+        }
+
+        private Inline GenerateFrame(IElement element)
+        {
+            var span = new Span();
+            var inlineUiContainer = new InlineUIContainer();
+            var frameElement = (IHtmlInlineFrameElement)element;
+            if (!Uri.IsWellFormedUriString(
+                frameElement.Source, UriKind.Absolute))
+                return span;
+            {
+                Width = frameElement.DisplayWidth,
+                Height = frameElement.DisplayHeight
+            };
+            inlineUiContainer.Child = webView;
+            span.Inlines.Add(inlineUiContainer);
+            webView.Navigate(new Uri(frameElement.Source));
             return span;
         }
 
@@ -178,6 +195,8 @@ namespace myFeed.Views.Uwp.Platform
                 case "h5":
                 case "h6":
                     return GenerateHeader(element);
+                case "iframe":
+                    return GenerateFrame(element);
                 default:
                     return GenerateSpan(element);
             }
