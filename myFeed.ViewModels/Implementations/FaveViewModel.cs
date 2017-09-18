@@ -28,8 +28,8 @@ namespace myFeed.ViewModels.Implementations
                     Items.Add(viewModel);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
                     {
-                        if (viewModel.IsFavorite.Value) return;
-                        Items.Remove(viewModel);
+                        if (viewModel.IsFavorite.Value) Items.Add(viewModel);
+                        else Items.Remove(viewModel);
                         IsEmpty.Value = Items.Count == 0;
                     };
                 }
