@@ -59,7 +59,7 @@
                 </core:DataTriggerBehavior>
             </interactivity:Interaction.Behaviors>
             <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
-            <controls:TitleBlock Text="артикль"/>
+            <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Article}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <controls:TransparentButton Symbol="Link" Command="{Binding LaunchUri}"/>
                 <controls:TransparentButton Symbol="Copy" Command="{Binding CopyLink}"/>

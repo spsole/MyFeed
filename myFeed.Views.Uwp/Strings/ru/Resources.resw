@@ -345,6 +345,9 @@
   <data name="ChooseArticle">
     <value>И приступайте к чтению.</value>
   </data>
+  <data name="Article">
+    <value>СТАТЬЯ</value>
+  </data>
   <data name="SettingsNotification">
     <value>Уведомление</value>
   </data>
