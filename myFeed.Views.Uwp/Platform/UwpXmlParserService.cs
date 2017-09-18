@@ -144,6 +144,7 @@ namespace myFeed.Views.Uwp.Platform
             if (!Uri.IsWellFormedUriString(
                 frameElement.Source, UriKind.Absolute))
                 return span;
+            var webView = new WebView(WebViewExecutionMode.SeparateThread)
             {
                 Width = frameElement.DisplayWidth,
                 Height = frameElement.DisplayHeight
