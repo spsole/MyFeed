@@ -15,16 +15,10 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService)
         {
-            IsEmpty = new ObservableProperty<bool>(false);
-            IsLoading = new ObservableProperty<bool>(true);
+            IsEmpty = new Property<bool>(false);
+            IsLoading = new Property<bool>(true);
             Items = new ObservableCollection<SourcesCategoryViewModel>();
-            Items.CollectionChanged += (s, a) =>
-            {
-                IsEmpty.Value = Items.Count == 0;
-                var items = Items.Select(i => i.Category.Value);
-                sourcesRepository.RearrangeAsync(items);
-            };
-            Load = new ActionCommand(async () =>
+            Load = new Command(async () =>
             {
                 IsLoading.Value = true;
                 var categories = await sourcesRepository.GetAllAsync();
@@ -36,7 +30,7 @@ namespace myFeed.ViewModels.Implementations
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
-            AddCategory = new ActionCommand(async () =>
+            AddCategory = new Command(async () =>
             {
                 var name = await dialogService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
@@ -48,6 +42,12 @@ namespace myFeed.ViewModels.Implementations
                     this, dialogService, platformService, 
                     sourcesRepository, translationsService));
             });
+            Items.CollectionChanged += (s, a) =>
+            {
+                IsEmpty.Value = Items.Count == 0;
+                var items = Items.Select(i => i.Category.Value);
+                sourcesRepository.RearrangeAsync(items);
+            };
         }
 
         /// <summary>
@@ -58,21 +58,21 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Is collection being loaded or not.
         /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
+        public Property<bool> IsLoading { get; }
 
         /// <summary>
         /// Indicates if welcome screen is visible.
         /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; }
+        public Property<bool> IsEmpty { get; }
 
         /// <summary>
         /// Adds new category to list.
         /// </summary>
-        public ActionCommand AddCategory { get; }
+        public Command AddCategory { get; }
 
         /// <summary>
         /// Loads categories into view.
         /// </summary>
-        public ActionCommand Load { get; }
+        public Command Load { get; }
     }
 }

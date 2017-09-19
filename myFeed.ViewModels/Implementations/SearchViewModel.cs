@@ -15,10 +15,10 @@ namespace myFeed.ViewModels.Implementations
             ISearchService searchService)
         {
             Items = new ObservableCollection<SearchItemViewModel>();
-            SearchQuery = new ObservableProperty<string>(string.Empty);
-            IsLoading = new ObservableProperty<bool>(false);
-            IsEmpty = new ObservableProperty<bool>(true);
-            Fetch = new ActionCommand(async () =>
+            SearchQuery = new Property<string>(string.Empty);
+            IsLoading = new Property<bool>(false);
+            IsEmpty = new Property<bool>(true);
+            Fetch = new Command(async () =>
             {
                 IsLoading.Value = true;
                 var query = SearchQuery.Value;
@@ -41,21 +41,21 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Contains search query.
         /// </summary>
-        public ObservableProperty<string> SearchQuery { get; }
+        public Property<string> SearchQuery { get; }
 
         /// <summary>
         /// Is collection being loaded or not.
         /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
+        public Property<bool> IsLoading { get; }
 
         /// <summary>
         /// Is collection empty or not?
         /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; }
+        public Property<bool> IsEmpty { get; }
 
         /// <summary>
         /// Fetches results from Feedly search engine.
         /// </summary>
-        public ActionCommand Fetch { get; }
+        public Command Fetch { get; }
     }
 }

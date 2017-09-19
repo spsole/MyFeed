@@ -14,60 +14,57 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             IPlatformService platformService)
         {
-            Url = new ObservableProperty<string>(entity.Uri);
-            Name = new ObservableProperty<string>(new Uri(entity.Uri).Host);
-            Notify = new ObservableProperty<bool>(entity.Notify);
-            Notify.PropertyChanged += async (sender, args) =>
-            {
-                entity.Notify = Notify.Value;
-                await sourcesRepository.UpdateAsync(entity.Category);
-            };
-            CopyLink = new ActionCommand(async () =>
-            {
-                await platformService.CopyTextToClipboard(entity.Uri);
-            });
-            DeleteSource = new ActionCommand(async () =>
-            {
-                await sourcesRepository.RemoveSourceAsync(entity.Category, entity);
-                parentViewModel.Items.Remove(this);
-            });
-            OpenInBrowser = new ActionCommand(async () =>
+            Url = new Property<string>(entity.Uri);
+            Name = new Property<string>(new Uri(entity.Uri).Host);
+            Notify = new Property<bool>(entity.Notify);
+            CopyLink = new Command(() => platformService.CopyTextToClipboard(entity.Uri));
+            OpenInBrowser = new Command(async () =>
             {
                 if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;
                 var uri = new Uri(entity.Uri);
                 var plainUri = new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host));
                 await platformService.LaunchUri(plainUri);
             });
+            DeleteSource = new Command(async () =>
+            {
+                await sourcesRepository.RemoveSourceAsync(entity.Category, entity);
+                parentViewModel.Items.Remove(this);
+            });
+            Notify.PropertyChanged += async (sender, args) =>
+            {
+                entity.Notify = Notify.Value;
+                await sourcesRepository.UpdateAsync(entity.Category);
+            };
         }
 
         /// <summary>
         /// Are notifications enabled or not?
         /// </summary>
-        public ObservableProperty<bool> Notify { get; }
+        public Property<bool> Notify { get; }
 
         /// <summary>
         /// Model url.
         /// </summary>
-        public ObservableProperty<string> Url { get; }
+        public Property<string> Url { get; }
 
         /// <summary>
         /// Website name.
         /// </summary>
-        public ObservableProperty<string> Name { get; }
+        public Property<string> Name { get; }
 
         /// <summary>
         /// Deletes the source.
         /// </summary>
-        public ActionCommand DeleteSource { get; }
+        public Command DeleteSource { get; }
 
         /// <summary>
         /// Opens the website in edge.
         /// </summary>
-        public ActionCommand OpenInBrowser { get; }
+        public Command OpenInBrowser { get; }
 
         /// <summary>
         /// Copies link location.
         /// </summary>
-        public ActionCommand CopyLink { get; }
+        public Command CopyLink { get; }
     }
 }

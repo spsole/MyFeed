@@ -16,10 +16,10 @@ namespace myFeed.ViewModels.Implementations
             IArticlesRepository articlesRepository)
         {
             Items = new ObservableCollection<FeedItemViewModel>();
-            Title = new ObservableProperty<string>(entity.Title);
-            IsLoading = new ObservableProperty<bool>(true);
-            IsEmpty = new ObservableProperty<bool>(false);
-            Fetch = new ActionCommand(async () =>
+            Title = new Property<string>(entity.Title);
+            IsLoading = new Property<bool>(true);
+            IsEmpty = new Property<bool>(false);
+            Fetch = new Command(async () =>
             {
                 IsLoading.Value = true;
                 var sources = entity.Sources;
@@ -41,21 +41,21 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Indicates if fetcher is loading data right now.
         /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
+        public Property<bool> IsLoading { get; }
 
         /// <summary>
         /// Indicates if the collection is empty.
         /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; }
+        public Property<bool> IsEmpty { get; }
 
         /// <summary>
         /// Feed category title.
         /// </summary>
-        public ObservableProperty<string> Title { get; }
+        public Property<string> Title { get; }
 
         /// <summary>
         /// Fetches data for current feed.
         /// </summary>
-        public ActionCommand Fetch { get; }
+        public Command Fetch { get; }
     }
 }

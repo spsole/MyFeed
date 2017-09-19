@@ -9,27 +9,27 @@ namespace myFeed.ViewModels.Extensions
     /// Observable property that provides an easy way 
     /// of setting and updating values.
     /// </summary>
-    public class ObservableProperty<T> : INotifyPropertyChanged
+    public class Property<T> : INotifyPropertyChanged
     {
         private T _value;
 
         /// <summary>
         /// Initializes a new instance of observable property.
         /// </summary>
-        public ObservableProperty() : this(default(T)) {}
+        public Property() : this(default(T)) {}
 
         /// <summary>
         /// Initializes a new instance of observable property
         /// with custom default value.
         /// </summary>
         /// <param name="value">Default value.</param>
-        public ObservableProperty(T value) => _value = value;
+        public Property(T value) => _value = value;
     
         /// <summary>
         /// Initializes ObservableProperty from task result.
         /// </summary>
         /// <param name="function">Function returning value.</param>
-        public ObservableProperty(Func<Task<T>> function) => UpdateValue(function);
+        public Property(Func<Task<T>> function) => UpdateValue(function);
 
         /// <summary>
         /// Asynchroniously updates property value.

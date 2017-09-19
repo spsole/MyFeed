@@ -14,9 +14,9 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             IArticlesRepository articlesRepository)
         {
-            IsLoading = new ObservableProperty<bool>(false);
             Items = new ObservableCollection<FeedCategoryViewModel>();
-            Load = new ActionCommand(async () =>
+            IsLoading = new Property<bool>(false);
+            Load = new Command(async () =>
             {
                 IsLoading.Value = true;
                 var sources = await sourcesRepository.GetAllAsync();
@@ -36,11 +36,11 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Indicates if viewmodel is loading items from disk.
         /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
+        public Property<bool> IsLoading { get; }
 
         /// <summary>
         /// Loads all feeds into items property.
         /// </summary>
-        public ActionCommand Load { get; }
+        public Command Load { get; }
     }
 }

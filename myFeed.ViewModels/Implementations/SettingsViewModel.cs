@@ -12,14 +12,14 @@ namespace myFeed.ViewModels.Implementations
             ISettingsService settingsService,
             IPlatformService platformService)
         {
-            Theme = new ObservableProperty<string>();
-            FontSize = new ObservableProperty<int>();
-            LoadImages = new ObservableProperty<bool>();
-            NotifyPeriod = new ObservableProperty<int>();
-            NeedBanners = new ObservableProperty<bool>();
-            ImportOpml = new ActionCommand(opmlService.ImportOpmlFeeds);
-            ExportOpml = new ActionCommand(opmlService.ExportOpmlFeeds);
-            Load = new ActionCommand(async () =>
+            Theme = new Property<string>();
+            FontSize = new Property<int>();
+            LoadImages = new Property<bool>();
+            NotifyPeriod = new Property<int>();
+            NeedBanners = new Property<bool>();
+            ImportOpml = new Command(opmlService.ImportOpmlFeeds);
+            ExportOpml = new Command(opmlService.ExportOpmlFeeds);
+            Load = new Command(async () =>
             {
                 NotifyPeriod.Value = await settingsService.Get<int>("NotifyPeriod");
                 NeedBanners.Value = await settingsService.Get<bool>("NeedBanners"); 
@@ -33,7 +33,7 @@ namespace myFeed.ViewModels.Implementations
                 Subscribe(NeedBanners, "NeedBanners", platformService.RegisterBanners);
                 Subscribe(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask);
                 
-                void Subscribe<T>(ObservableProperty<T> prop, string key, Func<T, Task> clb) where T : IConvertible
+                void Subscribe<T>(Property<T> prop, string key, Func<T, Task> clb) where T : IConvertible
                 {
                     prop.PropertyChanged += async (o, args) =>
                     {
@@ -47,41 +47,41 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Selected theme.
         /// </summary>
-        public ObservableProperty<string> Theme { get; }
+        public Property<string> Theme { get; }
 
         /// <summary>
         /// Download images or not?
         /// </summary>
-        public ObservableProperty<bool> LoadImages { get; }
+        public Property<bool> LoadImages { get; }
 
         /// <summary>
         /// True if need banners.
         /// </summary>
-        public ObservableProperty<bool> NeedBanners { get; }
+        public Property<bool> NeedBanners { get; }
 
         /// <summary> 
         /// True if notifications needed. 
         /// </summary>
-        public ObservableProperty<int> NotifyPeriod { get; }
+        public Property<int> NotifyPeriod { get; }
 
         /// <summary>
         /// Selected font size.
         /// </summary>
-        public ObservableProperty<int> FontSize { get; }
+        public Property<int> FontSize { get; }
 
         /// <summary>
         /// Imports feeds from Opml.
         /// </summary>
-        public ActionCommand ImportOpml { get; }
+        public Command ImportOpml { get; }
 
         /// <summary>
         /// Exports feeds to Opml.
         /// </summary>
-        public ActionCommand ExportOpml { get; }
+        public Command ExportOpml { get; }
 
         /// <summary>
         /// Loads settings into UI.
         /// </summary>
-        public ActionCommand Load { get; }
+        public Command Load { get; }
     }
 }

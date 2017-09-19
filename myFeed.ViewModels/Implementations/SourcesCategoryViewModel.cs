@@ -17,11 +17,11 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService)
         {
-            Category = new ObservableProperty<SourceCategoryEntity>(entity);
-            SourceUri = new ObservableProperty<string>(string.Empty);
+            Category = new Property<SourceCategoryEntity>(entity);
+            SourceUri = new Property<string>(string.Empty);
             Items = new ObservableCollection<SourcesItemViewModel>();
-            Title = new ObservableProperty<string>(entity.Title);
-            RenameCategory = new ActionCommand(async () =>
+            Title = new Property<string>(entity.Title);
+            RenameCategory = new Command(async () =>
             {
                 var name = await dialogService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
@@ -30,7 +30,7 @@ namespace myFeed.ViewModels.Implementations
                 await sourcesRepository.RenameAsync(entity, name);
                 entity.Title = Title.Value = name;
             });
-            RemoveCategory = new ActionCommand(async () =>
+            RemoveCategory = new Command(async () =>
             {
                 var shouldDelete = await dialogService.ShowDialogForConfirmation(
                     translationsService.Resolve("DeleteCategory"),
@@ -39,7 +39,7 @@ namespace myFeed.ViewModels.Implementations
                 await sourcesRepository.RemoveAsync(entity);
                 parentViewModel.Items.Remove(this);
             });
-            AddSource = new ActionCommand(async () =>
+            AddSource = new Command(async () =>
             {
                 var sourceUri = SourceUri.Value;
                 if (string.IsNullOrWhiteSpace(sourceUri) ||
@@ -51,7 +51,7 @@ namespace myFeed.ViewModels.Implementations
                 Items.Add(new SourcesItemViewModel(model, this,
                     sourcesRepository, platformService));
             });
-            Load = new ActionCommand(() =>
+            Load = new Command(() =>
             {
                 Items.Clear();
                 foreach (var source in entity.Sources)
@@ -68,36 +68,36 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Read-only category entity.
         /// </summary>
-        public ObservableProperty<SourceCategoryEntity> Category { get; }
+        public Property<SourceCategoryEntity> Category { get; }
 
         /// <summary>
         /// Source Uri for new category user input.
         /// </summary>
-        public ObservableProperty<string> SourceUri { get; }
+        public Property<string> SourceUri { get; }
 
         /// <summary>
         /// Grouping title.
         /// </summary>
-        public ObservableProperty<string> Title { get; }
+        public Property<string> Title { get; }
 
         /// <summary>
         /// Removes the entire category.
         /// </summary>
-        public ActionCommand RemoveCategory { get; }
+        public Command RemoveCategory { get; }
 
         /// <summary>
         /// Renames the category.
         /// </summary>
-        public ActionCommand RenameCategory { get; }
+        public Command RenameCategory { get; }
 
         /// <summary>
         /// Adds new source to this category.
         /// </summary>
-        public ActionCommand AddSource { get; }
+        public Command AddSource { get; }
 
         /// <summary>
         /// Loads items.
         /// </summary>
-        public ActionCommand Load { get; }
+        public Command Load { get; }
     }
 }

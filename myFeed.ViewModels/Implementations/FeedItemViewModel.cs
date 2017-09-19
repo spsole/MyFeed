@@ -14,37 +14,30 @@ namespace myFeed.ViewModels.Implementations
             IPlatformService platformService,
             IArticlesRepository articlesRepository)
         {
-            IsRead = new ObservableProperty<bool>(entity.Read);
-            IsFavorite = new ObservableProperty<bool>(entity.Fave);
-            PublishedDate = new ObservableProperty<DateTime>(entity.PublishedDate);
-            Content = new ObservableProperty<string>(entity.Content);
-            Feed = new ObservableProperty<string>(entity.FeedTitle);
-            Title = new ObservableProperty<string>(entity.Title);
-            Image = new ObservableProperty<string>(async () =>
+            IsRead = new Property<bool>(entity.Read);
+            Title = new Property<string>(entity.Title);
+            IsFavorite = new Property<bool>(entity.Fave);
+            Feed = new Property<string>(entity.FeedTitle);
+            Content = new Property<string>(entity.Content);
+            PublishedDate = new Property<DateTime>(entity.PublishedDate);
+            Image = new Property<string>(async () => await settingsService
+                .Get<bool>("LoadImages") 
+                ? entity.ImageUri
+                : string.Empty);
+
+            Share = new Command(() => platformService.Share($"{entity.Title}\r\n{entity.Uri}"));
+            CopyLink = new Command(() => platformService.CopyTextToClipboard(entity.Uri));
+            LaunchUri = new Command(async () =>
             {
-                var loadImages = await settingsService.Get<bool>("LoadImages");
-                return loadImages ? entity.ImageUri : null;
+                if (Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) 
+                    await platformService.LaunchUri(new Uri(entity.Uri));
             });
-            Share = new ActionCommand(async () =>
-            {
-                var shareText = $"{entity.Title}\r\n{entity.Uri}";
-                await platformService.Share(shareText);
-            });
-            CopyLink = new ActionCommand(async () =>
-            {
-                await platformService.CopyTextToClipboard(entity.Uri);
-            });
-            LaunchUri = new ActionCommand(async () =>
-            {
-                if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;
-                await platformService.LaunchUri(new Uri(entity.Uri));
-            });
-            MarkRead = new ActionCommand(async () =>
+            MarkRead = new Command(async () =>
             {
                 IsRead.Value = entity.Read = !IsRead.Value;
                 await articlesRepository.UpdateAsync(entity);
             });
-            MarkFavorite = new ActionCommand(async () =>
+            MarkFavorite = new Command(async () =>
             {
                 IsFavorite.Value = entity.Fave = !IsFavorite.Value;
                 await articlesRepository.UpdateAsync(entity);
@@ -52,63 +45,63 @@ namespace myFeed.ViewModels.Implementations
         }
         
         /// <summary>
-        /// Is article read or not?
+        /// Human-readable date.
         /// </summary>
-        public ObservableProperty<bool> IsRead { get; }
+        public Property<DateTime> PublishedDate { get; }
 
         /// <summary>
         /// Is article added to favorites or not?
         /// </summary>
-        public ObservableProperty<bool> IsFavorite { get; }
-
+        public Property<bool> IsFavorite { get; }
+        
         /// <summary>
-        /// Human-readable date.
+        /// Is article read or not?
         /// </summary>
-        public ObservableProperty<DateTime> PublishedDate { get; }
+        public Property<bool> IsRead { get; }
 
         /// <summary>
         /// Contains article content.
         /// </summary>
-        public ObservableProperty<string> Content { get; }
+        public Property<string> Content { get; }
 
         /// <summary>
         /// Image url.
         /// </summary>
-        public ObservableProperty<string> Image { get; }
+        public Property<string> Image { get; }
 
         /// <summary>
         /// Article title.
         /// </summary>
-        public ObservableProperty<string> Title { get; }
+        public Property<string> Title { get; }
 
         /// <summary>
         /// Source feed title.
         /// </summary>
-        public ObservableProperty<string> Feed { get; }
+        public Property<string> Feed { get; }
 
         /// <summary>
         /// Adds article to favorites.
         /// </summary>
-        public ActionCommand MarkFavorite { get; }
+        public Command MarkFavorite { get; }
 
         /// <summary>
         /// Opens article in web browser.
         /// </summary>
-        public ActionCommand LaunchUri { get; }
+        public Command LaunchUri { get; }
 
         /// <summary>
         /// Marks article as read.
         /// </summary>
-        public ActionCommand MarkRead { get; }
+        public Command MarkRead { get; }
 
         /// <summary>
         /// Copies link to clipboard.
         /// </summary>
-        public ActionCommand CopyLink { get; }
+        public Command CopyLink { get; }
 
         /// <summary>
         /// Shows share UI for article.
         /// </summary>
-        public ActionCommand Share { get; }
+        public Command Share { get; }
     }
 }

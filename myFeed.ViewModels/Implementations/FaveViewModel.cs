@@ -13,9 +13,9 @@ namespace myFeed.ViewModels.Implementations
             IArticlesRepository articlesRepository)
         {
             Items = new ObservableCollection<FeedItemViewModel>();
-            IsLoading = new ObservableProperty<bool>(true);
-            IsEmpty = new ObservableProperty<bool>(true);
-            Load = new ActionCommand(async () =>
+            IsLoading = new Property<bool>(true);
+            IsEmpty = new Property<bool>(true);
+            Load = new Command(async () =>
             {
                 IsLoading.Value = true;
                 var articles = await articlesRepository.GetAllAsync();
@@ -46,16 +46,16 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Indicates if fetcher is loading data right now.
         /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
+        public Property<bool> IsLoading { get; }
 
         /// <summary>
         /// Indicates if the collection is empty.
         /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; }
+        public Property<bool> IsEmpty { get; }
 
         /// <summary>
         /// Loads favorites collection.
         /// </summary>
-        public ActionCommand Load { get; }
+        public Command Load { get; }
     }
 }

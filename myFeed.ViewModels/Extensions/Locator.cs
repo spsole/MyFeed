@@ -6,12 +6,12 @@ using myFeed.ViewModels.Implementations;
 namespace myFeed.ViewModels.Extensions
 {
     /// <summary>
-    /// Locator that should be used as ViewModel Locator resource for the whole application.
+    /// Locator that should be used as ViewModelLocator resource for the whole application.
     /// Represents a bindable source containing factories for all ViewModels that 
     /// application contains. Usage: "{Binding Path=., Source={StaticResource Locator}}"
     /// Remember to declare this as a singleton resource in App.xaml or similar.
     /// </summary>
-    public abstract class ViewModelLocator<TA, TB, TC, TD> : IDisposable
+    public abstract class Locator<TA, TB, TC, TD> : IDisposable
         where TA : ITranslationsService
         where TB : IPlatformService
         where TC : IDialogService
@@ -22,7 +22,7 @@ namespace myFeed.ViewModels.Extensions
         /// <summary>
         /// Initializes new ViewModels abstract locator.
         /// </summary>
-        protected ViewModelLocator()
+        protected Locator()
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule<ViewModelsModule>();

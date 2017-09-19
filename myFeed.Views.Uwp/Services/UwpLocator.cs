@@ -6,7 +6,7 @@ using myFeed.ViewModels.Extensions;
 
 namespace myFeed.Views.Uwp.Services
 {
-    public sealed class UwpLocator : ViewModelLocator<
+    public sealed class UwpLocator : Locator<
         UwpTranslationsService,
         UwpPlatformService,
         UwpDialogService,

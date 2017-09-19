@@ -8,7 +8,7 @@ namespace myFeed.ViewModels.Extensions
     /// <summary>
     /// Command that dispatches task-actions.
     /// </summary>
-    public class ActionCommand : ICommand
+    public class Command : ICommand
     {
         private readonly Func<Task> _task;
         private bool _canExecute = true;
@@ -17,13 +17,13 @@ namespace myFeed.ViewModels.Extensions
         /// Creates new instance using task lambda expression as a command.
         /// </summary>
         /// <param name="task">Task to execute.</param>
-        public ActionCommand(Func<Task> task) => _task = task;
+        public Command(Func<Task> task) => _task = task;
 
         /// <summary>
         /// Creates new instance using action lambda expression as a command.
         /// </summary>
         /// <param name="action">Task to execute.</param>
-        public ActionCommand(Action action) => _task = () =>
+        public Command(Action action) => _task = () =>
         {
             action.Invoke();
             return Task.CompletedTask;
