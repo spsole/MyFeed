@@ -150,6 +150,7 @@
     </AppxManifest>
     <None Include="myFeed.Views.Uwp_StoreKey.pfx" />
     <None Include="myFeed.Views.Uwp_TemporaryKey.pfx" />
+    <PRIResource Include="Strings\en\Resources.resw" />
     <PRIResource Include="Strings\ru\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>

@@ -59,255 +59,255 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="FaveViewTitle" xml:space="preserve">
-    <value>ИЗБРАННОЕ</value>
+    <value>FAVORITES</value>
   </data>
   <data name="FeedViewTitle" xml:space="preserve">
-    <value>МОЯ ЛЕНТА</value>
+    <value>MY FEED</value>
   </data>
   <data name="SearchViewTitle" xml:space="preserve">
-    <value>ПОИСК</value>
+    <value>SEARCH</value>
   </data>
   <data name="SettingsViewTitle" xml:space="preserve">
-    <value>НАСТРОЙКИ</value>
-  </data>
-  <data name="SourcesViewTitle" xml:space="preserve">
-    <value>ИСТОЧНИКИ</value>
+    <value>SETTINGS</value>
   </data>
   <data name="Article">
-    <value>СТАТЬЯ</value>
+    <value>ARTICLE</value>
+  </data>
+  <data name="SourcesViewTitle" xml:space="preserve">
+    <value>Channels</value>
   </data>
   <data name="FeedViewMenuItem">
-    <value>Моя лента</value>
+    <value>Feed</value>
   </data>
   <data name="FaveViewMenuItem">
-    <value>Избранное</value>
+    <value>Favorites</value>
   </data>
   <data name="SourcesViewMenuItem">
-    <value>Источники</value>
+    <value>Channels</value>
   </data>
   <data name="SearchViewMenuItem">
-    <value>Поиск</value>
+    <value>Search</value>
   </data>
   <data name="SettingsViewMenuItem">
-    <value>Настройки</value>
+    <value>Settings</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Обновить</value>
+    <value>Refresh</value>
   </data>
   <data name="Read">
-    <value>Читать</value>
+    <value>Read</value>
   </data>
   <data name="Ok">
-    <value>Ок</value>
+    <value>Ok</value>
   </data>
   <data name="MarkAsRead">
-    <value>Пометить как прочитанное</value>
+    <value>Mark as read</value>
   </data>
   <data name="MarkAsUnread">
-    <value>Пометить как непрочитанное</value>
+    <value>Mark as unread</value>
   </data>
   <data name="AddToFavorites">
-    <value>Добавить в избранное</value>
+    <value>Add to favorites</value>
   </data>
   <data name="RemoveFromFavorites">
-    <value>Удалить из избранного</value>
+    <value>Remove from favorites</value>
   </data>
   <data name="Add">
-    <value>Добавить</value>
+    <value>Add</value>
   </data>
   <data name="Reorder">
-    <value>Упорядочить</value>
+    <value>Reorder</value>
   </data>
   <data name="Cancel">
-    <value>Отменить</value>
+    <value>Cancel</value>
   </data>
   <data name="Apply">
-    <value>Применить</value>
+    <value>Apply</value>
   </data>
   <data name="Remove">
-    <value>Удалить</value>
+    <value>Remove</value>
   </data>
   <data name="Edit">
-    <value>Изменить</value>
+    <value>Edit</value>
   </data>
   <data name="EnterLinkToRss">
-    <value>ВВЕДИТЕ ССЫЛКУ НА ИСТОЧНИК RSS</value>
+    <value>ENTER A LINK TO RSS FEED</value>
   </data>
   <data name="AddChannel">
-    <value>Добавить источник</value>
+    <value>Add channel</value>
   </data>
   <data name="AddCategory">
-    <value>Добавить категорию</value>
+    <value>Add category</value>
   </data>
   <data name="AddIntoCategory">
-    <value>Добавить в категорию</value>
+    <value>Add to category</value>
   </data>
   <data name="AddFromSearch">
-    <value>Добавить из поиска</value>
+    <value>Add from search</value>
   </data>
   <data name="OpenInBrowser">
-    <value>Открыть в браузере</value>
+    <value>Open in browser</value>
   </data>
   <data name="CopyLink">
-    <value>Копировать ссылку</value>
+    <value>Copy link</value>
   </data>
   <data name="ReShare">
-    <value>Поделиться</value>
+    <value>Share</value>
   </data>
   <data name="Notifications">
-    <value>Уведомления</value>
+    <value>Notifications</value>
   </data>
   <data name="Find">
-    <value>Найти!</value>
+    <value>Find!</value>
   </data>
   <data name="OpenMenu">
-    <value>Открыть меню</value>
+    <value>Open menu</value>
   </data>
   <data name="FaveWelcomeTitle">
-    <value>Здесь будут отображаться избранные статьи.</value>
+    <value>Here your favorite articles will be displayed.</value>
   </data>
   <data name="FaveWelcomeSubTitle">
-    <value>Нажмите на звёздочку во время чтения, чтобы добавить статью сюда!</value>
+    <value>Tap on star symbol when reading to add new article here!</value>
   </data>
   <data name="SearchNothingTitle">
-    <value>По этому запросу ничего найти не удалось!</value>
+    <value>Can't find anything related to this query!</value>
   </data>
   <data name="SearchNothingSubTitle">
-    <value>Проверьте правильность ввода запроса и соединение с интернетом.</value>
+    <value>Please, check your query and internet connection, then try again.</value>
   </data>
   <data name="Personalization">
-    <value>Персонализация</value>
+    <value>Personalization</value>
   </data>
   <data name="AboutApp">
-    <value>О приложении</value>
+    <value>About the app</value>
   </data>
   <data name="Special">
-    <value>Специальные</value>
+    <value>Special</value>
   </data>
   <data name="RefreshPage">
-    <value>Обновить страницу</value>
+    <value>Refresh the page</value>
   </data>
   <data name="ProvideSearchQuery">
-    <value>Введите запрос...</value>
+    <value>Enter search query...</value>
   </data>
   <data name="ChangeTextSizeTitle">
-    <value>Размер текста</value>
+    <value>Font size</value>
   </data>
   <data name="ChangeTextSize">
-    <value>Изменение размера текста в режиме чтения.</value>
+    <value>Change font size in reading mode.</value>
   </data>
   <data name="DisableImagesTitle">
-    <value>Изображения</value>
+    <value>Images</value>
   </data>
   <data name="DisableImages">
-    <value>Загрузка изображений. Отключение этой опции может помочь сэкономить трафик, если используется лимитированное соединение с интернетом.</value>
+    <value>Should myFeed download images from the Internet? Disabling this option may help to reduce cellular data usage if you are using limited internet connection.</value>
   </data>
   <data name="NotifyCheckTimeTitle">
-    <value>Уведомления</value>
+    <value>Notifications</value>
   </data>
   <data name="NotifyCheckTime">
-    <value>Как часто служба уведомлений должна проверять, появилось ли что-то новое в ваших RSS каналах?</value>
+    <value>How often notifications service should check your feeds for recent updates?</value>
   </data>
   <data name="NotifyBannersTitle">
-    <value>Баннеры</value>
+    <value>Banners</value>
   </data>
   <data name="NotifyBanners">
-    <value>Должна ли служба уведомлений myFeed отправлять вам баннеры и звуковые уведомления?</value>
+    <value>Should myFeed notification service send you banners and sound alerts?</value>
   </data>
   <data name="ChangeThemeTitle">
-    <value>Оформление</value>
+    <value>Appearance</value>
   </data>
   <data name="ChangeTheme">
-    <value>Выберите тему, которая будет использована при следующем запуске приложения.</value>
+    <value>Choose application theme that should be used in the app.</value>
   </data>
   <data name="Export">
-    <value>Экспортировать</value>
+    <value>Export</value>
   </data>
   <data name="ExportOpmlTitle">
-    <value>Экспорт источников</value>
+    <value>Export feeds</value>
   </data>
   <data name="ExportOpml">
-    <value>myFeed предоставляет пользователям возможность экспортировать список источников в популярном формате хранения данных OPML.</value>
+    <value>myFeed provides an ability to export feeds in a popular RSS feeds storage format named OPML.</value>
   </data>
   <data name="Import">
-    <value>Импортировать</value>
+    <value>Import</value>
   </data>
   <data name="ImportOpmlTitle">
-    <value>Импорт источников</value>
+    <value>Import feeds</value>
   </data>
   <data name="ImportOpml">
-    <value>Импортируйте в myFeed источники из других RSS-читалок и наслаждайтесь чтением любимых каналов в удобном приложении!</value>
+    <value>Import channels from other feed readers to myFeed and continue reading your favorite feeds!</value>
   </data>
   <data name="Reset">
-    <value>Сброс</value>
+    <value>Reset</value>
   </data>
   <data name="ResetText">
-    <value>Удаление всех данных приложения и сброс настроек к значениям по умолчанию. После применения настройки произойдет перезапуск приложения.</value>
+    <value>You can easily reinstall and reset myFeed by using this option. Note: all your data will be deleted.</value>
   </data>
   <data name="EnterNameOfNewCategoryTitle">
-    <value>Редактирование категории</value>
+    <value>Category editor</value>
   </data>
   <data name="EnterNameOfNewCategory">
-    <value>Введите новое название категории:</value>
+    <value>Enter new name of the category:</value>
   </data>
   <data name="DeleteCategory">
-    <value>Категория будет удалена вместе со всеми источниками. Это действите будет невозможно отменить.</value>
+    <value>Category will be deleted with all nested channels. This action can't be undone.</value>
   </data>
   <data name="DeleteElement">
-    <value>Удаление элемента</value>
+    <value>Delete element</value>
   </data>
   <data name="FeedWelcomeTitle">
-    <value>Здесь будут отображаться ваши новости.</value>
+    <value>Here your updates will be displayed.</value>
   </data>
   <data name="FeedWelcome">
-    <value>Добавьте новый RSS канал!</value>
+    <value>Add a new RSS channel!</value>
   </data>
   <data name="FeedNothingTitle">
-    <value>Здесь ничего нет!</value>
+    <value>Nothing here!</value>
   </data>
   <data name="FeedNothing">
-    <value>Проверьте соединение с интернетом или добавьте новый источник.</value>
+    <value>Check the connection or add a new channel.</value>
   </data>
   <data name="SourcesWelcomeTitle">
-    <value>Здесь будут храниться ваши поставщики новостей.</value>
+    <value>Here your channels are stored.</value>
   </data>
   <data name="SourcesWelcome">
-    <value>Добавьте новую категорию!</value>
+    <value>Add a new category!</value>
   </data>
   <data name="DefaultThemeOption">
-    <value>Использовать настройки системы</value>
+    <value>Use system defaults</value>
   </data>
   <data name="DarkThemeOption">
-    <value>Тёмная тема</value>
+    <value>Dark theme</value>
   </data>
   <data name="LightThemeOption">
-    <value>Светлая тема</value>
+    <value>Light theme</value>
   </data>
   <data name="ChooseArticleTitle">
-    <value>Выберите статью из списка слева!</value>
+    <value>Choose an article!</value>
   </data>
   <data name="ChooseArticle">
-    <value>И приступайте к чтению.</value>
+    <value>And start reading.</value>
   </data>
   <data name="SettingsNotification">
-    <value>Уведомление</value>
+    <value>Notification</value>
   </data>
   <data name="ExportFeedsSuccess">
-    <value>Источники были успешно экспортированы!</value>
+    <value>Feeds were successfully exported!</value>
   </data>
   <data name="ImportFeedsSuccess">
-    <value>Источники были успешно импортированы!</value>
+    <value>Feeds were successfully imported!</value>
   </data>
   <data name="SendMailButton">
-    <value>Сообщить о проблеме</value>
+    <value>Report an issue</value>
   </data>
   <data name="SendMail">
-    <value>Если Вы столкнулись с какой-либо проблемой при использовании myFeed, сообщите об этом!</value>
+    <value>If you have faced an issue when using myFeed, please, report it!</value>
   </data>
   <data name="SendFeedbackButton">
-    <value>Оценить приложение</value>
+    <value>Rate the app</value>
   </data>
   <data name="SendFeedback">
-    <value>Если Вам нравится myFeed, пожалуйста, оцените приложение в магазине Windows!</value>
+    <value>If you like myFeed, please, rate the app in Windows Store!</value>
   </data>
 </root>
