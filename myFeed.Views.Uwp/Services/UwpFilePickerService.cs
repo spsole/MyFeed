@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using myFeed.Services.Abstractions;
 
-namespace myFeed.Views.Uwp.Platform
+namespace myFeed.Views.Uwp.Services
 {
     public sealed class UwpFilePickerService : IFilePickerService
     {

@@ -1,7 +1,7 @@
 ﻿using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using myFeed.ViewModels.Implementations;
-using myFeed.Views.Uwp.Platform;
+using myFeed.Views.Uwp.Services;
 
 namespace myFeed.Views.Uwp.Views
 {

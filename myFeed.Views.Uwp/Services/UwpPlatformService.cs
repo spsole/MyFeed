@@ -5,7 +5,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using myFeed.Services.Abstractions;
 
-namespace myFeed.Views.Uwp.Platform
+namespace myFeed.Views.Uwp.Services
 {
     public sealed class UwpPlatformService : IPlatformService
     {

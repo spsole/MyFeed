@@ -6,7 +6,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using myFeed.Services.Abstractions;
 
-namespace myFeed.Views.Uwp.Platform
+namespace myFeed.Views.Uwp.Services
 {
     public sealed class UwpDialogService : IDialogService
     {

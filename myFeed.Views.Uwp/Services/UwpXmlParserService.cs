@@ -14,7 +14,7 @@ using AngleSharp.Parser.Html;
 using HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment;
 using VerticalAlignment = Windows.UI.Xaml.VerticalAlignment;
 
-namespace myFeed.Views.Uwp.Platform
+namespace myFeed.Views.Uwp.Services
 {
     public sealed class UwpXmlParserService
     {

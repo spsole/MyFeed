@@ -4,7 +4,7 @@ using Windows.UI.Xaml;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 
-namespace myFeed.Views.Uwp.Platform
+namespace myFeed.Views.Uwp.Services
 {
     public sealed class UwpLocator : ViewModelLocator<
         UwpTranslationsService,
