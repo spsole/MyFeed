@@ -41,8 +41,7 @@ myFeed.Views.Uwp/bin
 myFeed.Views.Uwp/BundleArtifacts
 myFeed.Views.Uwp.Notifications/obj
 myFeed.Views.Uwp.Notifications/bin
-myFeed_.sln
-myFeed_.sln.DotSettings.user
+myFeed.sln
 
 # OSX
 # =========================
