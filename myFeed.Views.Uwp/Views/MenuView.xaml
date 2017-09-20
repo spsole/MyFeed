@@ -73,7 +73,7 @@
                                 <Grid Background="Transparent" Width="270" Height="48">
                                     <interactivity:Interaction.Behaviors>
                                         <core:EventTriggerBehavior EventName="Tapped">
-                                            <extensions:NavigateAction TargetPage="{Binding Item3}"/>
+                                            <extensions:NavigateAction Key="{Binding Item3}"/>
                                             <core:ChangePropertyAction Value="False"
                                                 TargetObject="{Binding ElementName=Menu}" 
                                                 PropertyName="IsSwipeablePaneOpen"/>

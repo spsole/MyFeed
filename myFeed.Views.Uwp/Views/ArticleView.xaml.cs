@@ -1,5 +1,6 @@
 ﻿using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Implementations;
 using myFeed.Views.Uwp.Services;
 
@@ -13,7 +14,8 @@ namespace myFeed.Views.Uwp.Views
         {
             DataContext = e.Parameter;
             var viewModel = (FeedItemViewModel)e.Parameter;
-            var size = await UwpLocator.Current.GetSetting<int>("FontSize");
+            var service = UwpLocator.Current.Resolve<ISettingsService>();
+            var size = await service.Get<int>("FontSize");
             var xmlParserService = new UwpXmlParserService(size);
             var blocks = await xmlParserService.ParseAsync(viewModel?.Content.Value);
             foreach (var block in blocks) RichContent.Blocks.Add(block);

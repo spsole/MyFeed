@@ -10,6 +10,7 @@ namespace myFeed.ViewModels.Implementations
         public FaveViewModel(
             ISettingsService settingsService,
             IPlatformService platformService,
+            INavigationService navigationService,
             IArticlesRepository articlesRepository)
         {
             Items = new ObservableCollection<FeedItemViewModel>();
@@ -23,8 +24,8 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var article in articles)
                 {
                     if (!article.Fave) continue;
-                    var viewModel = new FeedItemViewModel(article, 
-                        settingsService, platformService, articlesRepository);
+                    var viewModel = new FeedItemViewModel(article, settingsService, 
+                        platformService, navigationService, articlesRepository);
                     Items.Add(viewModel);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
                     {

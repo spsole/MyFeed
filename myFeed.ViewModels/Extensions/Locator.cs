@@ -11,11 +11,12 @@ namespace myFeed.ViewModels.Extensions
     /// application contains. Usage: "{Binding Path=., Source={StaticResource Locator}}"
     /// Remember to declare this as a singleton resource in App.xaml or similar.
     /// </summary>
-    public abstract class Locator<TA, TB, TC, TD> : IDisposable
+    public abstract class Locator<TA, TB, TC, TD, TE> : IDisposable
         where TA : ITranslationsService
         where TB : IPlatformService
         where TC : IDialogService
         where TD : IFilePickerService
+        where TE : INavigationService
     {
         private readonly IContainer _lifetimeScope;
 
@@ -30,6 +31,7 @@ namespace myFeed.ViewModels.Extensions
             builder.RegisterType<TB>().As<IPlatformService>();
             builder.RegisterType<TC>().As<IDialogService>();
             builder.RegisterType<TD>().As<IFilePickerService>();
+            builder.RegisterType<TE>().As<INavigationService>().SingleInstance();
             _lifetimeScope = builder.Build();
         }
 
@@ -38,7 +40,7 @@ namespace myFeed.ViewModels.Extensions
         /// ILifetimeScope for each ViewModel.
         /// </summary>
         /// <typeparam name="T">Type to resolve.</typeparam>
-        protected T Resolve<T>() where T : class => _lifetimeScope.Resolve<T>();
+        public T Resolve<T>() where T : class => _lifetimeScope.Resolve<T>();
 
         /// <summary>
         /// Disposes internally stored lifetime scope.

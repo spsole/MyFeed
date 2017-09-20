@@ -13,6 +13,7 @@ namespace myFeed.ViewModels.Implementations
             IFeedService feedService,
             ISettingsService settingsService,
             IPlatformService platformService,
+            INavigationService navigationService,
             IArticlesRepository articlesRepository)
         {
             Items = new ObservableCollection<FeedItemViewModel>();
@@ -26,8 +27,8 @@ namespace myFeed.ViewModels.Implementations
                 var orderedArticles = await feedService.RetrieveFeedsAsync(sources);
                 Items.Clear();
                 foreach (var article in orderedArticles)
-                    Items.Add(new FeedItemViewModel(article, 
-                        settingsService, platformService, articlesRepository));
+                    Items.Add(new FeedItemViewModel(article, settingsService, 
+                        platformService, navigationService, articlesRepository));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });

@@ -32,7 +32,7 @@
         <controls:TransparentButton Grid.Row="0" HorizontalAlignment="Right" Symbol="Zoom">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="Click">
-                    <extensions:NavigateAction TargetPage="views:SearchView"/>
+                    <extensions:NavigateAction Key="SearchView"/>
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
             <ToolTipService.ToolTip>
@@ -223,7 +223,7 @@
                     Converter={StaticResource Locale}, ConverterParameter=AddFromSearch}">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">
-                            <extensions:NavigateAction TargetPage="views:SearchView"/>
+                            <extensions:NavigateAction Key="SearchView"/>
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>    
                 </Button>

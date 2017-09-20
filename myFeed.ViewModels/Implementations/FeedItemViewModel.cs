@@ -9,38 +9,40 @@ namespace myFeed.ViewModels.Implementations
     public sealed class FeedItemViewModel
     {
         public FeedItemViewModel(
-            ArticleEntity entity,
+            ArticleEntity article, 
             ISettingsService settingsService,
             IPlatformService platformService,
+            INavigationService navigationService,
             IArticlesRepository articlesRepository)
         {
-            IsRead = new Property<bool>(entity.Read);
-            Title = new Property<string>(entity.Title);
-            IsFavorite = new Property<bool>(entity.Fave);
-            Feed = new Property<string>(entity.FeedTitle);
-            Content = new Property<string>(entity.Content);
-            PublishedDate = new Property<DateTime>(entity.PublishedDate);
+            IsRead = new Property<bool>(article.Read);
+            Title = new Property<string>(article.Title);
+            IsFavorite = new Property<bool>(article.Fave);
+            Feed = new Property<string>(article.FeedTitle);
+            Content = new Property<string>(article.Content);
+            PublishedDate = new Property<DateTime>(article.PublishedDate);
             Image = new Property<string>(async () => await settingsService
                 .Get<bool>("LoadImages") 
-                ? entity.ImageUri
+                ? article.ImageUri
                 : string.Empty);
 
-            Share = new Command(() => platformService.Share($"{entity.Title}\r\n{entity.Uri}"));
-            CopyLink = new Command(() => platformService.CopyTextToClipboard(entity.Uri));
+            Open = new Command(() => navigationService.Navigate(ViewKey.ArticleView, this));
+            Share = new Command(() => platformService.Share($"{article.Title}\r\n{article.Uri}"));
+            CopyLink = new Command(() => platformService.CopyTextToClipboard(article.Uri));
             LaunchUri = new Command(async () =>
             {
-                if (Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) 
-                    await platformService.LaunchUri(new Uri(entity.Uri));
+                if (Uri.IsWellFormedUriString(article.Uri, UriKind.Absolute)) 
+                    await platformService.LaunchUri(new Uri(article.Uri));
             });
             MarkRead = new Command(async () =>
             {
-                IsRead.Value = entity.Read = !IsRead.Value;
-                await articlesRepository.UpdateAsync(entity);
+                IsRead.Value = article.Read = !IsRead.Value;
+                await articlesRepository.UpdateAsync(article);
             });
             MarkFavorite = new Command(async () =>
             {
-                IsFavorite.Value = entity.Fave = !IsFavorite.Value;
-                await articlesRepository.UpdateAsync(entity);
+                IsFavorite.Value = article.Fave = !IsFavorite.Value;
+                await articlesRepository.UpdateAsync(article);
             });
         }
         
@@ -103,5 +105,10 @@ namespace myFeed.ViewModels.Implementations
         /// Shows share UI for article.
         /// </summary>
         public Command Share { get; }
+
+        /// <summary>
+        /// Opens this FeedItem.
+        /// </summary>
+        public Command Open { get; }
     }
 }

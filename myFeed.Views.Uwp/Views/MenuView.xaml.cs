@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using myFeed.Services.Abstractions;
+using myFeed.Views.Uwp.Services;
 
 namespace myFeed.Views.Uwp.Views
 {
@@ -15,11 +17,11 @@ namespace myFeed.Views.Uwp.Views
             var loader = new ResourceLoader();
             DataContext = new[]
             {
-                (Symbol.PostUpdate, loader.GetString("FeedViewMenuItem"), typeof(FeedView)),
-                (Symbol.OutlineStar, loader.GetString("FaveViewMenuItem"), typeof(FaveView)),
-                (Symbol.List, loader.GetString("SourcesViewMenuItem"), typeof(SourcesView)),
-                (Symbol.Zoom, loader.GetString("SearchViewMenuItem"), typeof(SearchView)),
-                (Symbol.Setting, loader.GetString("SettingsViewMenuItem"), typeof(SettingsView)),
+                (Symbol.PostUpdate, loader.GetString("FeedViewMenuItem"), ViewKey.FeedView),
+                (Symbol.OutlineStar, loader.GetString("FaveViewMenuItem"), ViewKey.FaveView),
+                (Symbol.List, loader.GetString("SourcesViewMenuItem"), ViewKey.SourcesView),
+                (Symbol.Zoom, loader.GetString("SearchViewMenuItem"), ViewKey.SearchView),
+                (Symbol.Setting, loader.GetString("SettingsViewMenuItem"), ViewKey.SettingsView),
             }
             .Select(i => i.ToTuple());
             InitializeComponent();
@@ -27,8 +29,8 @@ namespace myFeed.Views.Uwp.Views
 
         private async void OnNavigated(object sender, NavigationEventArgs e)
         {
-            var items = ((IEnumerable<Tuple<Symbol, string, Type>>) DataContext).ToList();
-            var item = items.First(i => i.Item3 == NavigationFrame.SourcePageType);
+            var items = ((IEnumerable<Tuple<Symbol, string, ViewKey>>) DataContext).ToList();
+            var item = items.First(i => UwpNavigationService.Pages[i.Item3] == NavigationFrame.SourcePageType);
             var index = items.IndexOf(item);
             try
             {

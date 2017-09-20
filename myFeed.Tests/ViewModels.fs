@@ -32,6 +32,7 @@ module ViewModelsHelpers =
     /// Registers default empty mocks.
     let registerDefaults (builder: ContainerBuilder) =
         builder
+        |> tee registerMockInstance<INavigationService>
         |> tee registerMockInstance<ISettingsService>
         |> tee registerMockInstance<IDialogService>
         |> tee registerMockInstance<IFilePickerService>
