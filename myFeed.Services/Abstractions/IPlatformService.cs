@@ -47,5 +47,11 @@ namespace myFeed.Services.Abstractions
         /// Returns default settings specific for this platform.
         /// </summary>
         IReadOnlyDictionary<string, string> GetDefaultSettings();
+
+        /// <summary>
+        /// Returns menu icons for application main menu containing 
+        /// platform-type-specific icon codes.
+        /// </summary>
+        IReadOnlyDictionary<ViewKey, object> GetIconsForViews();
     }
 }

@@ -14,6 +14,7 @@ namespace myFeed.ViewModels
             builder.RegisterType<SearchViewModel>().AsSelf();
             builder.RegisterType<FeedViewModel>().AsSelf();
             builder.RegisterType<FaveViewModel>().AsSelf();
+            builder.RegisterType<MenuViewModel>().AsSelf();
             base.Load(builder);
         }
     }

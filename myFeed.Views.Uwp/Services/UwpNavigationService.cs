@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -14,7 +14,7 @@ namespace myFeed.Views.Uwp.Services
     public class UwpNavigationService : INavigationService
     {
         private readonly SystemNavigationManager _systemNavigationManager;
-        public static readonly IReadOnlyDictionary<ViewKey, Type> Pages = new Dictionary<ViewKey, Type>
+        private static readonly IReadOnlyDictionary<ViewKey, Type> Pages = new Dictionary<ViewKey, Type>
         {
             {ViewKey.SettingsView, typeof(SettingsView)},
             {ViewKey.SourcesView, typeof(SourcesView)},
@@ -31,6 +31,8 @@ namespace myFeed.Views.Uwp.Services
             UpdateBackButtonVisibility();
         }
 
+        public event EventHandler<ViewKey> Navigated;
+
         public Task Navigate(ViewKey viewKey) => Navigate(viewKey, null);
 
         public Task Navigate(ViewKey viewKey, object parameter)
@@ -45,11 +47,13 @@ namespace myFeed.Views.Uwp.Services
                     var splitViewFrame = GetFrame(Window.Current.Content, 0);
                     splitViewFrame?.Navigate(Pages[viewKey], parameter);
                     UpdateBackButtonVisibility();
+                    OnNavigated(viewKey);
                     break;
                 case ViewKey.ArticleView:
                     var articleFrame = GetFrame(Window.Current.Content, 1);
                     articleFrame?.Navigate(Pages[viewKey], parameter);
                     UpdateBackButtonVisibility();
+                    OnNavigated(viewKey);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(viewKey), viewKey, null);
@@ -64,12 +68,18 @@ namespace myFeed.Views.Uwp.Services
             {
                 articleFrame.GoBack();
                 UpdateBackButtonVisibility();
+                OnNavigated(articleFrame.CurrentSourcePageType);
                 return;
             }
             var splitViewFrame = GetFrame(Window.Current.Content, 0);
             if (splitViewFrame.CanGoBack) splitViewFrame.GoBack();
             UpdateBackButtonVisibility();
+            OnNavigated(splitViewFrame.CurrentSourcePageType);
         }
+
+        private void OnNavigated(Type pageType) => OnNavigated(Pages.First(x => x.Value == pageType).Key);
+
+        private void OnNavigated(ViewKey viewKey) => Navigated?.Invoke(this, viewKey);
 
         private void UpdateBackButtonVisibility() =>
             _systemNavigationManager.AppViewBackButtonVisibility =

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace myFeed.Services.Abstractions
 {
@@ -19,6 +20,11 @@ namespace myFeed.Services.Abstractions
         /// <param name="viewKey">View to show.</param>
         /// <param name="parameter">Parameter to pass.</param>
         Task Navigate(ViewKey viewKey, object parameter);
+
+        /// <summary>
+        /// Invoked when view changes.
+        /// </summary>
+        event EventHandler<ViewKey> Navigated;
     }
 
     /// <summary>

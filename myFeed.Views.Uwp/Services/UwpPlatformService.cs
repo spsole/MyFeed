@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
+using Windows.UI.Xaml.Controls;
 using myFeed.Services.Abstractions;
 
 namespace myFeed.Views.Uwp.Services
@@ -32,17 +33,23 @@ namespace myFeed.Views.Uwp.Services
             return Task.CompletedTask;
         }
 
-        public IReadOnlyDictionary<string, string> GetDefaultSettings()
+        public IReadOnlyDictionary<string, string> GetDefaultSettings() => new Dictionary<string, string>
         {
-            return new Dictionary<string, string>
-            {
-                {"NeedBanners", "true"},
-                {"LoadImages", "true"},
-                {"NotifyPeriod", "14"},
-                {"Theme", "default"},
-                {"FontSize", "14"}
-            };
-        }
+            {"NeedBanners", "true"},
+            {"LoadImages", "true"},
+            {"NotifyPeriod", "14"},
+            {"Theme", "default"},
+            {"FontSize", "14"}
+        };
+
+        public IReadOnlyDictionary<ViewKey, object> GetIconsForViews() => new Dictionary<ViewKey, object>
+        {
+            {ViewKey.FaveView, Symbol.OutlineStar},
+            {ViewKey.SettingsView, Symbol.Setting},
+            {ViewKey.FeedView, Symbol.PostUpdate},
+            {ViewKey.SourcesView, Symbol.List},
+            {ViewKey.SearchView, Symbol.Zoom},
+        };
 
         public Task RegisterBackgroundTask(int freq) => Task.Delay(1);
         public Task RegisterBanners(bool needBanners) => Task.Delay(1);

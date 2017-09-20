@@ -54,6 +54,7 @@ namespace myFeed.ViewModels.Extensions
         public SearchViewModel SearchViewModel => Resolve<SearchViewModel>();
         public FeedViewModel FeedViewModel => Resolve<FeedViewModel>();
         public FaveViewModel FaveViewModel => Resolve<FaveViewModel>();
+        public MenuViewModel MenuViewModel => Resolve<MenuViewModel>();
 
         #endregion
     }
