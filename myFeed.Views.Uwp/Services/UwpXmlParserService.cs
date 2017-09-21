@@ -50,7 +50,6 @@ namespace myFeed.Views.Uwp.Services
             span.Inlines.Add(new LineBreak());
             span.Inlines.Add(bold);
             span.Inlines.Add(new LineBreak());
-            span.Inlines.Add(new LineBreak());
             return span;
         }
 
@@ -74,7 +73,9 @@ namespace myFeed.Views.Uwp.Services
                 MaxHeight = 500
             };
             inlineUiContainer.Child = image;
+            span.Inlines.Add(new LineBreak());
             span.Inlines.Add(inlineUiContainer);
+            span.Inlines.Add(new LineBreak());
             return span;
         }
 
@@ -86,7 +87,8 @@ namespace myFeed.Views.Uwp.Services
             if (Uri.IsWellFormedUriString(linkElement.Href, UriKind.Absolute))
                 hyperlink.NavigateUri = new Uri(linkElement.Href, UriKind.Absolute);
             hyperlink.Inlines.Add(new Run { Text = element.TextContent });
-            span.Inlines.Add(hyperlink);
+            if (!string.IsNullOrWhiteSpace(element.TextContent))
+                span.Inlines.Add(hyperlink);
             return span;
         }
 
@@ -154,7 +156,9 @@ namespace myFeed.Views.Uwp.Services
                 Height = frameElement.DisplayHeight
             };
             inlineUiContainer.Child = webView;
+            span.Inlines.Add(new LineBreak());
             span.Inlines.Add(inlineUiContainer);
+            span.Inlines.Add(new LineBreak());
             webView.Navigate(new Uri(frameElement.Source));
             return span;
         }
@@ -181,7 +185,7 @@ namespace myFeed.Views.Uwp.Services
                 case "img":
                     return GenerateImage(element);
                 case "br":
-                    return new LineBreak();
+                    return new Span();
                 case "i":
                 case "em":
                     return GenerateItalic(element);
