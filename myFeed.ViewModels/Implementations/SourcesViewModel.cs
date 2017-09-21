@@ -13,11 +13,13 @@ namespace myFeed.ViewModels.Implementations
             IDialogService dialogService,
             IPlatformService platformService,
             ISourcesRepository sourcesRepository,
+            INavigationService navigationService,
             ITranslationsService translationsService)
         {
             IsEmpty = new Property<bool>(false);
             IsLoading = new Property<bool>(true);
             Items = new ObservableCollection<SourcesCategoryViewModel>();
+            OpenSearch = new Command(() => navigationService.Navigate(ViewKey.SearchView));
             Load = new Command(async () =>
             {
                 IsLoading.Value = true;
@@ -69,6 +71,12 @@ namespace myFeed.ViewModels.Implementations
         /// Adds new category to list.
         /// </summary>
         public Command AddCategory { get; }
+
+        /// <summary>
+        /// Opens search view when user'd like to add
+        /// new items to his channel collection.
+        /// </summary>
+        public Command OpenSearch { get; }
 
         /// <summary>
         /// Loads categories into view.

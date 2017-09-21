@@ -16,6 +16,7 @@ namespace myFeed.ViewModels.Implementations
             INavigationService navigationService,
             IArticlesRepository articlesRepository)
         {
+            OpenSources = new Command(() => navigationService.Navigate(ViewKey.SourcesView));
             Items = new ObservableCollection<FeedItemViewModel>();
             Title = new Property<string>(entity.Title);
             IsLoading = new Property<bool>(true);
@@ -53,6 +54,12 @@ namespace myFeed.ViewModels.Implementations
         /// Feed category title.
         /// </summary>
         public Property<string> Title { get; }
+
+        /// <summary>
+        /// Opens sources page as a proposal for user 
+        /// to add new RSS channels into this category.
+        /// </summary>
+        public Command OpenSources { get; }
 
         /// <summary>
         /// Fetches data for current feed.

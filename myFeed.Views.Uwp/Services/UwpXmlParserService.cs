@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Shapes;
 using AngleSharp.Dom;
 using AngleSharp.Dom.Html;
 using AngleSharp.Parser.Html;
+using myFeed.Services.Abstractions;
 using HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment;
 using VerticalAlignment = Windows.UI.Xaml.VerticalAlignment;
 
@@ -18,20 +19,24 @@ namespace myFeed.Views.Uwp.Services
 {
     public sealed class UwpXmlParserService
     {
+        private readonly ISettingsService _service;
         private readonly HtmlParser _htmlParser;
-        private readonly double _fontSize;
 
-        public UwpXmlParserService(double fontSize)
+        public UwpXmlParserService()
         {
+            _service = UwpLocator.Current.Resolve<ISettingsService>();
             _htmlParser = new HtmlParser();
-            _fontSize = fontSize;
         }
 
         public async Task<IEnumerable<Block>> ParseAsync(string html)
         {
-            var lineHeight = _fontSize * 1.5;
+            var size = await _service.Get<int>("FontSize");
             var document = await _htmlParser.ParseAsync(html);
-            var paragraph = new Paragraph {FontSize = _fontSize, LineHeight = lineHeight};
+            var paragraph = new Paragraph
+            {
+                FontSize = size,
+                LineHeight = size * 1.5
+            };
             var node = GenerateNode(document.DocumentElement);
             paragraph.Inlines.Add(node);
             return new[] {paragraph};
@@ -41,7 +46,6 @@ namespace myFeed.Views.Uwp.Services
         {
             var span = new Span();
             var bold = GenerateBold(element);
-            bold.FontSize = _fontSize * 1.5;
             span.Inlines.Add(new LineBreak());
             span.Inlines.Add(new LineBreak());
             span.Inlines.Add(bold);

@@ -185,7 +185,7 @@
                                 </toolkit:PullToRefreshListView.ItemTemplate>
                             </toolkit:PullToRefreshListView>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                                Visibility="{Binding Items.Count, Converter={StaticResource FalsyToVisible}}">
+                                Visibility="{Binding IsEmpty.Value, Converter={StaticResource TruthyToVisible}}">
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEB5E;" TextAlignment="Center"
                                     FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                                 <TextBlock TextAlignment="Center" FontWeight="SemiLight" Margin="12 6" TextWrapping="Wrap" FontSize="24" 
@@ -194,14 +194,8 @@
                                     Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
                                     Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedNothing}"/>
                                 <Button Content="{Binding Converter={StaticResource Locale}, ConverterParameter=AddChannel}"
-                                    Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
-                                    Foreground="White" Margin="12" HorizontalAlignment="Center">
-                                    <interactivity:Interaction.Behaviors>
-                                        <core:EventTriggerBehavior EventName="Click">
-                                            <extensions:NavigateAction Key="SourcesView"/>
-                                        </core:EventTriggerBehavior>
-                                    </interactivity:Interaction.Behaviors>
-                                </Button>
+                                    Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White" 
+                                    Margin="12" HorizontalAlignment="Center" Command="{Binding OpenSources}"/>
                             </StackPanel>
                             <controls:LoadingScreen IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
                         </Grid>
@@ -209,7 +203,7 @@
                 </Pivot.ItemTemplate>
             </Pivot>
             <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                Visibility="{Binding Items.Count, Converter={StaticResource FalsyToVisible}}">
+                Visibility="{Binding IsEmpty.Value, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -48 0 0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE897;" TextAlignment="Center"
                         FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
@@ -219,14 +213,8 @@
                         Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedWelcome}"/>
                     <Button Content="{Binding Converter={StaticResource Locale}, ConverterParameter=AddChannel}"
-                        Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
-                        Foreground="White" Margin="12" HorizontalAlignment="Center">
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Click">
-                                <extensions:NavigateAction Key="SourcesView"/>
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                    </Button>
+                        Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White" 
+                        Margin="12" HorizontalAlignment="Center" Command="{Binding OpenSources}"/>
                 </StackPanel>
             </Grid>
             <controls:LoadingScreen Grid.Row="1" IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>

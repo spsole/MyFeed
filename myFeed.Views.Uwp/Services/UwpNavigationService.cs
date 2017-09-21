@@ -77,7 +77,11 @@ namespace myFeed.Views.Uwp.Services
             OnNavigated(splitViewFrame.CurrentSourcePageType);
         }
 
-        private void OnNavigated(Type pageType) => OnNavigated(Pages.First(x => x.Value == pageType).Key);
+        private void OnNavigated(Type pageType)
+        {
+            if (Pages.Values.Contains(pageType))
+                OnNavigated(Pages.First(x => x.Value == pageType).Key);
+        }
 
         private void OnNavigated(ViewKey viewKey) => Navigated?.Invoke(this, viewKey);
 

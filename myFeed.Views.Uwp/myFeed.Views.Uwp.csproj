@@ -96,7 +96,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Expander.cs" />
-    <Compile Include="Extensions\NavigateAction.cs" />
     <Compile Include="Extensions\OpenFlyoutAction.cs" />
     <Compile Include="Controls\LoadingScreen.xaml.cs">
       <DependentUpon>LoadingScreen.xaml</DependentUpon>

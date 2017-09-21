@@ -8,7 +8,6 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
-    xmlns:views="using:myFeed.Views.Uwp.Views"
     xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
     mc:Ignorable="d">
 
@@ -29,12 +28,8 @@
         </Grid.RowDefinitions>
         <controls:TitleBlock Count="{Binding Items.Count, Mode=OneWay}" Text="{Binding 
             Converter={StaticResource Locale}, ConverterParameter=SourcesViewTitle}"/>
-        <controls:TransparentButton Grid.Row="0" HorizontalAlignment="Right" Symbol="Zoom">
-            <interactivity:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="Click">
-                    <extensions:NavigateAction Key="SearchView"/>
-                </core:EventTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
+        <controls:TransparentButton Command="{Binding OpenSearch}"
+            Grid.Row="0" Symbol="Zoom" HorizontalAlignment="Right">
             <ToolTipService.ToolTip>
                 <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Find}"/>
             </ToolTipService.ToolTip>
@@ -197,7 +192,7 @@
             </ListView.ItemTemplate>
         </ListView>
         <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            Visibility="{Binding Items.Count, Converter={StaticResource FalsyToVisible}}">
+            Visibility="{Binding IsEmpty.Value, Converter={StaticResource TruthyToVisible}}">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -50 0 0">
                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE71B;" TextAlignment="Center" 
                     FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
@@ -220,13 +215,8 @@
                 </Button>
                 <Button HorizontalAlignment="Center" HorizontalContentAlignment="Center"
                     Style="{ThemeResource TextBlockButtonStyle}" FontSize="13" Content="{Binding 
-                    Converter={StaticResource Locale}, ConverterParameter=AddFromSearch}">
-                    <interactivity:Interaction.Behaviors>
-                        <core:EventTriggerBehavior EventName="Click">
-                            <extensions:NavigateAction Key="SearchView"/>
-                        </core:EventTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>    
-                </Button>
+                    Converter={StaticResource Locale}, ConverterParameter=AddFromSearch}"
+                    Command="{Binding OpenSearch}"/>
             </StackPanel>
         </Grid>
         <CommandBar VerticalAlignment="Bottom" Grid.Row="1" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
