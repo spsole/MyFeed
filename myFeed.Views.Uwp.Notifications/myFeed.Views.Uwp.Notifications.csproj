@@ -115,6 +115,12 @@
       <Version>5.4.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\myFeed.ViewModels\myFeed.ViewModels.csproj">
+      <Project>{36ea26e4-720c-44be-8a7a-25e35f739344}</Project>
+      <Name>myFeed.ViewModels</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -8,7 +8,11 @@ namespace myFeed.Views.Uwp.Notifications
     {
         public void Run(IBackgroundTaskInstance taskInstance)
         {
-            // TODO implement background task runner
+            var defferal = taskInstance.GetDeferral();
+            var cost = BackgroundWorkCost.CurrentBackgroundWorkCost;
+            if (cost == BackgroundWorkCostValue.High) return;
+
+            defferal.Complete();
         }
     }
 }

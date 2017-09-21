@@ -263,6 +263,10 @@
       <Project>{36ea26e4-720c-44be-8a7a-25e35f739344}</Project>
       <Name>myFeed.ViewModels</Name>
     </ProjectReference>
+    <ProjectReference Include="..\myFeed.Views.Uwp.Notifications\myFeed.Views.Uwp.Notifications.csproj">
+      <Project>{74fa52ef-b4da-4ebe-a49b-ba843b5c7e3b}</Project>
+      <Name>myFeed.Views.Uwp.Notifications</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
