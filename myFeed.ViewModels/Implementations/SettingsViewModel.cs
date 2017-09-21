@@ -39,7 +39,7 @@ namespace myFeed.ViewModels.Implementations
                 Subscribe(Theme, "Theme", platformService.RegisterTheme);
                 Subscribe(FontSize, "FontSize", o => Task.CompletedTask);
                 Subscribe(LoadImages, "LoadImages", o => Task.CompletedTask);
-                Subscribe(NeedBanners, "NeedBanners", platformService.RegisterBanners);
+                Subscribe(NeedBanners, "NeedBanners", o => Task.CompletedTask);
                 Subscribe(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask);
                 
                 void Subscribe<T>(Property<T> prop, string key, Func<T, Task> clb) where T : IConvertible

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.System;
@@ -12,6 +13,10 @@ namespace myFeed.Views.Uwp.Services
 {
     public sealed class UwpPlatformService : IPlatformService
     {
+        private readonly IDialogService _dialogService;
+
+        public UwpPlatformService(IDialogService dialogService) => _dialogService = dialogService;
+
         public async Task LaunchUri(Uri uri) => await Launcher.LaunchUriAsync(uri);
 
         public Task Share(string content)
@@ -60,8 +65,29 @@ namespace myFeed.Views.Uwp.Services
             {ViewKey.SearchView, Symbol.Zoom},
         };
 
-        public Task RegisterBackgroundTask(int freq) => Task.Delay(1);
-        public Task RegisterBanners(bool needBanners) => Task.Delay(1);
-        public Task RegisterTheme(string theme) => Task.Delay(1);
+        public async Task RegisterBackgroundTask(int freq)
+        {
+            var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+            if (backgroundAccessStatus != BackgroundAccessStatus.AlwaysAllowed &&
+                backgroundAccessStatus != BackgroundAccessStatus.AllowedSubjectToSystemPolicy)
+                return;
+
+            foreach (var task in BackgroundTaskRegistration.AllTasks.Values)
+                if (task.Name == "myFeedNotify") task.Unregister(true);
+
+            if (freq == 0) return;
+            var builder = new BackgroundTaskBuilder();
+            builder.SetTrigger(new TimeTrigger((uint)freq * 60, false)); // Note: minutes here; 30 = 30 mins
+            builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
+            builder.TaskEntryPoint = "myFeed.Views.Uwp.Notifications.Runner";
+            builder.Name = "myFeedNotify";
+            builder.Register();
+        }
+
+        public async Task RegisterTheme(string theme)
+        {
+            var response = await _dialogService.ShowDialogForConfirmation("restart", "need");
+            if (response) Application.Current.Exit();
+        }
     }
 }

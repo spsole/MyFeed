@@ -15,9 +15,8 @@ Application is completely free and open-source. No ads, no mandatory subscriptio
 
 ## Application architecture
 
-myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architectural pattern. <b>ViewModels</b> provide Views abstractions, exposing public properties and commands. <b>Views</b> are specific for each platform supported by myFeed (currently UWP Views only); ViewModels and Models do not rely on Views. <b>Models</b> represent real state content and logic; this part of MVVM pattern is implemented as <b>Entities</b>, <b>Services</b> and <b>Repositories</b> layers. There is a dependencies graph below to make all these points clear:
+myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architectural pattern. <b>ViewModels</b> provide Views abstractions with UI logic, exposing public properties and commands. <b>Views</b> are specific for each platform supported by myFeed (currently UWP Views only); ViewModels and Models do not rely on Views. <b>Models</b> represent real state content and logic; this part of MVVM pattern is implemented as <b>Entities</b>, <b>Repositories</b> and <b>Services</b> layers. <b>Entities</b> represent data stored in databases, <b>Repositories</b> encapsulate data access, <b>Services</b> provide common logic. There is a dependencies graph below to clearify this:
 
-<img src="/DependenciesGraph.png" width="400px">
 
 ## Technologies and Tools used
 
@@ -28,13 +27,11 @@ myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architectural pattern. <b>Vie
 - <a href="https://github.com/aspnet/EntityFrameworkCore">Entity Framework Core</a> to work with data
 - <a href="http://www.sqlite.org/">SQLite</a> as a database engine
 - <a href="https://github.com/AngleSharp/AngleSharp">AngleSharp</a> to parse html
-- <a href="https://www.newtonsoft.com/json">Newtonsoft.JSON</a> to parse JSON objects
 - <a href="https://github.com/codehollow/FeedReader">CodeHollow.FeedReader</a> to parse feeds
+- <a href="https://www.newtonsoft.com/json">Newtonsoft.Json</a> to parse Json objects
 - <a href="https://developer.microsoft.com/en-us/windows/apps">Universal Windows Platform</a>
 - <a href="https://github.com/Microsoft/UWPCommunityToolkit">UWP Community Toolkit</a>
 - <a href="https://github.com/Microsoft/XamlBehaviors">UWP XAML Behaviors SDK</a>
 - <a href="https://code.visualstudio.com/">Visual Studio Code</a> with <a href="http://ionide.io/">Ionide plugin</a>
 - <a href="https://www.visualstudio.com/ru/vs/whatsnew/">Visual Studio 2017</a> with <a href="https://www.jetbrains.com/resharper/">JetBrains ReSharper</a>
-
-## License Info
-Licensed under <a href="https://github.com/Worldbeater/myFeed/blob/master/LICENSE.md">MIT license</a>.
+- <a href="https://www.jetbrains.com/rider/">JetBrains Rider</a>

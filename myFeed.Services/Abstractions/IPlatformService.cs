@@ -34,11 +34,6 @@ namespace myFeed.Services.Abstractions
         Task RegisterBackgroundTask(int freq);
 
         /// <summary>
-        /// Registers banners.
-        /// </summary>
-        Task RegisterBanners(bool needBanners);
-
-        /// <summary>
         /// Registers application design theme.
         /// </summary>
         Task RegisterTheme(string theme);

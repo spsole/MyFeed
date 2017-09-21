@@ -1,4 +1,6 @@
-﻿using Windows.ApplicationModel.Background;
+﻿using System;
+using Windows.ApplicationModel.Background;
+using Windows.Storage;
 
 namespace myFeed.Views.Uwp.Notifications
 {
