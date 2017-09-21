@@ -48,22 +48,14 @@ module ViewModelsHelpers =
 module MenuViewModelsTests =
 
     [<Fact>]
-    let ``should create instance of menu viewmodel``() =
-        ContainerBuilder()
-        |> tee registerDefaults
-        |> tee registerAsSelf<MenuViewModel>
-        |> buildScope
-        |> tee assertResolve<MenuViewModel>
-        |> dispose
-
-    [<Fact>]
     let ``should load menu viewmodel``() =
         let icons = 
             dict[ ViewKey.ArticleView, null;
                   ViewKey.FaveView, null;
                   ViewKey.FeedView, null
                   ViewKey.SearchView, null;
-                  ViewKey.SettingsView, null ] 
+                  ViewKey.SettingsView, null;
+                  ViewKey.SourcesView, null ] 
             |> Dictionary<_, _>
         let mock = Mock<IPlatformService>()
         mock.Setup(fun i -> i.GetIconsForViews())
@@ -75,11 +67,8 @@ module MenuViewModelsTests =
             |> tee (registerInstanceAs<IPlatformService> mock.Object)
             |> buildScope
             |> resolveDispose<MenuViewModel>
-        viewModel.Load.CanExecuteChanged += fun _ ->
-            if (viewModel.Load.CanExecute()) then
-                Assert.Equal(0, viewModel.SelectedIndex.Value)
-                Assert.NotEmpty(viewModel.Items)
-        viewModel.Load.Execute(null)  
+        Assert.Equal(0, viewModel.SelectedIndex.Value)
+        Assert.NotEmpty(viewModel.Items)
 
 // Tests for search ViewModel.
 module SearchViewModelsTests =

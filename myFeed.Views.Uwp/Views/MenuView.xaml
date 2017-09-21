@@ -68,11 +68,6 @@
                         ScrollViewer.VerticalScrollMode="Disabled" 
                         ItemsSource="{Binding Items}"
                         SelectedIndex="{Binding SelectedIndex.Value, Mode=TwoWay}">
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Loaded">
-                                <core:InvokeCommandAction Command="{Binding Load}"/>
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Background="Transparent" Width="270" Height="48">
