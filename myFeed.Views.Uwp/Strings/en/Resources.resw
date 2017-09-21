@@ -310,4 +310,7 @@
   <data name="SendFeedback">
     <value>If you like myFeed, please, rate the app in Windows Store!</value>
   </data>
+  <data name="ResetAppNoRestore">
+    <value>This action will delete all your locally stored data, including favorite articles and channels list. This stuff will be lost forever! Are you sure you want to continue?</value>
+  </data>
 </root>

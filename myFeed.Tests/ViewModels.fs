@@ -164,6 +164,8 @@ module SettingsViewModelsTests =
         |> tee registerMockInstance<ISettingsService>
         |> tee registerMockInstance<IPlatformService>
         |> tee registerMockInstance<IOpmlService>
+        |> tee registerMockInstance<IDialogService>
+        |> tee registerMockInstance<ITranslationsService>
         |> tee registerAsSelf<SettingsViewModel>
         |> ignore
 

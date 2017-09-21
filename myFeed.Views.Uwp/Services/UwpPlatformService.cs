@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Services.Abstractions;
 
@@ -31,6 +33,13 @@ namespace myFeed.Views.Uwp.Services
             dataPackage.SetText(text);
             Clipboard.SetContent(dataPackage);
             return Task.CompletedTask;
+        }
+
+        public async Task ResetApp()
+        {
+            var database = await ApplicationData.Current.LocalFolder.GetFileAsync("MyFeed.db");
+            await database.DeleteAsync(StorageDeleteOption.Default);
+            Application.Current.Exit();
         }
 
         public IReadOnlyDictionary<string, string> GetDefaultSettings() => new Dictionary<string, string>

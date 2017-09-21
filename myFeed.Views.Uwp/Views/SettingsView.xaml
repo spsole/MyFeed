@@ -145,9 +145,8 @@
                                 Converter={StaticResource Locale}, ConverterParameter=Reset}"/>
                             <TextBlock Margin="0 6" TextWrapping="Wrap" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=ResetText}"/>
-                            <Button Margin="0 6" Content="{Binding 
-                                Converter={StaticResource Locale}, 
-                                ConverterParameter=Reset}"/>
+                            <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, 
+                                ConverterParameter=Reset}" Command="{Binding Reset}"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

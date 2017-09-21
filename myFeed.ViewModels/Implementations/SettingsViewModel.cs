@@ -9,8 +9,10 @@ namespace myFeed.ViewModels.Implementations
     {
         public SettingsViewModel(
             IOpmlService opmlService,
+            IDialogService dialogService,
             ISettingsService settingsService,
-            IPlatformService platformService)
+            IPlatformService platformService,
+            ITranslationsService translationsService)
         {
             Theme = new Property<string>();
             FontSize = new Property<int>();
@@ -19,6 +21,13 @@ namespace myFeed.ViewModels.Implementations
             NeedBanners = new Property<bool>();
             ImportOpml = new Command(opmlService.ImportOpmlFeeds);
             ExportOpml = new Command(opmlService.ExportOpmlFeeds);
+            Reset = new Command(async () =>
+            {
+                var response = await dialogService.ShowDialogForConfirmation(
+                    translationsService.Resolve("ResetAppNoRestore"),
+                    translationsService.Resolve("Notification"));
+                if (response) await platformService.ResetApp();
+            });
             Load = new Command(async () =>
             {
                 NotifyPeriod.Value = await settingsService.Get<int>("NotifyPeriod");
@@ -78,6 +87,11 @@ namespace myFeed.ViewModels.Implementations
         /// Exports feeds to Opml.
         /// </summary>
         public Command ExportOpml { get; }
+
+        /// <summary>
+        /// Resets application settings.
+        /// </summary>
+        public Command Reset { get; }
 
         /// <summary>
         /// Loads settings into UI.

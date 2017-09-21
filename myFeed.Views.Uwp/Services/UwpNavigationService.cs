@@ -28,7 +28,6 @@ namespace myFeed.Views.Uwp.Services
         {
             _systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             _systemNavigationManager.BackRequested += NavigateBack;
-            UpdateBackButtonVisibility();
         }
 
         public event EventHandler<ViewKey> Navigated;
@@ -46,13 +45,11 @@ namespace myFeed.Views.Uwp.Services
                 case ViewKey.SettingsView:
                     var splitViewFrame = GetFrame(Window.Current.Content, 0);
                     splitViewFrame?.Navigate(Pages[viewKey], parameter);
-                    UpdateBackButtonVisibility();
                     OnNavigated(viewKey);
                     break;
                 case ViewKey.ArticleView:
                     var articleFrame = GetFrame(Window.Current.Content, 1);
                     articleFrame?.Navigate(Pages[viewKey], parameter);
-                    UpdateBackButtonVisibility();
                     OnNavigated(viewKey);
                     break;
                 default:
@@ -67,13 +64,11 @@ namespace myFeed.Views.Uwp.Services
             if (articleFrame != null && articleFrame.CanGoBack)
             {
                 articleFrame.GoBack();
-                UpdateBackButtonVisibility();
                 OnNavigated(articleFrame.CurrentSourcePageType);
                 return;
             }
             var splitViewFrame = GetFrame(Window.Current.Content, 0);
             if (splitViewFrame.CanGoBack) splitViewFrame.GoBack();
-            UpdateBackButtonVisibility();
             OnNavigated(splitViewFrame.CurrentSourcePageType);
         }
 
@@ -83,7 +78,11 @@ namespace myFeed.Views.Uwp.Services
                 OnNavigated(Pages.First(x => x.Value == pageType).Key);
         }
 
-        private void OnNavigated(ViewKey viewKey) => Navigated?.Invoke(this, viewKey);
+        private void OnNavigated(ViewKey viewKey)
+        {
+            Navigated?.Invoke(this, viewKey);
+            UpdateBackButtonVisibility();
+        }
 
         private void UpdateBackButtonVisibility() =>
             _systemNavigationManager.AppViewBackButtonVisibility =

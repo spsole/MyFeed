@@ -42,6 +42,12 @@ namespace myFeed.Services.Abstractions
         /// Registers application design theme.
         /// </summary>
         Task RegisterTheme(string theme);
+
+        /// <summary>
+        /// Resets application settings, removes stored
+        /// data and relaunches the app.
+        /// </summary>
+        Task ResetApp();
         
         /// <summary>
         /// Returns default settings specific for this platform.
