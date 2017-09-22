@@ -10,11 +10,18 @@ namespace myFeed.ViewModels.Implementations
     {
         public MenuViewModel(
             IPlatformService platformService,
+            ISettingsService settingsService,
             INavigationService navigationService,
             ITranslationsService translationsService)
         {
             SelectedIndex = new Property<int>();
             Items = new ObservableCollection<Tuple<string, object, Command>>();
+            Load = new Command(async () =>
+            {
+                var theme = await settingsService.Get<string>("Theme");
+                await platformService.RegisterTheme(theme);
+            });
+
             var icons = platformService.GetIconsForViews();
             var pairs = new List<(ViewKey, string)>
             {
@@ -46,5 +53,10 @@ namespace myFeed.ViewModels.Implementations
         /// Selected item index.
         /// </summary>
         public Property<int> SelectedIndex { get; }
+
+        /// <summary>
+        /// Loads application settings into view.
+        /// </summary>
+        public Command Load { get; }
     }
 }

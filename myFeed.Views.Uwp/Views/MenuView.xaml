@@ -37,6 +37,11 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        <interactivity:Interaction.Behaviors>
+            <core:EventTriggerBehavior EventName="Loaded">
+                <core:InvokeCommandAction Command="{Binding Load}"/>
+            </core:EventTriggerBehavior>
+        </interactivity:Interaction.Behaviors>
         <controls:SwipeableSplitView 
             x:Name="Menu" DisplayMode="Overlay" 
             CompactPaneLength="48" OpenPaneLength="270">

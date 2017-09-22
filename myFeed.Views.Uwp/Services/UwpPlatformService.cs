@@ -8,14 +8,18 @@ using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Services.Abstractions;
+using Microsoft.Toolkit.Uwp.UI.Extensions;
 
 namespace myFeed.Views.Uwp.Services
 {
     public sealed class UwpPlatformService : IPlatformService
     {
-        private readonly IDialogService _dialogService;
-
-        public UwpPlatformService(IDialogService dialogService) => _dialogService = dialogService;
+        private static readonly Dictionary<string, ElementTheme> Themes = new Dictionary<string, ElementTheme>
+        {
+            {"dark", ElementTheme.Dark},
+            {"light", ElementTheme.Light},
+            {"default", ElementTheme.Default}
+        };
 
         public async Task LaunchUri(Uri uri) => await Launcher.LaunchUriAsync(uri);
 
@@ -84,10 +88,11 @@ namespace myFeed.Views.Uwp.Services
             builder.Register();
         }
 
-        public async Task RegisterTheme(string theme)
+        public Task RegisterTheme(string theme)
         {
-            var response = await _dialogService.ShowDialogForConfirmation("restart", "need");
-            if (response) Application.Current.Exit();
+            var contentElement = (Frame)Window.Current.Content;
+            contentElement.RequestedTheme = Themes[theme];
+            return Task.CompletedTask;
         }
     }
 }

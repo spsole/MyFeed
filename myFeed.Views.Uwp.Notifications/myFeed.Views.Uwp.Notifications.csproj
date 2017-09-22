@@ -107,6 +107,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Processor.cs" />
     <Compile Include="Runner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -116,6 +117,14 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj">
+      <Project>{7905a6f6-84c1-4a79-97fa-e9abf586cbed}</Project>
+      <Name>myFeed.Repositories</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj">
+      <Project>{c92e164b-4611-4770-9520-df974255fc8a}</Project>
+      <Name>myFeed.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\myFeed.ViewModels\myFeed.ViewModels.csproj">
       <Project>{36ea26e4-720c-44be-8a7a-25e35f739344}</Project>
       <Name>myFeed.ViewModels</Name>
