@@ -107,7 +107,8 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Processor.cs" />
+    <Compile Include="Services\UwpDefaultsService.cs" />
+    <Compile Include="Services\UwpFeedProcessor.cs" />
     <Compile Include="Runner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading.Tasks;
 
 namespace myFeed.Services.Abstractions
@@ -43,16 +41,5 @@ namespace myFeed.Services.Abstractions
         /// data and relaunches the app.
         /// </summary>
         Task ResetApp();
-        
-        /// <summary>
-        /// Returns default settings specific for this platform.
-        /// </summary>
-        IReadOnlyDictionary<string, string> GetDefaultSettings();
-
-        /// <summary>
-        /// Returns menu icons for application main menu containing 
-        /// platform-type-specific icon codes.
-        /// </summary>
-        IReadOnlyDictionary<ViewKey, object> GetIconsForViews();
     }
 }

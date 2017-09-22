@@ -7,21 +7,21 @@ using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 
-namespace myFeed.Views.Uwp.Notifications
+namespace myFeed.Views.Uwp.Notifications.Services
 {
-    internal sealed class Processor
+    internal sealed class UwpFeedProcessor
     {
-        private readonly IConfigurationRepository _configurationRepository;
         private readonly ISourcesRepository _sourcesRepository;
+        private readonly ISettingsService _settingsService;
         private readonly IFeedService _feedService;
 
-        public Processor(
+        public UwpFeedProcessor(
             IFeedService feedService, 
             ISourcesRepository sourcesRepository,
-            IConfigurationRepository configurationRepository)
+            ISettingsService settingsService)
         {
-            _configurationRepository = configurationRepository;
             _sourcesRepository = sourcesRepository;
+            _settingsService = settingsService;
             _feedService = feedService;
         }
 
@@ -33,9 +33,10 @@ namespace myFeed.Views.Uwp.Notifications
             var feed = await _feedService.RetrieveFeedsAsync(sources).ConfigureAwait(false);
 
             // Get preferences settings.
-            var recentFetch = await GetStoredDatetime().ConfigureAwait(false);
-            var needBanners = await GetStoredBannersPreference();
-            var needImages = await GetStoredImagesPreference();
+            var recentFetchDateTime = await _settingsService.Get<string>("LastFetched");
+            var recentFetch = DateTime.Parse(recentFetchDateTime, CultureInfo.InvariantCulture);
+            var needBanners = await _settingsService.Get<bool>("NeedBanners");
+            var needImages = await _settingsService.Get<bool>("LoadImages");
 
             // Show notifications for revant articles.
             feed.Where(i => i.PublishedDate > recentFetch)
@@ -44,31 +45,7 @@ namespace myFeed.Views.Uwp.Notifications
                 .ForEach(i => SendToastNotification(i, needBanners, needImages));
 
             // Update last fetch date.
-            await SetCurrentDateTime().ConfigureAwait(false);
-        }
-
-        private async Task<bool> GetStoredBannersPreference()
-        {
-            var needBanners = await _configurationRepository.GetByNameAsync("NeedBanners");
-            return !bool.TryParse(needBanners, out var result) || result;
-        }
-
-        private async Task<bool> GetStoredImagesPreference()
-        {
-            var needImages = await _configurationRepository.GetByNameAsync("LoadImages");
-            return !bool.TryParse(needImages, out var result) || result;
-        }
-
-        private async Task<DateTime> GetStoredDatetime()
-        {
-            var lastFetched = await _configurationRepository.GetByNameAsync("LastFetched");
-            return lastFetched != null ? DateTime.Parse(lastFetched, CultureInfo.InvariantCulture) : DateTime.MinValue;
-        }
-
-        private Task SetCurrentDateTime()
-        {
-            var stringifiedDate = DateTime.Now.ToString(CultureInfo.InvariantCulture);
-            return _configurationRepository.SetByNameAsync("LastFetched", stringifiedDate);
+            await _settingsService.Set("LastFetched", DateTime.Now.ToString(CultureInfo.InvariantCulture));
         }
 
         private static void SendToastNotification(ArticleEntity articleEntity, bool needBanners, bool needImages)

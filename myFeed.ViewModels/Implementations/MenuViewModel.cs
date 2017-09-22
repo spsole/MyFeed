@@ -20,9 +20,10 @@ namespace myFeed.ViewModels.Implementations
             {
                 var theme = await settingsService.Get<string>("Theme");
                 await platformService.RegisterTheme(theme);
+                var freq = await settingsService.Get<int>("NotifyPeriod");
+                await platformService.RegisterBackgroundTask(freq);
+                await settingsService.Set("LastFetched", DateTime.Now);
             });
-
-            var icons = platformService.GetIconsForViews();
             var pairs = new List<(ViewKey, string)>
             {
                 (ViewKey.FeedView, "FeedViewMenuItem"),
@@ -35,7 +36,7 @@ namespace myFeed.ViewModels.Implementations
             {
                 var command = new Command(() => navigationService.Navigate(pair.Item1));
                 var translation = translationsService.Resolve(pair.Item2);
-                Items.Add((translation, icons[pair.Item1], command).ToTuple());
+                Items.Add((translation, navigationService.Icons[pair.Item1], command).ToTuple());
             }
             navigationService.Navigated += (sender, args) =>
             {

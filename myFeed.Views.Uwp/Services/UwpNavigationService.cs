@@ -30,6 +30,15 @@ namespace myFeed.Views.Uwp.Services
             _systemNavigationManager.BackRequested += NavigateBack;
         }
 
+        public IReadOnlyDictionary<ViewKey, object> Icons => new Dictionary<ViewKey, object>
+        {
+            {ViewKey.FaveView, Symbol.OutlineStar},
+            {ViewKey.SettingsView, Symbol.Setting},
+            {ViewKey.FeedView, Symbol.PostUpdate},
+            {ViewKey.SourcesView, Symbol.List},
+            {ViewKey.SearchView, Symbol.Zoom}
+        };
+
         public event EventHandler<ViewKey> Navigated;
 
         public Task Navigate(ViewKey viewKey) => Navigate(viewKey, null);

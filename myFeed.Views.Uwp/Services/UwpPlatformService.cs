@@ -50,25 +50,7 @@ namespace myFeed.Views.Uwp.Services
             await database.DeleteAsync(StorageDeleteOption.Default);
             Application.Current.Exit();
         }
-
-        public IReadOnlyDictionary<string, string> GetDefaultSettings() => new Dictionary<string, string>
-        {
-            {"NeedBanners", "true"},
-            {"LoadImages", "true"},
-            {"NotifyPeriod", "14"},
-            {"Theme", "default"},
-            {"FontSize", "14"}
-        };
-
-        public IReadOnlyDictionary<ViewKey, object> GetIconsForViews() => new Dictionary<ViewKey, object>
-        {
-            {ViewKey.FaveView, Symbol.OutlineStar},
-            {ViewKey.SettingsView, Symbol.Setting},
-            {ViewKey.FeedView, Symbol.PostUpdate},
-            {ViewKey.SourcesView, Symbol.List},
-            {ViewKey.SearchView, Symbol.Zoom},
-        };
-
+        
         public async Task RegisterBackgroundTask(int freq)
         {
             var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();

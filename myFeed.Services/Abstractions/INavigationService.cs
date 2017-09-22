@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace myFeed.Services.Abstractions
@@ -25,6 +26,12 @@ namespace myFeed.Services.Abstractions
         /// Invoked when view changes.
         /// </summary>
         event EventHandler<ViewKey> Navigated;
+
+        /// <summary>
+        /// Returns menu icons for application main menu containing 
+        /// platform-type-specific icon codes.
+        /// </summary>
+        IReadOnlyDictionary<ViewKey, object> Icons { get; }
     }
 
     /// <summary>

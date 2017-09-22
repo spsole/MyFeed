@@ -1,7 +1,8 @@
 ﻿using Windows.ApplicationModel.Background;
 using Autofac;
-using myFeed.Repositories;
 using myFeed.Services;
+using myFeed.Services.Abstractions;
+using myFeed.Views.Uwp.Notifications.Services;
 
 namespace myFeed.Views.Uwp.Notifications
 {
@@ -14,7 +15,7 @@ namespace myFeed.Views.Uwp.Notifications
             if (cost == BackgroundWorkCostValue.High) return;
             using (var scope = ConfigureScope())
             {
-                var processor = scope.Resolve<Processor>();
+                var processor = scope.Resolve<UwpFeedProcessor>();
                 await processor.ProcessFeeds().ConfigureAwait(false);
             }
             defferal.Complete();
@@ -23,9 +24,9 @@ namespace myFeed.Views.Uwp.Notifications
         private static ILifetimeScope ConfigureScope()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterModule<RepositoriesModule>();
             builder.RegisterModule<ServicesModule>();
-            builder.RegisterType<Processor>().AsSelf();
+            builder.RegisterType<UwpDefaultsService>().As<IDefaultsService>();
+            builder.RegisterType<UwpFeedProcessor>().AsSelf();
             return builder.Build();
         }
     }

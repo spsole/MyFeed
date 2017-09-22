@@ -14,12 +14,12 @@ namespace myFeed.Services.Implementations
         private readonly IDictionary<string, string> _cachedConfiguration;
         
         public SettingsService(
-            IPlatformService platformService,
+            IDefaultsService defaultsService,
             IConfigurationRepository configurationRepository)
         {
             _configurationRepository = configurationRepository;
             _cachedConfiguration = new Dictionary<string, string>();
-            _defaultConfiguration = platformService.GetDefaultSettings();
+            _defaultConfiguration = defaultsService.DefaultSettings;
         }
         
         public async Task<TValue> Get<TValue>(string key) where TValue : IConvertible
