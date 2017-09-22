@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Views.Uwp.Views;
@@ -10,18 +8,16 @@ namespace myFeed.Views.Uwp
 {
     public sealed partial class App : Application
     {
-        public App()
+        public App() => InitializeComponent();
+
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             UnhandledException += (_, args) => Debug.WriteLine(args.Message);
-            InitializeComponent();
-        }
+            if (Window.Current.Content == null) Window.Current.Content = new Frame();
+            Window.Current.Activate();
 
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
-        {
-            var rootFrame = await CreateRootFrameAsync();
-            if (rootFrame.Content == null) rootFrame.Navigate(typeof(MenuView));
-            var systemManager = SystemNavigationManager.GetForCurrentView();
-            systemManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            var frame = (Frame)Window.Current.Content;
+            if (frame.Content == null) frame.Navigate(typeof(MenuView));
 
             /*
             // Register notifications.
@@ -83,64 +79,6 @@ namespace myFeed.Views.Uwp
             FeedCategoriesPage.NavigationFrame.Navigate(
                 typeof(ArticlePage), targetItem);
             targetItem.MarkAsRead();
-            */
-        }
-
-        private static Task<Frame> CreateRootFrameAsync()
-        {
-            if (Window.Current.Content is Frame rootFrame) return Task.FromResult(rootFrame);
-            rootFrame = new Frame();
-            Window.Current.Content = rootFrame;
-            Window.Current.Activate();
-            return Task.FromResult(rootFrame);
-            /*
-            // Return existing frame if already set.
-            if (Window.Current.Content is Frame rootFrame) return rootFrame;
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(300, 300));
-
-            // Read settings.
-            var settings = await SettingsService.GetInstance().ReadSettingsAsync();
-            await ProcessFilesAsync();
-
-            // Create frame.
-            rootFrame = new Frame();
-            rootFrame.NavigationFailed += OnNavigationFailed;
-            var theme = (ElementTheme)settings.ApplicationTheme;
-            rootFrame.RequestedTheme = theme;
-
-            // Set content and activate window.
-            Window.Current.Content = rootFrame;
-            Window.Current.Activate();
-            return rootFrame;
-            */
-        }
-
-        private static async Task ProcessFilesAsync()
-        {
-            /*
-            // Get dummy files.
-            const CreationCollisionOption op = CreationCollisionOption.OpenIfExists;
-            var folder = ApplicationData.Current.LocalFolder;
-            await folder.CreateFolderAsync("favorites", op);
-            await folder.CreateFileAsync("saved_cache", op);
-
-            // Update last launch date time for notifications.
-            var dateOffsetFile = await folder.CreateFileAsync("datecutoff", op);
-            await FileIO.WriteTextAsync(dateOffsetFile, DateTime.Now.ToString(CultureInfo.InvariantCulture));
-
-            // Do stuff with read.txt.
-            var readFile = await folder.CreateFileAsync("read.txt", op);
-            var contents = await FileIO.ReadTextAsync(readFile);
-            if (string.IsNullOrEmpty(contents)) return;
-
-            // Clear too many values.
-            var readSplit = contents.Split(';').ToList();
-            if (readSplit.Count > 180)
-            {
-                readSplit.RemoveAt(readSplit.Count - 1);
-                readSplit = readSplit.Skip(Math.Max(0, readSplit.Count - 180)).ToList();
-                await FileIO.WriteTextAsync(readFile, string.Join(";", readSplit));
-            }
             */
         }
     }

@@ -216,9 +216,6 @@ module SettingsViewModelsTests =
         mock.Setup(fun i -> i.RegisterBackgroundTask(It.IsAny()))
             .Returns(Task.CompletedTask) 
             .Callback(fun i -> count <- count + 1) |> ignore
-        mock.Setup(fun i -> i.RegisterBanners(It.IsAny()))
-            .Returns(Task.CompletedTask) 
-            .Callback(fun i -> count <- count + 1) |> ignore
 
         let viewModel = 
             ContainerBuilder()
@@ -237,7 +234,7 @@ module SettingsViewModelsTests =
                 Assert.Equal(false, viewModel.NeedBanners.Value)
                 Assert.Equal(0, viewModel.NotifyPeriod.Value)
                 Assert.Equal("Bar", viewModel.Theme.Value)
-                Assert.Equal(3, count)
+                Assert.Equal(2, count)
 
         viewModel.Load.Execute(null)             
 

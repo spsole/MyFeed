@@ -11,24 +11,22 @@ namespace myFeed.Views.Uwp.Notifications
         {
             var defferal = taskInstance.GetDeferral();
             var cost = BackgroundWorkCost.CurrentBackgroundWorkCost;
-            if (cost == BackgroundWorkCostValue.High)
-                return;
-
+            if (cost == BackgroundWorkCostValue.High) return;
             using (var scope = ConfigureScope())
             {
                 var processor = scope.Resolve<Processor>();
-                await processor.ProcessFeeds();
+                await processor.ProcessFeeds().ConfigureAwait(false);
             }
             defferal.Complete();
+        }
 
-            ILifetimeScope ConfigureScope()
-            {
-                var builder = new ContainerBuilder();
-                builder.RegisterModule<RepositoriesModule>();
-                builder.RegisterModule<ServicesModule>();
-                builder.RegisterType<Processor>().AsSelf();
-                return builder.Build();
-            }
+        private static ILifetimeScope ConfigureScope()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterModule<RepositoriesModule>();
+            builder.RegisterModule<ServicesModule>();
+            builder.RegisterType<Processor>().AsSelf();
+            return builder.Build();
         }
     }
 }

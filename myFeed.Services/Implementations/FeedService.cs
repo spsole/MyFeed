@@ -33,15 +33,15 @@ namespace myFeed.Services.Implementations
 
                 // Read items into dict using title and date fields as keys.
                 var sourcesList = sourceEntities.ToList();
-                var dictionary = sourcesList
+                var existingEntities = sourcesList
                     .SelectMany(i => i.Articles)
-                    .ToDictionary(i => (i.Title, i.PublishedDate));
+                    .ToLookup(i => (i.Title, i.PublishedDate));
 
                 // Retrieve feed based on single fetcher implementation.
                 var grouppedArticles = await Task.WhenAll(sourcesList.Select(RetrieveFeedAsync));
                 var distinctGroupping = grouppedArticles
                     .Select(i => (i.Item1, i.Item2
-                        .Where(x => !dictionary.ContainsKey((x.Title, x.PublishedDate)))
+                        .Where(x => !existingEntities.Contains((x.Title, x.PublishedDate)))
                         .ToArray()))
                     .ToList();
                 
@@ -52,7 +52,8 @@ namespace myFeed.Services.Implementations
 
                 // Return global join with both old and new articles.
                 var flatternedArticles = distinctGroupping.SelectMany(i => i.Item2);
-                return dictionary.Values
+                return existingEntities
+                    .SelectMany(i => i)
                     .Concat(flatternedArticles)
                     .OrderByDescending(i => i.PublishedDate);
             });
