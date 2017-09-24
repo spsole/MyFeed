@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Implementations;
@@ -31,6 +33,11 @@ namespace myFeed.Views.Uwp.Services
             if (article == null) return;
             var viewModel = new FeedItemViewModel(article, _settingsService, 
                 _platformService, _navigationService, _articlesRepository);
+            if (UwpNavigationService.GetChild<Frame>(Window.Current.Content, 1) == null)
+            {
+                await _navigationService.Navigate(typeof(FeedViewModel));
+                await Task.Delay(150);
+            }
             await _navigationService.Navigate(typeof(ArticleViewModel), viewModel);
         }
     }

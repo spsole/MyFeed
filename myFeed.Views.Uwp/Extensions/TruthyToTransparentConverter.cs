@@ -9,9 +9,6 @@ namespace myFeed.Views.Uwp.Extensions
         {
             return TruthyToVisibleConverter.IsDefault(value) ? 1 : 0.5;
         }
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, string language) => null;
     }
 }

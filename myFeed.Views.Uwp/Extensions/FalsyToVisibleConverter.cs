@@ -10,9 +10,6 @@ namespace myFeed.Views.Uwp.Extensions
         {
             return TruthyToVisibleConverter.IsDefault(value) ? Visibility.Visible : Visibility.Collapsed;
         }
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, string language) => null;
     }
 }

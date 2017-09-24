@@ -39,7 +39,9 @@ namespace myFeed.Views.Uwp
 
         private async void OpenArticleViewForPinnedArticleUsingGuid(Guid id)
         {
-            await UwpViewModelLocator.Current.Resolve<UwpLauncherService>().LaunchArticleById(id);
+            await UwpViewModelLocator.Current
+                .Resolve<UwpLauncherService>()
+                .LaunchArticleById(id);
         }
     }
 }

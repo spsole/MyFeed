@@ -9,9 +9,6 @@ namespace myFeed.Views.Uwp.Extensions
         {
             return ((string) value).ToUpperInvariant();
         }
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, string language) => null;
     }
 }

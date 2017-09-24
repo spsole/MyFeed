@@ -52,11 +52,11 @@ namespace myFeed.Views.Uwp.Services
         }
 
         public SettingsViewModel SettingsViewModel => Resolve<SettingsViewModel>();
-        public ArticleViewModel ArticleViewModel => Resolve<ArticleViewModel>();
-        public SourcesViewModel SourcesViewModel => Resolve<SourcesViewModel>();
-        public SearchViewModel SearchViewModel => Resolve<SearchViewModel>();
-        public FeedViewModel FeedViewModel => Resolve<FeedViewModel>();
-        public FaveViewModel FaveViewModel => Resolve<FaveViewModel>();
-        public MenuViewModel MenuViewModel => Resolve<MenuViewModel>();
+        public ArticleViewModel  ArticleViewModel =>  Resolve<ArticleViewModel>();
+        public SourcesViewModel  SourcesViewModel =>  Resolve<SourcesViewModel>();
+        public SearchViewModel   SearchViewModel =>   Resolve<SearchViewModel>();
+        public FeedViewModel     FeedViewModel =>     Resolve<FeedViewModel>();
+        public FaveViewModel     FaveViewModel =>     Resolve<FaveViewModel>();
+        public MenuViewModel     MenuViewModel =>     Resolve<MenuViewModel>();
     }
 }

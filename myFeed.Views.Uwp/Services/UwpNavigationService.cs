@@ -52,12 +52,12 @@ namespace myFeed.Views.Uwp.Services
                 case "SearchViewModel":
                 case "SourcesViewModel":
                 case "SettingsViewModel":
-                    var splitViewFrame = GetFrame(Window.Current.Content, 0);
+                    var splitViewFrame = GetChild<Frame>(Window.Current.Content, 0);
                     splitViewFrame?.Navigate(Pages[viewModelType], parameter);
                     OnNavigated(viewModelType);
                     break;
                 case "ArticleViewModel":
-                    var articleFrame = GetFrame(Window.Current.Content, 1);
+                    var articleFrame = GetChild<Frame>(Window.Current.Content, 1);
                     articleFrame?.Navigate(Pages[viewModelType], parameter);
                     OnNavigated(viewModelType);
                     break;
@@ -69,14 +69,14 @@ namespace myFeed.Views.Uwp.Services
 
         private void NavigateBack(object sender, BackRequestedEventArgs e)
         {
-            var articleFrame = GetFrame(Window.Current.Content, 1);
+            var articleFrame = GetChild<Frame>(Window.Current.Content, 1);
             if (articleFrame != null && articleFrame.CanGoBack)
             {
                 articleFrame.GoBack();
                 OnNavigatedByView(articleFrame.CurrentSourcePageType);
                 return;
             }
-            var splitViewFrame = GetFrame(Window.Current.Content, 0);
+            var splitViewFrame = GetChild<Frame>(Window.Current.Content, 0);
             if (splitViewFrame.CanGoBack) splitViewFrame.GoBack();
             OnNavigatedByView(splitViewFrame.CurrentSourcePageType);
 
@@ -95,19 +95,19 @@ namespace myFeed.Views.Uwp.Services
 
         private void UpdateBackButtonVisibility() =>
             _systemNavigationManager.AppViewBackButtonVisibility =
-                GetFrame(Window.Current.Content, 0)?.CanGoBack == true ||
-                GetFrame(Window.Current.Content, 1)?.CanGoBack == true
+                GetChild<Frame>(Window.Current.Content, 0)?.CanGoBack == true ||
+                GetChild<Frame>(Window.Current.Content, 1)?.CanGoBack == true
                     ? AppViewBackButtonVisibility.Visible
                     : AppViewBackButtonVisibility.Collapsed;
 
-        private static Frame GetFrame(DependencyObject root, int depth)
+        public static T GetChild<T>(DependencyObject root, int depth) where T : DependencyObject
         {
             var childrenCount = VisualTreeHelper.GetChildrenCount(root);
             for (var x = 0; x < childrenCount; x++)
             {
                 var child = VisualTreeHelper.GetChild(root, x);
-                if (child is Frame thisFrame && depth-- == 0) return thisFrame;
-                var frame = GetFrame(child, depth);
+                if (child is T ths && depth-- == 0) return ths;
+                var frame = GetChild<T>(child, depth);
                 if (frame != null) return frame;
             }
             return null;

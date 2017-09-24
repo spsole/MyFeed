@@ -13,7 +13,7 @@ namespace myFeed.Views.Uwp.Notifications
             var defferal = taskInstance.GetDeferral();
             var cost = BackgroundWorkCost.CurrentBackgroundWorkCost;
             if (cost == BackgroundWorkCostValue.High) return;
-            using (var scope = ConfigureScope())
+            using (var scope = Load(new ContainerBuilder()).Build())
             {
                 var processor = scope.Resolve<UwpFeedProcessor>();
                 await processor.ProcessFeeds().ConfigureAwait(false);
@@ -21,13 +21,12 @@ namespace myFeed.Views.Uwp.Notifications
             defferal.Complete();
         }
 
-        private static ILifetimeScope ConfigureScope()
+        private static ContainerBuilder Load(ContainerBuilder builder)
         {
-            var builder = new ContainerBuilder();
             builder.RegisterModule<ServicesModule>();
             builder.RegisterType<UwpDefaultsService>().As<IDefaultsService>();
             builder.RegisterType<UwpFeedProcessor>().AsSelf();
-            return builder.Build();
+            return builder;
         }
     }
 }
