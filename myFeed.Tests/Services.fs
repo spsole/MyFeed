@@ -14,8 +14,7 @@ open Moq
 open Moq.Protected
 
 open myFeed.Tests.Extensions
-open myFeed.Tests.Extensions.DependencyInjection
-open myFeed.Tests.Extensions.Mocking
+open myFeed.Tests.Extensions.Dep
 
 open myFeed.ViewModels.Extensions
 
@@ -36,11 +35,11 @@ module SettingsServiceTests =
 
     let createService(): ISettingsService =
         ContainerBuilder()
-        |> tee registerMockInstance<IConfigurationRepository>
-        |> tee registerMockInstance<IPlatformService>
-        |> tee registerAs<SettingsService, ISettingsService>
+        |> also registerMock<IConfigurationRepository>
+        |> also registerMock<IDefaultsService>
+        |> also registerAs<SettingsService, ISettingsService>
         |> buildScope
-        |> resolveDispose<ISettingsService>
+        |> resolveOnce<ISettingsService>
 
     [<Fact>]
     let ``should be able to resolve strings``() = 
@@ -81,16 +80,16 @@ module SettingsServiceTests =
     [<Fact>]
     let ``should resolve default settings``() =
         let defaults = dict["Foo", "Bar"] |> Dictionary<string, string>
-        let mock = Mock<IPlatformService>()
-        mock.Setup(fun i -> i.GetDefaultSettings())
+        let mock = Mock<IDefaultsService>()
+        mock.SetupGet(fun i -> i.DefaultSettings)
             .Returns(defaults) |> ignore
         let service = 
             ContainerBuilder()
-            |> tee registerMockInstance<IConfigurationRepository>
-            |> tee (registerInstanceAs<IPlatformService> mock.Object) 
-            |> tee registerAs<SettingsService, ISettingsService>   
+            |> also registerMock<IConfigurationRepository>
+            |> also (registerInstanceAs<IDefaultsService> mock.Object) 
+            |> also registerAs<SettingsService, ISettingsService>   
             |> buildScope
-            |> resolveDispose<ISettingsService>   
+            |> resolveOnce<ISettingsService>   
         Assert.Equal("Bar", get<string> service "Foo") 
 
     [<Fact>]
@@ -102,11 +101,11 @@ module SettingsServiceTests =
             .Callback(fun () -> counter <- counter + 1) |> ignore
         let service = 
             ContainerBuilder()
-            |> tee registerMockInstance<IPlatformService>
-            |> tee (registerInstanceAs<IConfigurationRepository> mock.Object)  
-            |> tee registerAs<SettingsService, ISettingsService>   
+            |> also registerMock<IDefaultsService>
+            |> also (registerInstanceAs<IConfigurationRepository> mock.Object)  
+            |> also registerAs<SettingsService, ISettingsService>   
             |> buildScope
-            |> resolveDispose<ISettingsService> 
+            |> resolveOnce<ISettingsService> 
         Assert.Equal("Foo", get<string> service "Any")       
         Assert.Equal("Foo", get<string> service "Any")       
         Assert.Equal(1, counter)
@@ -250,21 +249,21 @@ module OpmlServiceTests =
 
     let registerOpmlDefaults (builder: ContainerBuilder) =
         builder 
-        |> tee registerMockInstance<IPlatformService>
-        |> tee registerMockInstance<ITranslationsService>
-        |> tee registerMockInstance<ISourcesRepository>
-        |> tee registerMockInstance<ISerializationService>
-        |> tee registerMockInstance<IDialogService>
-        |> tee registerMockInstance<IFilePickerService>
+        |> also registerMock<IPlatformService>
+        |> also registerMock<ITranslationsService>
+        |> also registerMock<ISourcesRepository>
+        |> also registerMock<ISerializationService>
+        |> also registerMock<IDialogService>
+        |> also registerMock<IFilePickerService>
         |> ignore
 
     [<Fact>]
     let ``should create instance of opml service``() =
         ContainerBuilder()
-        |> tee registerOpmlDefaults
-        |> tee registerAs<OpmlService, IOpmlService>
+        |> also registerOpmlDefaults
+        |> also registerAs<OpmlService, IOpmlService>
         |> buildScope
-        |> tee assertResolve<IOpmlService>
+        |> also Should.resolve<IOpmlService>
         |> dispose
 
     [<Fact>]
@@ -304,11 +303,11 @@ module OpmlServiceTests =
 
         use scope =
             ContainerBuilder()
-            |> tee registerOpmlDefaults
-            |> tee registerAsSelf<OpmlService>
-            |> tee (registerInstanceAs<ISourcesRepository> mockRepository.Object)
-            |> tee (registerInstanceAs<ISerializationService> mockSerializer.Object)
-            |> tee (registerInstanceAs<IFilePickerService> mockPicker.Object)
+            |> also registerOpmlDefaults
+            |> also registerAsSelf<OpmlService>
+            |> also (registerInstanceAs<ISourcesRepository> mockRepository.Object)
+            |> also (registerInstanceAs<ISerializationService> mockSerializer.Object)
+            |> also (registerInstanceAs<IFilePickerService> mockPicker.Object)
             |> buildScope
 
         let service = resolve<OpmlService> scope
@@ -341,10 +340,10 @@ module OpmlServiceTests =
         
         use scope = 
             ContainerBuilder()
-            |> tee registerOpmlDefaults
-            |> tee registerAs<OpmlService, IOpmlService>
-            |> tee (registerInstanceAs<ISerializationService> mockSerializer.Object)
-            |> tee (registerInstanceAs<ISourcesRepository> mockRepository.Object)
+            |> also registerOpmlDefaults
+            |> also registerAs<OpmlService, IOpmlService>
+            |> also (registerInstanceAs<ISerializationService> mockSerializer.Object)
+            |> also (registerInstanceAs<ISourcesRepository> mockRepository.Object)
             |> buildScope
 
         let service = resolve<IOpmlService> scope
@@ -356,9 +355,9 @@ module XmlSerializerTests =
     [<Fact>]
     let ``should resolve instance of xml serializer``() =
         ContainerBuilder()
-        |> tee registerAs<SerializationService, ISerializationService>
+        |> also registerAs<SerializationService, ISerializationService>
         |> buildScope
-        |> tee assertResolve<ISerializationService>
+        |> also Should.resolve<ISerializationService>
         |> dispose
 
     [<Fact>]
@@ -460,4 +459,4 @@ module CommandTests =
         Assert.Equal(true, command.CanExecute())
         command.CanExecuteChanged += fun _ -> fired <- fired + 1
         command.Execute(null)
-        Assert.Equal(2, fired)    
+        Assert.Equal(2, fired)   

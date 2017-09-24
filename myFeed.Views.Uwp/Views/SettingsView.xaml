@@ -42,7 +42,7 @@
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding ConverterParameter=
                                 ChangeTextSize, Converter={StaticResource Locale}}"/>
                             <Slider Value="{Binding FontSize.Value, Mode=TwoWay}" 
-                                Minimum="0" Maximum="30" Width="300" HorizontalAlignment="Left"/>
+                                Minimum="12" Maximum="28" Width="300" HorizontalAlignment="Left"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 

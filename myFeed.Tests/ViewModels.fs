@@ -10,8 +10,7 @@ open Xunit
 open Moq
 
 open myFeed.Tests.Extensions
-open myFeed.Tests.Extensions.DependencyInjection
-open myFeed.Tests.Extensions.Mocking
+open myFeed.Tests.Extensions.Dep
 
 open myFeed.ViewModels
 open myFeed.ViewModels.Implementations
@@ -32,16 +31,17 @@ module ViewModelsHelpers =
     /// Registers default empty mocks.
     let registerDefaults (builder: ContainerBuilder) =
         builder
-        |> tee registerMockInstance<INavigationService>
-        |> tee registerMockInstance<ISettingsService>
-        |> tee registerMockInstance<IDialogService>
-        |> tee registerMockInstance<IFilePickerService>
-        |> tee registerMockInstance<IPlatformService>
-        |> tee registerMockInstance<ISourcesRepository>
-        |> tee registerMockInstance<ITranslationsService>
-        |> tee registerMockInstance<ISearchService>
-        |> tee registerMockInstance<IArticlesRepository>
-        |> tee registerMockInstance<IFeedService>
+        |> also registerMock<IDefaultsService>
+        |> also registerMock<INavigationService>
+        |> also registerMock<ISettingsService>
+        |> also registerMock<IDialogService>
+        |> also registerMock<IFilePickerService>
+        |> also registerMock<IPlatformService>
+        |> also registerMock<ISourcesRepository>
+        |> also registerMock<ITranslationsService>
+        |> also registerMock<ISearchService>
+        |> also registerMock<IArticlesRepository>
+        |> also registerMock<IFeedService>
         |> ignore
 
 // Tests for menu ViewModels.
@@ -57,16 +57,16 @@ module MenuViewModelsTests =
                   ViewKey.SettingsView, null;
                   ViewKey.SourcesView, null ] 
             |> Dictionary<_, _>
-        let mock = Mock<IPlatformService>()
-        mock.Setup(fun i -> i.GetIconsForViews())
+        let mock = Mock<INavigationService>()
+        mock.SetupGet(fun i -> i.Icons)
             .Returns(icons) |> ignore
         let viewModel = 
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<MenuViewModel>
-            |> tee (registerInstanceAs<IPlatformService> mock.Object)
+            |> also registerDefaults
+            |> also registerAsSelf<MenuViewModel>
+            |> also (registerInstanceAs<INavigationService> mock.Object)
             |> buildScope
-            |> resolveDispose<MenuViewModel>
+            |> resolveOnce<MenuViewModel>
         Assert.Equal(0, viewModel.SelectedIndex.Value)
         Assert.NotEmpty(viewModel.Items)
 
@@ -76,10 +76,10 @@ module SearchViewModelsTests =
     [<Fact>]
     let ``should create instance of search viewmodel``() =
         ContainerBuilder()
-        |> tee registerDefaults
-        |> tee registerAsSelf<SearchViewModel>
+        |> also registerDefaults
+        |> also registerAsSelf<SearchViewModel>
         |> buildScope
-        |> tee assertResolve<SearchViewModel>
+        |> also Should.resolve<SearchViewModel>
         |> dispose
 
     [<Fact>]
@@ -87,9 +87,9 @@ module SearchViewModelsTests =
         let entity = SearchItemEntity(Title="Foo")
         use scope = 
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<SearchItemViewModel>
-            |> tee (registerInstanceAs<SearchItemEntity> <| entity)
+            |> also registerDefaults
+            |> also registerAsSelf<SearchItemViewModel>
+            |> also (registerInstanceAs<SearchItemEntity> <| entity)
             |> buildScope
 
         let searchItemViewModel = resolve<SearchItemViewModel> scope
@@ -110,15 +110,15 @@ module SearchViewModelsTests =
             .Setup(fun i -> i.Search(It.IsAny<string>()))
             .Returns(response) |> ignore
 
-        use scope =
+        let searchViewModel =
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<SearchViewModel>
-            |> tee registerAsSelf<SearchItemViewModel>
-            |> tee (registerInstanceAs<ISearchService> mockSearchService.Object)
+            |> also registerDefaults
+            |> also registerAsSelf<SearchViewModel>
+            |> also registerAsSelf<SearchItemViewModel>
+            |> also (registerInstanceAs<ISearchService> mockSearchService.Object)
             |> buildScope
+            |> resolveOnce<SearchViewModel>
 
-        let searchViewModel = resolve<SearchViewModel> scope
         searchViewModel.Fetch.CanExecuteChanged += fun _ ->
             if (searchViewModel.Fetch.CanExecute()) then
 
@@ -145,15 +145,14 @@ module SearchViewModelsTests =
             .Callback<SourceCategoryEntity, SourceEntity>(fun c e -> 
                 Assert.Equal("http://example.com", e.Uri)) |> ignore               
 
-        use scope = 
+        let viewModel = 
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<SearchItemViewModel>
-            |> tee (registerInstanceAs<SearchItemEntity> searchEntity)
-            |> tee (registerInstanceAs<IDialogService> mockService.Object)
+            |> also registerDefaults
+            |> also registerAsSelf<SearchItemViewModel>
+            |> also (registerInstanceAs<SearchItemEntity> searchEntity)
+            |> also (registerInstanceAs<IDialogService> mockService.Object)
             |> buildScope
-
-        let viewModel = resolve<SearchItemViewModel> scope
+            |> resolveOnce<SearchItemViewModel>
         viewModel.AddToSources.Execute(null)            
 
 // Tests for settings ViewModel.
@@ -161,12 +160,12 @@ module SettingsViewModelsTests =
 
     let registerSettingsDefaults (builder: ContainerBuilder) =
         builder
-        |> tee registerMockInstance<ISettingsService>
-        |> tee registerMockInstance<IPlatformService>
-        |> tee registerMockInstance<IOpmlService>
-        |> tee registerMockInstance<IDialogService>
-        |> tee registerMockInstance<ITranslationsService>
-        |> tee registerAsSelf<SettingsViewModel>
+        |> also registerMock<ISettingsService>
+        |> also registerMock<IPlatformService>
+        |> also registerMock<IOpmlService>
+        |> also registerMock<IDialogService>
+        |> also registerMock<ITranslationsService>
+        |> also registerAsSelf<SettingsViewModel>
         |> ignore
 
     let fakeSettingsService =
@@ -184,19 +183,19 @@ module SettingsViewModelsTests =
     [<Fact>]
     let ``should create instance of settings viewmodel``() =
         ContainerBuilder()
-        |> tee registerSettingsDefaults 
+        |> also registerSettingsDefaults 
         |> buildScope            
-        |> tee assertResolve<SettingsViewModel>
+        |> also Should.resolve<SettingsViewModel>
         |> dispose
 
     [<Fact>]
     let ``should load data properly from repository``() =
         let viewModel = 
             ContainerBuilder()    
-            |> tee registerSettingsDefaults
-            |> tee (registerInstanceAs<ISettingsService> fakeSettingsService)
+            |> also registerSettingsDefaults
+            |> also (registerInstanceAs<ISettingsService> fakeSettingsService)
             |> buildScope
-            |> resolveDispose<SettingsViewModel>
+            |> resolveOnce<SettingsViewModel>
         viewModel.Load.CanExecuteChanged += fun _ ->
             if (viewModel.Load.CanExecute()) then
 
@@ -219,11 +218,11 @@ module SettingsViewModelsTests =
 
         let viewModel = 
             ContainerBuilder()
-            |> tee registerSettingsDefaults
-            |> tee (registerInstanceAs<ISettingsService> fakeSettingsService)
-            |> tee (registerInstanceAs<IPlatformService> mock.Object)
+            |> also registerSettingsDefaults
+            |> also (registerInstanceAs<ISettingsService> fakeSettingsService)
+            |> also (registerInstanceAs<IPlatformService> mock.Object)
             |> buildScope
-            |> resolveDispose<SettingsViewModel>
+            |> resolveOnce<SettingsViewModel>
         viewModel.Load.CanExecuteChanged += fun _ ->
             if (viewModel.Load.CanExecute()) then   
                 
@@ -244,20 +243,20 @@ module FeedViewModelsTests =
     [<Fact>]
     let ``should create instance of feed viewmodel``() =
         ContainerBuilder()
-        |> tee registerDefaults
-        |> tee registerAsSelf<FeedViewModel>
+        |> also registerDefaults
+        |> also registerAsSelf<FeedViewModel>
         |> buildScope
-        |> tee assertResolve<FeedViewModel>
+        |> also Should.resolve<FeedViewModel>
         |> dispose
 
     [<Fact>]
     let ``should create instance of feed category viewmodel``() =
         ContainerBuilder()
-        |> tee registerDefaults
-        |> tee registerAsSelf<FeedCategoryViewModel>
-        |> tee registerAsSelf<SourceCategoryEntity>
+        |> also registerDefaults
+        |> also registerAsSelf<FeedCategoryViewModel>
+        |> also registerAsSelf<SourceCategoryEntity>
         |> buildScope
-        |> tee assertResolve<FeedCategoryViewModel>
+        |> also Should.resolve<FeedCategoryViewModel>
         |> dispose
 
     [<Fact>]
@@ -279,11 +278,11 @@ module FeedViewModelsTests =
         
         use scope = 
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee (registerInstanceAs<SourceCategoryEntity> fakeEntity)
-            |> tee (registerInstanceAs<IFeedService> fakeFeedService)
-            |> tee registerAsSelf<FeedCategoryViewModel>
-            |> tee registerAsSelf<FeedItemViewModel>
+            |> also registerDefaults
+            |> also (registerInstanceAs<SourceCategoryEntity> fakeEntity)
+            |> also (registerInstanceAs<IFeedService> fakeFeedService)
+            |> also registerAsSelf<FeedCategoryViewModel>
+            |> also registerAsSelf<FeedItemViewModel>
             |> buildScope
 
         let viewModel = resolve<FeedCategoryViewModel> scope
@@ -315,10 +314,10 @@ module FeedViewModelsTests =
 
         use scope =
             ContainerBuilder()
-            |> tee registerDefaults  
-            |> tee (registerInstanceAs<ISourcesRepository> mockRepository.Object)
-            |> tee registerAsSelf<FeedCategoryViewModel>   
-            |> tee registerAsSelf<FeedViewModel>  
+            |> also registerDefaults  
+            |> also (registerInstanceAs<ISourcesRepository> mockRepository.Object)
+            |> also registerAsSelf<FeedCategoryViewModel>   
+            |> also registerAsSelf<FeedViewModel>  
             |> buildScope
 
         let viewModel = resolve<FeedViewModel> scope 
@@ -337,20 +336,20 @@ module FaveViewModelsTests =
     [<Fact>]
     let ``should create instance of fave viewmodel``() =
         ContainerBuilder()
-        |> tee registerDefaults
-        |> tee registerAsSelf<FaveViewModel>
+        |> also registerDefaults
+        |> also registerAsSelf<FaveViewModel>
         |> buildScope
-        |> tee assertResolve<FaveViewModel> 
+        |> also Should.resolve<FaveViewModel> 
         |> dispose
 
     [<Fact>]
     let ``should create instance of fave item viewmodel``() =
         ContainerBuilder()
-        |> tee registerDefaults
-        |> tee registerAsSelf<ArticleEntity>
-        |> tee registerAsSelf<FeedItemViewModel>     
+        |> also registerDefaults
+        |> also registerAsSelf<ArticleEntity>
+        |> also registerAsSelf<FeedItemViewModel>     
         |> buildScope
-        |> tee assertResolve<FeedItemViewModel> 
+        |> also Should.resolve<FeedItemViewModel> 
         |> dispose
 
     [<Fact>]
@@ -370,10 +369,10 @@ module FaveViewModelsTests =
 
         use scope = 
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<FaveViewModel> 
-            |> tee registerAsSelf<FeedItemViewModel>
-            |> tee (registerInstanceAs<IArticlesRepository> fakeRepository)
+            |> also registerDefaults
+            |> also registerAsSelf<FaveViewModel> 
+            |> also registerAsSelf<FeedItemViewModel>
+            |> also (registerInstanceAs<IArticlesRepository> fakeRepository)
             |> buildScope
 
         let viewModel = resolve<FaveViewModel> scope
@@ -392,9 +391,9 @@ module FaveViewModelsTests =
         let article = ArticleEntity(Read=false)
         use scope = 
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<FeedItemViewModel>
-            |> tee (registerInstanceAs<ArticleEntity> article)
+            |> also registerDefaults
+            |> also registerAsSelf<FeedItemViewModel>
+            |> also (registerInstanceAs<ArticleEntity> article)
             |> buildScope
         
         let viewModel = resolve<FeedItemViewModel> scope
@@ -410,9 +409,9 @@ module FaveViewModelsTests =
         let article = ArticleEntity(Fave=false)
         use scope = 
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<FeedItemViewModel>
-            |> tee (registerInstanceAs<ArticleEntity> article)
+            |> also registerDefaults
+            |> also registerAsSelf<FeedItemViewModel>
+            |> also (registerInstanceAs<ArticleEntity> article)
             |> buildScope
 
         let viewModel = resolve<FeedItemViewModel> scope
@@ -425,10 +424,10 @@ module SourcesViewModelsTests =
     [<Fact>]
     let ``should resolve instance of sources viewmodel``() =
         ContainerBuilder()
-        |> tee registerDefaults
-        |> tee registerAsSelf<SourcesViewModel>
+        |> also registerDefaults
+        |> also registerAsSelf<SourcesViewModel>
         |> buildScope
-        |> tee assertResolve<SourcesViewModel>
+        |> also Should.resolve<SourcesViewModel>
         |> dispose
 
     [<Fact>]
@@ -448,10 +447,10 @@ module SourcesViewModelsTests =
     
         use scope =
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerAsSelf<SourcesViewModel>
-            |> tee registerAsSelf<SourcesCategoryViewModel>
-            |> tee (registerInstanceAs<ISourcesRepository> fakeSourcesRepository)
+            |> also registerDefaults
+            |> also registerAsSelf<SourcesViewModel>
+            |> also registerAsSelf<SourcesCategoryViewModel>
+            |> also (registerInstanceAs<ISourcesRepository> fakeSourcesRepository)
             |> buildScope
 
         let viewModel = scope.Resolve<SourcesViewModel>()
@@ -471,10 +470,10 @@ module SourcesViewModelsTests =
         let category = SourceCategoryEntity(Title="Foo")
         use scope =
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee (registerInstanceAs<SourceCategoryEntity> category)
-            |> tee registerAsSelf<SourcesViewModel>
-            |> tee registerAsSelf<SourcesCategoryViewModel>
+            |> also registerDefaults
+            |> also (registerInstanceAs<SourceCategoryEntity> category)
+            |> also registerAsSelf<SourcesViewModel>
+            |> also registerAsSelf<SourcesCategoryViewModel>
             |> buildScope
 
         let viewModel = resolve<SourcesCategoryViewModel> scope
@@ -485,12 +484,12 @@ module SourcesViewModelsTests =
         let entity = SourceEntity(Notify=true, Uri="https://google.com")
         use scope = 
             ContainerBuilder()
-            |> tee registerDefaults    
-            |> tee registerAsSelf<SourcesCategoryViewModel>
-            |> tee registerAsSelf<SourcesItemViewModel>
-            |> tee registerAsSelf<SourcesViewModel>
-            |> tee registerAsSelf<SourceCategoryEntity>
-            |> tee (registerInstanceAs<SourceEntity> entity)
+            |> also registerDefaults    
+            |> also registerAsSelf<SourcesCategoryViewModel>
+            |> also registerAsSelf<SourcesItemViewModel>
+            |> also registerAsSelf<SourcesViewModel>
+            |> also registerAsSelf<SourceCategoryEntity>
+            |> also (registerInstanceAs<SourceEntity> entity)
             |> buildScope
 
         let viewModel = resolve<SourcesItemViewModel> scope
@@ -502,11 +501,11 @@ module SourcesViewModelsTests =
         let category = SourceCategoryEntity(Title="Foo")
         use scope = 
             ContainerBuilder()
-            |> tee registerDefaults
-            |> tee registerModule<ViewModelsModule>
-            |> tee registerAsSelf<SourcesViewModel>
-            |> tee registerAsSelf<SourcesCategoryViewModel>
-            |> tee (registerInstanceAs<SourceCategoryEntity> <| category)
+            |> also registerDefaults
+            |> also registerModule<ViewModelsModule>
+            |> also registerAsSelf<SourcesViewModel>
+            |> also registerAsSelf<SourcesCategoryViewModel>
+            |> also (registerInstanceAs<SourceCategoryEntity> <| category)
             |> buildScope
 
         let sourcesRepository = resolve<ISourcesRepository> scope  
@@ -524,3 +523,4 @@ module SourcesViewModelsTests =
         Assert.Equal("http://foo.bar", first.Sources |> Seq.item 0 |> fun i -> i.Uri)
 
         sourcesRepository.RemoveAsync first |> awaitTask
+        

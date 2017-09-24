@@ -13,53 +13,42 @@ open Moq
 [<AutoOpen>]
 module Tools =
 
-    // Curried dispose.
-    let dispose (disposable: IDisposable) =
+    /// Disposes IDisposable in func style. 
+    let dispose (disposable: IDisposable) = 
         disposable.Dispose()
-    
-    /// Converts seq to List/ICollection/Etc.
-    let collection (sequence: seq<'a>) =
+
+    /// Converts sequence to collection.    
+    let collection (sequence: seq<'a>) = 
         sequence.ToList()
+
+    /// Attaches handler to IEvent.
+    let inline (+=) (event: IEvent<'a, 'b>) (handler: 'b -> unit) = 
+        event.Add handler
     
-    /// Await pattern from C#.
+    /// C#-like await operator.
     let await (task: Task<'a>) = 
         async {
             let! result = task |> Async.AwaitTask 
             return result 
         } |> Async.RunSynchronously
 
-    /// Await pattern from C# for simple tasks.
+    /// C#-like task await operator.
     let awaitTask (task: Task) = 
         async {
             let! result = task |> Async.AwaitTask 
             return result 
         } |> Async.RunSynchronously
 
-    /// Function for better piping and chaining support.
-    let tee f x = f <| x; x  
+    /// "Tee" applies f to x and continues.
+    let also f x = f x; x  
 
-    /// Subscribes ('b -> unit) lambda to event.
-    let inline (+=) (event: IEvent<'a, 'b>) (handler: 'b -> unit) =
-        event.Add handler
+    /// Asynchronious pipe operator.
+    let inline (|@>) (task: Task<'a>) (fn: 'a -> 'b) = task |> await |> fn   
 
-    /// Task for results awaiter operator.
-    let inline (|@>) (task: Task<'a>) (fn: 'a -> 'b) = 
-        task |> await |> fn   
+/// Dependency injection module.
+module Dep =
 
-    /// Invokes action adn returns completed task.
-    let actionAsAwaitableFunc (action: unit -> unit) =
-        Func<Task>(fun () -> 
-            action()
-            Task.CompletedTask)
-
-    /// Awaits generic task and returns non generic one.
-    let taskAsAwaitableFunc (task: Task<_>) =
-        task |> await |> ignore
-        Func<Task>(fun () -> Task.CompletedTask)    
-
-module DependencyInjection =
-
-    /// Registers types for Autofac IoC container.
+    /// Registers type as abstraction.
     let registerAs<'a, 'i> (builder: ContainerBuilder) =
         builder.RegisterType<'a>().As<'i>() |> ignore
 
@@ -67,44 +56,55 @@ module DependencyInjection =
     let registerAsSelf<'a> (builder: ContainerBuilder) =
         builder.RegisterType<'a>().AsSelf() |> ignore  
 
-    /// Registers instance to interface.
+    /// Registers instance as abstraction.
     let registerInstanceAs<'i> (instance: obj) (builder: ContainerBuilder) =
         builder.RegisterInstance(instance).As<'i>() |> ignore  
 
-    /// Registers lambda instantiation as self.
+    /// Registers lambda as abstraction.
     let registerLambda<'a> (func: IComponentContext -> 'a) (builder: ContainerBuilder) =
         builder.Register(func).AsSelf() |> ignore
 
-    /// Registers autofac module.
+    /// Registers module into container builder.
     let registerModule<'m when 'm: (new: unit -> 'm) and 'm :> Core.IModule> (builder: ContainerBuilder) =
         builder.RegisterModule<'m>() |> ignore     
 
-    /// Resolves abstraction from autofac lifetime scope.
+    /// Registers mock instance info builder.
+    let registerMock<'a when 'a: not struct> (builder: ContainerBuilder) =
+        let mock = Mock<'a>()
+        builder |> registerInstanceAs<'a> mock.Object |> ignore
+
+    /// Resolves stuff from scope.
     let resolve<'i> (scope: ILifetimeScope) = 
         scope.Resolve<'i>() 
 
-    /// Resolves instance from scope and disposes that scope.
-    let resolveDispose<'i> (scope: ILifetimeScope) =
+    /// Resolves something from scope and disposes it.
+    let resolveOnce<'i> (scope: ILifetimeScope) =
         let instance = resolve<'i> scope
-        dispose scope
-        instance    
+        dispose scope; instance    
 
-    /// Tries to resolve and item and checks it for null.
-    let assertResolve<'i> (scope: ILifetimeScope) =
-        scope |> resolve<'i> |> Assert.NotNull
-
-    /// Builds and starts lifetime scope for builder.
-    let buildScope (builder: ContainerBuilder) =
+    /// Builds scope from a builder.        
+    let buildScope (builder: ContainerBuilder) = 
         builder.Build()   
 
-module Mocking =
-    open DependencyInjection
+/// FSharpy fluent assertions.
+module Should =
 
-    /// Creates dummy object implementing interface.
-    let getMock<'a when 'a: not struct>() = 
-        Mock<'a>().Object
+    /// Ensures a is null.
+    let beNull<'a> (a: 'a) = 
+        Assert.Null(a)
 
-    /// Registers mock instance.
-    let registerMockInstance<'a when 'a: not struct> (builder: ContainerBuilder) =
-        builder |> registerInstanceAs<'a> (getMock<'a>()) |> ignore
+    /// Ensures a is not null.
+    let notBeNull<'a> (a: 'a) = 
+        Assert.NotNull(a)
+
+    /// Ensures a equals b.
+    let equal<'a> (a: 'a) (b: 'a) = 
+        Assert.Equal(a, b)
+    
+    /// Ensures a not equals b.
+    let notEqual<'a> (a: 'a) (b: 'a) = 
+        Assert.NotEqual(a, b)
+
+    /// Ensures instance can be resolved from scope.
+    let resolve<'a> = Dep.resolve<'a> >> notBeNull
     

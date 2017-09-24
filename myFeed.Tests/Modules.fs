@@ -1,9 +1,8 @@
 namespace myFeed.Tests.Modules
 
+open Moq
 open Xunit
 open Autofac
-open Moq
-
 open System
 
 open myFeed.Entities
@@ -12,60 +11,66 @@ open myFeed.Repositories
 open myFeed.Repositories.Abstractions
 
 open myFeed.Tests.Extensions
-open myFeed.Tests.Extensions.Mocking
-open myFeed.Tests.Extensions.DependencyInjection
+open myFeed.Tests.Extensions.Dep
 
 open myFeed.Services
 open myFeed.Services.Abstractions
-open myFeed.Services.Implementations
 
-open myFeed.ViewModels
 open myFeed.ViewModels.Implementations
+open myFeed.ViewModels
 
-// Tests for modules registrations.
+/// Tests for Autofac modules registrations
+/// for dependency injection.
 module RegistrationsTestsModule =    
+
+    /// Register mock instances for successful 
+    /// services instantiation by autofac.
+    let registerMocks (builder: ContainerBuilder) =
+        builder
+        |> also registerMock<IPlatformService>
+        |> also registerMock<ITranslationsService>
+        |> also registerMock<IFilePickerService>
+        |> also registerMock<IDialogService>
+        |> also registerMock<IDefaultsService>
+        |> also registerMock<INavigationService>
+        |> ignore
 
     [<Fact>]
     let ``all data providers should be registered``() =
         ContainerBuilder() 
-        |> tee registerModule<RepositoriesModule>
+        |> also registerModule<RepositoriesModule>
         |> buildScope
-        |> tee assertResolve<IArticlesRepository>
-        |> tee assertResolve<ISourcesRepository>
-        |> tee assertResolve<IConfigurationRepository>
+        |> also Should.resolve<IArticlesRepository>
+        |> also Should.resolve<ISourcesRepository>
+        |> also Should.resolve<IConfigurationRepository>
         |> dispose
 
     [<Fact>]
     let ``all default services should be registered``() = 
         ContainerBuilder()
-        |> tee registerModule<ServicesModule> 
-        |> tee registerMockInstance<IPlatformService>
-        |> tee registerMockInstance<ITranslationsService>
-        |> tee registerMockInstance<IFilePickerService>
-        |> tee registerMockInstance<IDialogService>
+        |> also registerModule<ServicesModule> 
+        |> also registerMocks
         |> buildScope
-        |> tee assertResolve<ISourcesRepository>
-        |> tee assertResolve<IConfigurationRepository>
-        |> tee assertResolve<IArticlesRepository>
-        |> tee assertResolve<ISearchService>
-        |> tee assertResolve<IOpmlService>
-        |> tee assertResolve<ISerializationService>
-        |> tee assertResolve<IHtmlService>
-        |> tee assertResolve<IFeedService>
-        |> tee assertResolve<ISettingsService>
+        |> also Should.resolve<ISourcesRepository>
+        |> also Should.resolve<IConfigurationRepository>
+        |> also Should.resolve<IArticlesRepository>
+        |> also Should.resolve<ISearchService>
+        |> also Should.resolve<IOpmlService>
+        |> also Should.resolve<ISerializationService>
+        |> also Should.resolve<IHtmlService>
+        |> also Should.resolve<IFeedService>
+        |> also Should.resolve<ISettingsService>
         |> dispose
 
+    [<Fact>]
     let ``all default viewmodels should be registered``() =
         ContainerBuilder()
-        |> tee registerModule<ViewModelsModule>
-        |> tee registerMockInstance<IPlatformService>
-        |> tee registerMockInstance<ITranslationsService>
-        |> tee registerMockInstance<IFilePickerService>
-        |> tee registerMockInstance<IDialogService>
+        |> also registerModule<ViewModelsModule>
+        |> also registerMocks
         |> buildScope
-        |> tee assertResolve<FaveViewModel>
-        |> tee assertResolve<FeedViewModel>
-        |> tee assertResolve<SearchViewModel>
-        |> tee assertResolve<SettingsViewModel>
-        |> tee assertResolve<SourcesViewModel>
+        |> also Should.resolve<FaveViewModel>
+        |> also Should.resolve<FeedViewModel>
+        |> also Should.resolve<SearchViewModel>
+        |> also Should.resolve<SettingsViewModel>
+        |> also Should.resolve<SourcesViewModel>
         |> dispose    

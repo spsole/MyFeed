@@ -3,36 +3,13 @@ namespace myFeed.Tests.Logging
 open System
 open System.Reflection
 
-open Moq
-open Xunit.Sdk
-
 open Microsoft.Extensions.Logging
 open Microsoft.EntityFrameworkCore.Storage
 
-[<AutoOpen>]
-module Logging =
+open Xunit.Sdk
+open Moq
 
-    [<Literal>] 
-    /// True for spammy output.
-    let LoggingEnabled = false
-
-    /// Logs anything to the console.
-    let log (object: obj) = 
-        if (LoggingEnabled) then
-            string object
-            |> sprintf "[myFeed.Tests] %s" 
-            |> Console.WriteLine
-
-/// Displays test name before test is executed.
-type LogAttribute() =
-    inherit BeforeAfterTestAttribute() with
-        override x.Before(info: MethodInfo) =
-            sprintf "(Starting Test): %s" info.Name |> log
-        override x.After(info: MethodInfo) =
-            sprintf "(Finishing Test): %s" info.Name |> log
-
-/// Logger that processes EntityFramework 
-/// debug sql output for XUnit.
+/// XUnit logger for queries logging.
 type XUnitLogger() =
     interface ILogger with
         member x.IsEnabled(logLevel) = true
@@ -46,16 +23,14 @@ type XUnitLogger() =
                     match box state with 
                     | :? DbCommandLogData as cmd ->
                         let query = cmd.CommandText
-                        if ("PRAGMA" 
-                            |> query.Contains 
-                            |> not) 
-                        then
-                            query.Replace("\r\n", " ") 
-                            |> log
+                        if ("PRAGMA" |> query.Contains |> not) 
+                        then query.Replace("\r\n", " ") 
+                            |> sprintf "[myFeed.Tests] %s" 
+                            |> Console.WriteLine
                     | _ -> ()
                 | _ -> ()
 
-/// Logger provider providing XUnitLogger.
+/// XUnit logger provider for query logging.
 type XUnitLoggerProvider() =
     interface ILoggerProvider with
         member x.Dispose() = ()

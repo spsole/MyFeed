@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Windows.ApplicationModel.Activation;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Views.Uwp.Views;
@@ -12,40 +14,32 @@ namespace myFeed.Views.Uwp
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            UnhandledException += (_, args) => Debug.WriteLine(args.Message);
-            if (Window.Current.Content == null) Window.Current.Content = new Frame();
-            Window.Current.Activate();
-
-            var frame = (Frame)Window.Current.Content;
-            if (frame.Content == null) frame.Navigate(typeof(MenuView));
-
-            /*
-            // Register notifications.
-            switch (e.TileId)
-            {
-                default:
-                    await Task.Delay(300);
-                    if (NavigationPage.NavigationFrame.CurrentSourcePageType != typeof(Fave.FavePage))
-                        NavigationPage.NavigationFrame.Navigate(typeof(Fave.FavePage));
-                    var articles = await Fave.FaveManager.GetInstance().LoadArticles();
-                    var target = articles.FirstOrDefault(i => i.GetModel().GetTileId() == e.TileId);
-                    if (target != null)
-                        Fave.FavePage.NavigationFrame.Navigate(
-                            typeof(ArticlePage), target);
-                    break;
-            }
-            */
+            EnsureDefaultViewIsPresent();
+            if (Guid.TryParse(e.TileId, out var guid))
+                OpenArticleViewForPinnedArticleUsingGuid(guid);
         }
 
-        protected override async void OnActivated(IActivatedEventArgs args)
+        protected override void OnActivated(IActivatedEventArgs args)
         {
-            /*
-            if (args.Kind != ActivationKind.ToastNotification) return;
-            // Build content frame.
-            // Find appropriate category.
-            // Retrieve data for category.
-            // Navigate and mark as read.
-            */
+            EnsureDefaultViewIsPresent();
+            if (args.Kind == ActivationKind.ToastNotification &&
+                args is IToastNotificationActivatedEventArgs e &&
+                Guid.TryParse(e.Argument, out var guid)) 
+                OpenArticleViewForPinnedArticleUsingGuid(guid);
+        }
+
+        private void EnsureDefaultViewIsPresent()
+        {
+            UnhandledException += (_, args) => Debug.WriteLine(args.Message);
+            if (Window.Current.Content == null) Window.Current.Content = new Frame();
+            var frame = (Frame)Window.Current.Content;
+            if (frame.Content == null) frame.Navigate(typeof(MenuView));
+            Window.Current.Activate();
+        }
+
+        private async void OpenArticleViewForPinnedArticleUsingGuid(Guid id)
+        {
+            await new MessageDialog(id.ToString()).ShowAsync();
         }
     }
 }

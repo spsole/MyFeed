@@ -1,16 +1,16 @@
 namespace myFeed.Tests.Repositories
 
+open Xunit
+open Autofac
+
 open System
 open System.Linq
 
 open Microsoft.Extensions.Logging
 open Microsoft.EntityFrameworkCore
 
-open Xunit
-open Autofac
-
 open myFeed.Tests.Extensions
-open myFeed.Tests.Extensions.DependencyInjection
+open myFeed.Tests.Extensions.Dep
 open myFeed.Tests.Logging
 open myFeed.Tests.Modules
 
@@ -23,38 +23,37 @@ open myFeed.Entities
 [<AutoOpen>]
 module RepositoryHelpers =
 
-    let clearSet<'a when 'a: not struct> (context: DbContext) =
+    let clear<'a when 'a: not struct> (context: DbContext) =
         context.Set<'a>() |> context.Set<'a>().RemoveRange
         context.SaveChangesAsync() |> awaitTask
 
-    let clearContext () =
+    let clearContext() =
         new EntityContext()
-        |> tee clearSet<ArticleEntity>
-        |> tee clearSet<SourceCategoryEntity>
-        |> tee clearSet<ConfigurationEntity>
+        |> also clear<ArticleEntity>
+        |> also clear<SourceCategoryEntity>
+        |> also clear<ConfigurationEntity>
         |> dispose
 
-    let buildRepository<'a> () =
-        use scope = 
-            ContainerBuilder() 
-            |> tee registerAs<SourcesRepository, ISourcesRepository>
-            |> tee registerAs<ArticlesRepository, IArticlesRepository>
-            |> tee registerAs<ConfigurationRepository, IConfigurationRepository>
-            |> buildScope 
-        let repository = resolve<'a> scope
-        dispose scope
-        repository          
+    let buildRepository<'a>() =
+        ContainerBuilder() 
+        |> also registerAs<SourcesRepository, ISourcesRepository>
+        |> also registerAs<ArticlesRepository, IArticlesRepository>
+        |> also registerAs<ConfigurationRepository, IConfigurationRepository>
+        |> buildScope 
+        |> resolveOnce<'a>
 
-// Tests for configuration repository.
+/// Tests for configuration EFCore 
+/// repository open API methods.
 module ConfigurationRepositoryTests =
     let repository = buildRepository<IConfigurationRepository>()
 
     [<Fact>]
-    let ``should return value using name``() = 
+    let ``should set and return values using names``() = 
         repository.SetByNameAsync("Foo", "Bar") |> awaitTask
         repository.SetByNameAsync("Bar", "Foo") |> awaitTask
-        Assert.Equal("Bar", await <| repository.GetByNameAsync("Foo"))
-        Assert.Equal("Foo", await <| repository.GetByNameAsync("Bar"))
+        repository.GetByNameAsync("Foo") |@> Should.equal "Bar"
+        repository.GetByNameAsync("Bar") |@> Should.equal "Foo"
+        clearContext()
 
 // Tests for sources repository.
 module SourcesRepositoryTests =
@@ -62,7 +61,9 @@ module SourcesRepositoryTests =
 
     [<Fact>]
     let ``should return all items enumerable``() = 
-        repository.GetAllAsync() |@> Assert.NotNull
+        repository.GetAllAsync() 
+        |@> Seq.length 
+        |> Should.equal 0
 
     [<Fact>]
     let ``should insert items into table and order them``() =
@@ -71,11 +72,10 @@ module SourcesRepositoryTests =
                SourceCategoryEntity(Title="Bar") |]
         repository.InsertAsync entities |> awaitTask     
         let categories = repository.GetAllAsync() |@> List.ofSeq
-
-        Assert.Equal(1, categories.[0].Order)
-        Assert.Equal(2, categories.[1].Order)
-        Assert.Equal("Foo", categories.[0].Title)
-        Assert.Equal("Bar", categories.[1].Title)
+        Should.equal 1 categories.[0].Order
+        Should.equal 2 categories.[1].Order
+        Should.equal "Foo" categories.[0].Title
+        Should.equal "Bar" categories.[1].Title
         clearContext()
 
     [<Fact>]
@@ -85,33 +85,31 @@ module SourcesRepositoryTests =
                 Title="Foo", Sources=
                     ([| SourceEntity(Uri="http://foo.bar") |]))
         repository.InsertAsync category |> awaitTask
-        let source = 
-            repository.GetAllAsync() 
-            |@> Seq.item 0
-            |> fun x -> x.Sources
-            |> Seq.item 0
-        Assert.Equal("http://foo.bar", source.Uri)                
+        repository.GetAllAsync() 
+        |@> Seq.item 0
+        |> fun category -> category.Sources
+        |> Seq.item 0
+        |> fun source -> source.Uri
+        |> Should.equal "http://foo.bar"
         clearContext()
         
     [<Fact>]    
     let ``should be able to rename category in table``() = 
         let entry = SourceCategoryEntity()
         repository.InsertAsync entry |> awaitTask
-        (entry, "Foo")
-        |> repository.RenameAsync
-        |> awaitTask
-        Assert.Equal("Foo", entry.Title)
+        repository.RenameAsync(entry, "Foo") |> awaitTask
+        Should.equal "Foo" entry.Title
         clearContext()
 
     [<Fact>]
     let ``should add source entity to category``() = 
         let category = SourceCategoryEntity()
         repository.InsertAsync category |> awaitTask
-        (category, SourceEntity())
-        |> repository.AddSourceAsync
-        |> awaitTask
-        
-        Assert.Equal(1, category.Sources |> Seq.length)
+
+        repository.AddSourceAsync(category, SourceEntity()) |> awaitTask
+        category.Sources
+        |> Seq.length
+        |> Should.equal 1
         clearContext()
 
     [<Fact>]
@@ -119,14 +117,16 @@ module SourcesRepositoryTests =
         let category = SourceCategoryEntity()
         let source = SourceEntity()
         category.Sources.Add <| source
+
         repository.InsertAsync category |> awaitTask
+        category.Sources
+        |> Seq.length
+        |> Should.equal 1
 
-        Assert.Equal(1, category.Sources |> Seq.length)
-        (category, source)
-        |> repository.RemoveSourceAsync
-        |> awaitTask
-
-        Assert.Equal(0, category.Sources |> Seq.length)
+        repository.RemoveSourceAsync(category, source) |> awaitTask
+        category.Sources
+        |> Seq.length
+        |> Should.equal 0
         clearContext()
 
     [<Fact>]
@@ -136,20 +136,21 @@ module SourcesRepositoryTests =
                SourceCategoryEntity(Title="Bar");
                SourceCategoryEntity(Title="Foobar") |]
         repository.InsertAsync sequence |> awaitTask
+        repository.GetAllAsync() 
+        |@> Seq.item 0
+        |> fun x -> x.Title
+        |> Should.equal "Foo"
 
-        let first = repository.GetAllAsync() |@> Seq.item 0
-        Assert.Equal(first.Title, "Foo")
-
-        let rearrangedSequence = 
-            [ sequence.[1]; 
-              sequence.[2]; 
-              sequence.[0] ]
-        rearrangedSequence 
+        [ sequence.[1]; 
+          sequence.[2]; 
+          sequence.[0] ]
         |> repository.RearrangeAsync
         |> awaitTask
-
-        let first = repository.GetAllAsync() |@> Seq.item 0
-        Assert.Equal(first.Title, "Bar")
+        
+        repository.GetAllAsync() 
+        |@> Seq.item 0
+        |> fun x -> x.Title
+        |> Should.equal "Bar"
         clearContext()
 
 // Tests for articles repository.
@@ -158,17 +159,38 @@ module ArticlesRepositoryTests =
 
     [<Fact>]
     let ``should return all items enumerable``() =
-        repository.GetAllAsync() |@> Assert.NotNull
+        repository.GetAllAsync() 
+        |@> Seq.length 
+        |> Should.equal 0
 
     [<Fact>]
     let ``should be able to insert items``() = 
         let source = SourceEntity()
+        use context = new EntityContext()
+        SourceCategoryEntity(Sources=([| source |]))
+        |> context.Set<SourceCategoryEntity>().Add |> ignore
+        context.SaveChanges() |> ignore
 
-        buildRepository<ISourcesRepository>().InsertAsync (
-            SourceCategoryEntity(Sources=([| source |]))) |> awaitTask
         repository.InsertAsync (source=source, entities=
             [| ArticleEntity(Title="Foo") |]) |> awaitTask     
-
-        let article = repository.GetAllAsync() |@> Seq.item 0
-        Assert.Equal("Foo", article.Title)
+        repository.GetAllAsync() 
+        |@> Seq.item 0
+        |> fun x -> x.Title
+        |> Should.equal "Foo"
         clearContext()
+
+    [<Fact>]
+    let ``should return article by id``() =
+        use context = new EntityContext()
+        ArticleEntity(Title="Foo")
+        |> context.Set<ArticleEntity>().Add |> ignore
+        context.SaveChanges() |> ignore
+
+        repository.GetAllAsync() 
+        |@> Seq.item 0        
+        |> fun first -> first.Id
+        |> repository.GetByIdAsync
+        |@> fun article -> article.Title
+        |> Should.equal "Foo"
+        clearContext() 
+        

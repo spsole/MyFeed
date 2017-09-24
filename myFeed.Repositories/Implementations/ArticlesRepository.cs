@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using myFeed.Entities;
@@ -29,6 +30,17 @@ namespace myFeed.Repositories.Implementations
                     .ToList()
                     .AsEnumerable();
                 return Task.FromResult(enumerable);
+            }
+        }
+
+        public async Task<ArticleEntity> GetByIdAsync(Guid guid)
+        {
+            using (var context = new EntityContext())
+            {
+                var article = await context
+                    .Set<ArticleEntity>()
+                    .FindAsync(guid);
+                return article;
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using myFeed.Entities.Local;
 
@@ -13,6 +14,11 @@ namespace myFeed.Repositories.Abstractions
         /// Returns all articles with all referenced tables.
         /// </summary>
         Task<IEnumerable<ArticleEntity>> GetAllAsync();
+
+        /// <summary>
+        /// Returns article with given id froim database.
+        /// </summary>
+        Task<ArticleEntity> GetByIdAsync(Guid guid);
         
         /// <summary>
         /// Inserts item into database table.
