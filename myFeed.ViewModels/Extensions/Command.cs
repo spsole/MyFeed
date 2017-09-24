@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -23,11 +22,7 @@ namespace myFeed.ViewModels.Extensions
         /// Creates new instance using action lambda expression as a command.
         /// </summary>
         /// <param name="action">Task to execute.</param>
-        public Command(Action action) => _task = () =>
-        {
-            action.Invoke();
-            return Task.CompletedTask;
-        };
+        public Command(Action action) => _task = async () => action.Invoke();
 
         /// <summary>
         /// True if queue is unlocked and command can be executed.
@@ -45,15 +40,9 @@ namespace myFeed.ViewModels.Extensions
         public async void Execute(object parameter)
         {
             UpdateCanExecute(false);
-            try
-            {
-                await _task.Invoke();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.InnerException);
-            }
+            await _task.Invoke();
             UpdateCanExecute(true);
+
             void UpdateCanExecute(bool value)
             {
                 _canExecute = value;

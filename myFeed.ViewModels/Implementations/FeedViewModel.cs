@@ -15,7 +15,7 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             IArticlesRepository articlesRepository)
         {
-            OpenSources = new Command(() => navigationService.Navigate(ViewKey.SourcesView));
+            OpenSources = new Command(() => navigationService.Navigate(typeof(SourcesViewModel)));
             Items = new ObservableCollection<FeedCategoryViewModel>();
             IsLoading = new Property<bool>(false);
             IsEmpty = new Property<bool>(false);

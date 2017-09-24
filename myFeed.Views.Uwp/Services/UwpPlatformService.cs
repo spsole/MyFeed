@@ -8,7 +8,6 @@ using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Services.Abstractions;
-using Microsoft.Toolkit.Uwp.UI.Extensions;
 
 namespace myFeed.Views.Uwp.Services
 {
@@ -63,7 +62,7 @@ namespace myFeed.Views.Uwp.Services
 
             if (freq == 0) return;
             var builder = new BackgroundTaskBuilder();
-            builder.SetTrigger(new TimeTrigger((uint)freq * 60, false)); // Note: minutes here; 30 = 30 mins
+            builder.SetTrigger(new TimeTrigger((uint)freq * 60, false));
             builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
             builder.TaskEntryPoint = "myFeed.Views.Uwp.Notifications.Runner";
             builder.Name = "myFeedNotify";

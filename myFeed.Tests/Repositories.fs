@@ -193,4 +193,10 @@ module ArticlesRepositoryTests =
         |@> fun article -> article.Title
         |> Should.equal "Foo"
         clearContext() 
+
+    [<Fact>]
+    let ``should return null if article with id does not exist``() =    
+        Guid()
+        |> repository.GetByIdAsync
+        |@> Should.beNull
         

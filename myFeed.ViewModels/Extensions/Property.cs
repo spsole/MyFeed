@@ -19,22 +19,18 @@ namespace myFeed.ViewModels.Extensions
         public Property() : this(default(T)) {}
 
         /// <summary>
-        /// Initializes a new instance of observable property
-        /// with custom default value.
+        /// Initializes observable property from value.
         /// </summary>
-        /// <param name="value">Default value.</param>
         public Property(T value) => _value = value;
     
         /// <summary>
-        /// Initializes ObservableProperty from task result.
+        /// Initializes observable property from task.
         /// </summary>
-        /// <param name="function">Function returning value.</param>
         public Property(Func<Task<T>> function) => UpdateValue(function);
 
         /// <summary>
         /// Asynchroniously updates property value.
         /// </summary>
-        /// <param name="function">Function to invoke to get task to await.</param>
         private async void UpdateValue(Func<Task<T>> function) => Value = await function();
 
         /// <summary>

@@ -114,12 +114,13 @@
     <Compile Include="Services\UwpDefaultsService.cs" />
     <Compile Include="Services\UwpDialogService.cs" />
     <Compile Include="Services\UwpFilePickerService.cs" />
-    <Compile Include="Services\UwpLocator.cs" />
+    <Compile Include="Services\UwpLauncherService.cs" />
     <Compile Include="Services\UwpNavigationService.cs" />
     <Compile Include="Services\UwpPlatformService.cs" />
     <Compile Include="Services\UwpTranslationsService.cs" />
-    <Compile Include="Services\UwpXmlParserService.cs" />
+    <Compile Include="Services\UwpHtmlParserService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\UwpViewModelLocator.cs" />
     <Compile Include="Views\ArticleView.xaml.cs">
       <DependentUpon>ArticleView.xaml</DependentUpon>
     </Compile>
@@ -252,6 +253,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\myFeed.Entities\myFeed.Entities.csproj">
+      <Project>{52fa8970-69d4-4ae6-8471-caf62b6ff016}</Project>
+      <Name>myFeed.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj">
       <Project>{7905a6f6-84c1-4a79-97fa-e9abf586cbed}</Project>
       <Name>myFeed.Repositories</Name>

@@ -10,40 +10,27 @@ namespace myFeed.Services.Abstractions
     public interface INavigationService
     {
         /// <summary>
-        /// Brings user into view with view key.
+        /// Brings user into ViewModel.
         /// </summary>
-        /// <param name="viewKey">View to show.</param>
-        Task Navigate(ViewKey viewKey);
+        /// <param name="viewModelType">ViewModel to show.</param>
+        Task Navigate(Type viewModelType);
 
         /// <summary>
-        /// Brings user into view with parameter.
+        /// Brings user into ViewModel with parameter.
         /// </summary>
-        /// <param name="viewKey">View to show.</param>
+        /// <param name="viewModelType">ViewModel to show.</param>
         /// <param name="parameter">Parameter to pass.</param>
-        Task Navigate(ViewKey viewKey, object parameter);
+        Task Navigate(Type viewModelType, object parameter);
 
         /// <summary>
         /// Invoked when view changes.
         /// </summary>
-        event EventHandler<ViewKey> Navigated;
+        event EventHandler<Type> Navigated;
 
         /// <summary>
         /// Returns menu icons for application main menu containing 
         /// platform-type-specific icon codes.
         /// </summary>
-        IReadOnlyDictionary<ViewKey, object> Icons { get; }
-    }
-
-    /// <summary>
-    /// All views enum.
-    /// </summary>
-    public enum ViewKey
-    {
-        FeedView,
-        FaveView,
-        SearchView,
-        SourcesView,
-        ArticleView,
-        SettingsView
+        IReadOnlyDictionary<Type, object> Icons { get; }
     }
 }

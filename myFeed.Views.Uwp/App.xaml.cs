@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using Windows.ApplicationModel.Activation;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using myFeed.Views.Uwp.Services;
 using myFeed.Views.Uwp.Views;
 
 namespace myFeed.Views.Uwp
@@ -39,7 +39,7 @@ namespace myFeed.Views.Uwp
 
         private async void OpenArticleViewForPinnedArticleUsingGuid(Guid id)
         {
-            await new MessageDialog(id.ToString()).ShowAsync();
+            await UwpViewModelLocator.Current.Resolve<UwpLauncherService>().LaunchArticleById(id);
         }
     }
 }

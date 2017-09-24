@@ -50,12 +50,12 @@ module MenuViewModelsTests =
     [<Fact>]
     let ``should load menu viewmodel``() =
         let icons = 
-            dict[ ViewKey.ArticleView, null;
-                  ViewKey.FaveView, null;
-                  ViewKey.FeedView, null
-                  ViewKey.SearchView, null;
-                  ViewKey.SettingsView, null;
-                  ViewKey.SourcesView, null ] 
+            dict[ typeof<ArticleViewModel>, null;
+                  typeof<FaveViewModel>, null;
+                  typeof<FeedViewModel>, null
+                  typeof<SearchViewModel>, null;
+                  typeof<SettingsViewModel>, null;
+                  typeof<SourcesViewModel>, null ] 
             |> Dictionary<_, _>
         let mock = Mock<INavigationService>()
         mock.SetupGet(fun i -> i.Icons)

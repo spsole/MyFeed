@@ -7,6 +7,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using myFeed.Services.Abstractions;
+using myFeed.ViewModels.Implementations;
 using myFeed.Views.Uwp.Views;
 
 namespace myFeed.Views.Uwp.Services
@@ -14,14 +15,22 @@ namespace myFeed.Views.Uwp.Services
     public class UwpNavigationService : INavigationService
     {
         private readonly SystemNavigationManager _systemNavigationManager;
-        private static readonly IReadOnlyDictionary<ViewKey, Type> Pages = new Dictionary<ViewKey, Type>
+        private static readonly IReadOnlyDictionary<Type, Type> Pages = new Dictionary<Type, Type>
         {
-            {ViewKey.SettingsView, typeof(SettingsView)},
-            {ViewKey.SourcesView, typeof(SourcesView)},
-            {ViewKey.ArticleView, typeof(ArticleView)},
-            {ViewKey.SearchView, typeof(SearchView)},
-            {ViewKey.FaveView, typeof(FaveView)},
-            {ViewKey.FeedView, typeof(FeedView)},
+            {typeof(SettingsViewModel), typeof(SettingsView)},
+            {typeof(SourcesViewModel), typeof(SourcesView)},
+            {typeof(ArticleViewModel), typeof(ArticleView)},
+            {typeof(SearchViewModel), typeof(SearchView)},
+            {typeof(FaveViewModel), typeof(FaveView)},
+            {typeof(FeedViewModel), typeof(FeedView)}
+        };
+        public IReadOnlyDictionary<Type, object> Icons => new Dictionary<Type, object>
+        {
+            {typeof(FaveViewModel), Symbol.OutlineStar},
+            {typeof(SettingsViewModel), Symbol.Setting},
+            {typeof(FeedViewModel), Symbol.PostUpdate},
+            {typeof(SourcesViewModel), Symbol.List},
+            {typeof(SearchViewModel), Symbol.Zoom}
         };
 
         public UwpNavigationService()
@@ -30,39 +39,30 @@ namespace myFeed.Views.Uwp.Services
             _systemNavigationManager.BackRequested += NavigateBack;
         }
 
-        public IReadOnlyDictionary<ViewKey, object> Icons => new Dictionary<ViewKey, object>
+        public event EventHandler<Type> Navigated;
+
+        public Task Navigate(Type viewModelType) => Navigate(viewModelType, null);
+
+        public Task Navigate(Type viewModelType, object parameter)
         {
-            {ViewKey.FaveView, Symbol.OutlineStar},
-            {ViewKey.SettingsView, Symbol.Setting},
-            {ViewKey.FeedView, Symbol.PostUpdate},
-            {ViewKey.SourcesView, Symbol.List},
-            {ViewKey.SearchView, Symbol.Zoom}
-        };
-
-        public event EventHandler<ViewKey> Navigated;
-
-        public Task Navigate(ViewKey viewKey) => Navigate(viewKey, null);
-
-        public Task Navigate(ViewKey viewKey, object parameter)
-        {
-            switch (viewKey)
+            switch (viewModelType.Name)
             {
-                case ViewKey.FeedView:
-                case ViewKey.FaveView:
-                case ViewKey.SearchView:
-                case ViewKey.SourcesView:
-                case ViewKey.SettingsView:
+                case "FeedViewModel":
+                case "FaveViewModel":
+                case "SearchViewModel":
+                case "SourcesViewModel":
+                case "SettingsViewModel":
                     var splitViewFrame = GetFrame(Window.Current.Content, 0);
-                    splitViewFrame?.Navigate(Pages[viewKey], parameter);
-                    OnNavigated(viewKey);
+                    splitViewFrame?.Navigate(Pages[viewModelType], parameter);
+                    OnNavigated(viewModelType);
                     break;
-                case ViewKey.ArticleView:
+                case "ArticleViewModel":
                     var articleFrame = GetFrame(Window.Current.Content, 1);
-                    articleFrame?.Navigate(Pages[viewKey], parameter);
-                    OnNavigated(viewKey);
+                    articleFrame?.Navigate(Pages[viewModelType], parameter);
+                    OnNavigated(viewModelType);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(viewKey), viewKey, null);
+                    throw new ArgumentOutOfRangeException(nameof(viewModelType), viewModelType, null);
             }
             return Task.CompletedTask;
         }
@@ -73,23 +73,23 @@ namespace myFeed.Views.Uwp.Services
             if (articleFrame != null && articleFrame.CanGoBack)
             {
                 articleFrame.GoBack();
-                OnNavigated(articleFrame.CurrentSourcePageType);
+                OnNavigatedByView(articleFrame.CurrentSourcePageType);
                 return;
             }
             var splitViewFrame = GetFrame(Window.Current.Content, 0);
             if (splitViewFrame.CanGoBack) splitViewFrame.GoBack();
-            OnNavigated(splitViewFrame.CurrentSourcePageType);
+            OnNavigatedByView(splitViewFrame.CurrentSourcePageType);
+
+            void OnNavigatedByView(Type viewType)
+            {
+                if (Pages.Values.Contains(viewType))
+                    OnNavigated(Pages.First(x => x.Value == viewType).Key);
+            }
         }
 
-        private void OnNavigated(Type pageType)
+        private void OnNavigated(Type viewModelType)
         {
-            if (Pages.Values.Contains(pageType))
-                OnNavigated(Pages.First(x => x.Value == pageType).Key);
-        }
-
-        private void OnNavigated(ViewKey viewKey)
-        {
-            Navigated?.Invoke(this, viewKey);
+            Navigated?.Invoke(this, viewModelType);
             UpdateBackButtonVisibility();
         }
 

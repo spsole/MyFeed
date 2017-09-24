@@ -1,6 +1,6 @@
 ﻿using myFeed.Services.Abstractions;
-using myFeed.Repositories;
 using Autofac;
+using myFeed.Repositories;
 using myFeed.Services.Implementations;
 
 namespace myFeed.Services

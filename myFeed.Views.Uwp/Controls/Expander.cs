@@ -30,11 +30,9 @@ namespace myFeed.Views.Uwp.Controls
             if (root == null) throw new ArgumentNullException();
             ProcessAllDescendants(root, o =>
             {
-                if (o is Button button)
-                {
-                    var brush = Application.Current.Resources["ApplicationForegroundThemeBrush"];
-                    button.Foreground = (SolidColorBrush) brush;
-                }
+                if (!(o is Button button)) return;
+                var brush = Application.Current.Resources["ApplicationForegroundThemeBrush"];
+                button.Foreground = (SolidColorBrush) brush;
             });
         }
 

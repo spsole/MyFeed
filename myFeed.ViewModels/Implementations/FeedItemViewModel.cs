@@ -26,7 +26,7 @@ namespace myFeed.ViewModels.Implementations
                 ? article.ImageUri
                 : string.Empty);
 
-            Open = new Command(() => navigationService.Navigate(ViewKey.ArticleView, this));
+            Open = new Command(() => navigationService.Navigate(typeof(ArticleViewModel), this));
             Share = new Command(() => platformService.Share($"{article.Title}\r\n{article.Uri}"));
             CopyLink = new Command(() => platformService.CopyTextToClipboard(article.Uri));
             LaunchUri = new Command(async () =>

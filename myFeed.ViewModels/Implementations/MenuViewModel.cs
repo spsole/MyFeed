@@ -14,8 +14,8 @@ namespace myFeed.ViewModels.Implementations
             INavigationService navigationService,
             ITranslationsService translationsService)
         {
-            SelectedIndex = new Property<int>();
             Items = new ObservableCollection<Tuple<string, object, Command>>();
+            SelectedIndex = new Property<int>();
             Load = new Command(async () =>
             {
                 var theme = await settingsService.Get<string>("Theme");
@@ -24,13 +24,13 @@ namespace myFeed.ViewModels.Implementations
                 await platformService.RegisterBackgroundTask(freq);
                 await settingsService.Set("LastFetched", DateTime.Now);
             });
-            var pairs = new List<(ViewKey, string)>
+            var pairs = new List<(Type, string)>
             {
-                (ViewKey.FeedView, "FeedViewMenuItem"),
-                (ViewKey.FaveView, "FaveViewMenuItem"),
-                (ViewKey.SourcesView, "SourcesViewMenuItem"),
-                (ViewKey.SearchView, "SearchViewMenuItem"),
-                (ViewKey.SettingsView, "SettingsViewMenuItem")
+                (typeof(FeedViewModel), "FeedViewMenuItem"),
+                (typeof(FaveViewModel), "FaveViewMenuItem"),
+                (typeof(SourcesViewModel), "SourcesViewMenuItem"),
+                (typeof(SearchViewModel), "SearchViewMenuItem"),
+                (typeof(SettingsViewModel), "SettingsViewMenuItem")
             };
             foreach (var pair in pairs)
             {

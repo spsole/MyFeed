@@ -17,14 +17,14 @@ using VerticalAlignment = Windows.UI.Xaml.VerticalAlignment;
 
 namespace myFeed.Views.Uwp.Services
 {
-    public sealed class UwpXmlParserService
+    public sealed class UwpHtmlParserService
     {
         private readonly ISettingsService _service;
         private readonly HtmlParser _htmlParser;
 
-        public UwpXmlParserService()
+        public UwpHtmlParserService(ISettingsService settingsService)
         {
-            _service = UwpLocator.Current.Resolve<ISettingsService>();
+            _service = settingsService;
             _htmlParser = new HtmlParser();
         }
 
