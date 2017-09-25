@@ -42,9 +42,6 @@ module Tools =
     /// "Tee" applies f to x and continues.
     let also f x = f x; x  
 
-    /// Asynchronious pipe operator.
-    let inline (|@>) (task: Task<'a>) (fn: 'a -> 'b) = task |> await |> fn   
-
 /// Dependency injection module.
 module Dep =
 

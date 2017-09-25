@@ -49,10 +49,10 @@ module ConfigurationRepositoryTests =
 
     [<Fact>]
     let ``should set and return values using names``() = 
-        repository.SetByNameAsync("Foo", "Bar") |> awaitTask
-        repository.SetByNameAsync("Bar", "Foo") |> awaitTask
-        repository.GetByNameAsync("Foo") |@> Should.equal "Bar"
-        repository.GetByNameAsync("Bar") |@> Should.equal "Foo"
+        repository.SetByNameAsync("Foo", "Bar")   |> awaitTask
+        repository.SetByNameAsync("Bar", "Foo")   |> awaitTask
+        repository.GetByNameAsync("Foo") |> await |> Should.equal "Bar"
+        repository.GetByNameAsync("Bar") |> await |> Should.equal "Foo"
         clearContext()
 
 // Tests for sources repository.
@@ -62,7 +62,8 @@ module SourcesRepositoryTests =
     [<Fact>]
     let ``should return all items enumerable``() = 
         repository.GetAllAsync() 
-        |@> Seq.length 
+        |> await
+        |> Seq.length 
         |> Should.equal 0
 
     [<Fact>]
@@ -71,7 +72,10 @@ module SourcesRepositoryTests =
             [| SourceCategoryEntity(Title="Foo"); 
                SourceCategoryEntity(Title="Bar") |]
         repository.InsertAsync entities |> awaitTask     
-        let categories = repository.GetAllAsync() |@> List.ofSeq
+        let categories = 
+            repository.GetAllAsync() 
+            |> await
+            |> List.ofSeq
         Should.equal 1 categories.[0].Order
         Should.equal 2 categories.[1].Order
         Should.equal "Foo" categories.[0].Title
@@ -86,7 +90,8 @@ module SourcesRepositoryTests =
                     ([| SourceEntity(Uri="http://foo.bar") |]))
         repository.InsertAsync category |> awaitTask
         repository.GetAllAsync() 
-        |@> Seq.item 0
+        |> await
+        |> Seq.item 0
         |> fun category -> category.Sources
         |> Seq.item 0
         |> fun source -> source.Uri
@@ -137,8 +142,9 @@ module SourcesRepositoryTests =
                SourceCategoryEntity(Title="Foobar") |]
         repository.InsertAsync sequence |> awaitTask
         repository.GetAllAsync() 
-        |@> Seq.item 0
-        |> fun x -> x.Title
+        |> await
+        |> Seq.item 0
+        |> fun entity -> entity.Title
         |> Should.equal "Foo"
 
         [ sequence.[1]; 
@@ -148,8 +154,9 @@ module SourcesRepositoryTests =
         |> awaitTask
         
         repository.GetAllAsync() 
-        |@> Seq.item 0
-        |> fun x -> x.Title
+        |> await
+        |> Seq.item 0
+        |> fun entity -> entity.Title
         |> Should.equal "Bar"
         clearContext()
 
@@ -160,7 +167,8 @@ module ArticlesRepositoryTests =
     [<Fact>]
     let ``should return all items enumerable``() =
         repository.GetAllAsync() 
-        |@> Seq.length 
+        |> await
+        |> Seq.length 
         |> Should.equal 0
 
     [<Fact>]
@@ -174,8 +182,9 @@ module ArticlesRepositoryTests =
         repository.InsertAsync (source=source, entities=
             [| ArticleEntity(Title="Foo") |]) |> awaitTask     
         repository.GetAllAsync() 
-        |@> Seq.item 0
-        |> fun x -> x.Title
+        |> await
+        |> Seq.item 0
+        |> fun entity -> entity.Title
         |> Should.equal "Foo"
         clearContext()
 
@@ -187,10 +196,12 @@ module ArticlesRepositoryTests =
         context.SaveChanges() |> ignore
 
         repository.GetAllAsync() 
-        |@> Seq.item 0        
+        |> await
+        |> Seq.item 0        
         |> fun first -> first.Id
         |> repository.GetByIdAsync
-        |@> fun article -> article.Title
+        |> await
+        |> fun article -> article.Title
         |> Should.equal "Foo"
         clearContext() 
 
@@ -198,5 +209,6 @@ module ArticlesRepositoryTests =
     let ``should return null if article with id does not exist``() =    
         Guid()
         |> repository.GetByIdAsync
-        |@> Should.beNull
+        |> await
+        |> Should.beNull
         

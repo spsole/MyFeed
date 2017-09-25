@@ -31,14 +31,14 @@ namespace myFeed.Views.Uwp.Services
         {
             var article = await _articlesRepository.GetByIdAsync(guid);
             if (article == null) return;
-            var viewModel = new FeedItemViewModel(article, _settingsService, 
+            var viewModel = new ArticleViewModel(article, _settingsService, 
                 _platformService, _navigationService, _articlesRepository);
             if (UwpNavigationService.GetChild<Frame>(Window.Current.Content, 1) == null)
             {
-                await _navigationService.Navigate(typeof(FeedViewModel));
+                await _navigationService.Navigate<FeedViewModel>();
                 await Task.Delay(150);
             }
-            await _navigationService.Navigate(typeof(ArticleViewModel), viewModel);
+            await _navigationService.Navigate<ArticleViewModel>(viewModel);
         }
     }
 }

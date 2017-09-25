@@ -12,15 +12,13 @@ namespace myFeed.Services.Abstractions
         /// <summary>
         /// Brings user into ViewModel.
         /// </summary>
-        /// <param name="viewModelType">ViewModel to show.</param>
-        Task Navigate(Type viewModelType);
+        Task Navigate<T>();
 
         /// <summary>
-        /// Brings user into ViewModel with parameter.
+        /// Brings user into ViewModel with custom ViewModel.
         /// </summary>
-        /// <param name="viewModelType">ViewModel to show.</param>
-        /// <param name="parameter">Parameter to pass.</param>
-        Task Navigate(Type viewModelType, object parameter);
+        /// <param name="parameter">ViewModel to pass.</param>
+        Task Navigate<T>(object parameter);
 
         /// <summary>
         /// Invoked when view changes.

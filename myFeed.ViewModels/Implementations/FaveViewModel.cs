@@ -13,7 +13,7 @@ namespace myFeed.ViewModels.Implementations
             INavigationService navigationService,
             IArticlesRepository articlesRepository)
         {
-            Items = new ObservableCollection<FeedItemViewModel>();
+            Items = new ObservableCollection<ArticleViewModel>();
             IsLoading = new Property<bool>(true);
             IsEmpty = new Property<bool>(true);
             Load = new Command(async () =>
@@ -24,7 +24,7 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var article in articles)
                 {
                     if (!article.Fave) continue;
-                    var viewModel = new FeedItemViewModel(article, settingsService, 
+                    var viewModel = new ArticleViewModel(article, settingsService, 
                         platformService, navigationService, articlesRepository);
                     Items.Add(viewModel);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
@@ -42,7 +42,7 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Contains favorite items.
         /// </summary>
-        public ObservableCollection<FeedItemViewModel> Items { get; }
+        public ObservableCollection<ArticleViewModel> Items { get; }
 
         /// <summary>
         /// Indicates if fetcher is loading data right now.

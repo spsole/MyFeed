@@ -18,11 +18,12 @@ namespace myFeed.Views.Uwp.Services
         private static readonly IReadOnlyDictionary<Type, Type> Pages = new Dictionary<Type, Type>
         {
             {typeof(SettingsViewModel), typeof(SettingsView)},
-            {typeof(SourcesViewModel), typeof(SourcesView)},
             {typeof(ArticleViewModel), typeof(ArticleView)},
+            {typeof(SourcesViewModel), typeof(SourcesView)},
             {typeof(SearchViewModel), typeof(SearchView)},
+            {typeof(MenuViewModel), typeof(MenuView)},
             {typeof(FaveViewModel), typeof(FaveView)},
-            {typeof(FeedViewModel), typeof(FeedView)}
+            {typeof(FeedViewModel), typeof(FeedView)},
         };
         public IReadOnlyDictionary<Type, object> Icons => new Dictionary<Type, object>
         {
@@ -41,56 +42,58 @@ namespace myFeed.Views.Uwp.Services
 
         public event EventHandler<Type> Navigated;
 
-        public Task Navigate(Type viewModelType) => Navigate(viewModelType, null);
+        public Task Navigate<T>() => Navigate<T>(UwpViewModelLocator.Current.Resolve<T>());
 
-        public Task Navigate(Type viewModelType, object parameter)
+        public Task Navigate<T>(object instance)
         {
+            var viewModelType = typeof(T);
+            var rootFrame = (Frame)Window.Current.Content;
             switch (viewModelType.Name)
             {
-                case "FeedViewModel":
-                case "FaveViewModel":
-                case "SearchViewModel":
-                case "SourcesViewModel":
-                case "SettingsViewModel":
-                    var splitViewFrame = GetChild<Frame>(Window.Current.Content, 0);
-                    splitViewFrame?.Navigate(Pages[viewModelType], parameter);
-                    OnNavigated(viewModelType);
+                case nameof(FeedViewModel):
+                case nameof(FaveViewModel):
+                case nameof(SearchViewModel):
+                case nameof(SourcesViewModel):
+                case nameof(SettingsViewModel):
+                    NavigateWithViewModel(GetChild<Frame>(rootFrame, 0));
                     break;
-                case "ArticleViewModel":
-                    var articleFrame = GetChild<Frame>(Window.Current.Content, 1);
-                    articleFrame?.Navigate(Pages[viewModelType], parameter);
-                    OnNavigated(viewModelType);
+                case nameof(ArticleViewModel):
+                    NavigateWithViewModel(GetChild<Frame>(rootFrame, 1));
+                    break;
+                case nameof(MenuViewModel):
+                    NavigateWithViewModel(rootFrame);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(viewModelType), viewModelType, null);
+                    throw new ArgumentOutOfRangeException();
             }
             return Task.CompletedTask;
+
+            void NavigateWithViewModel(Frame frame)
+            {
+                frame.Navigate(Pages[viewModelType], instance);
+                frame.DataContext = instance;
+                Navigated?.Invoke(this, viewModelType);
+                UpdateBackButtonVisibility();
+            }
         }
 
         private void NavigateBack(object sender, BackRequestedEventArgs e)
         {
-            var articleFrame = GetChild<Frame>(Window.Current.Content, 1);
-            if (articleFrame != null && articleFrame.CanGoBack)
-            {
-                articleFrame.GoBack();
-                OnNavigatedByView(articleFrame.CurrentSourcePageType);
-                return;
-            }
-            var splitViewFrame = GetChild<Frame>(Window.Current.Content, 0);
-            if (splitViewFrame.CanGoBack) splitViewFrame.GoBack();
-            OnNavigatedByView(splitViewFrame.CurrentSourcePageType);
+            var rootObject = (Frame)Window.Current.Content;
+            var articleFrame = GetChild<Frame>(rootObject, 1);
+            var navigationFrame = articleFrame?.CanGoBack == true ? articleFrame : GetChild<Frame>(rootObject, 0);
+            NavigateBackWithViewModel(navigationFrame);
 
-            void OnNavigatedByView(Type viewType)
+            void NavigateBackWithViewModel(Frame frame)
             {
-                if (Pages.Values.Contains(viewType))
-                    OnNavigated(Pages.First(x => x.Value == viewType).Key);
+                frame.GoBack();
+                var viewType = frame.CurrentSourcePageType;
+                if (!Pages.Values.Contains(viewType)) return;
+                var viewModelType = Pages.First(x => x.Value == viewType).Key;
+                frame.DataContext = UwpViewModelLocator.Current.Resolve(viewModelType);
+                Navigated?.Invoke(this, viewModelType);
+                UpdateBackButtonVisibility();
             }
-        }
-
-        private void OnNavigated(Type viewModelType)
-        {
-            Navigated?.Invoke(this, viewModelType);
-            UpdateBackButtonVisibility();
         }
 
         private void UpdateBackButtonVisibility() =>

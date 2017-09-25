@@ -152,7 +152,7 @@ module FeedServiceTests =
         fakeStoredEntities |> Seq.iter fakeSourceEntity.Articles.Add          
 
         let service = mockService fakeStoredEntities (fakeSourceEntity, fakeFetchedEntities)
-        let feed = service.RetrieveFeedsAsync([ fakeSourceEntity ]) |@> List.ofSeq
+        let feed = service.RetrieveFeedsAsync([ fakeSourceEntity ]) |> await |> List.ofSeq
 
         Assert.Equal(4, feed.Count())
         Assert.Equal("Bar", feed.[0].Title)
@@ -171,7 +171,7 @@ module FeedServiceTests =
         fakeSource.Articles.Add fakeStoredArticles.[0]    
 
         let service = mockService fakeStoredArticles (fakeSource, Seq.empty)     
-        let feed = service.RetrieveFeedsAsync([ fakeSource ]) |@> List.ofSeq
+        let feed = service.RetrieveFeedsAsync([ fakeSource ]) |> await |> List.ofSeq
 
         Assert.Equal(1, feed.Count())
         Assert.Equal("Foo", feed.[0].Title)
@@ -190,7 +190,7 @@ module FeedServiceTests =
         fakeSource.Articles.Add fakeStoredArticles.[0]    
 
         let service = mockService fakeStoredArticles (fakeSource, fakeFetchedArticles)
-        let feed = service.RetrieveFeedsAsync([ fakeSource ]) |@> List.ofSeq
+        let feed = service.RetrieveFeedsAsync([ fakeSource ]) |> await |> List.ofSeq
 
         Assert.Equal(3, feed.Count())
         Assert.Equal("FooBar", feed.[0].Title)
@@ -222,7 +222,10 @@ module FeedServiceTests =
                 mockRepository.Object :> obj)
 
         let service = mockFeedService.Object
-        let feed = service.RetrieveFeedsAsync(Seq.empty) |@> List.ofSeq
+        let feed = 
+            service.RetrieveFeedsAsync(Seq.empty) 
+            |> await 
+            |> List.ofSeq
         Assert.Equal(0, feed.Count())
 
 // Tests for html parsing service.
@@ -393,7 +396,8 @@ module FeedlySearchServiceTests =
     [<Fact>]
     let ``should find something on feedly``() =
         FeedlySearchService().Search("feedly")
-        |@> Assert.NotNull
+        |> await
+        |> Assert.NotNull
 
 // Tests for observable properties!
 module PropertyTests =

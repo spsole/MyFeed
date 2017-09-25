@@ -19,7 +19,7 @@ namespace myFeed.ViewModels.Implementations
             IsEmpty = new Property<bool>(false);
             IsLoading = new Property<bool>(true);
             Items = new ObservableCollection<SourcesCategoryViewModel>();
-            OpenSearch = new Command(() => navigationService.Navigate(typeof(SearchViewModel)));
+            OpenSearch = new Command(navigationService.Navigate<SearchViewModel>);
             Load = new Command(async () =>
             {
                 IsLoading.Value = true;

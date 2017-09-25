@@ -3,7 +3,6 @@ using Windows.UI.Xaml;
 using Autofac;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels;
-using myFeed.ViewModels.Implementations;
 
 namespace myFeed.Views.Uwp.Services
 {
@@ -26,17 +25,23 @@ namespace myFeed.Views.Uwp.Services
         public static UwpViewModelLocator Current => (UwpViewModelLocator)Application.Current.Resources["Locator"];
 
         /// <summary>
-        /// Resolves components from Autofac container in a separate 
-        /// ILifetimeScope for each ViewModel.
+        /// Resolves generic from scope.
         /// </summary>
-        /// <typeparam name="T">Type to resolve.</typeparam>
-        public T Resolve<T>() where T : class => _lifetimeScope.Resolve<T>();
+        public T Resolve<T>() => _lifetimeScope.Resolve<T>();
+
+        /// <summary>
+        /// Resolves type from scope.
+        /// </summary>
+        public object Resolve(Type type) => _lifetimeScope.Resolve(type);
 
         /// <summary>
         /// Disposes internally stored lifetime scope.
         /// </summary>
         public void Dispose() => _lifetimeScope?.Dispose();
 
+        /// <summary>
+        /// Loads all registrations into container builder.
+        /// </summary>
         private static ContainerBuilder Load(ContainerBuilder builder)
         {
             builder.RegisterModule<ViewModelsModule>();
@@ -50,13 +55,5 @@ namespace myFeed.Views.Uwp.Services
             builder.RegisterType<UwpLauncherService>().AsSelf();
             return builder;
         }
-
-        public SettingsViewModel SettingsViewModel => Resolve<SettingsViewModel>();
-        public ArticleViewModel  ArticleViewModel =>  Resolve<ArticleViewModel>();
-        public SourcesViewModel  SourcesViewModel =>  Resolve<SourcesViewModel>();
-        public SearchViewModel   SearchViewModel =>   Resolve<SearchViewModel>();
-        public FeedViewModel     FeedViewModel =>     Resolve<FeedViewModel>();
-        public FaveViewModel     FaveViewModel =>     Resolve<FaveViewModel>();
-        public MenuViewModel     MenuViewModel =>     Resolve<MenuViewModel>();
     }
 }

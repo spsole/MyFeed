@@ -16,8 +16,8 @@ namespace myFeed.ViewModels.Implementations
             INavigationService navigationService,
             IArticlesRepository articlesRepository)
         {
-            OpenSources = new Command(() => navigationService.Navigate(typeof(SourcesViewModel)));
-            Items = new ObservableCollection<FeedItemViewModel>();
+            OpenSources = new Command(navigationService.Navigate<SourcesViewModel>);
+            Items = new ObservableCollection<ArticleViewModel>();
             Title = new Property<string>(entity.Title);
             IsLoading = new Property<bool>(true);
             IsEmpty = new Property<bool>(false);
@@ -28,7 +28,7 @@ namespace myFeed.ViewModels.Implementations
                 var orderedArticles = await feedService.RetrieveFeedsAsync(sources);
                 Items.Clear();
                 foreach (var article in orderedArticles)
-                    Items.Add(new FeedItemViewModel(article, settingsService, 
+                    Items.Add(new ArticleViewModel(article, settingsService, 
                         platformService, navigationService, articlesRepository));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
@@ -38,7 +38,7 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Feed items received from fetcher.
         /// </summary>
-        public ObservableCollection<FeedItemViewModel> Items { get; }
+        public ObservableCollection<ArticleViewModel> Items { get; }
 
         /// <summary>
         /// Indicates if fetcher is loading data right now.

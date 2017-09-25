@@ -11,7 +11,6 @@ namespace myFeed.ViewModels
             builder.RegisterModule<ServicesModule>();
             builder.RegisterType<SettingsViewModel>().AsSelf();
             builder.RegisterType<SourcesViewModel>().AsSelf();
-            builder.RegisterType<ArticleViewModel>().AsSelf();
             builder.RegisterType<SearchViewModel>().AsSelf();
             builder.RegisterType<FeedViewModel>().AsSelf();
             builder.RegisterType<FaveViewModel>().AsSelf();

@@ -11,9 +11,8 @@ namespace myFeed.Views.Uwp.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            var article = ((ArticleViewModel)DataContext).Article.Value = (FeedItemViewModel)e.Parameter;
             foreach(var block in await UwpViewModelLocator.Current.Resolve<UwpHtmlParserService>()
-                .ParseAsync(article?.Content.Value)) RichContent.Blocks.Add(block);
+                .ParseAsync(((ArticleViewModel)e.Parameter)?.Content.Value)) RichContent.Blocks.Add(block);
             base.OnNavigatedTo(e);
         }
     }

@@ -72,10 +72,11 @@ module SourcesTableTests =
         buildLoggableContext()
         |> also (count<SourceCategoryEntity> >> Should.equal 0)
         |> also populate
-        |> also (fun ctxt ->
-            ctxt.Set<SourceCategoryEntity>()
+        |> also (fun context ->
+            context.Set<SourceCategoryEntity>()
                 .FirstAsync(fun x -> x.Title = "Foo")
-            |@> fun category -> category.Sources
+            |> await
+            |> fun category -> category.Sources
             |> Seq.where (fun x -> x.Uri.Length = 3)
             |> Seq.length
             |> Should.equal 2)
@@ -87,8 +88,8 @@ module SourcesTableTests =
         buildLoggableContext()
         |> also (count<SourceCategoryEntity> >> Should.equal 0)
         |> also populate 
-        |> also (fun ctxt -> 
-            ctxt.Set<SourceCategoryEntity>()
+        |> also (fun context -> 
+            context.Set<SourceCategoryEntity>()
                 .Include(fun x -> x.Sources)
             |> Seq.toList            
             |> Seq.collect (fun x -> x.Sources)
@@ -121,10 +122,11 @@ module ConfigurationTableTests =
         buildLoggableContext()
         |> also (count<ConfigurationEntity> >> Should.equal 0)
         |> also populate
-        |> also (fun ctxt -> 
-            ctxt.Set<ConfigurationEntity>()
+        |> also (fun context -> 
+            context.Set<ConfigurationEntity>()
                 .FirstAsync(fun i -> i.Key = "Foo")
-            |@> fun x -> x.Value
+            |> await
+            |> fun entity -> entity.Value
             |> Should.equal "Bar")
         |> also clear<ConfigurationEntity>
         |> dispose
@@ -155,10 +157,11 @@ module ArticlesTableTests =
         buildLoggableContext()
         |> also (count<ArticleEntity> >> Should.equal 0)
         |> also populate
-        |> also (fun ctxt -> 
-            ctxt.Set<ArticleEntity>()
+        |> also (fun context -> 
+            context.Set<ArticleEntity>()
                 .FirstAsync(fun x -> x.Content = "Bar")
-            |@> fun found -> found.FeedTitle
+            |> await
+            |> fun found -> found.FeedTitle
             |> Should.equal "Foobar")
         |> also clear<ArticleEntity>
         |> dispose        
@@ -168,8 +171,8 @@ module ArticlesTableTests =
         buildLoggableContext()
         |> also (count<ArticleEntity> >> Should.equal 0)
         |> also populate
-        |> also (fun ctxt -> 
-            ctxt.Set<ArticleEntity>()
+        |> also (fun context -> 
+            context.Set<ArticleEntity>()
             |> Seq.where (fun x -> x.Content = "Foo")
             |> Seq.length
             |> Should.equal 2)
@@ -181,10 +184,11 @@ module ArticlesTableTests =
         buildLoggableContext()
         |> also (count<ArticleEntity> >> Should.equal 0)
         |> also populate
-        |> also (fun ctxt -> 
-            ctxt.Set<ArticleEntity>()
+        |> also (fun context -> 
+            context.Set<ArticleEntity>()
                 .AllAsync(fun x -> x.Content.Length = 3)
-            |@> Should.equal true)
+            |> await
+            |> Should.equal true)
         |> also clear<ArticleEntity>       
         |> dispose
 
@@ -193,10 +197,10 @@ module ArticlesTableTests =
         buildLoggableContext()
         |> also (count<ArticleEntity> >> Should.equal 0)
         |> also populate
-        |> also (fun ctxt -> 
-            ctxt.Set<ArticleEntity>()
-                .AnyAsync()
-            |@> Should.equal true)
+        |> also (fun context -> 
+            context.Set<ArticleEntity>().AnyAsync()
+            |> await
+            |> Should.equal true)
         |> also clear<ArticleEntity>
         |> dispose
         

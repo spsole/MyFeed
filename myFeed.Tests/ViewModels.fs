@@ -50,8 +50,7 @@ module MenuViewModelsTests =
     [<Fact>]
     let ``should load menu viewmodel``() =
         let icons = 
-            dict[ typeof<ArticleViewModel>, null;
-                  typeof<FaveViewModel>, null;
+            dict[ typeof<FaveViewModel>, null;
                   typeof<FeedViewModel>, null
                   typeof<SearchViewModel>, null;
                   typeof<SettingsViewModel>, null;
@@ -282,7 +281,7 @@ module FeedViewModelsTests =
             |> also (registerInstanceAs<SourceCategoryEntity> fakeEntity)
             |> also (registerInstanceAs<IFeedService> fakeFeedService)
             |> also registerAsSelf<FeedCategoryViewModel>
-            |> also registerAsSelf<FeedItemViewModel>
+            |> also registerAsSelf<ArticleViewModel>
             |> buildScope
 
         let viewModel = resolve<FeedCategoryViewModel> scope
@@ -347,9 +346,9 @@ module FaveViewModelsTests =
         ContainerBuilder()
         |> also registerDefaults
         |> also registerAsSelf<ArticleEntity>
-        |> also registerAsSelf<FeedItemViewModel>     
+        |> also registerAsSelf<ArticleViewModel>     
         |> buildScope
-        |> also Should.resolve<FeedItemViewModel> 
+        |> also Should.resolve<ArticleViewModel> 
         |> dispose
 
     [<Fact>]
@@ -371,7 +370,7 @@ module FaveViewModelsTests =
             ContainerBuilder()
             |> also registerDefaults
             |> also registerAsSelf<FaveViewModel> 
-            |> also registerAsSelf<FeedItemViewModel>
+            |> also registerAsSelf<ArticleViewModel>
             |> also (registerInstanceAs<IArticlesRepository> fakeRepository)
             |> buildScope
 
@@ -392,11 +391,11 @@ module FaveViewModelsTests =
         use scope = 
             ContainerBuilder()
             |> also registerDefaults
-            |> also registerAsSelf<FeedItemViewModel>
+            |> also registerAsSelf<ArticleViewModel>
             |> also (registerInstanceAs<ArticleEntity> article)
             |> buildScope
         
-        let viewModel = resolve<FeedItemViewModel> scope
+        let viewModel = resolve<ArticleViewModel> scope
 
         viewModel.MarkRead.Execute(null)
         Assert.Equal(true, article.Read)
@@ -410,11 +409,11 @@ module FaveViewModelsTests =
         use scope = 
             ContainerBuilder()
             |> also registerDefaults
-            |> also registerAsSelf<FeedItemViewModel>
+            |> also registerAsSelf<ArticleViewModel>
             |> also (registerInstanceAs<ArticleEntity> article)
             |> buildScope
 
-        let viewModel = resolve<FeedItemViewModel> scope
+        let viewModel = resolve<ArticleViewModel> scope
         viewModel.MarkFavorite.Execute(null)
         Assert.Equal(true, article.Fave)
 

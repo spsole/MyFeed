@@ -3,6 +3,8 @@ using System.Diagnostics;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using myFeed.Services.Abstractions;
+using myFeed.ViewModels.Implementations;
 using myFeed.Views.Uwp.Services;
 using myFeed.Views.Uwp.Views;
 
@@ -33,7 +35,7 @@ namespace myFeed.Views.Uwp
             UnhandledException += (_, args) => Debug.WriteLine(args.Message);
             if (Window.Current.Content == null) Window.Current.Content = new Frame();
             var frame = (Frame)Window.Current.Content;
-            if (frame.Content == null) frame.Navigate(typeof(MenuView));
+            if (frame.Content == null) UwpViewModelLocator.Current.Resolve<INavigationService>().Navigate<MenuViewModel>();
             Window.Current.Activate();
         }
 

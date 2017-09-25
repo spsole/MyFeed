@@ -73,5 +73,4 @@ module RegistrationsTestsModule =
         |> also Should.resolve<SearchViewModel>
         |> also Should.resolve<SettingsViewModel>
         |> also Should.resolve<SourcesViewModel>
-        |> also Should.resolve<ArticleViewModel>
         |> dispose    
