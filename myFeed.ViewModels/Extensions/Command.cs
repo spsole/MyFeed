@@ -22,7 +22,11 @@ namespace myFeed.ViewModels.Extensions
         /// Creates new instance using action lambda expression as a command.
         /// </summary>
         /// <param name="action">Task to execute.</param>
-        public Command(Action action) => _task = async () => action.Invoke();
+        public Command(Action action) => _task = () =>
+        {
+            action.Invoke();
+            return Task.CompletedTask;
+        };
 
         /// <summary>
         /// True if queue is unlocked and command can be executed.

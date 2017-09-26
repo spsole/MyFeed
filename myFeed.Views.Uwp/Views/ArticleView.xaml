@@ -9,6 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels.Implementations"
+    NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Transitions>

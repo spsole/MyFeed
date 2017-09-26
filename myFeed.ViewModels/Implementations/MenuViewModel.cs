@@ -39,7 +39,7 @@ namespace myFeed.ViewModels.Implementations
                 SelectedIndex.Value = Items.IndexOf(first);
             };
 
-            void CreateItem<T>(string key)
+            void CreateItem<T>(string key) where T : class
             {
                 var type = typeof(T);
                 var command = new Command(navigationService.Navigate<T>);

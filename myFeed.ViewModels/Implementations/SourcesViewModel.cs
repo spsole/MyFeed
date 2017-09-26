@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -23,7 +24,7 @@ namespace myFeed.ViewModels.Implementations
             Load = new Command(async () =>
             {
                 IsLoading.Value = true;
-                var categories = await sourcesRepository.GetAllAsync();
+                var categories = await Task.Run(sourcesRepository.GetAllAsync);
                 Items.Clear();
                 foreach (var category in categories)
                     Items.Add(new SourcesCategoryViewModel(category, 

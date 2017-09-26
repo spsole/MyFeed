@@ -42,66 +42,76 @@ namespace myFeed.Views.Uwp.Services
 
         public event EventHandler<Type> Navigated;
 
-        public Task Navigate<T>() => Navigate<T>(UwpViewModelLocator.Current.Resolve<T>());
+        public Task Navigate<T>() where T : class => Navigate(UwpViewModelLocator.Current.Resolve<T>());
 
-        public Task Navigate<T>(object instance)
+        public Task Navigate<T>(T instance) where T : class
         {
-            var viewModelType = typeof(T);
-            var rootFrame = (Frame)Window.Current.Content;
-            switch (viewModelType.Name)
+            switch (typeof(T).Name)
             {
                 case nameof(FeedViewModel):
                 case nameof(FaveViewModel):
                 case nameof(SearchViewModel):
                 case nameof(SourcesViewModel):
                 case nameof(SettingsViewModel):
-                    NavigateWithViewModel(GetChild<Frame>(rootFrame, 0));
+                    NavigateWithViewModel(GetChild<Frame>(Window.Current.Content, 0));
                     break;
                 case nameof(ArticleViewModel):
-                    NavigateWithViewModel(GetChild<Frame>(rootFrame, 1));
+                    NavigateWithViewModel(GetChild<Frame>(Window.Current.Content, 1));
                     break;
                 case nameof(MenuViewModel):
-                    NavigateWithViewModel(rootFrame);
+                    NavigateWithViewModel((Frame)Window.Current.Content);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return Task.CompletedTask;
-
-            void NavigateWithViewModel(Frame frame)
+            return Task.CompletedTask; void NavigateWithViewModel(Frame frame)
             {
-                frame.Navigate(Pages[viewModelType], instance);
-                frame.DataContext = instance;
-                Navigated?.Invoke(this, viewModelType);
-                UpdateBackButtonVisibility();
+                frame.Navigate(Pages[typeof(T)], instance);
+                // Pass ViewModel as a parameter and set DataContext.
+                // ReSharper disable once PossibleNullReferenceException
+                ((Page) frame.Content).DataContext = instance;
+                RaiseNavigated(instance);
             }
         }
 
         private void NavigateBack(object sender, BackRequestedEventArgs e)
         {
-            var rootObject = (Frame)Window.Current.Content;
-            var articleFrame = GetChild<Frame>(rootObject, 1);
-            var navigationFrame = articleFrame?.CanGoBack == true ? articleFrame : GetChild<Frame>(rootObject, 0);
-            NavigateBackWithViewModel(navigationFrame);
+            // Get nessesary frame to obtain.
+            var articleFrame = GetChild<Frame>(Window.Current.Content, 1);
+            var splitViewFrame = GetChild<Frame>(Window.Current.Content, 0);
+            var frame = 
+                articleFrame?.CanGoBack == true
+                    ? articleFrame
+                    : splitViewFrame?.CanGoBack == true
+                        ? splitViewFrame
+                        : null;
+            if (frame == null) return;
 
-            void NavigateBackWithViewModel(Frame frame)
-            {
-                frame.GoBack();
-                var viewType = frame.CurrentSourcePageType;
-                if (!Pages.Values.Contains(viewType)) return;
-                var viewModelType = Pages.First(x => x.Value == viewType).Key;
-                frame.DataContext = UwpViewModelLocator.Current.Resolve(viewModelType);
-                Navigated?.Invoke(this, viewModelType);
-                UpdateBackButtonVisibility();
-            }
+            // Extract last navigation parameter and clear forward stack.
+            var instance = frame.BackStack.Last().Parameter;
+            frame.GoBack();
+            frame.ForwardStack.Clear();
+            if (instance == null) return;
+
+            // Update DataContext if parameter is not null (null means 
+            // navigation service had no control over that navigation).
+            // DataContext should be updated with _new_ instance of 
+            // ViewModel. Reusing old ones may cause misbehavior.
+            // ReSharper disable once PossibleNullReferenceException
+            ((Page)frame.Content).DataContext = instance is ArticleViewModel 
+                ? instance : UwpViewModelLocator.Current.Resolve(instance.GetType());
+            RaiseNavigated(instance);
         }
 
-        private void UpdateBackButtonVisibility() =>
+        private void RaiseNavigated(object instance)
+        {
+            Navigated?.Invoke(this, instance?.GetType());
             _systemNavigationManager.AppViewBackButtonVisibility =
                 GetChild<Frame>(Window.Current.Content, 0)?.CanGoBack == true ||
                 GetChild<Frame>(Window.Current.Content, 1)?.CanGoBack == true
                     ? AppViewBackButtonVisibility.Visible
                     : AppViewBackButtonVisibility.Collapsed;
+        }
 
         public static T GetChild<T>(DependencyObject root, int depth) where T : DependencyObject
         {

@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
@@ -23,7 +25,7 @@ namespace myFeed.ViewModels.Implementations
             {
                 IsEmpty.Value = false;
                 IsLoading.Value = true;
-                var sources = await sourcesRepository.GetAllAsync();
+                var sources = await Task.Run(sourcesRepository.GetAllAsync);
                 Items.Clear();
                 foreach (var source in sources)
                     Items.Add(new FeedCategoryViewModel(source, feedService, settingsService, 

@@ -12,6 +12,7 @@
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
     xmlns:views="using:myFeed.Views.Uwp.Views"
     xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
+    NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Transitions>
@@ -61,7 +62,7 @@
             </controls:TransparentButton>
             <Grid Grid.Row="1" Height="48" VerticalAlignment="Top" Background="{
                 ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
-            <Pivot Grid.Row="1" ItemsSource="{Binding Items}">
+            <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Loaded">
                         <core:InvokeCommandAction Command="{Binding Load}"/>
