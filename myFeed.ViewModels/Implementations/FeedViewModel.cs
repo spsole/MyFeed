@@ -19,7 +19,7 @@ namespace myFeed.ViewModels.Implementations
         {
             OpenSources = new Command(navigationService.Navigate<SourcesViewModel>);
             Items = new ObservableCollection<FeedCategoryViewModel>();
-            IsLoading = new Property<bool>(false);
+            IsLoading = new Property<bool>(true);
             IsEmpty = new Property<bool>(false);
             Load = new Command(async () =>
             {

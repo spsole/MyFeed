@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
@@ -38,39 +40,82 @@ namespace myFeed.Views.Uwp.Notifications.Services
             var needBanners = await _settingsService.Get<bool>("NeedBanners");
             var needImages = await _settingsService.Get<bool>("LoadImages");
 
-            // Show notifications for revant articles.
-            feed.Where(i => i.PublishedDate > recentFetch)
+            // Get recent items.
+            var recentItems = feed
+                .Where(i => i.PublishedDate > recentFetch)
                 .OrderByDescending(i => i.PublishedDate)
-                .Take(15).Reverse().ToList()
-                .ForEach(i => SendToastNotification(i, needBanners, needImages));
+                .Take(15).Reverse().ToList();
+            
+            // Show notifications for revant articles.
+            foreach (var entity in recentItems) 
+                SendToastNotification(entity, needBanners, needImages);
+            SendTileNotifications(recentItems);
 
             // Update last fetch date.
             await _settingsService.Set("LastFetched", DateTime.Now.ToString(CultureInfo.InvariantCulture));
         }
 
-        private static void SendToastNotification(ArticleEntity articleEntity, bool needBanners, bool needImages)
+        private static void SendTileNotifications(IEnumerable<ArticleEntity> receivedArticles)
         {
-            var imageString =
-                Uri.IsWellFormedUriString(articleEntity.ImageUri, UriKind.Absolute) && needImages
-                    ? $@"<image src='{articleEntity.ImageUri}' placement='appLogoOverride' hint-crop='circle'/>"
-                    : string.Empty;
-            var tileXmlString = $@"
-                <toast launch='{articleEntity.Id}'>
-                    <visual>
-                        <binding template='ToastGeneric'>
-                            <text>{articleEntity.Title}</text>
-                            <text>{articleEntity.FeedTitle}</text>
-                            {imageString}
-                        </binding>
-                    </visual>
-                    <actions>
-                        <action activationType='foreground' content='Read more' arguments='{articleEntity.Id}'/>
-                    </actions>
-                </toast>";
-            var xmlDocument = new Windows.Data.Xml.Dom.XmlDocument();
-            xmlDocument.LoadXml(tileXmlString);
+            var updateManager = TileUpdateManager.CreateTileUpdaterForApplication();
+            updateManager.EnableNotificationQueue(true);
+            updateManager.Clear();
+
+            foreach (var article in receivedArticles.Take(5))
+            {
+                var template = GetTileTemplate(article.FeedTitle, article.Title);
+                var xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(template);
+                var notification = new TileNotification(xmlDocument);
+                updateManager.Update(notification);
+            }
+        }
+
+        private static void SendToastNotification(ArticleEntity article, bool needBanners, bool needImages)
+        {
+            var identifier = article.Id.ToString();
+            var uri = needImages ? article.ImageUri : string.Empty;
+            var template = GetNotificationTemplate(article.Title, 
+                article.FeedTitle, uri, identifier);
+
+            var xmlDocument = new XmlDocument();
+            xmlDocument.LoadXml(template);
             var notification = new ToastNotification(xmlDocument) { SuppressPopup = !needBanners };
             ToastNotificationManager.CreateToastNotifier().Show(notification);
         }
+
+        private static string GetTileTemplate(string title, string message) => $@"
+            <tile>
+                <visual>
+                    <binding template='TileMedium'>
+                        <text hint-style='captionSubtle'>{title}</text>
+                        <text hint-style='base' hint-wrap='true'>{message}</text>
+                    </binding>
+                    <binding template='TileWide'>
+                        <text hint-style='captionSubtle'>{title}</text>
+                        <text hint-style='base' hint-wrap='true'>{message}</text>
+                    </binding>
+                    <binding template='TileLarge'>
+                        <text hint-style='captionSubtle'>{title}</text>
+                        <text hint-style='base' hint-wrap='true'>{message}</text>
+                    </binding>
+                </visual>
+            </tile>";
+
+        private static string GetNotificationTemplate(string title, string message, string imageUri, string id) => $@"
+            <toast launch='{id}'>
+                <visual>
+                    <binding template='ToastGeneric'>
+                        <text>{title}</text>
+                        <text>{message}</text>
+                        {(Uri.IsWellFormedUriString(imageUri, UriKind.Absolute) 
+                          ? $@"<image src='{imageUri}' placement='appLogoOverride' hint-crop='circle'/>"
+                          : string.Empty)}
+                    </binding>
+                </visual>
+                <actions>
+                    <action activationType='foreground' content='Read more' arguments='{id}'/>
+                </actions>
+            </toast>";
     }
 }

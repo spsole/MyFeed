@@ -35,7 +35,9 @@ namespace myFeed.Views.Uwp
             UnhandledException += (_, args) => Debug.WriteLine(args.Message);
             if (Window.Current.Content == null) Window.Current.Content = new Frame();
             var frame = (Frame)Window.Current.Content;
-            if (frame.Content == null) UwpViewModelLocator.Current.Resolve<INavigationService>().Navigate<MenuViewModel>();
+            if (frame.Content == null) UwpViewModelLocator.Current
+                    .Resolve<INavigationService>()
+                    .Navigate<MenuViewModel>();
             Window.Current.Activate();
         }
 
