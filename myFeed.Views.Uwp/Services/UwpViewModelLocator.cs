@@ -53,6 +53,7 @@ namespace myFeed.Views.Uwp.Services
             builder.RegisterType<UwpDialogService>().As<IDialogService>();
             builder.RegisterType<UwpHtmlParserService>().AsSelf();
             builder.RegisterType<UwpLauncherService>().AsSelf();
+            builder.RegisterType<UwpLegacyFileService>().AsSelf();
             return builder;
         }
     }

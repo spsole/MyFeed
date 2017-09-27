@@ -313,4 +313,16 @@
   <data name="ResetAppNoRestore">
     <value>This action will delete all your locally stored data, including favorite articles and channels list. This stuff will be lost forever! Are you sure you want to continue?</value>
   </data>
+  <data name="SourcesMigrateSuccess">
+    <value>All your news feeds have been succesfully converted to new feed storage format. We hope you'll enjoy new and updated myFeed!</value>
+  </data>
+  <data name="SourcesMigrateFailure">
+    <value>Error occured while converting news channels. Please, add missing ones once again. Error message: {0}</value>
+  </data>
+  <data name="ArticlesMigrateSuccess">
+    <value>All your favorite articles were successfully convertet to new article storage format. Thank you for using myFeed!</value>
+  </data>
+  <data name="ArticlesMigrateFailure">
+    <value>Error occured while converting favorite articles. Error message: {0}</value>
+  </data>
 </root>

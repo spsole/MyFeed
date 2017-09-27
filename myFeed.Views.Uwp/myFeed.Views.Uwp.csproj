@@ -115,6 +115,7 @@
     <Compile Include="Services\UwpDialogService.cs" />
     <Compile Include="Services\UwpFilePickerService.cs" />
     <Compile Include="Services\UwpLauncherService.cs" />
+    <Compile Include="Services\UwpLegacyFileService.cs" />
     <Compile Include="Services\UwpNavigationService.cs" />
     <Compile Include="Services\UwpPlatformService.cs" />
     <Compile Include="Services\UwpTranslationsService.cs" />

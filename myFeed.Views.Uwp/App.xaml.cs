@@ -30,15 +30,19 @@ namespace myFeed.Views.Uwp
                 OpenArticleViewForPinnedArticleUsingGuid(guid);
         }
 
-        private void EnsureDefaultViewIsPresent()
+        private async void EnsureDefaultViewIsPresent()
         {
             UnhandledException += (_, args) => Debug.WriteLine(args.Message);
             if (Window.Current.Content == null) Window.Current.Content = new Frame();
             var frame = (Frame)Window.Current.Content;
-            if (frame.Content == null) UwpViewModelLocator.Current
+            if (frame.Content == null) await UwpViewModelLocator.Current
                     .Resolve<INavigationService>()
                     .Navigate<MenuViewModel>();
             Window.Current.Activate();
+
+            var legacyService = UwpViewModelLocator.Current.Resolve<UwpLegacyFileService>();
+            await legacyService.ImportFeedsFromLegacyFormat();
+            await legacyService.ImportArticlesFromLegacyFormat();
         }
 
         private async void OpenArticleViewForPinnedArticleUsingGuid(Guid id)
