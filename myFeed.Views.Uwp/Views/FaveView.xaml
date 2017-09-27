@@ -11,6 +11,7 @@
     xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
     xmlns:views="using:myFeed.Views.Uwp.Views"
     xmlns:implementations="using:myFeed.ViewModels.Implementations"
+    xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -105,9 +106,28 @@
                                     <SymbolIcon Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
                                         Visibility="{Binding Image.Value, Converter={StaticResource FalsyToVisible}}"
                                         VerticalAlignment="Center" HorizontalAlignment="Center" Symbol="PostUpdate"/>
-                                    <Ellipse Width="70" Height="70" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Ellipse x:Name="PictureEllipse" Opacity="0" Width="70" Height="70" 
+                                             HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Ellipse.Fill>
-                                            <ImageBrush ImageSource="{Binding Image.Value}" Stretch="UniformToFill"/>
+                                            <ImageBrush Stretch="UniformToFill">
+                                                <interactivity:Interaction.Behaviors>
+                                                    <core:EventTriggerBehavior EventName="ImageOpened">
+                                                        <media:ControlStoryboardAction>
+                                                            <media:ControlStoryboardAction.Storyboard>
+                                                                <Storyboard TargetName="PictureEllipse" TargetProperty="(UIElement.Opacity)">
+                                                                    <DoubleAnimationUsingKeyFrames>
+                                                                        <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
+                                                                        <EasingDoubleKeyFrame Value="1" KeyTime="0:0:1"/>
+                                                                    </DoubleAnimationUsingKeyFrames>
+                                                                </Storyboard>
+                                                            </media:ControlStoryboardAction.Storyboard>
+                                                        </media:ControlStoryboardAction>
+                                                    </core:EventTriggerBehavior>
+                                                </interactivity:Interaction.Behaviors>
+                                                <ImageBrush.ImageSource>
+                                                    <BitmapImage DecodePixelType="Logical" UriSource="{Binding Image.Value}"/>
+                                                </ImageBrush.ImageSource>
+                                            </ImageBrush>
                                         </Ellipse.Fill>
                                     </Ellipse>
                                 </Grid>

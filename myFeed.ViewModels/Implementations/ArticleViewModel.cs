@@ -22,9 +22,9 @@ namespace myFeed.ViewModels.Implementations
             Content = new Property<string>(article.Content);
             PublishedDate = new Property<DateTime>(article.PublishedDate);
             Image = new Property<string>(async () => await settingsService
-                .Get<bool>("LoadImages") ? article.ImageUri : string.Empty);
+                .Get<bool>("LoadImages") ? article.ImageUri : null);
 
-            Open = new Command(() => navigationService.Navigate<ArticleViewModel>(this));
+            Open = new Command(() => navigationService.Navigate(this));
             Share = new Command(() => platformService.Share($"{article.Title}\r\n{article.Uri}"));
             CopyLink = new Command(() => platformService.CopyTextToClipboard(article.Uri));
             LaunchUri = new Command(async () =>
