@@ -6,42 +6,12 @@ using myFeed.ViewModels;
 
 namespace myFeed.Views.Uwp.Services
 {
-    /// <summary>
-    /// Locator that should be used as ViewModelLocator resource for the whole application.
-    /// Represents a bindable source containing factories for all ViewModels that 
-    /// application contains. Usage: "{Binding Path=., Source={StaticResource Locator}}"
-    /// Remember to declare this as a singleton resource in App.xaml or similar.
-    /// </summary>
-    public class UwpViewModelLocator : IDisposable
+    public class Uwp : IDisposable
     {
-        private readonly ILifetimeScope _lifetimeScope; 
+        private readonly ILifetimeScope _lifetimeScope;
 
-        /// <inheritdoc />
-        public UwpViewModelLocator() => _lifetimeScope = Load(new ContainerBuilder()).Build();
+        public Uwp() => _lifetimeScope = Load(new ContainerBuilder()).Build();
 
-        /// <summary>
-        /// Returns current locator instance.
-        /// </summary>
-        public static UwpViewModelLocator Current => (UwpViewModelLocator)Application.Current.Resources["Locator"];
-
-        /// <summary>
-        /// Resolves generic from scope.
-        /// </summary>
-        public T Resolve<T>() => _lifetimeScope.Resolve<T>();
-
-        /// <summary>
-        /// Resolves type from scope.
-        /// </summary>
-        public object Resolve(Type type) => _lifetimeScope.Resolve(type);
-
-        /// <summary>
-        /// Disposes internally stored lifetime scope.
-        /// </summary>
-        public void Dispose() => _lifetimeScope?.Dispose();
-
-        /// <summary>
-        /// Loads all registrations into container builder.
-        /// </summary>
         private static ContainerBuilder Load(ContainerBuilder builder)
         {
             builder.RegisterModule<ViewModelsModule>();
@@ -56,5 +26,13 @@ namespace myFeed.Views.Uwp.Services
             builder.RegisterType<UwpLegacyFileService>().AsSelf();
             return builder;
         }
+
+        public object Resolve(Type type) => _lifetimeScope.Resolve(type);
+
+        public T Resolve<T>() => _lifetimeScope.Resolve<T>();
+
+        public void Dispose() => _lifetimeScope?.Dispose();
+
+        public static Uwp Current => (Uwp)Application.Current.Resources["Locator"];
     }
 }

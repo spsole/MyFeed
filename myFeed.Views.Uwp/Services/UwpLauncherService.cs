@@ -38,7 +38,7 @@ namespace myFeed.Views.Uwp.Services
                 await _navigationService.Navigate<FeedViewModel>();
                 await Task.Delay(150);
             }
-            await _navigationService.Navigate<ArticleViewModel>(viewModel);
+            await _navigationService.Navigate(viewModel);
         }
     }
 }

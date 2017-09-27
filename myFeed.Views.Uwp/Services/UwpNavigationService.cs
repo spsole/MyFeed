@@ -42,7 +42,7 @@ namespace myFeed.Views.Uwp.Services
 
         public event EventHandler<Type> Navigated;
 
-        public Task Navigate<T>() where T : class => Navigate(UwpViewModelLocator.Current.Resolve<T>());
+        public Task Navigate<T>() where T : class => Navigate(Uwp.Current.Resolve<T>());
 
         public Task Navigate<T>(T instance) where T : class
         {
@@ -67,8 +67,6 @@ namespace myFeed.Views.Uwp.Services
             return Task.CompletedTask; void NavigateWithViewModel(Frame frame)
             {
                 frame.Navigate(Pages[typeof(T)], instance);
-                // Pass ViewModel as a parameter and set DataContext.
-                // ReSharper disable once PossibleNullReferenceException
                 ((Page) frame.Content).DataContext = instance;
                 RaiseNavigated(instance);
             }
@@ -76,7 +74,6 @@ namespace myFeed.Views.Uwp.Services
 
         private void NavigateBack(object sender, BackRequestedEventArgs e)
         {
-            // Get nessesary frame to obtain.
             var articleFrame = GetChild<Frame>(Window.Current.Content, 1);
             var splitViewFrame = GetChild<Frame>(Window.Current.Content, 0);
             var frame = 
@@ -87,19 +84,15 @@ namespace myFeed.Views.Uwp.Services
                         : null;
             if (frame == null) return;
 
-            // Extract last navigation parameter and clear forward stack.
             var instance = frame.BackStack.Last().Parameter;
             frame.GoBack();
             frame.ForwardStack.Clear();
             if (instance == null) return;
 
-            // Update DataContext if parameter is not null (null means 
-            // navigation service had no control over that navigation).
             // DataContext should be updated with _new_ instance of 
             // ViewModel. Reusing old ones may cause misbehavior.
-            // ReSharper disable once PossibleNullReferenceException
             ((Page)frame.Content).DataContext = instance is ArticleViewModel 
-                ? instance : UwpViewModelLocator.Current.Resolve(instance.GetType());
+                ? instance : Uwp.Current.Resolve(instance.GetType());
             RaiseNavigated(instance);
         }
 

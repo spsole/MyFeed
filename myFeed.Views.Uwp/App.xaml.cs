@@ -35,19 +35,19 @@ namespace myFeed.Views.Uwp
             UnhandledException += (_, args) => Debug.WriteLine(args.Message);
             if (Window.Current.Content == null) Window.Current.Content = new Frame();
             var frame = (Frame)Window.Current.Content;
-            if (frame.Content == null) await UwpViewModelLocator.Current
+            if (frame.Content == null) await Services.Uwp.Current
                     .Resolve<INavigationService>()
                     .Navigate<MenuViewModel>();
             Window.Current.Activate();
 
-            var legacyService = UwpViewModelLocator.Current.Resolve<UwpLegacyFileService>();
+            var legacyService = Services.Uwp.Current.Resolve<UwpLegacyFileService>();
             await legacyService.ImportFeedsFromLegacyFormat();
             await legacyService.ImportArticlesFromLegacyFormat();
         }
 
         private async void OpenArticleViewForPinnedArticleUsingGuid(Guid id)
         {
-            await UwpViewModelLocator.Current
+            await Services.Uwp.Current
                 .Resolve<UwpLauncherService>()
                 .LaunchArticleById(id);
         }

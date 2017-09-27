@@ -12,7 +12,7 @@
                 <ResourceDictionary Source="Controls/TransparentButton.xaml"/>
                 <ResourceDictionary Source="Controls/Expander.xaml" />
                 <ResourceDictionary>
-                    <services:UwpViewModelLocator x:Key="Locator"/>
+                    <services:Uwp x:Key="Locator"/>
                     <extensions:LocaleConverter x:Key="Locale"/>
                     <extensions:NegateBoolConverter x:Key="NegateBool"/>
                     <extensions:FalsyToVisibleConverter x:Key="FalsyToVisible" />
