@@ -135,12 +135,12 @@
                                             </interactivity:Interaction.Behaviors>
                                             <FlyoutBase.AttachedFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem Icon="Copy" Command="{Binding CopyLink}" Text="{Binding 
+                                                    <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding CopyLink}" Text="{Binding 
                                                         Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
-                                                    <MenuFlyoutItem Icon="Link" Command="{Binding OpenInBrowser}" Text="{Binding
+                                                    <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding OpenInBrowser}" Text="{Binding
                                                         Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
                                                     <MenuFlyoutSeparator/>
-                                                    <MenuFlyoutItem Icon="Delete" Command="{Binding DeleteSource}" Text="{Binding
+                                                    <controls:MenuFlyoutItemWithIcon Icon="Delete" Command="{Binding DeleteSource}" Text="{Binding
                                                         Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
                                                 </MenuFlyout>
                                             </FlyoutBase.AttachedFlyout>

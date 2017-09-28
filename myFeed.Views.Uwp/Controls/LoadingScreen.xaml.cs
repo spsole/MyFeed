@@ -10,7 +10,7 @@ namespace myFeed.Views.Uwp.Controls
             InitializeComponent();
             BackGrid.Visibility = Visibility.Visible;
             LoadRing.IsActive = true;
-            BackGrid.Fade(value: 1, duration: 300).StartAsync();
+            BackGrid.Fade(value: 1, duration: 400).StartAsync();
         }
 
         public static readonly DependencyProperty IsActiveProperty =
@@ -32,12 +32,12 @@ namespace myFeed.Views.Uwp.Controls
             {
                 thisControl.BackGrid.Visibility = Visibility.Visible;
                 thisControl.LoadRing.IsActive = true;
-                await thisControl.BackGrid.Fade(1, 300).StartAsync();
+                await thisControl.BackGrid.Fade(1, 400).StartAsync();
             }
             else
             {
                 thisControl.LoadRing.IsActive = false;
-                await thisControl.BackGrid.Fade(0, 300).StartAsync();
+                await thisControl.BackGrid.Fade(0, 400).StartAsync();
                 thisControl.BackGrid.Visibility = Visibility.Collapsed;
             }
         }

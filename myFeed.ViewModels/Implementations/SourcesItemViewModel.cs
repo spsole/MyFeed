@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -27,13 +28,13 @@ namespace myFeed.ViewModels.Implementations
             });
             DeleteSource = new Command(async () =>
             {
-                await sourcesRepository.RemoveSourceAsync(entity.Category, entity);
                 parentViewModel.Items.Remove(this);
+                await Task.Run(() => sourcesRepository.RemoveSourceAsync(entity.Category, entity));
             });
             Notify.PropertyChanged += async (sender, args) =>
             {
                 entity.Notify = Notify.Value;
-                await sourcesRepository.UpdateAsync(entity.Category);
+                await Task.Run(() => sourcesRepository.UpdateAsync(entity.Category));
             };
         }
 

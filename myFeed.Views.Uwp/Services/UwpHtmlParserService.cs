@@ -31,7 +31,7 @@ namespace myFeed.Views.Uwp.Services
         public async Task<IEnumerable<Block>> ParseAsync(string html)
         {
             var size = await _service.Get<int>("FontSize");
-            var document = await _htmlParser.ParseAsync(html);
+            var document = await Task.Run(() => _htmlParser.ParseAsync(html));
             var paragraph = new Paragraph
             {
                 FontSize = size,

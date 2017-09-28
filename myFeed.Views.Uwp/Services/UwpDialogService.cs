@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Services.Abstractions;
 
@@ -30,11 +31,15 @@ namespace myFeed.Views.Uwp.Services
         public async Task<string> ShowDialogForResults(string message, string title)
         {
             var resourceLoader = ResourceLoader.GetForViewIndependentUse();
-            var inputDialog = new ContentDialog {Title = title};
-            var contentBox = new TextBox {PlaceholderText = message};
-            inputDialog.PrimaryButtonText = resourceLoader.GetString("Ok");
-            inputDialog.SecondaryButtonText = resourceLoader.GetString("Cancel");
-            inputDialog.Content = new StackPanel {Children = {contentBox}};
+            var contentBox = new TextBox { PlaceholderText = message };
+            var inputDialog = new ContentDialog
+            {
+                Title = title,
+                Margin = new Thickness(0, 12, 0, 0),
+                PrimaryButtonText = resourceLoader.GetString("Ok"),
+                SecondaryButtonText = resourceLoader.GetString("Cancel"),
+                Content = new StackPanel {Children = {contentBox}}
+            };
             var result = await inputDialog.ShowAsync();
             return result == ContentDialogResult.Primary ? contentBox.Text : string.Empty;
         }
@@ -42,11 +47,19 @@ namespace myFeed.Views.Uwp.Services
         public async Task<object> ShowDialogForSelection(IEnumerable<object> items)
         {
             var resourceLoader = ResourceLoader.GetForViewIndependentUse();
-            var selectionDialog = new ContentDialog {Title = resourceLoader.GetString("AddIntoCategory")};
-            var selectBox = new ComboBox {DisplayMemberPath = "Title", ItemsSource = items};
-            selectionDialog.PrimaryButtonText = resourceLoader.GetString("Ok");
-            selectionDialog.SecondaryButtonText = resourceLoader.GetString("Cancel");
-            selectionDialog.Content = selectBox;
+            var selectBox = new ComboBox
+            {
+                DisplayMemberPath = "Title",
+                ItemsSource = items
+            };
+            var selectionDialog = new ContentDialog
+            {
+                Title = resourceLoader.GetString("AddIntoCategory"),
+                Margin = new Thickness(0, 12, 0, 0),
+                PrimaryButtonText = resourceLoader.GetString("Ok"),
+                SecondaryButtonText = resourceLoader.GetString("Cancel"),
+                Content = selectBox
+            };
             var result = await selectionDialog.ShowAsync();
             return result != ContentDialogResult.Primary ? null : selectBox.SelectedItem;
         }

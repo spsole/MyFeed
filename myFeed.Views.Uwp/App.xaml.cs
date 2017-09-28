@@ -30,9 +30,8 @@ namespace myFeed.Views.Uwp
                 OpenArticleViewForPinnedArticleUsingGuid(guid);
         }
 
-        private async void EnsureDefaultViewIsPresent()
+        private static async void EnsureDefaultViewIsPresent()
         {
-            UnhandledException += (_, args) => Debug.WriteLine(args.Message);
             if (Window.Current.Content == null) Window.Current.Content = new Frame();
             var frame = (Frame)Window.Current.Content;
             if (frame.Content == null) await Services.Uwp.Current
@@ -45,7 +44,7 @@ namespace myFeed.Views.Uwp
             await legacyService.ImportArticlesFromLegacyFormat();
         }
 
-        private async void OpenArticleViewForPinnedArticleUsingGuid(Guid id)
+        private static async void OpenArticleViewForPinnedArticleUsingGuid(Guid id)
         {
             await Services.Uwp.Current
                 .Resolve<UwpLauncherService>()

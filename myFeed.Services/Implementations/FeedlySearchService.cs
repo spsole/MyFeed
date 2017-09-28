@@ -11,8 +11,8 @@ namespace myFeed.Services.Implementations
     public class FeedlySearchService : ISearchService
     {
         private static readonly HttpClient Client = new HttpClient();
-        
-        public async Task<SearchRootEntity> Search(string query)
+
+        public Task<SearchRootEntity> Search(string query) => Task.Run(async () =>
         {
             try
             {
@@ -30,6 +30,6 @@ namespace myFeed.Services.Implementations
                     Results = new List<SearchItemEntity>()
                 };
             }
-        }
+        });
     }
 }

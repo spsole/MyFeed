@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using myFeed.Entities.Feedly;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
@@ -29,12 +30,12 @@ namespace myFeed.ViewModels.Implementations
             AddToSources = new Command(async () =>
             {
                 if (!Uri.IsWellFormedUriString(FeedUrl.Value, UriKind.Absolute)) return;
-                var categories = await sourcesRepository.GetAllAsync();
+                var categories = await Task.Run(sourcesRepository.GetAllAsync);
                 var response = await dialogService.ShowDialogForSelection(categories);
                 if (response is SourceCategoryEntity sourceCategoryEntity)
                 {
                     var source = new SourceEntity {Notify = true, Uri = FeedUrl.Value};
-                    await sourcesRepository.AddSourceAsync(sourceCategoryEntity, source);
+                    await Task.Run(() => sourcesRepository.AddSourceAsync(sourceCategoryEntity, source));
                 }
             });
         }

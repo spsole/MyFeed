@@ -6,7 +6,6 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Implementations;
 using myFeed.Views.Uwp.Views;
@@ -87,6 +86,7 @@ namespace myFeed.Views.Uwp.Services
 
             var instance = frame.BackStack.Last().Parameter;
             frame.GoBack();
+            e.Handled = true;
             frame.ForwardStack.Clear();
             if (instance == null) return;
 

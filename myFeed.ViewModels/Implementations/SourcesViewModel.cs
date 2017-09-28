@@ -40,16 +40,16 @@ namespace myFeed.ViewModels.Implementations
                     translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new SourceCategoryEntity {Title = name};
-                await sourcesRepository.InsertAsync(category);
+                await Task.Run(() => sourcesRepository.InsertAsync(category));
                 Items.Add(new SourcesCategoryViewModel(category, 
                     this, dialogService, platformService, 
                     sourcesRepository, translationsService));
             });
-            Items.CollectionChanged += (s, a) =>
+            Items.CollectionChanged += async (s, a) =>
             {
                 IsEmpty.Value = Items.Count == 0;
                 var items = Items.Select(i => i.Category.Value);
-                sourcesRepository.RearrangeAsync(items);
+                await Task.Run(() => sourcesRepository.RearrangeAsync(items));
             };
         }
 

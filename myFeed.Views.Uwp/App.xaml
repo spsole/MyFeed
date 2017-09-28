@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="Controls/SwipableSplitView.xaml" />
                 <ResourceDictionary Source="Controls/TransparentButton.xaml"/>
                 <ResourceDictionary Source="Controls/Expander.xaml" />
+                <ResourceDictionary Source="Controls/MenuFlyoutItemWithIcon.xaml"/>
                 <ResourceDictionary>
                     <services:Uwp x:Key="Locator"/>
                     <extensions:LocaleConverter x:Key="Locale"/>

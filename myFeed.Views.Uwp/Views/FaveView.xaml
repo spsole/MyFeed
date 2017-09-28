@@ -88,12 +88,12 @@
                                 </interactivity:Interaction.Behaviors>
                                 <FlyoutBase.AttachedFlyout>
                                     <MenuFlyout>
-                                        <MenuFlyoutItem Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
-                                        <MenuFlyoutItem Icon="Link" Command="{Binding LaunchUri}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
-                                        <MenuFlyoutItem Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
-                                        <MenuFlyoutItem Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
+                                        <controls:MenuFlyoutItemWithIcon Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
+                                        <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding LaunchUri}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
+                                        <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
+                                        <controls:MenuFlyoutItemWithIcon Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
                                         <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem Icon="Delete" Command="{Binding MarkFavorite}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
+                                        <controls:MenuFlyoutItemWithIcon Icon="Delete" Command="{Binding MarkFavorite}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
                                     </MenuFlyout>
                                 </FlyoutBase.AttachedFlyout>
                                 <Grid.ColumnDefinitions>

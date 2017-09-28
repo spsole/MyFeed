@@ -122,21 +122,21 @@
                                             </interactivity:Interaction.Behaviors>
                                             <FlyoutBase.AttachedFlyout>
                                                 <MenuFlyout>
-                                                    <MenuFlyoutItem Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
-                                                    <MenuFlyoutItem Icon="Link" Command="{Binding LaunchUri}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
-                                                    <MenuFlyoutItem Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
-                                                    <MenuFlyoutItem Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
+                                                    <controls:MenuFlyoutItemWithIcon Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
+                                                    <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding LaunchUri}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
+                                                    <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
+                                                    <controls:MenuFlyoutItemWithIcon Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
                                                     <MenuFlyoutSeparator />
-                                                    <MenuFlyoutItem Icon="Read" Command="{Binding MarkRead}" 
+                                                    <controls:MenuFlyoutItemWithIcon Icon="Read" Command="{Binding MarkRead}" 
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=MarkAsRead}"
                                                         Visibility="{Binding IsRead.Value, Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
-                                                    <MenuFlyoutItem Icon="Mail" Command="{Binding MarkRead}" 
+                                                    <controls:MenuFlyoutItemWithIcon Icon="Mail" Command="{Binding MarkRead}" 
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=MarkAsUnread}"
                                                         Visibility="{Binding IsRead.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
-                                                    <MenuFlyoutItem Icon="OutlineStar" Command="{Binding MarkFavorite}"
+                                                    <controls:MenuFlyoutItemWithIcon Icon="OutlineStar" Command="{Binding MarkFavorite}"
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=RemoveFromFavorites}"
                                                         Visibility="{Binding IsFavorite.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
-                                                    <MenuFlyoutItem Icon="SolidStar" Command="{Binding MarkFavorite}" 
+                                                    <controls:MenuFlyoutItemWithIcon Icon="SolidStar" Command="{Binding MarkFavorite}" 
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=AddToFavorites}"
                                                         Visibility="{Binding IsFavorite.Value, Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
                                                 </MenuFlyout>
@@ -233,8 +233,6 @@
                 </StackPanel>
             </Grid>
             <controls:LoadingScreen Grid.Row="1" Margin="0 48 0 0" IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
-            <Grid Visibility="{Binding IsLoading.Value, Converter={StaticResource TruthyToVisible}}" Grid.Row="1" 
-                Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" Height="48" VerticalAlignment="Top"/>
         </Grid>
     </Grid>
 </Page>
