@@ -25,8 +25,9 @@ namespace myFeed.ViewModels.Implementations
                 .Get<bool>("LoadImages") ? article.ImageUri : null);
 
             Open = new Command(() => navigationService.Navigate(this));
-            Share = new Command(() => platformService.Share($"{article.Title}\r\n{article.Uri}"));
             CopyLink = new Command(() => platformService.CopyTextToClipboard(article.Uri));
+            Share = new Command(() => platformService.Share(string.Concat(article.Title,
+                Environment.NewLine, article.Uri, Environment.NewLine, "via myFeed for Windows")));
             LaunchUri = new Command(async () =>
             {
                 if (Uri.IsWellFormedUriString(article.Uri, UriKind.Absolute)) 

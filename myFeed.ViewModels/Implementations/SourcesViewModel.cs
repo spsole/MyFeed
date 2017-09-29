@@ -31,6 +31,13 @@ namespace myFeed.ViewModels.Implementations
                         sourcesRepository, translationsService));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
+
+                Items.CollectionChanged += async (s, a) =>
+                {
+                    IsEmpty.Value = Items.Count == 0;
+                    var items = Items.Select(i => i.Category.Value);
+                    await sourcesRepository.RearrangeAsync(items);
+                };
             });
             AddCategory = new Command(async () =>
             {
@@ -44,12 +51,6 @@ namespace myFeed.ViewModels.Implementations
                     this, dialogService, platformService, 
                     sourcesRepository, translationsService));
             });
-            Items.CollectionChanged += async (s, a) =>
-            {
-                IsEmpty.Value = Items.Count == 0;
-                var items = Items.Select(i => i.Category.Value);
-                await sourcesRepository.RearrangeAsync(items);
-            };
         }
 
         /// <summary>

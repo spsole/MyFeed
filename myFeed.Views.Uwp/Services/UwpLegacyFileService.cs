@@ -69,9 +69,10 @@ namespace myFeed.Views.Uwp.Services
             }
         }
 
-        private async Task<bool> ProcessFeedsFromLegacyFormat()
+        private Task<bool> ProcessFeedsFromLegacyFormat() => Task.Run(async () =>
         {
-            var storageItem = await ApplicationData.Current.LocalFolder.TryGetItemAsync("sites");
+            var localFolder = ApplicationData.Current.LocalFolder;
+            var storageItem = await localFolder.TryGetItemAsync("sites");
             if (!(storageItem is IStorageFile storageFile)) return false;
 
             var stream = await storageFile.OpenStreamForReadAsync();
@@ -91,16 +92,16 @@ namespace myFeed.Views.Uwp.Services
                 await _sourcesRepository.InsertAsync(categories.ToArray());
             }
 
-            var files = new[] { "config", "datecutoff", "read.txt", "saved_cache", "sites" };
+            var files = new[] {"config", "datecutoff", "read.txt", "saved_cache", "sites"};
             foreach (var name in files)
             {
-                var file = await ApplicationData.Current.LocalFolder.TryGetItemAsync(name);
+                var file = await localFolder.TryGetItemAsync(name);
                 if (file != null) await file.DeleteAsync();
             }
             return true;
-        }
+        });
 
-        private async Task<bool> ProcessArticlesFromLegacyFormat()
+        private Task<bool> ProcessArticlesFromLegacyFormat() => Task.Run(async () =>
         {
             var favoritesFolder = await ApplicationData.Current.LocalFolder.TryGetItemAsync("favorites");
             if (!(favoritesFolder is IStorageFolder storageFolder)) return false;
@@ -134,7 +135,7 @@ namespace myFeed.Views.Uwp.Services
             await _sourcesRepository.RemoveAsync(temporaryCategory);
             await favoritesFolder.DeleteAsync();
             return true;
-        }
+        });
 
         [XmlType("PFeedItem")]
         public sealed class FeedItemModel

@@ -11,8 +11,6 @@ namespace myFeed.Views.Uwp.Notifications
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             var defferal = taskInstance.GetDeferral();
-            var cost = BackgroundWorkCost.CurrentBackgroundWorkCost;
-            if (cost == BackgroundWorkCostValue.High) return;
             using (var scope = Load(new ContainerBuilder()).Build())
             {
                 var processor = scope.Resolve<UwpFeedProcessor>();

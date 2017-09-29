@@ -125,7 +125,8 @@
                                                     </core:EventTriggerBehavior>
                                                 </interactivity:Interaction.Behaviors>
                                                 <ImageBrush.ImageSource>
-                                                    <BitmapImage DecodePixelType="Logical" UriSource="{Binding Image.Value}"/>
+                                                    <BitmapImage DecodePixelType="Logical" UriSource="{Binding Image.Value}"
+                                                        DecodePixelHeight="70" DecodePixelWidth="70"/>
                                                 </ImageBrush.ImageSource>
                                             </ImageBrush>
                                         </Ellipse.Fill>

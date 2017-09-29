@@ -64,34 +64,37 @@ namespace myFeed.Services.Implementations
         /// Github: https://github.com/CodeHollow/FeedReader
         /// </summary>
         /// <param name="e">Uri to obtain.</param>
-        protected virtual async Task<(SourceEntity, IEnumerable<ArticleEntity>)> RetrieveFeedAsync(SourceEntity e)
+        protected virtual Task<(SourceEntity, IEnumerable<ArticleEntity>)> RetrieveFeedAsync(SourceEntity e)
         {
-            try
+            return Task.Run(async () =>
             {
-                var feed = await FeedReader.ReadAsync(e.Uri).ConfigureAwait(false);
-                var articles = 
-                    from feedItem in feed.Items
-                    let content = feedItem.Content
-                    let contents = string.IsNullOrWhiteSpace(content) ? feedItem.Description : content
-                    let publishedDate = feedItem.PublishingDate ?? DateTime.MinValue
-                    let imageUri = _htmlService.ExtractImage(contents)
-                    select new ArticleEntity
-                    {
-                        ImageUri = imageUri,
-                        PublishedDate = publishedDate,
-                        FeedTitle = feed.Title,
-                        Content = contents,
-                        Title = feedItem.Title,
-                        Uri = feedItem.Link,
-                        Read = false,
-                        Fave = false
-                    };
-                return (e, articles);
-            }
-            catch (Exception)
-            {
-                return (e, new List<ArticleEntity>());
-            }
+                try
+                {
+                    var feed = await FeedReader.ReadAsync(e.Uri);
+                    var articles =
+                        from feedItem in feed.Items
+                        let content = feedItem.Content
+                        let contents = string.IsNullOrWhiteSpace(content) ? feedItem.Description : content
+                        let publishedDate = feedItem.PublishingDate ?? DateTime.MinValue
+                        let imageUri = _htmlService.ExtractImage(contents)
+                        select new ArticleEntity
+                        {
+                            ImageUri = imageUri,
+                            PublishedDate = publishedDate,
+                            FeedTitle = feed.Title,
+                            Content = contents,
+                            Title = feedItem.Title,
+                            Uri = feedItem.Link,
+                            Read = false,
+                            Fave = false
+                        };
+                    return (e, articles);
+                }
+                catch (Exception)
+                {
+                    return (e, new List<ArticleEntity>());
+                }
+            });
         }
     }
 }
