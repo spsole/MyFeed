@@ -1,7 +1,6 @@
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using myFeed.Repositories.Abstractions;
 
 namespace myFeed.ViewModels.Implementations
@@ -20,7 +19,7 @@ namespace myFeed.ViewModels.Implementations
             Load = new Command(async () =>
             {
                 IsLoading.Value = true;
-                var articles = await Task.Run(articlesRepository.GetAllAsync);
+                var articles = await articlesRepository.GetAllAsync();
                 Items.Clear();
                 foreach (var article in articles)
                 {

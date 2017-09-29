@@ -15,8 +15,8 @@ namespace myFeed.Repositories.Implementations
                 if (!context.Database.GetAppliedMigrations().Any())
                     context.Database.Migrate();
         }
-        
-        public async Task<string> GetByNameAsync(string name)
+
+        public Task<string> GetByNameAsync(string name) => Task.Run(async () =>
         {
             using (var context = new EntityContext())
             {
@@ -25,9 +25,9 @@ namespace myFeed.Repositories.Implementations
                     .FirstOrDefaultAsync(i => i.Key == name);
                 return entity?.Value;
             }
-        }
+        });
 
-        public async Task SetByNameAsync(string name, string value)
+        public Task SetByNameAsync(string name, string value) => Task.Run(async () =>
         {
             using (var context = new EntityContext())
             {
@@ -37,6 +37,6 @@ namespace myFeed.Repositories.Implementations
                 else set.Add(new ConfigurationEntity {Key = name, Value = value});
                 await context.SaveChangesAsync();
             }
-        }
+        });
     }
 }

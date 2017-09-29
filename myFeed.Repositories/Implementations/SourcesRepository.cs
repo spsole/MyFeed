@@ -16,96 +16,95 @@ namespace myFeed.Repositories.Implementations
                 if (!context.Database.GetAppliedMigrations().Any())
                     context.Database.Migrate();
         }
-        
-        public Task<IOrderedEnumerable<SourceCategoryEntity>> GetAllAsync()
+
+        public Task<IOrderedEnumerable<SourceCategoryEntity>> GetAllAsync() => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
-                var enumerable = context
+                return context
                     .Set<SourceCategoryEntity>()
                     .Include(i => i.Sources)
                     .ThenInclude(i => i.Articles)
                     .AsNoTracking()
                     .ToList()
                     .OrderBy(i => i.Order);
-                return Task.FromResult(enumerable);
             }
-        }
+        });
 
-        public async Task InsertAsync(params SourceCategoryEntity[] entities)
+        public Task InsertAsync(params SourceCategoryEntity[] entities) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 var queryable = context.Set<SourceCategoryEntity>();
                 var max = queryable.Max(i => i.Order);
-                foreach (var entity in entities) 
+                foreach (var entity in entities)
                     entity.Order = ++max;
                 queryable.AddRange(entities);
-                await context.SaveChangesAsync();
+                return context.SaveChangesAsync();
             }
-        }
+        });
 
-        public async Task RemoveAsync(params SourceCategoryEntity[] entities)
+        public Task RemoveAsync(params SourceCategoryEntity[] entities) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 context.AttachRange(entities.AsEnumerable());
                 context.Set<SourceCategoryEntity>().RemoveRange(entities);
-                await context.SaveChangesAsync();
+                return context.SaveChangesAsync();
             }
-        }
+        });
 
-        public async Task RearrangeAsync(IEnumerable<SourceCategoryEntity> categories)
+        public Task RearrangeAsync(IEnumerable<SourceCategoryEntity> categories) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 var categoriesList = categories.ToList();
                 var index = 0;
                 context.AttachRange(categoriesList);
-                foreach (var category in categoriesList) 
+                foreach (var category in categoriesList)
                     category.Order = index++;
-                await context.SaveChangesAsync();
+                return context.SaveChangesAsync();
             }
-        }
+        });
 
-        public async Task RenameAsync(SourceCategoryEntity category, string name)
+        public Task RenameAsync(SourceCategoryEntity category, string name) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 context.Attach(category);
                 category.Title = name;
-                await context.SaveChangesAsync();
+                return context.SaveChangesAsync();
             }
-        }
+        });
 
-        public async Task AddSourceAsync(SourceCategoryEntity category, SourceEntity source) 
+        public Task AddSourceAsync(SourceCategoryEntity category, SourceEntity source) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 context.Attach(category);
                 category.Sources.Add(source);
-                await context.SaveChangesAsync();
+                return context.SaveChangesAsync();
             }
-        }
+        });
 
-        public async Task RemoveSourceAsync(SourceCategoryEntity category, SourceEntity source)
+        public Task RemoveSourceAsync(SourceCategoryEntity category, SourceEntity source) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 context.Attach(category);
                 context.Attach(source);
                 category.Sources.Remove(source);
-                await context.SaveChangesAsync();
+                return context.SaveChangesAsync();
             }
-        }
+        });
 
-        public async Task UpdateAsync(SourceCategoryEntity entity)
+        public Task UpdateAsync(SourceCategoryEntity entity) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 context.Entry(entity).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+                return context.SaveChangesAsync();
             }
-        }
+        });
     }
 }

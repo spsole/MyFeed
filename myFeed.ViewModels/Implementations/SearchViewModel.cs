@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
@@ -27,7 +26,6 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var result in searchResults.Results)
                     Items.Add(new SearchItemViewModel(result, 
                         dialogService, platformService, sourcesRepository));
-                await Task.Delay(500);
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });

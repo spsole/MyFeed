@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -48,7 +47,7 @@ namespace myFeed.ViewModels.Implementations
                     return;
                 SourceUri.Value = string.Empty;
                 var model = new SourceEntity {Uri = sourceUri, Notify = true};
-                await Task.Run(() => sourcesRepository.AddSourceAsync(entity, model));
+                await sourcesRepository.AddSourceAsync(entity, model);
                 Items.Add(new SourcesItemViewModel(model, this,
                     sourcesRepository, platformService));
             });

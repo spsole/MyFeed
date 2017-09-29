@@ -17,63 +17,58 @@ namespace myFeed.Repositories.Implementations
                 if (!context.Database.GetAppliedMigrations().Any())
                     context.Database.Migrate();
         }
-        
-        public Task<IEnumerable<ArticleEntity>> GetAllAsync()
+
+        public Task<IEnumerable<ArticleEntity>> GetAllAsync() => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
-                var enumerable = context
+                return context
                     .Set<ArticleEntity>()
                     .Include(i => i.Source)
                     .ThenInclude(i => i.Category)
                     .AsNoTracking()
                     .ToList()
                     .AsEnumerable();
-                return Task.FromResult(enumerable);
             }
-        }
+        });
 
-        public async Task<ArticleEntity> GetByIdAsync(Guid guid)
+        public Task<ArticleEntity> GetByIdAsync(Guid guid) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
-                var article = await context
-                    .Set<ArticleEntity>()
-                    .FindAsync(guid);
-                return article;
+                return context.Set<ArticleEntity>().FindAsync(guid);
             }
-        }
+        });
 
-        public async Task UpdateAsync(ArticleEntity entity)
+        public Task UpdateAsync(ArticleEntity entity) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 context.Attach(entity);
                 context.Entry(entity).State = EntityState.Modified;
-                await context.SaveChangesAsync();
+                return context.SaveChangesAsync();
             }
-        }
-        
-        public async Task RemoveAsync(params ArticleEntity[] entities)
+        });
+
+        public Task RemoveAsync(params ArticleEntity[] entities) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 context.AttachRange(entities.AsEnumerable());
                 context.Set<ArticleEntity>().RemoveRange(entities);
-                await context.SaveChangesAsync();
+                return context.SaveChangesAsync();
             }
-        }
+        });
 
-        public async Task InsertAsync(SourceEntity source, params ArticleEntity[] entities)
+        public Task InsertAsync(SourceEntity source, params ArticleEntity[] entities) => Task.Run(() =>
         {
             using (var context = new EntityContext())
             {
                 context.Attach(source);
                 context.Attach(source.Category);
-                foreach (var entity in entities)
-                    source.Articles.Add(entity);
-                await context.SaveChangesAsync();
+                foreach (var entity in entities) source.Articles.Add(entity);
+                return context.SaveChangesAsync();
             }
-        }
+        });
     }
 }

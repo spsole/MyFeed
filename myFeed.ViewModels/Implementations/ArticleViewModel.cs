@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -36,12 +35,12 @@ namespace myFeed.ViewModels.Implementations
             MarkRead = new Command(async () =>
             {
                 IsRead.Value = article.Read = !IsRead.Value;
-                await Task.Run(() => articlesRepository.UpdateAsync(article));
+                await articlesRepository.UpdateAsync(article);
             });
             MarkFavorite = new Command(async () =>
             {
                 IsFavorite.Value = article.Fave = !IsFavorite.Value;
-                await Task.Run(() => articlesRepository.UpdateAsync(article));
+                await articlesRepository.UpdateAsync(article);
             });
         }
         
