@@ -58,7 +58,8 @@ module RegistrationsTestsModule =
         |> also Should.resolve<IOpmlService>
         |> also Should.resolve<ISerializationService>
         |> also Should.resolve<IHtmlService>
-        |> also Should.resolve<IFeedService>
+        |> also Should.resolve<IFeedFetchService>
+        |> also Should.resolve<IFeedStoreService>
         |> also Should.resolve<ISettingsService>
         |> dispose
 

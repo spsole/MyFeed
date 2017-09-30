@@ -39,8 +39,14 @@ module Tools =
             return result 
         } |> Async.RunSynchronously
 
-    /// "Tee" applies f to x and continues.
-    let also f x = f x; x  
+    /// "Tee" functions.
+    let inline also f x = f x; x  
+
+    /// First for structs.
+    let fst struct (a, b) = a 
+
+    /// Second for structs.
+    let snd struct (a, b) = b
 
 /// Dependency injection module.
 module Dep =
@@ -104,4 +110,3 @@ module Should =
 
     /// Ensures instance can be resolved from scope.
     let resolve<'a> = Dep.resolve<'a> >> notBeNull
-    

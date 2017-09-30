@@ -41,7 +41,7 @@ module ViewModelsHelpers =
         |> also registerMock<ITranslationsService>
         |> also registerMock<ISearchService>
         |> also registerMock<IArticlesRepository>
-        |> also registerMock<IFeedService>
+        |> also registerMock<IFeedStoreService>
         |> ignore
 
 // Tests for menu ViewModels.
@@ -268,18 +268,17 @@ module FeedViewModelsTests =
                 [ ArticleEntity(Title="Foo");
                   ArticleEntity(Title="Bar") ]
                 |> fun s -> s.OrderBy(fun i -> i.Title) 
-                |> Task.FromResult               
-            let mockService = Mock<IFeedService>()
+            let mockService = Mock<IFeedStoreService>()
             mockService
-                .Setup(fun i -> i.RetrieveFeedsAsync(It.IsAny<IEnumerable<SourceEntity>>()))
-                .Returns(response) |> ignore
+                .Setup(fun i -> i.GetAsync(It.IsAny()))
+                .Returns(struct(null, response) |> Task.FromResult) |> ignore
             mockService.Object     
         
         use scope = 
             ContainerBuilder()
             |> also registerDefaults
             |> also (registerInstanceAs<SourceCategoryEntity> fakeEntity)
-            |> also (registerInstanceAs<IFeedService> fakeFeedService)
+            |> also (registerInstanceAs<IFeedStoreService> fakeFeedService)
             |> also registerAsSelf<FeedCategoryViewModel>
             |> also registerAsSelf<ArticleViewModel>
             |> buildScope

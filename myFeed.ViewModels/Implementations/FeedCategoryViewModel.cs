@@ -10,9 +10,9 @@ namespace myFeed.ViewModels.Implementations
     {
         public FeedCategoryViewModel(
             SourceCategoryEntity entity,
-            IFeedService feedService,
             ISettingsService settingsService,
             IPlatformService platformService,
+            IFeedStoreService feedStoreService,
             INavigationService navigationService,
             IArticlesRepository articlesRepository)
         {
@@ -25,9 +25,9 @@ namespace myFeed.ViewModels.Implementations
             {
                 IsLoading.Value = true;
                 var sources = entity.Sources;
-                var orderedArticles = await feedService.RetrieveFeedsAsync(sources);
+                (var errors, var articles) = await feedStoreService.GetAsync(sources);
                 Items.Clear();
-                foreach (var article in orderedArticles)
+                foreach (var article in articles)
                     Items.Add(new ArticleViewModel(article, settingsService, 
                         platformService, navigationService, articlesRepository));
                 IsEmpty.Value = Items.Count == 0;

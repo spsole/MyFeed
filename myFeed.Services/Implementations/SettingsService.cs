@@ -14,8 +14,8 @@ namespace myFeed.Services.Implementations
         private readonly IDictionary<string, string> _cachedConfiguration;
         
         public SettingsService(
-            IDefaultsService defaultsService,
-            IConfigurationRepository configurationRepository)
+            IConfigurationRepository configurationRepository,
+            IDefaultsService defaultsService)
         {
             _configurationRepository = configurationRepository;
             _cachedConfiguration = new Dictionary<string, string>();

@@ -42,7 +42,7 @@ namespace myFeed.Entities
                 .HasMany(i => i.Sources)
                 .WithOne(i => i.Category)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            
             base.OnModelCreating(modelBuilder);
         }
 

@@ -170,8 +170,9 @@
                                                                 </core:EventTriggerBehavior>
                                                             </interactivity:Interaction.Behaviors>
                                                             <ImageBrush.ImageSource>
-                                                                <BitmapImage DecodePixelType="Logical" UriSource="{Binding Image.Value}"
-                                                                    DecodePixelHeight="70" DecodePixelWidth="70"/>
+                                                                <BitmapImage DecodePixelType="Logical" 
+                                                                    UriSource="{Binding Image.Value}"
+                                                                    DecodePixelHeight="70"/>
                                                             </ImageBrush.ImageSource>
                                                         </ImageBrush>
                                                     </Ellipse.Fill>
@@ -234,6 +235,8 @@
                 </StackPanel>
             </Grid>
             <controls:LoadingScreen Grid.Row="1" Margin="0 48 0 0" IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
+            <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" VerticalAlignment="Top" 
+                Visibility="{Binding IsLoading.Value, Mode=OneWay}" Grid.Row="1" Height="48"/>
         </Grid>
     </Grid>
 </Page>

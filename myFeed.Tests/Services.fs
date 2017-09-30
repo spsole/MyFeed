@@ -111,48 +111,41 @@ module SettingsServiceTests =
         Assert.Equal(1, counter)
 
 // Tests for service responsible for retrieving feeds.
-module FeedServiceTests = 
+module FeedStoreServiceTests = 
 
-    // Mocks feed service using provided repository instance and 
-    let mockService (stored: seq<ArticleEntity>) (resp: SourceEntity * seq<ArticleEntity>) =
-        let storedTask = stored |> Task.FromResult
-        let respTask = resp.ToValueTuple() |> Task.FromResult
+    let mockService (stored: seq<ArticleEntity>) (response: exn * seq<ArticleEntity>) =
+        let fake = response.ToValueTuple()
+        let fetc = Mock<IFeedFetchService>()
+        fetc.Setup(fun x -> x.FetchAsync(It.IsAny()))
+            .Returns(fake |> Task.FromResult) |> ignore
+        let repo = Mock<IArticlesRepository>()
+        repo.Setup(fun x -> x.GetAllAsync())
+            .Returns(stored |> Task.FromResult) |> ignore
 
-        // Mock repository.
-        let mockRepository = Mock<IArticlesRepository>()
-        mockRepository
-            .Setup(fun i -> i.GetAllAsync())
-            .Returns(storedTask) |> ignore  
-
-        // Mock feed service virtual methods.        
-        let mockFeedService = 
-            Mock<FeedService>( 
-                MockBehavior.Loose, // Params order matters!
-                Mock<IHtmlService>().Object :> obj,
-                mockRepository.Object :> obj)
-        mockFeedService.CallBase <- true
-        mockFeedService.Protected()
-            .Setup<Task<struct (SourceEntity * IEnumerable<ArticleEntity>)>>(
-                "RetrieveFeedAsync", ItExpr.IsAny<SourceEntity>())
-            .Returns(respTask) |> ignore          
-        mockFeedService.Object      
+        ContainerBuilder()
+        |> also (registerInstanceAs<IArticlesRepository> repo.Object)
+        |> also (registerInstanceAs<IFeedFetchService> fetc.Object)
+        |> also registerAs<FeedStoreService, IFeedStoreService>
+        |> buildScope
+        |> resolveOnce<IFeedStoreService>
 
     [<Fact>]
     let ``should sort and filter article entities``() =
         let fakeFetchedEntities = 
             [ ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue);
               ArticleEntity(Title="Bar", PublishedDate=DateTime.MaxValue);
-              ArticleEntity(Title="Abc", PublishedDate=DateTime.Now); ] 
+              ArticleEntity(Title="Abc", PublishedDate=DateTime.Now) ] 
 
-        // Create entities linked using both foreign keys: ICollection and reference.
         let fakeSourceEntity = SourceEntity(Uri="http://foo.com")
         let fakeStoredEntities =
-            [ ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue, Source=fakeSourceEntity);
-              ArticleEntity(Title="Kek", PublishedDate=DateTime.Now, Source=fakeSourceEntity)]
+            [| ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue, Source=fakeSourceEntity);
+               ArticleEntity(Title="Kek", PublishedDate=DateTime.Now, Source=fakeSourceEntity) |]
         fakeStoredEntities |> Seq.iter fakeSourceEntity.Articles.Add          
 
-        let service = mockService fakeStoredEntities (fakeSourceEntity, fakeFetchedEntities)
-        let feed = service.RetrieveFeedsAsync([ fakeSourceEntity ]) |> await |> List.ofSeq
+        let service = mockService fakeStoredEntities (null, fakeFetchedEntities)
+        let response = service.GetAsync([| fakeSourceEntity |]) |> await
+        let struct (_, feed) = response 
+        let feed = feed |> List.ofSeq       
 
         Assert.Equal(4, feed.Count())
         Assert.Equal("Bar", feed.[0].Title)
@@ -164,14 +157,14 @@ module FeedServiceTests =
     let ``should filter articles not related to any source``() =
     
         // Create entities linked using both foreign keys: ICollection and reference.
-        let fakeSource = SourceEntity(Uri="http://foo.bar")
+        let fakeSourceEntity = SourceEntity(Uri="http://foo.bar")
         let fakeStoredArticles =
-            [ ArticleEntity(Title="Foo", PublishedDate = DateTime.Now, Source=fakeSource);
+            [ ArticleEntity(Title="Foo", PublishedDate = DateTime.Now, Source=fakeSourceEntity);
               ArticleEntity(Title="Bar", PublishedDate = DateTime.Now) ]
-        fakeSource.Articles.Add fakeStoredArticles.[0]    
+        fakeSourceEntity.Articles.Add fakeStoredArticles.[0]    
 
-        let service = mockService fakeStoredArticles (fakeSource, Seq.empty)     
-        let feed = service.RetrieveFeedsAsync([ fakeSource ]) |> await |> List.ofSeq
+        let service = mockService fakeStoredArticles (null, [])
+        let feed = service.GetAsync([| fakeSourceEntity |]) |> await |> snd |> List.ofSeq
 
         Assert.Equal(1, feed.Count())
         Assert.Equal("Foo", feed.[0].Title)
@@ -183,50 +176,21 @@ module FeedServiceTests =
               ArticleEntity(Title="Jumba") ]
 
         // Create entities linked using both foreign keys: ICollection and reference.
-        let fakeSource = SourceEntity(Uri="http://foo.bar")
+        let fakeSourceEntity = SourceEntity(Uri="http://foo.bar")
         let fakeStoredArticles =
-            [ ArticleEntity(Title="Foo", Source = fakeSource);
-              ArticleEntity(Title="Bar", PublishedDate = DateTime.Now) ]
-        fakeSource.Articles.Add fakeStoredArticles.[0]    
+            [ ArticleEntity(Title="Foo", Source=fakeSourceEntity);
+              ArticleEntity(Title="Bar", PublishedDate=DateTime.Now) ]
+        fakeSourceEntity.Articles.Add fakeStoredArticles.[0]    
 
-        let service = mockService fakeStoredArticles (fakeSource, fakeFetchedArticles)
-        let feed = service.RetrieveFeedsAsync([ fakeSource ]) |> await |> List.ofSeq
+        let service = mockService fakeStoredArticles (null, fakeFetchedArticles)
+        let feed = service.GetAsync([| fakeSourceEntity |]) |> await
+        let struct (a, b) = feed
+        let feed = b |> List.ofSeq
 
         Assert.Equal(3, feed.Count())
         Assert.Equal("FooBar", feed.[0].Title)
         Assert.Equal("Foo", feed.[1].Title)
         Assert.Equal("Jumba", feed.[2].Title)
-
-    [<Fact>]
-    let ``favorite articles should never be removed but not included into feed``() =
-        let fakeStoredArticles =
-            [ ArticleEntity(Title="Foo", Fave=false);
-              ArticleEntity(Title="Bar", Fave=true) ]        
-        
-        let mockRepository = Mock<IArticlesRepository>()
-        mockRepository
-            .Setup(fun i -> i.GetAllAsync())
-            .Returns(fakeStoredArticles :> seq<_> |> Task.FromResult) 
-            |> ignore 
-        mockRepository
-            .Setup(fun i -> i.RemoveAsync(It.IsAny<ArticleEntity[]>()))
-            .Returns(Task.CompletedTask)
-            .Callback<seq<ArticleEntity>>(fun i -> 
-               Assert.Equal(1, Seq.length i)) // Make sure that only one row is deleted.
-            |> ignore        
-
-        let mockFeedService = 
-            Mock<FeedService>( 
-                MockBehavior.Loose, // Params order matters!
-                Mock<IHtmlService>().Object :> obj,
-                mockRepository.Object :> obj)
-
-        let service = mockFeedService.Object
-        let feed = 
-            service.RetrieveFeedsAsync(Seq.empty) 
-            |> await 
-            |> List.ofSeq
-        Assert.Equal(0, feed.Count())
 
 // Tests for html parsing service.
 module AngleSharpHtmlServiceTests =

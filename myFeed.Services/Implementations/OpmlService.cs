@@ -19,10 +19,10 @@ namespace myFeed.Services.Implementations
 
         public OpmlService(
             IDialogService dialogService,
+            ISourcesRepository sourcesRepository,
             IFilePickerService filePickerService,
             ITranslationsService translationsService,
-            ISerializationService serializationService,
-            ISourcesRepository sourcesRepository)
+            ISerializationService serializationService)
         {
             _dialogService = dialogService;
             _filePickerService = filePickerService;

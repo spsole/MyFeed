@@ -14,17 +14,17 @@ namespace myFeed.Views.Uwp.Notifications.Services
     internal sealed class UwpFeedProcessor
     {
         private readonly ISourcesRepository _sourcesRepository;
+        private readonly IFeedStoreService _feedStoreService;
         private readonly ISettingsService _settingsService;
-        private readonly IFeedService _feedService;
 
         public UwpFeedProcessor(
-            IFeedService feedService, 
+            IFeedStoreService feedStoreService, 
             ISourcesRepository sourcesRepository,
             ISettingsService settingsService)
         {
             _sourcesRepository = sourcesRepository;
+            _feedStoreService = feedStoreService;
             _settingsService = settingsService;
-            _feedService = feedService;
         }
 
         public async Task ProcessFeeds()
@@ -32,7 +32,7 @@ namespace myFeed.Views.Uwp.Notifications.Services
             // Fetch feed for all existing sources where user allowed notifications.
             var categories = await _sourcesRepository.GetAllAsync().ConfigureAwait(false);
             var sources = categories.SelectMany(i => i.Sources).Where(i => i.Notify);
-            var feed = await _feedService.RetrieveFeedsAsync(sources).ConfigureAwait(false);
+            var feed = await _feedStoreService.GetAsync(sources).ConfigureAwait(false);
 
             // Get preferences settings.
             var recentFetchDateTime = await _settingsService.Get<string>("LastFetched");
@@ -41,7 +41,7 @@ namespace myFeed.Views.Uwp.Notifications.Services
             var needImages = await _settingsService.Get<bool>("LoadImages");
 
             // Get recent items.
-            var recentItems = feed
+            var recentItems = feed.Item2
                 .Where(i => i.PublishedDate > recentFetch)
                 .OrderByDescending(i => i.PublishedDate)
                 .Take(15).Reverse().ToList();

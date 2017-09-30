@@ -157,7 +157,6 @@
                         <Grid.Transitions>
                             <TransitionCollection>
                                 <EntranceThemeTransition FromHorizontalOffset="20" FromVerticalOffset="0" />
-                                <ContentThemeTransition HorizontalOffset="20" VerticalOffset="0"/>
                             </TransitionCollection>
                         </Grid.Transitions>
                         <Grid.Resources>

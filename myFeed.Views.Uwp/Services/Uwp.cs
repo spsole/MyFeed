@@ -27,12 +27,12 @@ namespace myFeed.Views.Uwp.Services
             return builder;
         }
 
+        public static Uwp Current => (Uwp)Application.Current.Resources["Locator"];
+
         public object Resolve(Type type) => _lifetimeScope.Resolve(type);
 
         public T Resolve<T>() => _lifetimeScope.Resolve<T>();
 
         public void Dispose() => _lifetimeScope?.Dispose();
-
-        public static Uwp Current => (Uwp)Application.Current.Resources["Locator"];
     }
 }
