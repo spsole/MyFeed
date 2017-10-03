@@ -4,7 +4,7 @@ using myFeed.Repositories.Implementations;
 
 namespace myFeed.Repositories
 {
-    public class RepositoriesModule : Module
+    public sealed class RepositoriesModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

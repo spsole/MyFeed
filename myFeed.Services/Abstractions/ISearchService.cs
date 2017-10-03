@@ -11,7 +11,6 @@ namespace myFeed.Services.Abstractions
         /// <summary>
         /// Performs search.
         /// </summary>
-        /// <param name="query">Search query.</param>
         Task<SearchRootEntity> Search(string query);
     }
 }

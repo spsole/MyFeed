@@ -1,7 +1,6 @@
 namespace myFeed.Tests.Models
 
 open Xunit
-
 open System
 open System.Linq
 
@@ -11,67 +10,32 @@ open Microsoft.Extensions.Logging
 open myFeed.Entities
 open myFeed.Entities.Local
 
-open myFeed.Repositories.Abstractions
-
 open myFeed.Tests.Extensions
-open myFeed.Tests.Logging
+open myFeed.Tests.Extensions.EFCoreHelpers
 
-/// Helpers making work with EF contexts easier.
-module ModelHelpers =         
-
-    // Saves changes to hard disk.
-    let save (context: DbContext) = 
-        context.SaveChanges() |> ignore
-
-    // Counts elements in DbSet.
-    let count<'D when 'D: not struct> (context: DbContext) =
-        context.Set<'D>().CountAsync() |> await
-
-    // Clears given DbSet.
-    let clear<'D when 'D: not struct> (context: DbContext) =
-        let set = context.Set<'D>()
-        set |> set.RemoveRange
-        save context |> ignore
-
-    // Migrates database if it's not migrated.
-    let migrate (context: DbContext) =
-        if (not <| context.Database.GetAppliedMigrations().Any()) then
-            context.Database.MigrateAsync() |> awaitTask   
-
-    // Builds context using LoggerFactory.
-    let buildLoggableContext() =
-        let factory = new LoggerFactory()
-        factory.AddProvider(new XUnitLoggerProvider())
-        new EntityContext(factory) |> also migrate 
-
-/// Tests for source categories and sources tables 
-/// in Entityframework Core database.
-module SourcesTableTests = 
-    open ModelHelpers
-
-    let populate (context: DbContext) = 
+/// Tests fixture for sources entities.
+type SourcesTableFixture() = 
+    let loggableContext = buildLoggableContext()
+    let sampleDataset = 
         [ SourceCategoryEntity(Title="Foo", 
             Sources=([| SourceEntity(Uri="foo", Notify=true);
                         SourceEntity(Uri="bar", Notify=false) |]));
           SourceCategoryEntity(Title="Bar", 
             Sources=([| SourceEntity(Uri="foobar", Notify=false) |])) ]
-        |> context.Set<SourceCategoryEntity>().AddRange
-        save context
 
-    [<Fact>]
-    let ``should populate table with items``() =
-        buildLoggableContext()
+    [<Fact>] 
+    member x.``should populate table with items``() =
+        loggableContext
         |> also (count<SourceCategoryEntity> >> Should.equal 0)
-        |> also populate
+        |> also (populate sampleDataset)
         |> also (count<SourceCategoryEntity> >> Should.equal 2)
-        |> also clear<SourceCategoryEntity>
-        |> dispose
+        |> clear<SourceCategoryEntity>
         
     [<Fact>]
-    let ``should be able to select items from table``() =
-        buildLoggableContext()
+    member x.``should be able to select items from table``() =
+        loggableContext
         |> also (count<SourceCategoryEntity> >> Should.equal 0)
-        |> also populate
+        |> also (populate sampleDataset)
         |> also (fun context ->
             context.Set<SourceCategoryEntity>()
                 .FirstAsync(fun x -> x.Title = "Foo")
@@ -80,14 +44,13 @@ module SourcesTableTests =
             |> Seq.where (fun x -> x.Uri.Length = 3)
             |> Seq.length
             |> Should.equal 2)
-        |> also clear<SourceCategoryEntity>
-        |> dispose         
+        |> clear<SourceCategoryEntity>
 
     [<Fact>]
-    let ``should be able to select items from multiple tables``() =
-        buildLoggableContext()
+    member x.``should be able to select items from multiple tables``() =
+        loggableContext
         |> also (count<SourceCategoryEntity> >> Should.equal 0)
-        |> also populate 
+        |> also (populate sampleDataset) 
         |> also (fun context -> 
             context.Set<SourceCategoryEntity>()
                 .Include(fun x -> x.Sources)
@@ -95,112 +58,95 @@ module SourcesTableTests =
             |> Seq.collect (fun x -> x.Sources)
             |> Seq.length
             |> Should.equal 3)
-        |> also clear<SourceCategoryEntity>
-        |> dispose        
+        |> clear<SourceCategoryEntity>
 
-/// CRUD tests for configuration entities tables 
-/// in Entityframework local database.
-module ConfigurationTableTests =
-    open ModelHelpers
-
-    let populate (context: DbContext) =
-        ConfigurationEntity(Key="Foo", Value="Bar")
-        |> context.Set<ConfigurationEntity>().Add 
-        |> ignore; save context
+/// Tests fixture for configuration entities.
+type ConfigurationTableFixture() =
+    let loggableContext = buildLoggableContext()
+    let sampleDataset = [ ConfigurationEntity(Key="Foo", Value="Bar") ]
 
     [<Fact>]
-    let ``should be able to insert and remove items``() =
-        buildLoggableContext()
+    member x.``should be able to insert and remove items``() =
+        loggableContext
         |> also (count<ConfigurationEntity> >> Should.equal 0)
-        |> also populate
+        |> also (populate sampleDataset)
         |> also (count<ConfigurationEntity> >> Should.equal 1)
-        |> also clear<ConfigurationEntity>
-        |> dispose            
+        |> clear<ConfigurationEntity>
 
     [<Fact>]
-    let ``should select item by it's key``() =
-        buildLoggableContext()
+    member x.``should select item by it's key``() =
+        loggableContext
         |> also (count<ConfigurationEntity> >> Should.equal 0)
-        |> also populate
+        |> also (populate sampleDataset)
         |> also (fun context -> 
             context.Set<ConfigurationEntity>()
                 .FirstAsync(fun i -> i.Key = "Foo")
             |> await
             |> fun entity -> entity.Value
             |> Should.equal "Bar")
-        |> also clear<ConfigurationEntity>
-        |> dispose
+        |> clear<ConfigurationEntity>
 
-/// CRUD tests for articles table in 
-/// EntityFramework Core database table.
-module ArticlesTableTests =
-    open ModelHelpers
-
-    let populate (context: DbContext) =
+/// Tests fixture for article entities.
+type ArticlesTableFixture() =
+    let loggableContext = buildLoggableContext()
+    let sampleDataset = 
         [ ArticleEntity(Content="Foo", FeedTitle="Bar");
           ArticleEntity(Content="Foo", FeedTitle="Foo");
           ArticleEntity(Content="Bar", FeedTitle="Foobar") ]
-        |> context.Set<ArticleEntity>().AddRange 
-        save context
 
     [<Fact>]
-    let ``should be able to insert items``() =
-        buildLoggableContext()
+    member x.``should be able to insert items``() =
+        loggableContext
         |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also populate
+        |> also (populate sampleDataset)
         |> also (count<ArticleEntity> >> Should.equal 3)
-        |> also clear<ArticleEntity>
-        |> dispose
+        |> clear<ArticleEntity>
 
     [<Fact>]
-    let ``should find item in database``() =
-        buildLoggableContext()
+    member x.``should find item in database``() =
+        loggableContext
         |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also populate
+        |> also (populate sampleDataset)
         |> also (fun context -> 
             context.Set<ArticleEntity>()
                 .FirstAsync(fun x -> x.Content = "Bar")
             |> await
             |> fun found -> found.FeedTitle
             |> Should.equal "Foobar")
-        |> also clear<ArticleEntity>
-        |> dispose        
+        |> clear<ArticleEntity>
 
     [<Fact>]
-    let ``should select nessesary items from database``() =
-        buildLoggableContext()
+    member x.``should select nessesary items from database``() =
+        loggableContext
         |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also populate
+        |> also (populate sampleDataset)
         |> also (fun context -> 
             context.Set<ArticleEntity>()
             |> Seq.where (fun x -> x.Content = "Foo")
             |> Seq.length
             |> Should.equal 2)
-        |> also clear<ArticleEntity>
-        |> dispose        
+        |> clear<ArticleEntity>
 
     [<Fact>]
-    let ``should return all items satisfying condition``() =
-        buildLoggableContext()
+    member x.``should return all items satisfying condition``() =
+        loggableContext
         |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also populate
+        |> also (populate sampleDataset)
         |> also (fun context -> 
             context.Set<ArticleEntity>()
                 .AllAsync(fun x -> x.Content.Length = 3)
             |> await
             |> Should.equal true)
-        |> also clear<ArticleEntity>       
-        |> dispose
+        |> clear<ArticleEntity>       
 
     [<Fact>]
-    let ``should determine if table is empty``() =
-        buildLoggableContext()
+    member x.``should determine if table is empty``() =
+        loggableContext
         |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also populate
+        |> also (populate sampleDataset)
         |> also (fun context -> 
             context.Set<ArticleEntity>().AnyAsync()
             |> await
             |> Should.equal true)
-        |> also clear<ArticleEntity>
-        |> dispose
+        |> clear<ArticleEntity>
         

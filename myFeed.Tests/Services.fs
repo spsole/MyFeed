@@ -9,9 +9,7 @@ open System.Linq
 
 open Xunit
 open Autofac
-
-open Moq
-open Moq.Protected
+open NSubstitute
 
 open myFeed.Tests.Extensions
 open myFeed.Tests.Extensions.Dep
@@ -28,403 +26,288 @@ open myFeed.Entities.Local
 
 // Tests for default settings service which is responsible
 // for settings caching and setting defaults if not set.
-module SettingsServiceTests =
-
-    let get<'a when 'a :> IConvertible> (service: ISettingsService) = 
-        service.Get<'a> >> await
-
-    let createService(): ISettingsService =
-        ContainerBuilder()
-        |> also registerMock<IConfigurationRepository>
-        |> also registerMock<IDefaultsService>
-        |> also registerAs<SettingsService, ISettingsService>
-        |> buildScope
-        |> resolveOnce<ISettingsService>
+type SettingsServiceFixture() =
+    let settingsService = SettingsService(Substitute.For<_>(), Substitute.For<_>())
 
     [<Fact>]
-    let ``should be able to resolve strings``() = 
-        let service = createService()
-        service.Set<string>("FooStr", "Bar") |> awaitTask
-        Assert.Equal("Bar", get<string> service "FooStr")
+    member x.``should be able to resolve strings``() = 
+        settingsService.Set<string>("FooStr", "Bar").Wait()
+        settingsService.Get<string>("FooStr").Result
+        |> Should.equal "Bar" 
 
     [<Fact>]
-    let ``should be able to resolve booleans``() =
-        let service = createService()
-        service.Set<bool>("FooBool", true) |> awaitTask
-        Assert.Equal(true, get<bool> service "FooBool")
+    member x.``should be able to resolve booleans``() =
+        settingsService.Set<bool>("FooBool", true).Wait()
+        settingsService.Get<bool>("FooBool").Result
+        |> Should.equal true
 
     [<Fact>]
-    let ``should be able to resolve ints``() =
-        let service = createService()
-        service.Set<int>("FooInt", 42) |> awaitTask
-        Assert.Equal(42, get<int> service "FooInt") 
+    member x.``should be able to resolve ints``() =
+        settingsService.Set<int>("FooInt", 42).Wait()
+        settingsService.Get<int>("FooInt").Result
+        |> Should.equal 42
 
     [<Fact>]
-    let ``should be able to resolve doubles``() =
-        let service = createService()
-        service.Set<double>("Foo", 42.) |> awaitTask
-        Assert.Equal(42., get<double> service "Foo")       
+    member x.``should be able to resolve doubles``() =
+        settingsService.Set<double>("Foo", 42.).Wait()
+        settingsService.Get<double>("Foo").Result
+        |> Should.equal 42.
 
     [<Fact>]
-    let ``should be able to resolve floats``() =
-        let service = createService()
-        service.Set<float>("Foo", 42.) |> awaitTask
-        Assert.Equal(42., get<float> service "Foo")
+    member x.``should be able to resolve floats``() =
+        settingsService.Set<float>("Foo", 42.).Wait()
+        settingsService.Get<float>("Foo").Result
+        |> Should.equal 42.
 
     [<Fact>]
-    let ``should be able to resolve bytes``() =
-        let service = createService()
-        service.Set<byte>("Boo", 1uy) |> awaitTask
-        Assert.Equal(1uy, get<byte> service "Boo")  
+    member x.``should be able to resolve bytes``() =
+        settingsService.Set<byte>("Boo", 1uy).Wait()
+        settingsService.Get<byte>("Boo").Result
+        |> Should.equal 1uy
 
     [<Fact>]
-    let ``should resolve default settings``() =
-        let defaults = dict["Foo", "Bar"] |> Dictionary<string, string>
-        let mock = Mock<IDefaultsService>()
-        mock.SetupGet(fun i -> i.DefaultSettings)
-            .Returns(defaults) |> ignore
-        let service = 
-            ContainerBuilder()
-            |> also registerMock<IConfigurationRepository>
-            |> also (registerInstanceAs<IDefaultsService> mock.Object) 
-            |> also registerAs<SettingsService, ISettingsService>   
-            |> buildScope
-            |> resolveOnce<ISettingsService>   
-        Assert.Equal("Bar", get<string> service "Foo") 
+    member x.``should resolve default settings``() =
+        let defaultsService = Substitute.For<IDefaultsService>()
+        defaultsService.DefaultSettings.Returns(dict["Foo", "Bar"] 
+            |> Dictionary<string, string>) |> ignore
+        let service = SettingsService(Substitute.For<_>(), defaultsService)  
+        service.Get<string>("Foo").Result
 
     [<Fact>]
-    let ``should store recently fetched entities in cache``() =  
+    member x.``should store recently fetched entities in cache``() =  
         let mutable counter = 0
-        let mock = Mock<IConfigurationRepository>()
-        mock.Setup(fun i -> i.GetByNameAsync(It.IsAny()))
-            .Returns("Foo" |> Task.FromResult) 
-            .Callback(fun () -> counter <- counter + 1) |> ignore
-        let service = 
-            ContainerBuilder()
-            |> also registerMock<IDefaultsService>
-            |> also (registerInstanceAs<IConfigurationRepository> mock.Object)  
-            |> also registerAs<SettingsService, ISettingsService>   
-            |> buildScope
-            |> resolveOnce<ISettingsService> 
-        Assert.Equal("Foo", get<string> service "Any")       
-        Assert.Equal("Foo", get<string> service "Any")       
-        Assert.Equal(1, counter)
+        let configurationRepository = Substitute.For<IConfigurationRepository>()
+        configurationRepository
+            .GetByNameAsync(Arg.Any())
+            .Returns(Task.FromResult "Foo")
+            .AndDoes(fun _ -> counter <- counter + 1) |> ignore
+        let service = SettingsService(configurationRepository, Substitute.For<_>())
+        Should.equal "Foo" (service.Get<string>("Any").Result)
+        Should.equal "Foo" (service.Get<string>("Any").Result)
+        Should.equal 1 counter
 
 // Tests for service responsible for retrieving feeds.
-module FeedStoreServiceTests = 
+type FeedStoreServiceFixture() = 
+    let createService (stored: seq<_>) (response: seq<_>) =
+        let fetchService = Substitute.For<IFeedFetchService>()
+        fetchService.FetchAsync(Arg.Any()).Returns(Task.FromResult struct(null, response)) |> ignore
 
-    let mockService (stored: seq<ArticleEntity>) (response: exn * seq<ArticleEntity>) =
-        let fake = response.ToValueTuple()
-        let fetc = Mock<IFeedFetchService>()
-        fetc.Setup(fun x -> x.FetchAsync(It.IsAny()))
-            .Returns(fake |> Task.FromResult) |> ignore
-        let repo = Mock<IArticlesRepository>()
-        repo.Setup(fun x -> x.GetAllAsync())
-            .Returns(stored |> Task.FromResult) |> ignore
+        let articlesRepository = Substitute.For<IArticlesRepository>()
+        articlesRepository.InsertAsync(Arg.Any()).Returns(Task.CompletedTask) |> ignore
+        articlesRepository.GetAllAsync().Returns(Task.FromResult stored) |> ignore
 
-        ContainerBuilder()
-        |> also (registerInstanceAs<IArticlesRepository> repo.Object)
-        |> also (registerInstanceAs<IFeedFetchService> fetc.Object)
-        |> also registerAs<FeedStoreService, IFeedStoreService>
-        |> buildScope
-        |> resolveOnce<IFeedStoreService>
+        FeedStoreService(articlesRepository, fetchService)
 
     [<Fact>]
-    let ``should sort and filter article entities``() =
+    member x.``should sort and filter article entities``() =
+        let fakeSourceEntity = SourceEntity(Uri="http://foo.com")
+        let fakeStoredArticles =
+            [| ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue, Source=fakeSourceEntity);
+               ArticleEntity(Title="Kek", PublishedDate=DateTime.Now, Source=fakeSourceEntity) |]
+            |> also (Seq.iter fakeSourceEntity.Articles.Add)           
+
         let fakeFetchedEntities = 
             [ ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue);
               ArticleEntity(Title="Bar", PublishedDate=DateTime.MaxValue);
-              ArticleEntity(Title="Abc", PublishedDate=DateTime.Now) ] 
+              ArticleEntity(Title="Abc", PublishedDate=DateTime.Now-TimeSpan.FromDays(1.)) ] 
 
-        let fakeSourceEntity = SourceEntity(Uri="http://foo.com")
-        let fakeStoredEntities =
-            [| ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue, Source=fakeSourceEntity);
-               ArticleEntity(Title="Kek", PublishedDate=DateTime.Now, Source=fakeSourceEntity) |]
-        fakeStoredEntities |> Seq.iter fakeSourceEntity.Articles.Add          
+        let service = createService fakeStoredArticles fakeFetchedEntities
+        let feed = (List.ofSeq << snd) <| service.GetAsync([| fakeSourceEntity |]).Result
 
-        let service = mockService fakeStoredEntities (null, fakeFetchedEntities)
-        let response = service.GetAsync([| fakeSourceEntity |]) |> await
-        let struct (_, feed) = response 
-        let feed = feed |> List.ofSeq       
-
-        Assert.Equal(4, feed.Count())
-        Assert.Equal("Bar", feed.[0].Title)
-        Assert.Equal("Kek", feed.[1].Title)
-        Assert.Equal("Abc", feed.[2].Title)
-        Assert.Equal("Foo", feed.[3].Title)
+        Should.equal 4 (feed.Count())
+        Should.equal "Bar" feed.[0].Title
+        Should.equal "Kek" feed.[1].Title
+        Should.equal "Abc" feed.[2].Title
+        Should.equal "Foo" feed.[3].Title
 
     [<Fact>]
-    let ``should filter articles not related to any source``() =
-    
-        // Create entities linked using both foreign keys: ICollection and reference.
+    member x.``should filter articles not related to any source``() =
         let fakeSourceEntity = SourceEntity(Uri="http://foo.bar")
         let fakeStoredArticles =
-            [ ArticleEntity(Title="Foo", PublishedDate = DateTime.Now, Source=fakeSourceEntity);
-              ArticleEntity(Title="Bar", PublishedDate = DateTime.Now) ]
-        fakeSourceEntity.Articles.Add fakeStoredArticles.[0]    
+            [ ArticleEntity(Title="Foo", PublishedDate=DateTime.Now, Source=fakeSourceEntity);
+              ArticleEntity(Title="Bar", PublishedDate=DateTime.Now) ]
+        fakeSourceEntity.Articles.Add fakeStoredArticles.[0]                 
 
-        let service = mockService fakeStoredArticles (null, [])
-        let feed = service.GetAsync([| fakeSourceEntity |]) |> await |> snd |> List.ofSeq
+        let service = createService fakeStoredArticles []
+        let feed = (List.ofSeq << snd) <| service.GetAsync([| fakeSourceEntity |]).Result
 
-        Assert.Equal(1, feed.Count())
-        Assert.Equal("Foo", feed.[0].Title)
+        Should.equal "Foo" feed.[0].Title
+        Should.equal 1 (feed.Count())
 
     [<Fact>]
-    let ``should fetch new articles and remove not related to any source``() =    
-        let fakeFetchedArticles = 
-            [ ArticleEntity(Title="FooBar", PublishedDate = DateTime.Now);
-              ArticleEntity(Title="Jumba") ]
-
-        // Create entities linked using both foreign keys: ICollection and reference.
+    member x.``should fetch new articles and remove not related to any source``() =
         let fakeSourceEntity = SourceEntity(Uri="http://foo.bar")
         let fakeStoredArticles =
             [ ArticleEntity(Title="Foo", Source=fakeSourceEntity);
               ArticleEntity(Title="Bar", PublishedDate=DateTime.Now) ]
-        fakeSourceEntity.Articles.Add fakeStoredArticles.[0]    
+        fakeSourceEntity.Articles.Add fakeStoredArticles.[0]            
 
-        let service = mockService fakeStoredArticles (null, fakeFetchedArticles)
-        let feed = service.GetAsync([| fakeSourceEntity |]) |> await
-        let struct (a, b) = feed
-        let feed = b |> List.ofSeq
+        let fakeFetchedArticles = 
+            [ ArticleEntity(Title="FooBar", PublishedDate=DateTime.Now);
+              ArticleEntity(Title="Jumba") ]
 
-        Assert.Equal(3, feed.Count())
-        Assert.Equal("FooBar", feed.[0].Title)
-        Assert.Equal("Foo", feed.[1].Title)
-        Assert.Equal("Jumba", feed.[2].Title)
+        let service = createService fakeStoredArticles fakeFetchedArticles
+        let feed = (List.ofSeq << snd) <| service.GetAsync([| fakeSourceEntity |]).Result
 
-// Tests for html parsing service.
-module AngleSharpHtmlServiceTests =
-
-    [<Fact>]
-    let ``should extract first image url from plain text``() =
-        let sample = 
-            """ Foo bar <bla a="42"></bla> hello test
-                <img foo="bar" src="http://example.com" /> """
-        let service = AngleSharpHtmlService()
-        let extractedUrl = service.ExtractImage sample
-        Assert.Equal("http://example.com/", extractedUrl)
-
-    [<Fact>]
-    let ``should return null if there are no images``() =
-        let sample = """No images!"""
-        let service = AngleSharpHtmlService()
-        service.ExtractImage sample
-        |> Assert.Null
+        Should.equal 3 (feed.Count())
+        Should.equal "FooBar" feed.[0].Title
+        Should.equal "Jumba" feed.[2].Title
+        Should.equal "Foo" feed.[1].Title
 
 // Tests for opml service.
-module OpmlServiceTests =
-
-    let registerOpmlDefaults (builder: ContainerBuilder) =
-        builder 
-        |> also registerMock<IPlatformService>
-        |> also registerMock<ITranslationsService>
-        |> also registerMock<ISourcesRepository>
-        |> also registerMock<ISerializationService>
-        |> also registerMock<IDialogService>
-        |> also registerMock<IFilePickerService>
-        |> ignore
+type OpmlServiceFixture() =
 
     [<Fact>]
-    let ``should create instance of opml service``() =
-        ContainerBuilder()
-        |> also registerOpmlDefaults
-        |> also registerAs<OpmlService, IOpmlService>
-        |> buildScope
-        |> also Should.resolve<IOpmlService>
-        |> dispose
-
-    [<Fact>]
-    let ``should be able to export opml feeds``() =
+    member x.``should be able to export opml feeds``() =
         let fakeResponse = 
-            let fakeSourceEntities = 
-                [ SourceEntity(Uri="http://example.com/rss") ]
-                |> collection
-            [ SourceCategoryEntity(Title="Foo", Sources=([] |> collection));
-              SourceCategoryEntity(Title="Bar", Sources=fakeSourceEntities) ]
-            |> fun ls -> ls.OrderBy(fun i -> i.Title)
+            [ SourceCategoryEntity(Title="Foo"); SourceCategoryEntity(Title="Bar", 
+                Sources=[| SourceEntity(Uri="http://example.com/rss") |]) ]
+            |> fun sequence -> sequence.OrderBy(fun i -> i.Title)
             |> Task.FromResult
 
-        let mockRepository = Mock<ISourcesRepository>()
-        mockRepository
-            .Setup(fun i -> i.GetAllAsync())
-            .Returns(fakeResponse) |> ignore
+        let sourcesRepository = Substitute.For<ISourcesRepository>()
+        sourcesRepository.GetAllAsync().Returns(fakeResponse) |> ignore
+        let filePickerService = Substitute.For<IFilePickerService>()
+        filePickerService.PickFileForWriteAsync().Returns(new MemoryStream() :> Stream |> Task.FromResult) |> ignore
+        let serializationService = Substitute.For<ISerializationService>()
 
-        let mockPicker = Mock<IFilePickerService>()
-        mockPicker
-            .Setup(fun i -> i.PickFileForWriteAsync())
-            .Returns(new MemoryStream() :> Stream |> Task.FromResult) |> ignore                 
+        let service = 
+            OpmlService(
+                Substitute.For<_>(),
+                sourcesRepository,
+                filePickerService,
+                Substitute.For<_>(),
+                serializationService)
+        service.ExportOpmlFeeds().Wait()
 
-        let mockSerializer = Mock<ISerializationService>()
-        mockSerializer
-            .Setup(fun i -> i.Serialize<Opml>(It.IsAny<Opml>(), It.IsAny<Stream>()))
-            .Callback<Opml, Stream>(fun o s -> 
-                Assert.NotNull(o)
-                Assert.Equal(2, o.Body.Count)
-                Assert.Equal("Bar", o.Body.[0].Title)
-                Assert.Equal("Foo", o.Body.[1].Title)
-                Assert.Equal(1, o.Body.[0].ChildOutlines.Count)
-                Assert.Equal("example.com", o.Body.[0].ChildOutlines.[0].Title)
-                Assert.Equal("http://example.com", o.Body.[0].ChildOutlines.[0].HtmlUrl)
-                Assert.Equal("http://example.com/rss", o.Body.[0].ChildOutlines.[0].XmlUrl)
-            ) |> ignore
-
-        use scope =
-            ContainerBuilder()
-            |> also registerOpmlDefaults
-            |> also registerAsSelf<OpmlService>
-            |> also (registerInstanceAs<ISourcesRepository> mockRepository.Object)
-            |> also (registerInstanceAs<ISerializationService> mockSerializer.Object)
-            |> also (registerInstanceAs<IFilePickerService> mockPicker.Object)
-            |> buildScope
-
-        let service = resolve<OpmlService> scope
-        awaitTask <| service.ExportOpmlFeeds()
+        let opml = serializationService.ReceivedCalls().First().GetArguments().[0] :?> Opml
+        Should.equal 2 opml.Body.Count
+        Should.equal "Bar" opml.Body.[0].Title
+        Should.equal "Foo" opml.Body.[1].Title
+        Should.equal 1 opml.Body.[0].ChildOutlines.Count
+        Should.equal "example.com" opml.Body.[0].ChildOutlines.[0].Title
+        Should.equal "http://example.com" opml.Body.[0].ChildOutlines.[0].HtmlUrl
+        Should.equal "http://example.com/rss" opml.Body.[0].ChildOutlines.[0].XmlUrl
 
     [<Fact>]
-    let ``should be able to import opml feeds``() =    
+    member x.``should be able to import opml feeds``() =    
         let outlines = 
             [ Outline(XmlUrl="http://foo.com");
-              Outline(XmlUrl="https://bar.com") ]
-            |> collection              
+              Outline(XmlUrl="https://bar.com") ] |> List<_>
 
-        let mockSerializer = Mock<ISerializationService>()
-        mockSerializer
-            .Setup(fun i -> i.Deserialize<Opml>(It.IsAny<Stream>()))
-            .Returns(Opml(Body=outlines))
-            |> ignore
+        let serializationService = Substitute.For<ISerializationService>()
+        serializationService.Deserialize<Opml>(Arg.Any()).Returns(Opml(Body=outlines)) |> ignore
+        let sourcesRepository = Substitute.For<ISourcesRepository>()
+        sourcesRepository.InsertAsync(Arg.Any()).Returns(Task.CompletedTask) |> ignore
 
-        let mockRepository = Mock<ISourcesRepository>()
-        mockRepository
-            .Setup(fun i -> i.InsertAsync(It.IsAny<SourceCategoryEntity[]>()))
-            .Returns(Task.CompletedTask)
-            .Callback<SourceCategoryEntity[]>(fun e -> 
-                let entity = e |> Seq.item 0
-                match entity.Sources.Count with 
-                | 1 -> Assert.Equal("http://foo.com", entity.Sources |> Seq.item 0 |> fun i -> i.Uri)
-                | 2 -> Assert.Equal("https://bar.com", entity.Sources |> Seq.item 1 |> fun i -> i.Uri)
-                | _ -> failwith "Index out of range!"
-            ) |> ignore
-        
-        use scope = 
-            ContainerBuilder()
-            |> also registerOpmlDefaults
-            |> also registerAs<OpmlService, IOpmlService>
-            |> also (registerInstanceAs<ISerializationService> mockSerializer.Object)
-            |> also (registerInstanceAs<ISourcesRepository> mockRepository.Object)
-            |> buildScope
+        let service = 
+            OpmlService(
+                Substitute.For<_>(),
+                sourcesRepository,
+                Substitute.For<_>(),
+                Substitute.For<_>(),
+                serializationService)
+        service.ImportOpmlFeeds().Wait()
 
-        let service = resolve<IOpmlService> scope
-        awaitTask <| service.ImportOpmlFeeds()      
+        let entities = sourcesRepository.ReceivedCalls().First().GetArguments().[0] :?> SourceCategoryEntity[]
+        Should.equal 2 entities.[0].Sources.Count 
+        Should.equal "http://foo.com" (entities.[0].Sources |> Seq.item 0 |> fun i -> i.Uri)
+        Should.equal "https://bar.com" (entities.[0].Sources |> Seq.item 1 |> fun i -> i.Uri)
 
-// Tests for xml serializer.
-module XmlSerializerTests =
+// Tests for html parsing service responsible for images extracting.
+type RegexExtractImageServiceFixture(service: RegexExtractImageService) =
+    interface IClassFixture<RegexExtractImageService>
 
     [<Fact>]
-    let ``should resolve instance of xml serializer``() =
-        ContainerBuilder()
-        |> also registerAs<SerializationService, ISerializationService>
-        |> buildScope
-        |> also Should.resolve<ISerializationService>
-        |> dispose
+    member x.``should extract first image url from plain text``() =
+        "Foo <bla a='42'></bla> \n<img foo='bar' src='http://example.com' />"
+        |> (service.ExtractImage >> Should.equal "http://example.com")        
 
     [<Fact>]
-    let ``should serialize typed objects into xml``() =
-        let serializer = SerializationService()
+    member x.``should return null if there are no images``() =
+        "London is the capital of Great Britain"
+        |> (service.ExtractImage >> Should.equal null)
+
+// Xml file stream serializer test fixture. 
+type XmlSerializerFixture(service: SerializationService) =
+    interface IClassFixture<SerializationService>
+
+    [<Fact>]
+    member x.``should serialize typed objects into xml``() =
         let filename = "sample.xml"
-
-        let instance = Opml()
-        instance.Head <- Head()
-        instance.Head.Title <- "Foo"
-
-        serializer.Serialize<Opml>(instance, File.OpenWrite filename)
-        Assert.Contains("Foo", File.ReadAllText filename)
+        let instance = Opml(Head=Head(Title="Foo"))
+        service.Serialize<Opml>(instance, File.OpenWrite filename)
+        Should.contain "Foo" (File.ReadAllText filename)
         File.Delete filename
 
     [<Fact>]
-    let ``should deserialize typed objects from xml``() =
-        let serializer = SerializationService()
+    member x.``should deserialize typed objects from xml``() =
         let filename = "sample.xml"
-
-        let instance = Opml()
-        instance.Head <- Head()
-        instance.Head.Title <- "Bar"
-
-        serializer.Serialize<Opml>(instance, File.OpenWrite filename)
-        let opml = serializer.Deserialize<Opml>(File.OpenRead filename)
-        Assert.Equal("Bar", opml.Head.Title)
+        let instance = Opml(Head=Head(Title="Bar"))
+        service.Serialize<Opml>(instance, File.OpenWrite filename)
+        let opml = service.Deserialize<Opml>(File.OpenRead filename)
+        Should.equal "Bar" opml.Head.Title
         File.Delete filename
 
 // Tests for feed search engine based on Feedly API.
-module FeedlySearchServiceTests =
+type FeedlySearchServiceFixture(service: FeedlySearchService) =
+    interface IClassFixture<FeedlySearchService>
 
     [<Fact>]
-    let ``should find something on feedly``() =
-        FeedlySearchService().Search("feedly")
-        |> await
-        |> Assert.NotNull
+    member x.``should find something on feedly search engine``() =
+        service.Search("feedly").Result |> Should.notEqual null
 
 // Tests for observable properties!
-module PropertyTests =
+type ObservablePropertyFixture() =
 
     [<Fact>] 
-    let ``property changed event should raise on value change``() =
+    member x.``property changed event should raise on value change``() =
         let property = Property(42)
         let mutable fired = 0
         property.PropertyChanged += fun e -> fired <- fired + 1
         property.Value <- 3
-        Assert.Equal(1, fired)  
+        Should.equal 1 fired 
 
     [<Fact>]
-    let ``property changed event should not fire if value is the same``() =
+    member x.``property changed event should not fire if value is the same``() =
         let property = Property(42)
         let mutable fired = 0
         property.PropertyChanged += fun _ -> fired <- fired + 1
         property.Value <- 42
-        Assert.Equal(0, fired)  
+        Should.equal 0 fired
 
     [<Fact>]
-    let ``property name should be value``() =
+    member x.``property name should be value``() =
         let property = Property(42)
-        property.PropertyChanged += fun e -> Assert.Equal("Value", e.PropertyName)
+        property.PropertyChanged += fun e -> Should.equal "Value" e.PropertyName
         property.Value <- 3    
         
     [<Fact>]
-    let ``should slowly initialize value via fun of task``() =
+    member x.``should slowly initialize value via fun of task``() =
         let property = Property<string>(fun () -> "Foo" |> Task.FromResult)
-        Assert.Equal("Foo", property.Value)
+        Should.equal "Foo" property.Value
         
 // Tests for task-based ICommand implementation.
-module CommandTests =
+type AwaitableCommandTests() =
 
     [<Fact>]
-    let ``should execute passed actions``() =
+    member x.``should execute passed actions``() =
         let mutable fired = 0
-        let command =
-            Func<Task>(fun () -> 
-                fired <- fired + 1
-                Task.CompletedTask)
-            |> Command
-        Assert.Equal(true, command.CanExecute())    
+        let command = Func<Task>(fun () -> fired <- fired + 1; Task.CompletedTask) |> Command
         command.Execute(null)
-        Assert.Equal(true, command.CanExecute()) 
-        Assert.Equal(1, fired)
+        Should.equal true (command.CanExecute()) 
+        Should.equal 1 fired
 
     [<Fact>]
-    let ``should await previous execution``() =
-        let command =
-            Func<Task>(fun () -> Task.Delay(1000))
-            |> Command
-        Assert.Equal(true, command.CanExecute())
+    member x.``should await previous execution``() =
+        let command = Func<Task>(fun () -> Task.Delay(1000)) |> Command
         command.Execute(null)
-        Assert.Equal(false, command.CanExecute())
+        Should.equal false (command.CanExecute())
 
     [<Fact>]
-    let ``should raise state change event``() =
+    member x.``should raise state change event``() =
         let mutable fired = 0
-        let command =
-            Func<Task>(fun () -> Task.CompletedTask)
-            |> Command
-        Assert.Equal(true, command.CanExecute())
+        let command = Func<Task>(fun () -> Task.CompletedTask) |> Command
         command.CanExecuteChanged += fun _ -> fired <- fired + 1
         command.Execute(null)
-        Assert.Equal(2, fired)   
+        Should.equal 2 fired   

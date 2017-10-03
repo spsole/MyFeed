@@ -7,7 +7,7 @@ using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations
 {
-    public class SettingsService : ISettingsService
+    public sealed class SettingsService : ISettingsService
     {
         private readonly IReadOnlyDictionary<string, string> _defaultConfiguration;
         private readonly IConfigurationRepository _configurationRepository;

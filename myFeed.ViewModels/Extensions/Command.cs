@@ -15,13 +15,11 @@ namespace myFeed.ViewModels.Extensions
         /// <summary>
         /// Creates new instance using task lambda expression as a command.
         /// </summary>
-        /// <param name="task">Task to execute.</param>
         public Command(Func<Task> task) => _task = task;
 
         /// <summary>
         /// Creates new instance using action lambda expression as a command.
         /// </summary>
-        /// <param name="action">Task to execute.</param>
         public Command(Action action) => _task = () =>
         {
             action.Invoke();

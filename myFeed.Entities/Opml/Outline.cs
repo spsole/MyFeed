@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace myFeed.Entities.Opml
 {
     [XmlType("outline")]
-    public sealed class Outline
+    public class Outline
     {
         [XmlAttribute("title")]
         public string Title { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using myFeed.Entities.Feedly;
@@ -8,19 +9,24 @@ using Newtonsoft.Json;
 
 namespace myFeed.Services.Implementations
 {
-    public class FeedlySearchService : ISearchService
+    public sealed class FeedlySearchService : ISearchService
     {
-        private static readonly HttpClient Client = new HttpClient();
+        private static readonly Lazy<HttpClient> Client = new Lazy<HttpClient>(() => new HttpClient());
+        private const string QueryUrl = @"http://cloud.feedly.com/v3/search/feeds?count=40&query=:";
 
         public Task<SearchRootEntity> Search(string query) => Task.Run(async () =>
         {
             try
             {
-                var queryUrl = $@"http://cloud.feedly.com/v3/search/feeds?count=40&query=:{query}";
-                using (var response = await Client.GetAsync(queryUrl).ConfigureAwait(false))
+                var requestUrl = string.Concat(QueryUrl, query);
+                var fetch = Client.Value.GetStreamAsync(requestUrl);
+                using (var stream = await fetch.ConfigureAwait(false))
+                using (var streamReader = new StreamReader(stream))
+                using (var jsonReader = new JsonTextReader(streamReader))
                 {
-                    var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    return JsonConvert.DeserializeObject<SearchRootEntity>(responseString);
+                    var serializer = new JsonSerializer();
+                    var response = serializer.Deserialize<SearchRootEntity>(jsonReader);
+                    return response;
                 }
             }
             catch (Exception)

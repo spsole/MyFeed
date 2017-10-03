@@ -15,7 +15,6 @@ namespace myFeed.Services.Abstractions
         /// Retrieves single feed for passed multiple sources. Also 
         /// returns exceptions or an empty sequence if none occured.
         /// </summary>
-        /// <param name="entities">Sources to fetch.</param>
         Task<(IEnumerable<Exception>, 
               IOrderedEnumerable<ArticleEntity>)> GetAsync(
               IEnumerable<SourceEntity> entities);

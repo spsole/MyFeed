@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace myFeed.Repositories.Implementations
 {
-    public class ArticlesRepository : IArticlesRepository
+    public sealed class ArticlesRepository : IArticlesRepository
     {
         public ArticlesRepository()
         {

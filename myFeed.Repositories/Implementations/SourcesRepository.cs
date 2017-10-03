@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace myFeed.Repositories.Implementations
 {
-    public class SourcesRepository : ISourcesRepository
+    public sealed class SourcesRepository : ISourcesRepository
     {
         public SourcesRepository()
         {

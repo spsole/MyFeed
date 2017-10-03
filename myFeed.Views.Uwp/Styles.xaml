@@ -156,7 +156,7 @@
                         BorderBrush="Transparent" BorderThickness="0 0 0 3" Padding="0 0 0 3">
                         <Grid.Transitions>
                             <TransitionCollection>
-                                <EntranceThemeTransition FromHorizontalOffset="20" FromVerticalOffset="0" />
+                                <ContentThemeTransition HorizontalOffset="30" VerticalOffset="0"/>
                             </TransitionCollection>
                         </Grid.Transitions>
                         <Grid.Resources>

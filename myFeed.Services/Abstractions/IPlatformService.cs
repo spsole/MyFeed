@@ -11,19 +11,16 @@ namespace myFeed.Services.Abstractions
         /// <summary>
         /// Shows share UI to share provided string.
         /// </summary>
-        /// <param name="content">Content to share.</param>
         Task Share(string content);
 
         /// <summary>
         /// Launches Uri async.
         /// </summary>
-        /// <param name="uri">Uri to open.</param>
         Task LaunchUri(Uri uri);
 
         /// <summary>
         /// Copies text to clipboard.
         /// </summary>
-        /// <param name="text">Text to copy.</param>
         Task CopyTextToClipboard(string text);
 
         /// <summary>

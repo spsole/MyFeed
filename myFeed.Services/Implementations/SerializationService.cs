@@ -5,7 +5,7 @@ using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations
 {
-    public class SerializationService : ISerializationService
+    public sealed class SerializationService : ISerializationService
     {
         public void Serialize<T>(T instance, Stream stream)
         {

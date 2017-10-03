@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace myFeed.Repositories.Implementations
 {
-    public class ConfigurationRepository : IConfigurationRepository
+    public sealed class ConfigurationRepository : IConfigurationRepository
     {
         public ConfigurationRepository()
         {

@@ -8,7 +8,7 @@ using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations
 {
-    public class FeedStoreService : IFeedStoreService
+    public sealed class FeedStoreService : IFeedStoreService
     {
         private readonly IArticlesRepository _articlesRepository;
         private readonly IFeedFetchService _feedFetchService;

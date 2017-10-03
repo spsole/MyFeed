@@ -9,7 +9,7 @@ using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations
 {
-    public class OpmlService : IOpmlService
+    public sealed class OpmlService : IOpmlService
     {
         private readonly ISerializationService _serializationService;
         private readonly ITranslationsService _translationsService;

@@ -14,7 +14,6 @@ namespace myFeed.Services.Abstractions
         /// Fetches feed using passed uri and returns article entities
         /// built from this feed with an exception if it has occured.
         /// </summary>
-        /// <param name="uri">Uri to fetch.</param>
         Task<(Exception, IEnumerable<ArticleEntity>)> FetchAsync(string uri);
     }
 }

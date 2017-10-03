@@ -8,7 +8,6 @@
         /// <summary>
         /// Resolves given resourse name.
         /// </summary>
-        /// <param name="name">Name to resolve.</param>
         string Resolve(string name);
     }
 }

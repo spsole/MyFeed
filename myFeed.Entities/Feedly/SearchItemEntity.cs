@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace myFeed.Entities.Feedly
 {
-    public sealed class SearchItemEntity
+    public class SearchItemEntity
     {
         [JsonProperty("deleciousTags")]
         public List<string> DeliciousTags { get; set; }

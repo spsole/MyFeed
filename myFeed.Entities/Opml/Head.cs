@@ -3,7 +3,7 @@
 namespace myFeed.Entities.Opml
 {
     [XmlType("head")]
-    public sealed class Head
+    public class Head
     {
         [XmlElement("title")]
         public string Title { get; set; }

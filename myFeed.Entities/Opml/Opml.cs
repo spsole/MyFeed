@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 namespace myFeed.Entities.Opml
 {
     [XmlType("opml")]
-    public sealed class Opml
+    public class Opml
     {
         [XmlElement("head")]
         public Head Head { get; set; }

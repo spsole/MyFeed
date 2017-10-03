@@ -10,7 +10,6 @@ namespace myFeed.Repositories.Abstractions
         /// <summary>
         /// Finds resource with given name in database and returns it.
         /// </summary>
-        /// <param name="name">Resource name.</param>
         Task<string> GetByNameAsync(string name);
 
         /// <summary>
@@ -18,8 +17,6 @@ namespace myFeed.Repositories.Abstractions
         /// otherwise finds existing resource in database and updates it
         /// with newer value.
         /// </summary>
-        /// <param name="name">Resource name.</param>
-        /// <param name="value">Value.</param>
         Task SetByNameAsync(string name, string value);
     }
 }
