@@ -23,9 +23,9 @@ myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architectural pattern. <b>Vie
 
 - <a href="https://docs.microsoft.com/en-us/dotnet/csharp/csharp">C Sharp</a> and <a href="https://docs.microsoft.com/en-us/dotnet/fsharp/">F Sharp</a> programming languages 
 - <a href="https://docs.microsoft.com/en-us/dotnet/standard/net-standard">.NET Standard Library</a> to use code on various platforms 
-- <a href="http://xunit.github.io/">xUnit</a> tests on <a href="https://www.microsoft.com/net/core">.NET Core</a> with <a href="https://github.com/moq/moq4">Moq</a>
+- <a href="http://xunit.github.io/">xUnit</a> tests on <a href="https://www.microsoft.com/net/core">.NET Core</a> with <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a>
 - <a href="https://autofac.org/">Autofac</a> for <a href="https://en.wikipedia.org/wiki/Dependency_injection">Dependency Injection</a>
-- <a href="https://github.com/aspnet/EntityFrameworkCore">Entity Framework Core</a> to work with data
+- <a href="https://github.com/aspnet/EntityFrameworkCore">Entity Framework Core</a> to work with database
 - <a href="http://www.sqlite.org/">SQLite</a> as a database engine
 - <a href="https://github.com/AngleSharp/AngleSharp">AngleSharp</a> to parse html
 - <a href="https://github.com/codehollow/FeedReader">CodeHollow.FeedReader</a> to parse feeds
