@@ -134,14 +134,20 @@
                                     </Ellipse>
                                 </Grid>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0 0 12 0">
-                                    <TextBlock Text="{Binding Feed.Value, Converter={StaticResource StrToUpper}}"
-                                        FontSize="11" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" 
-                                        Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding Feed.Value, Converter={StaticResource StrToUpper}}" 
+                                            FontSize="11" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                            TextTrimming="CharacterEllipsis" FontWeight="SemiBold"/>
+                                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                            Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                            Text="{Binding PublishedDate.Value}" FontSize="11" FontWeight="SemiBold"/>
+                                    </Grid>
                                     <TextBlock Text="{Binding Title.Value}" TextWrapping="Wrap"/>
                                 </StackPanel>
-                                <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top"
-                                    Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" Margin="0 0 12 0"
-                                    Text="{Binding PublishedDate.Value}" FontSize="11" FontWeight="SemiBold"/>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

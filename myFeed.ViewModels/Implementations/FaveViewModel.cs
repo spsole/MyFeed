@@ -8,10 +8,12 @@ namespace myFeed.ViewModels.Implementations
     public sealed class FaveViewModel
     {
         public FaveViewModel(
+            IDialogService dialogService,
             ISettingsService settingsService,
             IPlatformService platformService,
             INavigationService navigationService,
-            IArticlesRepository articlesRepository)
+            IArticlesRepository articlesRepository,
+            ITranslationsService translationsService)
         {
             Items = new ObservableCollection<ArticleViewModel>();
             IsLoading = new Property<bool>(true);
@@ -24,8 +26,8 @@ namespace myFeed.ViewModels.Implementations
                 foreach (var article in articles)
                 {
                     if (!article.Fave) continue;
-                    var viewModel = new ArticleViewModel(article, settingsService, 
-                        platformService, navigationService, articlesRepository);
+                    var viewModel = new ArticleViewModel(article, dialogService, settingsService, 
+                        platformService, navigationService, articlesRepository, translationsService);
                     Items.Add(viewModel);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
                     {

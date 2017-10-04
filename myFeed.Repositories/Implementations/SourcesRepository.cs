@@ -40,7 +40,7 @@ namespace myFeed.Repositories.Implementations
                 foreach (var entity in entities)
                     entity.Order = ++max;
                 queryable.AddRange(entities);
-                return context.SaveChangesAsync();
+                context.SaveChanges();
             }
         });
 
@@ -50,7 +50,7 @@ namespace myFeed.Repositories.Implementations
             {
                 context.AttachRange(entities.AsEnumerable());
                 context.Set<SourceCategoryEntity>().RemoveRange(entities);
-                return context.SaveChangesAsync();
+                context.SaveChanges();
             }
         });
 
@@ -63,7 +63,7 @@ namespace myFeed.Repositories.Implementations
                 context.AttachRange(categoriesList);
                 foreach (var category in categoriesList)
                     category.Order = index++;
-                return context.SaveChangesAsync();
+                context.SaveChanges();
             }
         });
 
@@ -73,7 +73,7 @@ namespace myFeed.Repositories.Implementations
             {
                 context.Attach(category);
                 category.Title = name;
-                return context.SaveChangesAsync();
+                context.SaveChanges();
             }
         });
 
@@ -83,7 +83,7 @@ namespace myFeed.Repositories.Implementations
             {
                 context.Attach(category);
                 category.Sources.Add(source);
-                return context.SaveChangesAsync();
+                context.SaveChanges();
             }
         });
 
@@ -94,7 +94,8 @@ namespace myFeed.Repositories.Implementations
                 context.Attach(category);
                 context.Attach(source);
                 category.Sources.Remove(source);
-                return context.SaveChangesAsync();
+                context.Set<SourceEntity>().Remove(source);
+                context.SaveChanges();
             }
         });
 
@@ -103,7 +104,7 @@ namespace myFeed.Repositories.Implementations
             using (var context = new EntityContext())
             {
                 context.Entry(entity).State = EntityState.Modified;
-                return context.SaveChangesAsync();
+                context.SaveChanges();
             }
         });
     }

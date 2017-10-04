@@ -325,4 +325,7 @@
   <data name="ArticlesMigrateFailure">
     <value>К сожалению, некоторые избранные статьи не удалось сконвертировать в новый формат хранения данных. Причина ошибки: {0}</value>
   </data>
+  <data name="CopyLinkSuccess">
+    <value>Ссылка была успешно скопирована в буфер обмена!</value>
+  </data>
 </root>

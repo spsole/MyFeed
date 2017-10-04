@@ -5,51 +5,30 @@ using System.Threading.Tasks;
 
 namespace myFeed.ViewModels.Extensions
 {
-    /// <summary>
-    /// Observable property that provides an easy way 
-    /// of setting and updating values.
-    /// </summary>
-    public class Property<T> : INotifyPropertyChanged
+    public class Property<TValue> : INotifyPropertyChanged
     {
-        private T _value;
+        private TValue _encapsulatedField;
 
-        /// <summary>
-        /// Initializes a new instance of observable property.
-        /// </summary>
-        public Property() : this(default(T)) {}
+        public Property() : this(default(TValue)) { }
 
-        /// <summary>
-        /// Initializes observable property from value.
-        /// </summary>
-        public Property(T value) => _value = value;
-    
-        /// <summary>
-        /// Initializes observable property from task.
-        /// </summary>
-        public Property(Func<Task<T>> function) => UpdateValue(function);
+        public Property(TValue value) => _encapsulatedField = value;
 
-        /// <summary>
-        /// Asynchroniously updates property value.
-        /// </summary>
-        private async void UpdateValue(Func<Task<T>> function) => Value = await function();
+        public Property(Func<Task<TValue>> function) => UpdateValue(function);
 
-        /// <summary>
-        /// Invoked when property changes.
-        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        /// <summary>
-        /// Value of the ObservableProperty instance.
-        /// </summary>
-        public T Value
+        public TValue Value
         {
-            get => _value;
+            get => _encapsulatedField;
             set
             {
-                if (EqualityComparer<T>.Default.Equals(_value, value)) return;
-                _value = value;
+                if (EqualityComparer<TValue>.Default.Equals(
+                    _encapsulatedField, value)) return;
+                _encapsulatedField = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
             }
         }
+
+        private async void UpdateValue(Func<Task<TValue>> function) => Value = await function();
     }
 }

@@ -90,7 +90,7 @@ type ConfigurationTableFixture() =
 type ArticlesTableFixture() =
     let loggableContext = buildLoggableContext()
     let sampleDataset = 
-        [ ArticleEntity(Content="Foo", FeedTitle="Bar");
+        [ ArticleEntity(Content="Foo", FeedTitle="Bar", Fave=true);
           ArticleEntity(Content="Foo", FeedTitle="Foo");
           ArticleEntity(Content="Bar", FeedTitle="Foobar") ]
 
@@ -149,4 +149,28 @@ type ArticlesTableFixture() =
             |> await
             |> Should.equal true)
         |> clear<ArticleEntity>
+
+    [<Fact>]
+    member x.``should be able to select all using raw sql``() =
+        loggableContext
+        |> also (count<ArticleEntity> >> Should.equal 0)
+        |> also (populate sampleDataset)
+        |> also (fun context ->
+            context.Set<ArticleEntity>()
+               .FromSql<ArticleEntity>("SELECT * FROM Articles")
+            |> Seq.length
+            |> Should.equal 3)
+        |> clear<ArticleEntity>        
         
+    [<Fact>]    
+    member x.``should be able to execute raw actions``() =
+        loggableContext
+        |> also (count<ArticleEntity> >> Should.equal 0)
+        |> also (populate sampleDataset)
+        |> also (fun context ->
+            context.Database.ExecuteSqlCommand(
+                "DELETE FROM Articles WHERE Fave = 0") |> ignore
+            context.Set<ArticleEntity>()
+            |> Seq.length
+            |> Should.equal 1)
+        |> clear<ArticleEntity>  

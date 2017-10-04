@@ -325,4 +325,7 @@
   <data name="ArticlesMigrateFailure">
     <value>Error occured while converting favorite articles. Error message: {0}</value>
   </data>
+  <data name="CopyLinkSuccess">
+    <value>Link was successfully copied!</value>
+  </data>
 </root>

@@ -70,5 +70,19 @@ namespace myFeed.Repositories.Implementations
                 return context.SaveChangesAsync();
             }
         });
+
+        public Task RemoveUnreferencedArticles() => Task.Run(() => 
+        {
+            using (var context = new EntityContext()) 
+            {
+                const string query = @"
+                    DELETE FROM Articles 
+                    WHERE Fave = 0 
+                    AND (SourceId = NULL OR SourceId 
+                        NOT IN (SELECT Id FROM SourceEntities))";
+                context.Database.ExecuteSqlCommand(query);
+                return context.SaveChangesAsync();
+            }
+        });
     }
 }

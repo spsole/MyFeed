@@ -35,7 +35,7 @@ namespace myFeed.Repositories.Implementations
                 var entity = await set.FirstOrDefaultAsync(i => i.Key == name);
                 if (entity != null) entity.Value = value;
                 else set.Add(new ConfigurationEntity {Key = name, Value = value});
-                await context.SaveChangesAsync();
+                context.SaveChanges();
             }
         });
     }

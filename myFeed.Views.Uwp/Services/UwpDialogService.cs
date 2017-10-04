@@ -35,7 +35,7 @@ namespace myFeed.Views.Uwp.Services
             var inputDialog = new ContentDialog
             {
                 Title = title,
-                Margin = new Thickness(0, 12, 0, 0),
+                Padding = new Thickness(0, 12, 0, 0),
                 PrimaryButtonText = resourceLoader.GetString("Ok"),
                 SecondaryButtonText = resourceLoader.GetString("Cancel"),
                 Content = new StackPanel {Children = {contentBox}}
@@ -55,7 +55,7 @@ namespace myFeed.Views.Uwp.Services
             var selectionDialog = new ContentDialog
             {
                 Title = resourceLoader.GetString("AddIntoCategory"),
-                Margin = new Thickness(0, 12, 0, 0),
+                Padding = new Thickness(0, 12, 0, 0),
                 PrimaryButtonText = resourceLoader.GetString("Ok"),
                 SecondaryButtonText = resourceLoader.GetString("Cancel"),
                 Content = selectBox

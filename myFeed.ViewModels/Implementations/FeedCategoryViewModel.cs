@@ -10,11 +10,13 @@ namespace myFeed.ViewModels.Implementations
     {
         public FeedCategoryViewModel(
             SourceCategoryEntity entity,
+            IDialogService dialogService,
             ISettingsService settingsService,
             IPlatformService platformService,
             IFeedStoreService feedStoreService,
             INavigationService navigationService,
-            IArticlesRepository articlesRepository)
+            IArticlesRepository articlesRepository,
+            ITranslationsService translationsService)
         {
             OpenSources = new Command(navigationService.Navigate<SourcesViewModel>);
             Items = new ObservableCollection<ArticleViewModel>();
@@ -28,8 +30,8 @@ namespace myFeed.ViewModels.Implementations
                 (var errors, var articles) = await feedStoreService.GetAsync(sources);
                 Items.Clear();
                 foreach (var article in articles)
-                    Items.Add(new ArticleViewModel(article, settingsService, 
-                        platformService, navigationService, articlesRepository));
+                    Items.Add(new ArticleViewModel(article, dialogService, settingsService, 
+                        platformService, navigationService, articlesRepository, translationsService));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });

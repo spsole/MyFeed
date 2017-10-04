@@ -8,12 +8,14 @@ namespace myFeed.ViewModels.Implementations
     public sealed class FeedViewModel
     {
         public FeedViewModel(
+            IDialogService dialogService,
             ISettingsService settingsService,
             IPlatformService platformService,
             IFeedStoreService feedStoreService,
             INavigationService navigationService,
             ISourcesRepository sourcesRepository,
-            IArticlesRepository articlesRepository)
+            IArticlesRepository articlesRepository,
+            ITranslationsService translationsService)
         {
             OpenSources = new Command(navigationService.Navigate<SourcesViewModel>);
             Items = new ObservableCollection<FeedCategoryViewModel>();
@@ -23,12 +25,13 @@ namespace myFeed.ViewModels.Implementations
             {
                 IsEmpty.Value = false;
                 IsLoading.Value = true;
+                await articlesRepository.RemoveUnreferencedArticles();
                 var sources = await sourcesRepository.GetAllAsync();
                 Items.Clear();
                 foreach (var source in sources)
-                    Items.Add(new FeedCategoryViewModel(source, settingsService, 
+                    Items.Add(new FeedCategoryViewModel(source, dialogService, settingsService, 
                         platformService, feedStoreService, navigationService, 
-                        articlesRepository));
+                        articlesRepository, translationsService));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });

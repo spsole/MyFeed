@@ -10,10 +10,12 @@ namespace myFeed.ViewModels.Implementations
     {
         public ArticleViewModel(
             ArticleEntity article, 
+            IDialogService dialogService,
             ISettingsService settingsService,
             IPlatformService platformService,
             INavigationService navigationService,
-            IArticlesRepository articlesRepository)
+            IArticlesRepository articlesRepository,
+            ITranslationsService translationsService)
         {
             IsRead = new Property<bool>(article.Read);
             Title = new Property<string>(article.Title);
@@ -25,9 +27,15 @@ namespace myFeed.ViewModels.Implementations
                 .Get<bool>("LoadImages") ? article.ImageUri : null);
 
             Open = new Command(() => navigationService.Navigate(this));
-            CopyLink = new Command(() => platformService.CopyTextToClipboard(article.Uri));
             Share = new Command(() => platformService.Share(string.Concat(article.Title,
                 Environment.NewLine, article.Uri, Environment.NewLine, "via myFeed for Windows")));
+            CopyLink = new Command(async () => 
+            {
+                await platformService.CopyTextToClipboard(article.Uri);
+                await dialogService.ShowDialog(
+                    translationsService.Resolve("CopyLinkSuccess"),
+                    translationsService.Resolve("SettingsNotification"));
+            });
             LaunchUri = new Command(async () =>
             {
                 if (Uri.IsWellFormedUriString(article.Uri, UriKind.Absolute)) 

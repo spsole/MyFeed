@@ -190,7 +190,9 @@ type FeedViewModelsTests() =
                 sourceCategoryEntity,
                 Substitute.For<_>(),
                 Substitute.For<_>(),
+                Substitute.For<_>(),
                 feedStoreService,
+                Substitute.For<_>(),
                 Substitute.For<_>(),
                 Substitute.For<_>())        
 
@@ -223,7 +225,9 @@ type FeedViewModelsTests() =
                 Substitute.For<_>(),
                 Substitute.For<_>(),
                 Substitute.For<_>(),
+                Substitute.For<_>(),
                 sourcesRepository,
+                Substitute.For<_>(),
                 Substitute.For<_>())
 
         feedViewModel.Load.CanExecuteChanged += fun _ ->
@@ -250,7 +254,9 @@ type FaveViewModelFixture() =
                 Substitute.For<_>(),
                 Substitute.For<_>(),
                 Substitute.For<_>(),
-                articlesRepository)
+                Substitute.For<_>(),
+                articlesRepository,
+                Substitute.For<_>())
 
         faveViewModel.Load.CanExecuteChanged += fun _ ->
             if (faveViewModel.Load.CanExecute()) then
@@ -271,6 +277,8 @@ type FaveViewModelFixture() =
                 Substitute.For<_>(),
                 Substitute.For<_>(),
                 Substitute.For<_>(),
+                Substitute.For<_>(),
+                Substitute.For<_>(),
                 Substitute.For<_>())
 
         articleViewModel.MarkRead.Execute()  
@@ -285,6 +293,8 @@ type FaveViewModelFixture() =
         let articleViewModel = 
             ArticleViewModel(
                 articleEntity,
+                Substitute.For<_>(),
+                Substitute.For<_>(),
                 Substitute.For<_>(),
                 Substitute.For<_>(),
                 Substitute.For<_>(),

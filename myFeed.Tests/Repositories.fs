@@ -186,4 +186,22 @@ type ArticlesRepositoryFixture(repository: ArticlesRepository) =
     member x.``should return null if article with id does not exist``() =   
         repository.GetByIdAsync(Guid()).Result 
         |> Should.equal null 
-        
+
+    [<Fact>]
+    member x.``should remove unreferenced articles from the database``() =
+        new EntityContext()
+        |> also (populate 
+            [ SourceEntity(Articles=
+                collection [| ArticleEntity(Title="Bar");
+                    ArticleEntity(Title="Foo", Fave=true);
+                    ArticleEntity(Title="Zoo") |]) ])
+        |> also save
+        |> also clear<SourceEntity>
+        |> dispose
+
+        repository.GetAllAsync().Result |> (Seq.length >> Should.equal 3)
+        repository.RemoveUnreferencedArticles().Wait() 
+        repository.GetAllAsync().Result |> (Seq.length >> Should.equal 1)
+
+        purge<ArticleEntity>()
+        purge<SourceEntity>()

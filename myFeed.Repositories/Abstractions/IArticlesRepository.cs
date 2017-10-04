@@ -11,14 +11,14 @@ namespace myFeed.Repositories.Abstractions
     public interface IArticlesRepository
     {
         /// <summary>
-        /// Returns all articles with all referenced tables.
-        /// </summary>
-        Task<IEnumerable<ArticleEntity>> GetAllAsync();
-
-        /// <summary>
         /// Returns article with given id froim database.
         /// </summary>
         Task<ArticleEntity> GetByIdAsync(Guid guid);
+
+        /// <summary>
+        /// Returns all articles with all referenced tables.
+        /// </summary>
+        Task<IEnumerable<ArticleEntity>> GetAllAsync();
         
         /// <summary>
         /// Inserts item into database table.
@@ -34,5 +34,10 @@ namespace myFeed.Repositories.Abstractions
         /// Updates article entity.
         /// </summary>
         Task UpdateAsync(ArticleEntity entity);
+        
+        /// <summary>
+        /// Removes all articles satisfying predicate.
+        /// </summary>
+        Task RemoveUnreferencedArticles();
     }
 }

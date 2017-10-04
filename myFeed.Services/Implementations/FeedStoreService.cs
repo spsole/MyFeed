@@ -25,11 +25,6 @@ namespace myFeed.Services.Implementations
             IOrderedEnumerable<ArticleEntity>)> GetAsync(
             IEnumerable<SourceEntity> entities) => Task.Run(async () =>
         {
-            // Remove articles not referenced by any source and not starred.
-            var articles = await _articlesRepository.GetAllAsync();
-            var outdated = articles.Where(i => i.Source == null && !i.Fave);
-            await _articlesRepository.RemoveAsync(outdated.ToArray());
-
             // Read items into lookup using title and date as keys.
             var sourcesList = entities.ToList();
             var existingEntities = sourcesList

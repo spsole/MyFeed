@@ -11,7 +11,7 @@ namespace myFeed.Views.Uwp.Services
             {"LoadImages", "true"},
             {"NotifyPeriod", "14"},
             {"Theme", "default"},
-            {"FontSize", "14"}
+            {"FontSize", "17"}
         };
     }
 }

@@ -4,41 +4,23 @@ using System.Windows.Input;
 
 namespace myFeed.ViewModels.Extensions
 {
-    /// <summary>
-    /// Command that dispatches task-actions.
-    /// </summary>
     public class Command : ICommand
     {
         private readonly Func<Task> _task;
         private bool _canExecute = true;
 
-        /// <summary>
-        /// Creates new instance using task lambda expression as a command.
-        /// </summary>
         public Command(Func<Task> task) => _task = task;
 
-        /// <summary>
-        /// Creates new instance using action lambda expression as a command.
-        /// </summary>
         public Command(Action action) => _task = () =>
         {
             action.Invoke();
             return Task.CompletedTask;
         };
 
-        /// <summary>
-        /// True if queue is unlocked and command can be executed.
-        /// </summary>
         public bool CanExecute(object parameter) => _canExecute;
 
-        /// <summary>
-        /// Invoked when command state changes.
-        /// </summary>
         public event EventHandler CanExecuteChanged;
 
-        /// <summary>
-        /// Execute a command.
-        /// </summary>
         public async void Execute(object parameter)
         {
             UpdateCanExecute(false);

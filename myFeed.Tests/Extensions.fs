@@ -156,7 +156,7 @@ module EFCoreHelpers =
                             | :? DbCommandLogData as cmd ->
                                 cmd.CommandText.Replace("\r\n", " ") 
                                 |> sprintf "[myFeed.Tests] %s" 
-                                |> Console.WriteLine
+                                |> (Console.WriteLine >> also System.Diagnostics.Debug.WriteLine)
                             | _ -> ()
                         | _ -> () }
         let provider = { 
