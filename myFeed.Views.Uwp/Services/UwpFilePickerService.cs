@@ -14,6 +14,7 @@ namespace myFeed.Views.Uwp.Services
             var picker = new FileOpenPicker();
             picker.FileTypeFilter.Add(".opml");
             var file = await picker.PickSingleFileAsync();
+            if (file == null) return null;
             var stream = await file.OpenStreamForReadAsync();
             return stream;
         }
@@ -24,6 +25,7 @@ namespace myFeed.Views.Uwp.Services
             picker.FileTypeChoices.Add("Opml", new List<string> { ".opml" });
             picker.SuggestedFileName = "Feeds";
             var file = await picker.PickSaveFileAsync();
+            if (file == null) return null;
             var stream = await file.OpenStreamForWriteAsync();
             return stream;
         }

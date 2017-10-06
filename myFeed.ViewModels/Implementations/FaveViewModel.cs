@@ -1,6 +1,6 @@
+using System.Linq;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
-using System.Collections.ObjectModel;
 using myFeed.Repositories.Abstractions;
 
 namespace myFeed.ViewModels.Implementations
@@ -15,27 +15,27 @@ namespace myFeed.ViewModels.Implementations
             IArticlesRepository articlesRepository,
             ITranslationsService translationsService)
         {
-            Items = new ObservableCollection<ArticleViewModel>();
+            Items = new Collection<ArticleViewModel>();
             IsLoading = new Property<bool>(true);
             IsEmpty = new Property<bool>(false);
             Load = new Command(async () =>
             {
                 IsLoading.Value = true;
                 var articles = await articlesRepository.GetAllAsync();
+                var articleViewModels = articles
+                    .Where(i => i.Fave)
+                    .Select(i => new ArticleViewModel(i, 
+                        dialogService, settingsService, platformService, 
+                        navigationService, articlesRepository, translationsService));
                 Items.Clear();
-                foreach (var article in articles)
+                Items.AddRange(articleViewModels);
+
+                foreach (var viewModel in Items) viewModel.IsFavorite.PropertyChanged += (o, args) =>
                 {
-                    if (!article.Fave) continue;
-                    var viewModel = new ArticleViewModel(article, dialogService, settingsService, 
-                        platformService, navigationService, articlesRepository, translationsService);
-                    Items.Add(viewModel);
-                    viewModel.IsFavorite.PropertyChanged += (o, args) =>
-                    {
-                        if (viewModel.IsFavorite.Value) Items.Add(viewModel);
-                        else Items.Remove(viewModel);
-                        IsEmpty.Value = Items.Count == 0;
-                    };
-                }
+                    if (viewModel.IsFavorite.Value) Items.Add(viewModel);
+                    else Items.Remove(viewModel);
+                    IsEmpty.Value = Items.Count == 0;
+                };
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
@@ -44,7 +44,7 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Contains favorite items.
         /// </summary>
-        public ObservableCollection<ArticleViewModel> Items { get; }
+        public Collection<ArticleViewModel> Items { get; }
 
         /// <summary>
         /// Indicates if fetcher is loading data right now.

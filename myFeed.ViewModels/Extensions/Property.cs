@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace myFeed.ViewModels.Extensions
 {
-    public class Property<TValue> : INotifyPropertyChanged
+    public sealed class Property<TValue> : INotifyPropertyChanged
     {
         private TValue _encapsulatedField;
 

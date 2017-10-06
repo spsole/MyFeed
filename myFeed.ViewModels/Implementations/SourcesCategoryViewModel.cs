@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Linq;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -19,7 +19,7 @@ namespace myFeed.ViewModels.Implementations
         {
             Category = new Property<SourceCategoryEntity>(entity);
             SourceUri = new Property<string>(string.Empty);
-            Items = new ObservableCollection<SourcesItemViewModel>();
+            Items = new Collection<SourcesItemViewModel>();
             Title = new Property<string>(entity.Title);
             RenameCategory = new Command(async () =>
             {
@@ -53,17 +53,18 @@ namespace myFeed.ViewModels.Implementations
             });
             Load = new Command(() =>
             {
+                var sourcesViewModels = entity.Sources
+                    .Select(i => new SourcesItemViewModel(i,
+                         this, sourcesRepository, platformService));
                 Items.Clear();
-                foreach (var source in entity.Sources)
-                    Items.Add(new SourcesItemViewModel(source,
-                        this, sourcesRepository, platformService));
+                Items.AddRange(sourcesViewModels);
             });
         }
 
         /// <summary>
         /// Inner items collection.
         /// </summary>
-        public ObservableCollection<SourcesItemViewModel> Items { get; }
+        public Collection<SourcesItemViewModel> Items { get; }
 
         /// <summary>
         /// Read-only category entity.

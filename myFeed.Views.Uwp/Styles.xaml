@@ -5,7 +5,7 @@
     <Style TargetType="ListBoxItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="TabNavigation" Value="Local" />
-        <Setter Property="Padding" Value="12 0 12 0" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="Template">
@@ -130,7 +130,7 @@
                             TextWrapping="NoWrap"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Margin="{TemplateBinding Padding}" />
+                            Padding="{TemplateBinding Padding}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -156,7 +156,7 @@
                         BorderBrush="Transparent" BorderThickness="0 0 0 3" Padding="0 0 0 3">
                         <Grid.Transitions>
                             <TransitionCollection>
-                                <ContentThemeTransition HorizontalOffset="30" VerticalOffset="0"/>
+                                <EntranceThemeTransition FromHorizontalOffset="30" FromVerticalOffset="0" IsStaggeringEnabled="True"/>
                             </TransitionCollection>
                         </Grid.Transitions>
                         <Grid.Resources>

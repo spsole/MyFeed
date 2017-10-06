@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
@@ -14,7 +13,7 @@ namespace myFeed.ViewModels.Implementations
             INavigationService navigationService,
             ITranslationsService translationsService)
         {
-            Items = new ObservableCollection<Tuple<string, object, Command, Type>>();
+            Items = new Collection<Tuple<string, object, Command, Type>>();
             SelectedIndex = new Property<int>();
             Load = new Command(async () =>
             {
@@ -52,7 +51,7 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Menu items implemented as tuple-based records.
         /// </summary>
-        public ObservableCollection<Tuple<string, object, Command, Type>> Items { get; }
+        public Collection<Tuple<string, object, Command, Type>> Items { get; }
 
         /// <summary>
         /// Selected item index.

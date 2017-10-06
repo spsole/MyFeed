@@ -266,46 +266,39 @@ namespace myFeed.Views.Uwp.Controls
             }
             else if (x > -0.1 && x < 0.1)
             {
-                if (Math.Abs(_panAreaTransform.TranslateX) > Math.Abs(PanAreaInitialTranslateX) / 2)
-                {
+                if (Math.Abs(_panAreaTransform.TranslateX) >
+                    Math.Abs(PanAreaInitialTranslateX) / 2)
                     CloseSwipeablePane();
-                }
-                else
-                {
-                    OpenSwipeablePane();
-                }
+                else OpenSwipeablePane();
             }
             else
             {
                 OpenSwipeablePane();
             }
 
-            if (IsPanSelectorEnabled)
+            if (!IsPanSelectorEnabled) return;
+            if (sender == _paneRoot)
             {
-                if (sender == _paneRoot)
+                if (Math.Abs(e.Velocities.Linear.Y) >= 2 ||
+                    Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y))
                 {
-                    if (Math.Abs(e.Velocities.Linear.Y) >= 2 ||
-                        Math.Abs(e.Cumulative.Translation.X) > Math.Abs(e.Cumulative.Translation.Y))
-                    {
-                        foreach (var item in _menuItems)
-                            VisualStateManager.GoToState(item, "Normal", true);
-
-                        return;
-                    }
-
                     foreach (var item in _menuItems)
-                        VisualStateManager.GoToState(item, "Unselected", true);
-
-                    var itemContainer = _menuItems[_toBeSelectedIndex];
-                    VisualStateManager.GoToState(itemContainer, "Selected", true);
-
-                    await Task.Delay(250);
-                    _menuHost.SelectedIndex = _toBeSelectedIndex;
+                        VisualStateManager.GoToState(item, "Normal", true);
+                    return;
                 }
-                else
-                {
-                    _startingDistance = _distancePerItem * _menuHost.SelectedIndex;
-                }
+
+                foreach (var item in _menuItems)
+                    VisualStateManager.GoToState(item, "Unselected", true);
+
+                var itemContainer = _menuItems[_toBeSelectedIndex];
+                VisualStateManager.GoToState(itemContainer, "Selected", true);
+
+                await Task.Delay(250);
+                _menuHost.SelectedIndex = _toBeSelectedIndex;
+            }
+            else
+            {
+                _startingDistance = _distancePerItem * _menuHost.SelectedIndex;
             }
         }
 

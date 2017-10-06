@@ -75,7 +75,6 @@ type SearchViewModelFixture() =
                 Substitute.For<_>(),
                 Substitute.For<_>(),
                 searchService)
-
         searchViewModel.Fetch.CanExecuteChanged += fun _ ->
             if (searchViewModel.Fetch.CanExecute()) then
 
@@ -101,7 +100,6 @@ type SearchViewModelFixture() =
                 dialogService,
                 Substitute.For<_>(),
                 Substitute.For<_>())
-        
         searchItemViewModel.AddToSources.CanExecuteChanged += fun _ -> 
             if (searchItemViewModel.AddToSources.CanExecute()) then
 
@@ -110,6 +108,7 @@ type SearchViewModelFixture() =
 
         searchItemViewModel.AddToSources.Execute(null)            
 
+/// Tests for settings ViewModel.
 type SettingsViewModelFixture() =
     let fakeSettingsService =
         let settings = Substitute.For<ISettingsService>()
@@ -130,7 +129,6 @@ type SettingsViewModelFixture() =
                 fakeSettingsService,
                 Substitute.For<_>(),
                 Substitute.For<_>())
-
         settingsViewModel.Load.CanExecuteChanged += fun _ ->
             if (settingsViewModel.Load.CanExecute()) then
 
@@ -156,7 +154,6 @@ type SettingsViewModelFixture() =
                 fakeSettingsService,
                 platformService,
                 Substitute.For<_>())        
-
         settingsViewModel.Load.CanExecuteChanged += fun _ ->
             if (settingsViewModel.Load.CanExecute()) then   
                 
@@ -170,7 +167,8 @@ type SettingsViewModelFixture() =
 
         settingsViewModel.Load.Execute(null)             
 
-type FeedViewModelsTests() =
+/// Tests for feed view models.
+type FeedViewModelFixture() =
 
     [<Fact>]
     member x.``should populate feed category with received articles``() =
@@ -195,7 +193,6 @@ type FeedViewModelsTests() =
                 Substitute.For<_>(),
                 Substitute.For<_>(),
                 Substitute.For<_>())        
-
         feedViewModel.Fetch.CanExecuteChanged += fun _ ->
             if (feedViewModel.Fetch.CanExecute()) then
                 
@@ -229,7 +226,6 @@ type FeedViewModelsTests() =
                 sourcesRepository,
                 Substitute.For<_>(),
                 Substitute.For<_>())
-
         feedViewModel.Load.CanExecuteChanged += fun _ ->
             if (feedViewModel.Load.CanExecute()) then 
                 
@@ -239,6 +235,7 @@ type FeedViewModelsTests() =
 
         feedViewModel.Load.Execute(null)                   
 
+/// Tests for favorites section ViewModels.
 type FaveViewModelFixture() =
 
     [<Fact>]
@@ -257,7 +254,6 @@ type FaveViewModelFixture() =
                 Substitute.For<_>(),
                 articlesRepository,
                 Substitute.For<_>())
-
         faveViewModel.Load.CanExecuteChanged += fun _ ->
             if (faveViewModel.Load.CanExecute()) then
 
@@ -303,7 +299,8 @@ type FaveViewModelFixture() =
         articleViewModel.MarkFavorite.Execute(null)
         Assert.Equal(true, articleEntity.Fave)
 
-type SourcesViewModelsTests() =
+/// Tests for sources ViewModels.
+type SourcesViewModelFixture() =
 
     [<Fact>]
     member x.``child viewmodels should load properly``() =        
@@ -321,7 +318,6 @@ type SourcesViewModelsTests() =
                 sourcesRepository,
                 Substitute.For<_>(),
                 Substitute.For<_>())
-
         sourcesViewModel.Load.CanExecuteChanged += fun _ ->
             if sourcesViewModel.Load.CanExecute() then
 
@@ -372,7 +368,6 @@ type SourcesViewModelsTests() =
                 Substitute.For<_>(),
                 sourcesRepository,
                 Substitute.For<_>())
-                
         sourcesCategoryViewModel.SourceUri.Value <- "http://foo.bar"
         sourcesCategoryViewModel.AddSource.Execute()
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Linq;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
@@ -13,7 +13,7 @@ namespace myFeed.ViewModels.Implementations
             IDialogService dialogService,
             ISearchService searchService)
         {
-            Items = new ObservableCollection<SearchItemViewModel>();
+            Items = new Collection<SearchItemViewModel>();
             SearchQuery = new Property<string>(string.Empty);
             IsLoading = new Property<bool>(false);
             IsEmpty = new Property<bool>(true);
@@ -22,10 +22,12 @@ namespace myFeed.ViewModels.Implementations
                 IsLoading.Value = true;
                 var query = SearchQuery.Value;
                 var searchResults = await searchService.Search(query);
-                Items.Clear();
-                foreach (var result in searchResults.Results)
-                    Items.Add(new SearchItemViewModel(result, 
+                var searchViewModels = searchResults.Results
+                    .Select(i => new SearchItemViewModel(i, 
                         dialogService, platformService, sourcesRepository));
+
+                Items.Clear();
+                Items.AddRange(searchViewModels);
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
@@ -34,7 +36,7 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Loaded models.
         /// </summary>
-        public ObservableCollection<SearchItemViewModel> Items { get; }
+        public Collection<SearchItemViewModel> Items { get; }
 
         /// <summary>
         /// Contains search query.

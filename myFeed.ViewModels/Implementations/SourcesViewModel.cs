@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Linq;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -18,17 +17,19 @@ namespace myFeed.ViewModels.Implementations
         {
             IsEmpty = new Property<bool>(false);
             IsLoading = new Property<bool>(true);
-            Items = new ObservableCollection<SourcesCategoryViewModel>();
+            Items = new Collection<SourcesCategoryViewModel>();
             OpenSearch = new Command(navigationService.Navigate<SearchViewModel>);
             Load = new Command(async () =>
             {
                 IsLoading.Value = true;
                 var categories = await sourcesRepository.GetAllAsync();
-                Items.Clear();
-                foreach (var category in categories)
-                    Items.Add(new SourcesCategoryViewModel(category, 
-                        this, dialogService, platformService, 
+                var categoryViewModels = categories
+                    .Select(i => new SourcesCategoryViewModel(i,
+                        this, dialogService, platformService,
                         sourcesRepository, translationsService));
+
+                Items.Clear();
+                Items.AddRange(categoryViewModels);
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
 
@@ -56,7 +57,7 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// A collection of inner models.
         /// </summary>
-        public ObservableCollection<SourcesCategoryViewModel> Items { get; }
+        public Collection<SourcesCategoryViewModel> Items { get; }
 
         /// <summary>
         /// Is collection being loaded or not.

@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace myFeed.ViewModels.Extensions
 {
-    public class Command : ICommand
+    public sealed class Command : ICommand
     {
         private readonly Func<Task> _task;
         private bool _canExecute = true;

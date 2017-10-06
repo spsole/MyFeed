@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+using System.Linq;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -19,7 +19,7 @@ namespace myFeed.ViewModels.Implementations
             ITranslationsService translationsService)
         {
             OpenSources = new Command(navigationService.Navigate<SourcesViewModel>);
-            Items = new ObservableCollection<ArticleViewModel>();
+            Items = new Collection<ArticleViewModel>();
             Title = new Property<string>(entity.Title);
             IsLoading = new Property<bool>(true);
             IsEmpty = new Property<bool>(false);
@@ -28,10 +28,13 @@ namespace myFeed.ViewModels.Implementations
                 IsLoading.Value = true;
                 var sources = entity.Sources;
                 (var errors, var articles) = await feedStoreService.GetAsync(sources);
+                var articleViewModels = articles
+                    .Select(i => new ArticleViewModel(i, 
+                        dialogService, settingsService, platformService, 
+                        navigationService, articlesRepository, translationsService));
+
                 Items.Clear();
-                foreach (var article in articles)
-                    Items.Add(new ArticleViewModel(article, dialogService, settingsService, 
-                        platformService, navigationService, articlesRepository, translationsService));
+                Items.AddRange(articleViewModels);
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
@@ -40,7 +43,7 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Feed items received from fetcher.
         /// </summary>
-        public ObservableCollection<ArticleViewModel> Items { get; }
+        public Collection<ArticleViewModel> Items { get; }
 
         /// <summary>
         /// Indicates if fetcher is loading data right now.
