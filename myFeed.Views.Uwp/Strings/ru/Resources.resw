@@ -328,4 +328,10 @@
   <data name="CopyLinkSuccess">
     <value>Ссылка была успешно скопирована в буфер обмена!</value>
   </data>
+  <data name="SearchWelcomeTitle">
+    <value>Здесь вы можете найти интересующие вас RSS каналы.</value>
+  </data>
+  <data name="SearchWelcomeSubTitle">
+    <value>Введите запрос в текстовое поле выше, например "Новости", и нажмите "Найти"!</value>
+  </data>
 </root>

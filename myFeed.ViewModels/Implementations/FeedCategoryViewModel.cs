@@ -1,4 +1,4 @@
-using System.Linq;
+using System.Collections.ObjectModel;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -18,23 +18,24 @@ namespace myFeed.ViewModels.Implementations
             IArticlesRepository articlesRepository,
             ITranslationsService translationsService)
         {
-            OpenSources = new Command(navigationService.Navigate<SourcesViewModel>);
-            Items = new Collection<ArticleViewModel>();
-            Title = new Property<string>(entity.Title);
-            IsLoading = new Property<bool>(true);
-            IsEmpty = new Property<bool>(false);
-            Fetch = new Command(async () =>
+            OpenSources = new ObservableCommand(navigationService.Navigate<SourcesViewModel>);
+            Items = new ObservableCollection<ArticleViewModel>();
+            Title = new ObservableProperty<string>(entity.Title);
+            IsLoading = new ObservableProperty<bool>(true);
+            IsEmpty = new ObservableProperty<bool>(false);
+            Fetch = new ObservableCommand(async () =>
             {
                 IsLoading.Value = true;
                 var sources = entity.Sources;
                 (var errors, var articles) = await feedStoreService.GetAsync(sources);
-                var articleViewModels = articles
-                    .Select(i => new ArticleViewModel(i, 
-                        dialogService, settingsService, platformService, 
-                        navigationService, articlesRepository, translationsService));
-
                 Items.Clear();
-                Items.AddRange(articleViewModels);
+                foreach (var article in articles)
+                {
+                    var viewModel = new ArticleViewModel(article,
+                        dialogService, settingsService, platformService,
+                        navigationService, articlesRepository, translationsService);
+                    Items.Add(viewModel);
+                }
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
@@ -43,32 +44,32 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Feed items received from fetcher.
         /// </summary>
-        public Collection<ArticleViewModel> Items { get; }
+        public ObservableCollection<ArticleViewModel> Items { get; }
 
         /// <summary>
         /// Indicates if fetcher is loading data right now.
         /// </summary>
-        public Property<bool> IsLoading { get; }
+        public ObservableProperty<bool> IsLoading { get; }
 
         /// <summary>
         /// Indicates if the collection is empty.
         /// </summary>
-        public Property<bool> IsEmpty { get; }
+        public ObservableProperty<bool> IsEmpty { get; }
 
         /// <summary>
         /// Feed category title.
         /// </summary>
-        public Property<string> Title { get; }
+        public ObservableProperty<string> Title { get; }
 
         /// <summary>
         /// Opens sources page as a proposal for user 
         /// to add new RSS channels into this category.
         /// </summary>
-        public Command OpenSources { get; }
+        public ObservableCommand OpenSources { get; }
 
         /// <summary>
         /// Fetches data for current feed.
         /// </summary>
-        public Command Fetch { get; }
+        public ObservableCommand Fetch { get; }
     }
 }

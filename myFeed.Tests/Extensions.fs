@@ -167,3 +167,32 @@ module EFCoreHelpers =
         factory.AddProvider provider        
         new EntityContext(factory) 
         |> also migrate 
+
+/// Factory producer.
+module Factory =
+    open System.Reflection
+    
+    /// Produces instance of a given type using 
+    /// mocks if none parameter specified.
+    let produce<'T when 'T : not struct> (injectables: obj seq) =
+        let substituteIfNone (parameterInfo: ParameterInfo) =
+            let parameterType = parameterInfo.ParameterType
+            Console.WriteLine(parameterType)
+            injectables 
+            |> Seq.tryFind (fun x -> 
+                let objectType = x.GetType() 
+                objectType = parameterType ||
+                objectType.GetInterfaces()
+                |> Seq.contains parameterType)
+            |> function
+            | Some some -> some
+            | None -> Substitute.For([| parameterType |], null)
+
+        let objectType = typeof<'T>
+        let ctor = Seq.item 0 <| objectType.GetConstructors()
+        ctor.GetParameters()
+        |> Seq.map substituteIfNone
+        |> Seq.cast<obj>
+        |> Array.ofSeq
+        |> ctor.Invoke :?> 'T
+        

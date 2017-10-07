@@ -4,14 +4,14 @@ using System.Windows.Input;
 
 namespace myFeed.ViewModels.Extensions
 {
-    public sealed class Command : ICommand
+    public sealed class ObservableCommand : ICommand
     {
         private readonly Func<Task> _task;
         private bool _canExecute = true;
 
-        public Command(Func<Task> task) => _task = task;
+        public ObservableCommand(Func<Task> task) => _task = task;
 
-        public Command(Action action) => _task = () =>
+        public ObservableCommand(Action action) => _task = () =>
         {
             action.Invoke();
             return Task.CompletedTask;

@@ -63,7 +63,8 @@
                     </interactivity:Interaction.Behaviors>
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection>
-                            <AddDeleteThemeTransition />
+                            <ContentThemeTransition VerticalOffset="0" HorizontalOffset="30"/>
+                            <EntranceThemeTransition FromHorizontalOffset="30" FromVerticalOffset="0"/>
                         </TransitionCollection>
                     </ListView.ItemContainerTransitions>
                     <ListView.ItemContainerStyle>

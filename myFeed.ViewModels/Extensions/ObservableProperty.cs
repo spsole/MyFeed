@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 
 namespace myFeed.ViewModels.Extensions
 {
-    public sealed class Property<TValue> : INotifyPropertyChanged
+    public sealed class ObservableProperty<TValue> : INotifyPropertyChanged
     {
         private TValue _encapsulatedField;
 
-        public Property() : this(default(TValue)) { }
+        public ObservableProperty() : this(default(TValue)) { }
 
-        public Property(TValue value) => _encapsulatedField = value;
+        public ObservableProperty(TValue value) => _encapsulatedField = value;
 
-        public Property(Func<Task<TValue>> function) => UpdateValue(function);
+        public ObservableProperty(Func<Task<TValue>> function) => UpdateValue(function);
 
         public event PropertyChangedEventHandler PropertyChanged;
 

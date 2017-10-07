@@ -328,4 +328,10 @@
   <data name="CopyLinkSuccess">
     <value>Link was successfully copied!</value>
   </data>
+  <data name="SearchWelcomeTitle">
+    <value>Here you can find RSS channels you are interested in.</value>
+  </data>
+  <data name="SearchWelcomeSubTitle">
+    <value>Enter search query into the text field above, for example "News", and press "Search"!</value>
+  </data>
 </root>

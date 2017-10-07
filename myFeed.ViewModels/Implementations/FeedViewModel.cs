@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Collections.ObjectModel;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
@@ -17,24 +17,25 @@ namespace myFeed.ViewModels.Implementations
             IArticlesRepository articlesRepository,
             ITranslationsService translationsService)
         {
-            OpenSources = new Command(navigationService.Navigate<SourcesViewModel>);
-            Items = new Collection<FeedCategoryViewModel>();
-            IsLoading = new Property<bool>(false);
-            IsEmpty = new Property<bool>(false);
-            Load = new Command(async () =>
+            OpenSources = new ObservableCommand(navigationService.Navigate<SourcesViewModel>);
+            Items = new ObservableCollection<FeedCategoryViewModel>();
+            IsLoading = new ObservableProperty<bool>(true);
+            IsEmpty = new ObservableProperty<bool>(false);
+            Load = new ObservableCommand(async () =>
             {
                 IsEmpty.Value = false;
                 IsLoading.Value = true;
                 await articlesRepository.RemoveUnreferencedArticles();
-                var sources = await sourcesRepository.GetAllAsync();
-                var sourcesViewModels = sources
-                    .Select(i => new FeedCategoryViewModel(i, 
-                        dialogService, settingsService, platformService, 
-                        feedStoreService, navigationService, 
-                        articlesRepository, translationsService));
-
                 Items.Clear();
-                Items.AddRange(sourcesViewModels);
+                var sources = await sourcesRepository.GetAllAsync();
+                foreach (var source in sources)
+                {
+                    var viewModel = new FeedCategoryViewModel(source,
+                        dialogService, settingsService, platformService,
+                        feedStoreService, navigationService,
+                        articlesRepository, translationsService);
+                    Items.Add(viewModel);
+                }
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });
@@ -43,27 +44,27 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Feed categories viewmodels.
         /// </summary>
-        public Collection<FeedCategoryViewModel> Items { get; }
+        public ObservableCollection<FeedCategoryViewModel> Items { get; }
 
         /// <summary>
         /// Indicates if viewmodel is loading items from disk.
         /// </summary>
-        public Property<bool> IsLoading { get; }
+        public ObservableProperty<bool> IsLoading { get; }
 
         /// <summary>
         /// True if collection is empty.
         /// </summary>
-        public Property<bool> IsEmpty { get; }
+        public ObservableProperty<bool> IsEmpty { get; }
 
         /// <summary>
         /// Opens sources page as a proposal for user 
         /// to add new RSS categories into myFeed.
         /// </summary>
-        public Command OpenSources { get; }
+        public ObservableCommand OpenSources { get; }
 
         /// <summary>
         /// Loads all feeds into items property.
         /// </summary>
-        public Command Load { get; }
+        public ObservableCommand Load { get; }
     }
 }

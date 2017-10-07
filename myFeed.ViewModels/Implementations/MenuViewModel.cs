@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Extensions;
@@ -13,9 +14,9 @@ namespace myFeed.ViewModels.Implementations
             INavigationService navigationService,
             ITranslationsService translationsService)
         {
-            Items = new Collection<Tuple<string, object, Command, Type>>();
-            SelectedIndex = new Property<int>();
-            Load = new Command(async () =>
+            Items = new ObservableCollection<Tuple<string, object, ObservableCommand, Type>>();
+            SelectedIndex = new ObservableProperty<int>();
+            Load = new ObservableCommand(async () =>
             {
                 await navigationService.Navigate<FeedViewModel>();
                 var theme = await settingsService.Get<string>("Theme");
@@ -40,7 +41,7 @@ namespace myFeed.ViewModels.Implementations
             void CreateItem<T>(string key) where T : class
             {
                 var type = typeof(T);
-                var command = new Command(navigationService.Navigate<T>);
+                var command = new ObservableCommand(navigationService.Navigate<T>);
                 var translation = translationsService.Resolve(key);
                 var icon = navigationService.Icons[type];
                 var tuple = (translation, icon, command, type).ToTuple();
@@ -51,16 +52,16 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Menu items implemented as tuple-based records.
         /// </summary>
-        public Collection<Tuple<string, object, Command, Type>> Items { get; }
+        public ObservableCollection<Tuple<string, object, ObservableCommand, Type>> Items { get; }
 
         /// <summary>
         /// Selected item index.
         /// </summary>
-        public Property<int> SelectedIndex { get; }
+        public ObservableProperty<int> SelectedIndex { get; }
 
         /// <summary>
         /// Loads application settings into view.
         /// </summary>
-        public Command Load { get; }
+        public ObservableCommand Load { get; }
     }
 }

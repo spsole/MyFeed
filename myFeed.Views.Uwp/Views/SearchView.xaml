@@ -131,8 +131,7 @@
                     </DataTemplate>
                 </toolkit:PullToRefreshListView.ItemTemplate>
             </toolkit:PullToRefreshListView>
-            <controls:LoadingScreen IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
-            <Grid Padding="12" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                 Visibility="{Binding IsEmpty.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE783;" FontSize="50" TextAlignment="Center" 
@@ -140,14 +139,24 @@
                     <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingTitle}" 
                         TextAlignment="Center" FontSize="24" FontWeight="SemiLight" TextWrapping="Wrap" Margin="36 6"/>
                     <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingSubTitle}" 
-                        TextWrapping="Wrap" TextAlignment="Center" FontSize="17" Foreground="{ThemeResource 
-                            ApplicationSecondaryForegroundThemeBrush}"/>
+                        TextWrapping="Wrap" TextAlignment="Center" FontSize="17" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                     <Button Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
                         Content="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
                         HorizontalAlignment="Center" Margin="0 12 0 0" Command="{Binding Fetch}"/>
                 </StackPanel>
-                <controls:LoadingScreen IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
             </Grid>
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                Visibility="{Binding IsGreeting.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
+                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE71E;" FontSize="50" TextAlignment="Center" 
+                        Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeTitle}" 
+                        TextAlignment="Center" FontSize="24" FontWeight="SemiLight" TextWrapping="Wrap" Margin="36 6"/>
+                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeSubTitle}" 
+                        TextWrapping="Wrap" TextAlignment="Center" FontSize="17" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                </StackPanel>
+            </Grid>
+            <controls:LoadingScreen IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
         </Grid>
     </Grid>
 </Page>

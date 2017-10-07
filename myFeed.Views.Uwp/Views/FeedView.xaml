@@ -59,7 +59,7 @@
                 </ToolTipService.ToolTip>
             </controls:TransparentButton>
             <Grid Grid.Row="1" Height="48" VerticalAlignment="Top" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
-            <Pivot Grid.Row="1" ItemsSource="{Binding Items}">
+            <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Loaded">
                         <core:InvokeCommandAction Command="{Binding Load}"/>
@@ -94,7 +94,8 @@
                                 </toolkit:PullToRefreshListView.ItemContainerStyle>
                                 <toolkit:PullToRefreshListView.ItemContainerTransitions>
                                     <TransitionCollection>
-                                        <EntranceThemeTransition FromVerticalOffset="0" FromHorizontalOffset="30" />
+                                        <ContentThemeTransition VerticalOffset="0" HorizontalOffset="30"/>
+                                        <EntranceThemeTransition FromHorizontalOffset="30" FromVerticalOffset="0"/>
                                     </TransitionCollection>
                                 </toolkit:PullToRefreshListView.ItemContainerTransitions>
                                 <toolkit:PullToRefreshListView.PullToRefreshContent>
@@ -235,41 +236,6 @@
                 </StackPanel>
             </Grid>
             <controls:LoadingScreen Grid.Row="1" IsActive="{Binding IsLoading.Value}" Margin="0 48 0 0"/>
-            <Grid x:Name="PivotPanelHider" Grid.Row="1" Height="48" VerticalAlignment="Top"
-                  Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
-                <interactivity:Interaction.Behaviors>
-                    <core:DataTriggerBehavior ComparisonCondition="Equal" Binding="{Binding IsLoading.Value}">
-                        <core:DataTriggerBehavior.Value>
-                            <x:Boolean>True</x:Boolean>
-                        </core:DataTriggerBehavior.Value>
-                        <media:ControlStoryboardAction>
-                            <media:ControlStoryboardAction.Storyboard>
-                                <Storyboard TargetName="PivotPanelHider" TargetProperty="(UIElement.Opacity)">
-                                    <DoubleAnimationUsingKeyFrames>
-                                        <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
-                                        <EasingDoubleKeyFrame Value="1" KeyTime="0:0:0.33"/>
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </media:ControlStoryboardAction.Storyboard>
-                        </media:ControlStoryboardAction>
-                    </core:DataTriggerBehavior>
-                    <core:DataTriggerBehavior ComparisonCondition="Equal" Binding="{Binding IsLoading.Value}">
-                        <core:DataTriggerBehavior.Value>
-                            <x:Boolean>False</x:Boolean>
-                        </core:DataTriggerBehavior.Value>
-                        <media:ControlStoryboardAction>
-                            <media:ControlStoryboardAction.Storyboard>
-                                <Storyboard TargetName="PivotPanelHider" TargetProperty="(UIElement.Opacity)">
-                                    <DoubleAnimationUsingKeyFrames>
-                                        <EasingDoubleKeyFrame Value="1" KeyTime="0:0:0"/>
-                                        <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0.33"/>
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </media:ControlStoryboardAction.Storyboard>
-                        </media:ControlStoryboardAction>
-                    </core:DataTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </Grid>
         </Grid>
     </Grid>
 </Page>

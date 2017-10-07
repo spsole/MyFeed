@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.ObjectModel;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -17,11 +17,11 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             ITranslationsService translationsService)
         {
-            Category = new Property<SourceCategoryEntity>(entity);
-            SourceUri = new Property<string>(string.Empty);
-            Items = new Collection<SourcesItemViewModel>();
-            Title = new Property<string>(entity.Title);
-            RenameCategory = new Command(async () =>
+            Category = new ObservableProperty<SourceCategoryEntity>(entity);
+            SourceUri = new ObservableProperty<string>(string.Empty);
+            Items = new ObservableCollection<SourcesItemViewModel>();
+            Title = new ObservableProperty<string>(entity.Title);
+            RenameCategory = new ObservableCommand(async () =>
             {
                 var name = await dialogService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
@@ -30,7 +30,7 @@ namespace myFeed.ViewModels.Implementations
                 await sourcesRepository.RenameAsync(entity, name);
                 entity.Title = Title.Value = name;
             });
-            RemoveCategory = new Command(async () =>
+            RemoveCategory = new ObservableCommand(async () =>
             {
                 var shouldDelete = await dialogService.ShowDialogForConfirmation(
                     translationsService.Resolve("DeleteCategory"),
@@ -39,7 +39,7 @@ namespace myFeed.ViewModels.Implementations
                 await sourcesRepository.RemoveAsync(entity);
                 parentViewModel.Items.Remove(this);
             });
-            AddSource = new Command(async () =>
+            AddSource = new ObservableCommand(async () =>
             {
                 var sourceUri = SourceUri.Value;
                 if (string.IsNullOrWhiteSpace(sourceUri) ||
@@ -51,54 +51,53 @@ namespace myFeed.ViewModels.Implementations
                 Items.Add(new SourcesItemViewModel(model, this,
                     sourcesRepository, platformService));
             });
-            Load = new Command(() =>
+            Load = new ObservableCommand(() =>
             {
-                var sourcesViewModels = entity.Sources
-                    .Select(i => new SourcesItemViewModel(i,
-                         this, sourcesRepository, platformService));
                 Items.Clear();
-                Items.AddRange(sourcesViewModels);
+                foreach (var source in entity.Sources) 
+                    Items.Add(new SourcesItemViewModel(source, this, 
+                        sourcesRepository, platformService));
             });
         }
 
         /// <summary>
         /// Inner items collection.
         /// </summary>
-        public Collection<SourcesItemViewModel> Items { get; }
+        public ObservableCollection<SourcesItemViewModel> Items { get; }
 
         /// <summary>
         /// Read-only category entity.
         /// </summary>
-        public Property<SourceCategoryEntity> Category { get; }
+        public ObservableProperty<SourceCategoryEntity> Category { get; }
 
         /// <summary>
         /// Source Uri for new category user input.
         /// </summary>
-        public Property<string> SourceUri { get; }
+        public ObservableProperty<string> SourceUri { get; }
 
         /// <summary>
         /// Grouping title.
         /// </summary>
-        public Property<string> Title { get; }
+        public ObservableProperty<string> Title { get; }
 
         /// <summary>
         /// Removes the entire category.
         /// </summary>
-        public Command RemoveCategory { get; }
+        public ObservableCommand RemoveCategory { get; }
 
         /// <summary>
         /// Renames the category.
         /// </summary>
-        public Command RenameCategory { get; }
+        public ObservableCommand RenameCategory { get; }
 
         /// <summary>
         /// Adds new source to this category.
         /// </summary>
-        public Command AddSource { get; }
+        public ObservableCommand AddSource { get; }
 
         /// <summary>
         /// Loads items.
         /// </summary>
-        public Command Load { get; }
+        public ObservableCommand Load { get; }
     }
 }

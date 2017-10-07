@@ -68,7 +68,7 @@ type BindablePropertyFixture() =
 
     [<Fact>] 
     member x.``property changed event should raise on value change``() =
-        let property = Property(42)
+        let property = ObservableProperty(42)
         let mutable fired = 0
         property.PropertyChanged += fun e -> fired <- fired + 1
         property.Value <- 3
@@ -76,7 +76,7 @@ type BindablePropertyFixture() =
 
     [<Fact>]
     member x.``property changed event should not fire if value is the same``() =
-        let property = Property(42)
+        let property = ObservableProperty(42)
         let mutable fired = 0
         property.PropertyChanged += fun _ -> fired <- fired + 1
         property.Value <- 42
@@ -84,13 +84,13 @@ type BindablePropertyFixture() =
 
     [<Fact>]
     member x.``property name should be value``() =
-        let property = Property(42)
+        let property = ObservableProperty(42)
         property.PropertyChanged += fun e -> Should.equal "Value" e.PropertyName
         property.Value <- 3    
         
     [<Fact>]
     member x.``should slowly initialize value via fun of task``() =
-        let property = Property<string>(fun () -> "Foo" |> Task.FromResult)
+        let property = ObservableProperty<string>(fun () -> "Foo" |> Task.FromResult)
         Should.equal "Foo" property.Value
 
 type BindableCommandFixture() =
@@ -98,62 +98,24 @@ type BindableCommandFixture() =
     [<Fact>]
     member x.``should execute passed actions``() =
         let mutable fired = 0
-        let command = Func<Task>(fun () -> fired <- fired + 1; Task.CompletedTask) |> Command
+        let command = Func<Task>(fun () -> fired <- fired + 1; Task.CompletedTask) |> ObservableCommand
         command.Execute(null)
         Should.equal true (command.CanExecute()) 
         Should.equal 1 fired
 
     [<Fact>]
     member x.``should await previous execution``() =
-        let command = Func<Task>(fun () -> Task.Delay(1000)) |> Command
+        let command = Func<Task>(fun () -> Task.Delay(1000)) |> ObservableCommand
         command.Execute(null)
         Should.equal false (command.CanExecute())
 
     [<Fact>]
     member x.``should raise state change event``() =
         let mutable fired = 0
-        let command = Func<Task>(fun () -> Task.CompletedTask) |> Command
+        let command = Func<Task>(fun () -> Task.CompletedTask) |> ObservableCommand
         command.CanExecuteChanged += fun _ -> fired <- fired + 1
         command.Execute(null)
         Should.equal 2 fired   
-
-type BindableCollectionFixture() =
-
-    [<Fact>]
-    member x.``should add items to the collection``() =
-        let collection = myFeed.ViewModels.Extensions.Collection<int>()
-        collection.Add 42
-        Should.equal 1 collection.Count
-        Should.equal 42 collection.[0]
-
-    [<Fact>]
-    member x.``should add items range to the collection``() =
-        let collection = myFeed.ViewModels.Extensions.Collection<int>()
-        collection.AddRange [1; 2; 3]
-        Should.equal 3 collection.Count
-        Should.equal 1 collection.[0]
-        Should.equal 2 collection.[1]
-        Should.equal 3 collection.[2]    
-
-    [<Fact>]
-    member x.``should raise collection changed``() =   
-        let mutable counter = 0
-        let collection = myFeed.ViewModels.Extensions.Collection<int>()
-        collection.CollectionChanged += fun args -> counter <- counter + 1
-        collection.AddRange [1; 2; 3]
-        Should.equal 1 counter
-
-    [<Fact>]
-    member x.``should raise count property change``() =
-        let mutable counter = 0
-        let collection = myFeed.ViewModels.Extensions.Collection<int>()
-        let propertyChanged = collection :> System.ComponentModel.INotifyPropertyChanged
-        propertyChanged.PropertyChanged += fun args ->
-            match args.PropertyName with 
-            | "Count" -> counter <- counter + 1
-            | _ -> ()
-        collection.AddRange [1; 2; 3]
-        Should.equal 1 counter
 
 type SettingsServiceFixture() =
     let settingsService = SettingsService(Substitute.For<_>(), Substitute.For<_>())
@@ -322,6 +284,8 @@ type OpmlServiceFixture() =
             [ Outline(XmlUrl="http://foo.com");
               Outline(XmlUrl="https://bar.com") ] |> List<_>
 
+        let filePickerService = Substitute.For<IFilePickerService>()
+        filePickerService.PickFileForReadAsync().Returns(new MemoryStream() :> Stream |> Task.FromResult) |> ignore
         let serializationService = Substitute.For<ISerializationService>()
         serializationService.Deserialize<Opml>(Arg.Any()).Returns(Opml(Body=outlines)) |> ignore
         let sourcesRepository = Substitute.For<ISourcesRepository>()
@@ -331,7 +295,7 @@ type OpmlServiceFixture() =
             OpmlService(
                 Substitute.For<_>(),
                 sourcesRepository,
-                Substitute.For<_>(),
+                filePickerService,
                 Substitute.For<_>(),
                 serializationService)
         service.ImportOpmlFeeds().Wait()

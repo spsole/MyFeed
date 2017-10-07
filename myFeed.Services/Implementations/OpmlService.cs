@@ -68,8 +68,11 @@ namespace myFeed.Services.Implementations
 
         public async Task ImportOpmlFeeds()
         {
-            // Deserialize opml.
+            // Pick file for read.
             var stream = await _filePickerService.PickFileForReadAsync();
+            if (stream == null) return;
+            
+            // Deserialize object from file.
             var opml = _serializationService.Deserialize<Opml>(stream);
             if (opml == null) return;
 

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.ObjectModel;
+using System.Linq;
 using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
@@ -15,21 +16,22 @@ namespace myFeed.ViewModels.Implementations
             INavigationService navigationService,
             ITranslationsService translationsService)
         {
-            IsEmpty = new Property<bool>(false);
-            IsLoading = new Property<bool>(true);
-            Items = new Collection<SourcesCategoryViewModel>();
-            OpenSearch = new Command(navigationService.Navigate<SearchViewModel>);
-            Load = new Command(async () =>
+            IsEmpty = new ObservableProperty<bool>(false);
+            IsLoading = new ObservableProperty<bool>(true);
+            Items = new ObservableCollection<SourcesCategoryViewModel>();
+            OpenSearch = new ObservableCommand(navigationService.Navigate<SearchViewModel>);
+            Load = new ObservableCommand(async () =>
             {
                 IsLoading.Value = true;
                 var categories = await sourcesRepository.GetAllAsync();
-                var categoryViewModels = categories
-                    .Select(i => new SourcesCategoryViewModel(i,
-                        this, dialogService, platformService,
-                        sourcesRepository, translationsService));
-
                 Items.Clear();
-                Items.AddRange(categoryViewModels);
+                foreach (var category in categories)
+                {
+                    var viewModel = new SourcesCategoryViewModel(
+                        category, this, dialogService, platformService,
+                        sourcesRepository, translationsService);
+                    Items.Add(viewModel);
+                }
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
 
@@ -40,7 +42,7 @@ namespace myFeed.ViewModels.Implementations
                     await sourcesRepository.RearrangeAsync(items);
                 };
             });
-            AddCategory = new Command(async () =>
+            AddCategory = new ObservableCommand(async () =>
             {
                 var name = await dialogService.ShowDialogForResults(
                     translationsService.Resolve("EnterNameOfNewCategory"),
@@ -57,32 +59,32 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// A collection of inner models.
         /// </summary>
-        public Collection<SourcesCategoryViewModel> Items { get; }
+        public ObservableCollection<SourcesCategoryViewModel> Items { get; }
 
         /// <summary>
         /// Is collection being loaded or not.
         /// </summary>
-        public Property<bool> IsLoading { get; }
+        public ObservableProperty<bool> IsLoading { get; }
 
         /// <summary>
         /// Indicates if welcome screen is visible.
         /// </summary>
-        public Property<bool> IsEmpty { get; }
+        public ObservableProperty<bool> IsEmpty { get; }
 
         /// <summary>
         /// Adds new category to list.
         /// </summary>
-        public Command AddCategory { get; }
+        public ObservableCommand AddCategory { get; }
 
         /// <summary>
         /// Opens search view when user'd like to add
         /// new items to his channel collection.
         /// </summary>
-        public Command OpenSearch { get; }
+        public ObservableCommand OpenSearch { get; }
 
         /// <summary>
         /// Loads categories into view.
         /// </summary>
-        public Command Load { get; }
+        public ObservableCommand Load { get; }
     }
 }

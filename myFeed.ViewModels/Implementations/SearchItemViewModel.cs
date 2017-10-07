@@ -15,18 +15,18 @@ namespace myFeed.ViewModels.Implementations
             IPlatformService platformService,
             ISourcesRepository sourcesRepository)
         {
-            Url = new Property<string>(entity.Website);
-            Title = new Property<string>(entity.Title);
-            ImageUri = new Property<string>(entity.IconUrl);
-            Description = new Property<string>(entity.Description);
-            FeedUrl = new Property<string>(entity.FeedId?.Substring(5));
-            CopyLink = new Command(() => platformService.CopyTextToClipboard(entity.Website));
-            OpenInEdge = new Command(async () =>
+            Url = new ObservableProperty<string>(entity.Website);
+            Title = new ObservableProperty<string>(entity.Title);
+            ImageUri = new ObservableProperty<string>(entity.IconUrl);
+            Description = new ObservableProperty<string>(entity.Description);
+            FeedUrl = new ObservableProperty<string>(entity.FeedId?.Substring(5));
+            CopyLink = new ObservableCommand(() => platformService.CopyTextToClipboard(entity.Website));
+            OpenInEdge = new ObservableCommand(async () =>
             {
                 if (Uri.IsWellFormedUriString(entity.Website, UriKind.Absolute))
                     await platformService.LaunchUri(new Uri(entity.Website));
             });
-            AddToSources = new Command(async () =>
+            AddToSources = new ObservableCommand(async () =>
             {
                 if (!Uri.IsWellFormedUriString(FeedUrl.Value, UriKind.Absolute)) return;
                 var categories = await sourcesRepository.GetAllAsync();
@@ -42,41 +42,41 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Search result title.
         /// </summary>
-        public Property<string> Title { get; }
+        public ObservableProperty<string> Title { get; }
 
         /// <summary>
         /// Favicon.
         /// </summary>
-        public Property<string> ImageUri { get; }
+        public ObservableProperty<string> ImageUri { get; }
 
         /// <summary>
         /// Search result description.
         /// </summary>
-        public Property<string> Description { get; }
+        public ObservableProperty<string> Description { get; }
 
         /// <summary>
         /// Returns feed url.
         /// </summary>
-        public Property<string> FeedUrl { get; }
+        public ObservableProperty<string> FeedUrl { get; }
 
         /// <summary>
         /// Full website url.
         /// </summary>
-        public Property<string> Url { get; }
+        public ObservableProperty<string> Url { get; }
 
         /// <summary>
         /// Adds model to sources.
         /// </summary>
-        public Command AddToSources { get; }
+        public ObservableCommand AddToSources { get; }
 
         /// <summary>
         /// Opens link to website in default browser.
         /// </summary>
-        public Command OpenInEdge { get; }
+        public ObservableCommand OpenInEdge { get; }
 
         /// <summary>
         /// Copies website link to clipboard.
         /// </summary>
-        public Command CopyLink { get; }
+        public ObservableCommand CopyLink { get; }
     }
 }

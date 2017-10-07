@@ -14,21 +14,21 @@ namespace myFeed.ViewModels.Implementations
             IPlatformService platformService,
             ITranslationsService translationsService)
         {
-            Theme = new Property<string>();
-            FontSize = new Property<int>();
-            LoadImages = new Property<bool>();
-            NotifyPeriod = new Property<int>();
-            NeedBanners = new Property<bool>();
-            ImportOpml = new Command(opmlService.ImportOpmlFeeds);
-            ExportOpml = new Command(opmlService.ExportOpmlFeeds);
-            Reset = new Command(async () =>
+            Theme = new ObservableProperty<string>();
+            FontSize = new ObservableProperty<int>();
+            LoadImages = new ObservableProperty<bool>();
+            NotifyPeriod = new ObservableProperty<int>();
+            NeedBanners = new ObservableProperty<bool>();
+            ImportOpml = new ObservableCommand(opmlService.ImportOpmlFeeds);
+            ExportOpml = new ObservableCommand(opmlService.ExportOpmlFeeds);
+            Reset = new ObservableCommand(async () =>
             {
                 var response = await dialogService.ShowDialogForConfirmation(
                     translationsService.Resolve("ResetAppNoRestore"),
                     translationsService.Resolve("Notification"));
                 if (response) await platformService.ResetApp();
             });
-            Load = new Command(async () =>
+            Load = new ObservableCommand(async () =>
             {
                 NotifyPeriod.Value = await settingsService.Get<int>("NotifyPeriod");
                 NeedBanners.Value = await settingsService.Get<bool>("NeedBanners"); 
@@ -42,7 +42,7 @@ namespace myFeed.ViewModels.Implementations
                 Subscribe(NeedBanners, "NeedBanners", o => Task.CompletedTask);
                 Subscribe(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask);
                 
-                void Subscribe<T>(Property<T> prop, string key, Func<T, Task> clb) where T : IConvertible
+                void Subscribe<T>(ObservableProperty<T> prop, string key, Func<T, Task> clb) where T : IConvertible
                 {
                     prop.PropertyChanged += async (o, args) =>
                     {
@@ -56,46 +56,46 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Selected theme.
         /// </summary>
-        public Property<string> Theme { get; }
+        public ObservableProperty<string> Theme { get; }
 
         /// <summary>
         /// Download images or not?
         /// </summary>
-        public Property<bool> LoadImages { get; }
+        public ObservableProperty<bool> LoadImages { get; }
 
         /// <summary>
         /// True if need banners.
         /// </summary>
-        public Property<bool> NeedBanners { get; }
+        public ObservableProperty<bool> NeedBanners { get; }
 
         /// <summary> 
         /// True if notifications needed. 
         /// </summary>
-        public Property<int> NotifyPeriod { get; }
+        public ObservableProperty<int> NotifyPeriod { get; }
 
         /// <summary>
         /// Selected font size.
         /// </summary>
-        public Property<int> FontSize { get; }
+        public ObservableProperty<int> FontSize { get; }
 
         /// <summary>
         /// Imports feeds from Opml.
         /// </summary>
-        public Command ImportOpml { get; }
+        public ObservableCommand ImportOpml { get; }
 
         /// <summary>
         /// Exports feeds to Opml.
         /// </summary>
-        public Command ExportOpml { get; }
+        public ObservableCommand ExportOpml { get; }
 
         /// <summary>
         /// Resets application settings.
         /// </summary>
-        public Command Reset { get; }
+        public ObservableCommand Reset { get; }
 
         /// <summary>
         /// Loads settings into UI.
         /// </summary>
-        public Command Load { get; }
+        public ObservableCommand Load { get; }
     }
 }

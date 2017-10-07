@@ -14,18 +14,18 @@ namespace myFeed.ViewModels.Implementations
             ISourcesRepository sourcesRepository,
             IPlatformService platformService)
         {
-            Url = new Property<string>(entity.Uri);
-            Name = new Property<string>(new Uri(entity.Uri).Host);
-            Notify = new Property<bool>(entity.Notify);
-            CopyLink = new Command(() => platformService.CopyTextToClipboard(entity.Uri));
-            OpenInBrowser = new Command(async () =>
+            Url = new ObservableProperty<string>(entity.Uri);
+            Name = new ObservableProperty<string>(new Uri(entity.Uri).Host);
+            Notify = new ObservableProperty<bool>(entity.Notify);
+            CopyLink = new ObservableCommand(() => platformService.CopyTextToClipboard(entity.Uri));
+            OpenInBrowser = new ObservableCommand(async () =>
             {
                 if (!Uri.IsWellFormedUriString(entity.Uri, UriKind.Absolute)) return;
                 var uri = new Uri(entity.Uri);
                 var plainUri = new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host));
                 await platformService.LaunchUri(plainUri);
             });
-            DeleteSource = new Command(async () =>
+            DeleteSource = new ObservableCommand(async () =>
             {
                 parentViewModel.Items.Remove(this);
                 await sourcesRepository.RemoveSourceAsync(entity.Category, entity);
@@ -40,31 +40,31 @@ namespace myFeed.ViewModels.Implementations
         /// <summary>
         /// Are notifications enabled or not?
         /// </summary>
-        public Property<bool> Notify { get; }
+        public ObservableProperty<bool> Notify { get; }
 
         /// <summary>
         /// Model url.
         /// </summary>
-        public Property<string> Url { get; }
+        public ObservableProperty<string> Url { get; }
 
         /// <summary>
         /// Website name.
         /// </summary>
-        public Property<string> Name { get; }
+        public ObservableProperty<string> Name { get; }
 
         /// <summary>
         /// Deletes the source.
         /// </summary>
-        public Command DeleteSource { get; }
+        public ObservableCommand DeleteSource { get; }
 
         /// <summary>
         /// Opens the website in edge.
         /// </summary>
-        public Command OpenInBrowser { get; }
+        public ObservableCommand OpenInBrowser { get; }
 
         /// <summary>
         /// Copies link location.
         /// </summary>
-        public Command CopyLink { get; }
+        public ObservableCommand CopyLink { get; }
     }
 }
