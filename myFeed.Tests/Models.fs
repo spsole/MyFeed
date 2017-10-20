@@ -1,176 +1,212 @@
 namespace myFeed.Tests.Models
 
 open Xunit
+open LiteDB
 open System
-open System.Linq
 
-open Microsoft.EntityFrameworkCore
-open Microsoft.Extensions.Logging
-
-open myFeed.Entities
-open myFeed.Entities.Local
+open myFeed.Repositories.Models
 
 open myFeed.Tests.Extensions
-open myFeed.Tests.Extensions.EFCoreHelpers
+open myFeed.Tests.Extensions.Domain
 
-/// Tests fixture for sources entities.
-type SourcesTableFixture() = 
-    let loggableContext = buildLoggableContext()
-    let sampleDataset = 
-        [ SourceCategoryEntity(Title="Foo", 
-            Sources=([| SourceEntity(Uri="foo", Notify=true);
-                        SourceEntity(Uri="bar", Notify=false) |]));
-          SourceCategoryEntity(Title="Bar", 
-            Sources=([| SourceEntity(Uri="foobar", Notify=false) |])) ]
+module DatabaseConnectionFixture = 
 
-    [<Fact>] 
-    member x.``should populate table with items``() =
-        loggableContext
-        |> also (count<SourceCategoryEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (count<SourceCategoryEntity> >> Should.equal 2)
-        |> clear<SourceCategoryEntity>
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should insert category into database``() =
+
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(Category(Title="Foo")) |> ignore
+
+        let category = Seq.item 0 <| collection.FindAll()
+        Should.notEqual Guid.Empty category.Id
+        Should.equal "Foo" category.Title
+
+    [<Fact; CleanUpCollection("Category")>]
+    let ``ids should be unique each insertion``() =
         
-    [<Fact>]
-    member x.``should be able to select items from table``() =
-        loggableContext
-        |> also (count<SourceCategoryEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (fun context ->
-            context.Set<SourceCategoryEntity>()
-                .FirstAsync(fun x -> x.Title = "Foo")
-            |> await
-            |> fun category -> category.Sources
-            |> Seq.where (fun x -> x.Uri.Length = 3)
-            |> Seq.length
-            |> Should.equal 2)
-        |> clear<SourceCategoryEntity>
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(Category(Title="Foo")) |> ignore
+        collection.Insert(Category(Title="Bar")) |> ignore
 
-    [<Fact>]
-    member x.``should be able to select items from multiple tables``() =
-        loggableContext
-        |> also (count<SourceCategoryEntity> >> Should.equal 0)
-        |> also (populate sampleDataset) 
-        |> also (fun context -> 
-            context.Set<SourceCategoryEntity>()
-                .Include(fun x -> x.Sources)
-            |> Seq.toList            
-            |> Seq.collect (fun x -> x.Sources)
-            |> Seq.length
-            |> Should.equal 3)
-        |> clear<SourceCategoryEntity>
+        let response = List.ofSeq <| collection.FindAll()
+        Should.notEqual response.[0].Id response.[1].Id                    
 
-/// Tests fixture for configuration entities.
-type ConfigurationTableFixture() =
-    let loggableContext = buildLoggableContext()
-    let sampleDataset = [ ConfigurationEntity(Key="Foo", Value="Bar") ]
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should insert categories with nested documents``() =    
 
-    [<Fact>]
-    member x.``should be able to insert and remove items``() =
-        loggableContext
-        |> also (count<ConfigurationEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (count<ConfigurationEntity> >> Should.equal 1)
-        |> clear<ConfigurationEntity>
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(
+            Category(Channels=toList
+                ([Channel(Articles=toList
+                    ([Article(Title="Foo")]))]))) |> ignore
 
-    [<Fact>]
-    member x.``should select item by it's key``() =
-        loggableContext
-        |> also (count<ConfigurationEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (fun context -> 
-            context.Set<ConfigurationEntity>()
-                .FirstAsync(fun i -> i.Key = "Foo")
-            |> await
-            |> fun entity -> entity.Value
-            |> Should.equal "Bar")
-        |> clear<ConfigurationEntity>
+        let category = Seq.item 0 <| collection.FindAll()
+        Should.equal 1 category.Channels.Count
+        Should.equal 1 category.Channels.[0].Articles.Count
+        Should.equal "Foo" category.Channels.[0].Articles.[0].Title  
 
-/// Tests fixture for article entities.
-type ArticlesTableFixture() =
-    let loggableContext = buildLoggableContext()
-    let sampleDataset = 
-        [ ArticleEntity(Content="Foo", FeedTitle="Bar", Fave=true);
-          ArticleEntity(Content="Foo", FeedTitle="Foo");
-          ArticleEntity(Content="Bar", FeedTitle="Foobar") ]
+    [<Fact; CleanUpCollection("Setting")>]
+    let ``should find setting entities using their keys``() =
 
-    [<Fact>]
-    member x.``should be able to insert items``() =
-        loggableContext
-        |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (count<ArticleEntity> >> Should.equal 3)
-        |> clear<ArticleEntity>
+        let collection = connection.GetCollection<Setting>()
+        collection.Insert(Setting(Key="Foo", Value="Bar")) |> ignore
 
-    [<Fact>]
-    member x.``should find item in database``() =
-        loggableContext
-        |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (fun context -> 
-            context.Set<ArticleEntity>()
-                .FirstAsync(fun x -> x.Content = "Bar")
-            |> await
-            |> fun found -> found.FeedTitle
-            |> Should.equal "Foobar")
-        |> clear<ArticleEntity>
+        let setting = collection.FindOne(fun x -> x.Key = "Foo")
+        Should.equal "Foo" setting.Key
+        Should.equal "Bar" setting.Value    
 
-    [<Fact>]
-    member x.``should select nessesary items from database``() =
-        loggableContext
-        |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (fun context -> 
-            context.Set<ArticleEntity>()
-            |> Seq.where (fun x -> x.Content = "Foo")
-            |> Seq.length
-            |> Should.equal 2)
-        |> clear<ArticleEntity>
+    [<Fact; CleanUpCollection("Setting")>]
+    let ``should find setting entities by keys using Query``() =
 
-    [<Fact>]
-    member x.``should return all items satisfying condition``() =
-        loggableContext
-        |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (fun context -> 
-            context.Set<ArticleEntity>()
-                .AllAsync(fun x -> x.Content.Length = 3)
-            |> await
-            |> Should.equal true)
-        |> clear<ArticleEntity>       
+        let collection = connection.GetCollection<Setting>()
+        collection.Insert(Setting(Key="Foo", Value="Bar")) |> ignore
 
-    [<Fact>]
-    member x.``should determine if table is empty``() =
-        loggableContext
-        |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (fun context -> 
-            context.Set<ArticleEntity>().AnyAsync()
-            |> await
-            |> Should.equal true)
-        |> clear<ArticleEntity>
+        let query = Query.EQ("Key", BsonValue("Foo"))
+        let setting = collection.FindOne(query)
+        Should.equal "Foo" setting.Key
+        Should.equal "Bar" setting.Value
 
-    [<Fact>]
-    member x.``should be able to select all using raw sql``() =
-        loggableContext
-        |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (fun context ->
-            context.Set<ArticleEntity>()
-               .FromSql<ArticleEntity>("SELECT * FROM Articles")
-            |> Seq.length
-            |> Should.equal 3)
-        |> clear<ArticleEntity>        
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should scan nested entities in category``() =
+
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(
+            Category(Title="Foo", Channels=toList
+                ([Channel(Uri="http://foo.bar")]))) |> ignore
+
+        let query = Query.EQ("Channels[*].Uri", BsonValue("http://foo.bar")) 
+        let category = collection.FindOne(query)
+        Should.equal "Foo" category.Title
+        Should.equal "http://foo.bar" category.Channels.[0].Uri    
+
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should scan deeply nested entities in category``() =
+                            
+        let collection = connection.GetCollection<Category>()
+        collection.EnsureIndex(fun x -> x.Id) |> ignore
+        collection.Insert(
+            Category(Channels=toList
+                ([Channel(Articles=toList
+                    ([Article(Title="Foo")]))]))) |> ignore      
+
+        let query = Query.EQ("Channels[*].Articles[*].Title", BsonValue("Foo"))
+        let category = collection.FindOne(query)
+        Should.equal "Foo" category.Channels.[0].Articles.[0].Title   
+
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should find category by it's id``() =  
+
+        let category = Category(Title="Foo")
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(category) |> ignore
+
+        let query = Query.EQ("_id", BsonValue(category.Id))
+        let response = collection.FindOne(query)
+        Should.equal category.Id response.Id        
+        Should.equal "Foo" response.Title                      
+
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should update nested entity in database``() = 
         
-    [<Fact>]    
-    member x.``should be able to execute raw actions``() =
-        loggableContext
-        |> also (count<ArticleEntity> >> Should.equal 0)
-        |> also (populate sampleDataset)
-        |> also (fun context ->
-            context.Database.ExecuteSqlCommand(
-                "DELETE FROM Articles WHERE Fave = 0") |> ignore
-            context.Set<ArticleEntity>()
-            |> Seq.length
-            |> Should.equal 1)
-        |> clear<ArticleEntity>  
+        // Replaces channel and returns count of replaces items.
+        let update (channel: Channel) =
+            let collection = connection.GetCollection<Category>()
+            let query = Query.EQ("Channels[*]._id", BsonValue(channel.Id))
+            let category = collection.FindOne(query)
+            category.Channels.RemoveAll(fun x -> x.Id = channel.Id) |> ignore
+            category.Channels.Add(channel)   
+            collection.Update(category) |> ignore    
+
+        let channel = Channel(Uri="Foo")
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(Category(Channels=toList([channel]))) |> ignore
+
+        channel.Uri <- "Bar"
+        update channel 
+
+        let response = Seq.item 0 <| collection.FindAll()
+        Should.equal "Bar" response.Channels.[0].Uri
+
+    [<Fact; CleanUpCollection("Article")>]
+    let ``should perform bulk insert of entities set``() =    
+
+        let collection = connection.GetCollection<Article>()
+        collection.InsertBulk(
+            [ Article(Title="Foo");
+              Article(Title="Bar");
+              Article(Title="Zoo") ]) |> ignore
+
+        let articles = List.ofSeq <| collection.FindAll()      
+        Should.notEqual articles.[0].Id articles.[1].Id
+        Should.notEqual articles.[1].Id articles.[2].Id
+        Should.notEqual articles.[2].Id articles.[1].Id   
+
+    [<Fact; CleanUpCollection("Setting")>]
+    let ``should perform search on entities using Query``() =
+
+        let collection = connection.GetCollection<Setting>()
+        collection.Insert(Setting(Key="Foo", Value="Important")) |> ignore
+        
+        let query = Query.EQ("Key", BsonValue("Foo"))
+        let response = collection.FindOne(query)
+        Should.equal "Important" response.Value
+        Should.equal "Foo" response.Key
+
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should performs search on nested objects using Query``() =
+
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(
+            Category(Channels=toList
+                ([Channel(Articles=toList
+                    ([Article(Title="Foo")]))]))) |> ignore  
+
+        let query = Query.EQ("Channels[*].Articles[*].Title", BsonValue("Foo"))
+        let response = collection.FindOne(query)
+        Should.equal "Foo" response.Channels.[0].Articles.[0].Title
+
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should performs search on nested objects by id using Query``() =
+
+        let uniqueIdentifier = Guid.NewGuid()
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(
+            Category(Channels=toList
+                ([Channel(Articles=toList
+                    ([Article(Id=uniqueIdentifier)]))]))) |> ignore  
+
+        let query = Query.EQ("Channels[*].Articles[*]._id", BsonValue(uniqueIdentifier))
+        let response = collection.FindOne(query)
+        Should.equal uniqueIdentifier response.Channels.[0].Articles.[0].Id
+
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should find nested entity by id and return its instance``() =
+
+        let identifier = Guid.NewGuid()
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(
+            Category(Channels=toList
+                ([Channel(Articles=toList
+                    ([Article(Title="Foo", Id=identifier)]))]))) |> ignore  
+
+        let query = Query.EQ("Channels[*].Articles[*]._id", BsonValue(identifier))
+        collection.FindOne(query).Channels
+        |> Seq.collect (fun x -> x.Articles)
+        |> Seq.find (fun x -> x.Id = identifier)
+        |> fun x -> x.Title
+        |> Should.equal "Foo"
+
+    [<Fact; CleanUpCollection("Category")>]
+    let ``should set not null unique identifier for child nodes``() =
+
+        let collection = connection.GetCollection<Category>()
+        collection.Insert(
+            Category(Channels=toList
+                ([Channel(Articles=toList
+                    ([Article(Title="Foo")]))]))) |> ignore
+
+        let response = Seq.item 0 <| collection.FindAll()
+        Should.notEqual Guid.Empty response.Id
+        Should.notEqual Guid.Empty response.Channels.[0].Id    
+        Should.notEqual Guid.Empty response.Channels.[0].Articles.[0].Id      
+        

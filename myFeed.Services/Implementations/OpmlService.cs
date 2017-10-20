@@ -1,46 +1,38 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using myFeed.Entities.Local;
-using myFeed.Entities.Opml;
 using myFeed.Repositories.Abstractions;
+using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
+using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
     public sealed class OpmlService : IOpmlService
     {
         private readonly ISerializationService _serializationService;
-        private readonly ITranslationsService _translationsService;
-        private readonly ISourcesRepository _sourcesRepository;
-        private readonly IFilePickerService _filePickerService;
-        private readonly IDialogService _dialogService;
+        private readonly ICategoriesRepository _categoriesRepository;
 
         public OpmlService(
-            IDialogService dialogService,
-            ISourcesRepository sourcesRepository,
-            IFilePickerService filePickerService,
-            ITranslationsService translationsService,
+            ICategoriesRepository categoriesRepository,
             ISerializationService serializationService)
         {
-            _dialogService = dialogService;
-            _filePickerService = filePickerService;
-            _sourcesRepository = sourcesRepository;
-            _translationsService = translationsService;
+            _categoriesRepository = categoriesRepository;
             _serializationService = serializationService;
         }
 
-        public async Task ExportOpmlFeeds()
+        public async Task<bool> ExportOpmlFeedsAsync(Stream stream)
         {
-            // Init new Opml instance and read categories from db.
-            var opml = new Opml {Head = new Head {Title = "Feeds from myFeed App"}};
-            var categories = await _sourcesRepository.GetAllAsync();
-            var outlines = categories.Select(x => new Outline
+            // Initialize new Opml instance and read categories from db.
+            var opml = new Opml {Head = new OpmlHead {Title = "Feeds from myFeed App"}};
+            var categories = await _categoriesRepository.GetAllAsync();
+            var outlines = categories.Select(x => new OpmlOutline
             {
-                ChildOutlines = x.Sources
+                ChildOutlines = x.Channels
                     .Select(i => new {Entity = i, Uri = new Uri(i.Uri)})
-                    .Select(y => new Outline
+                    .Select(y => new OpmlOutline
                     {
                         HtmlUrl = $"{y.Uri.Scheme}://{y.Uri.Host}",
                         XmlUrl = y.Uri.ToString(),
@@ -55,37 +47,27 @@ namespace myFeed.Services.Implementations
             });
 
             // Fill opml with categories.
-            opml.Body = new List<Outline>(outlines);
-            var stream = await _filePickerService.PickFileForWriteAsync();
-            if (stream == null) return;
-
-            // Serialize data into file picked by user.
+            opml.Body = new List<OpmlOutline>(outlines);
             _serializationService.Serialize(opml, stream);
-            await _dialogService.ShowDialog(
-                _translationsService.Resolve("ExportFeedsSuccess"),
-                _translationsService.Resolve("SettingsNotification"));
+            return true;
         }
 
-        public async Task ImportOpmlFeeds()
+        public async Task<bool> ImportOpmlFeedsAsync(Stream stream)
         {
-            // Pick file for read.
-            var stream = await _filePickerService.PickFileForReadAsync();
-            if (stream == null) return;
-            
             // Deserialize object from file.
             var opml = _serializationService.Deserialize<Opml>(stream);
-            if (opml == null) return;
+            if (opml == null) return false;
 
             // Process potential categories.
-            var categories = new List<SourceCategoryEntity>();
+            var categories = new List<Category>();
             opml.Body
                 .Where(i => i.XmlUrl == null && i.HtmlUrl == null)
                 .Select(i => new {Title = i.Title ?? i.Text, Outline = i})
                 .Where(i => i.Title != null)
-                .Select(i => new SourceCategoryEntity
+                .Select(i => new Category
                 {
-                    Sources = i.Outline.ChildOutlines
-                        .Select(o => new SourceEntity
+                    Channels = i.Outline.ChildOutlines
+                        .Select(o => new Channel
                         {
                             Uri = o.XmlUrl,
                             Notify = true
@@ -97,22 +79,20 @@ namespace myFeed.Services.Implementations
                 .ForEach(i => categories.Add(i));
 
             // Process plain feeds.
-            var uncategorized = new SourceCategoryEntity
+            var uncategorized = new Category
             {
                 Title = "Unknown category",
-                Sources = opml.Body
+                Channels = opml.Body
                     .Where(i => Uri.IsWellFormedUriString(i.XmlUrl, UriKind.Absolute))
-                    .Select(i => new SourceEntity {Uri = i.XmlUrl, Notify = true})
+                    .Select(i => new Channel {Uri = i.XmlUrl, Notify = true})
                     .ToList()
             };
-            if (uncategorized.Sources.Any()) categories.Add(uncategorized);
+            if (uncategorized.Channels.Any()) categories.Add(uncategorized);
 
             // Insert into database and notify user.
-            foreach (var category in categories)
-                await _sourcesRepository.InsertAsync(category);
-            await _dialogService.ShowDialog(
-                _translationsService.Resolve("ImportFeedsSuccess"),
-                _translationsService.Resolve("SettingsNotification"));
+            foreach (var category in categories) 
+                await _categoriesRepository.InsertAsync(category);
+            return true;
         }
     }
 }

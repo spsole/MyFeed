@@ -1,275 +1,116 @@
 namespace myFeed.Tests.Services
 
-open System
-open System.Threading.Tasks
-open System.Collections.Generic
-open System.Collections.Immutable
-open System.IO
-open System.Linq
-
 open Xunit
 open Autofac
 open NSubstitute
 
-open myFeed.Tests.Extensions
-open myFeed.Tests.Extensions.Dep
+open System
+open System.IO
+open System.Linq
+open System.Threading.Tasks
+open System.Collections.Generic
 
-open myFeed.ViewModels.Extensions
+open myFeed.Tests.Extensions
+open myFeed.Tests.Extensions.Domain
+
+open myFeed.Repositories.Abstractions
+open myFeed.Repositories.Models
 
 open myFeed.Services.Abstractions
 open myFeed.Services.Implementations
+open myFeed.Services.Platform
+open myFeed.Services.Models
 
-open myFeed.Repositories.Abstractions
-
-open myFeed.Entities.Opml
-open myFeed.Entities.Local
-
-type RegexExtractImageServiceFixture(service: RegexExtractImageService) =
-    interface IClassFixture<RegexExtractImageService>
+module CachingSettingsServiceFixture =
 
     [<Fact>]
-    member x.``should extract first image url from plain text``() =
-        "Foo <bla a='42'></bla> \n<img foo='bar' src='http://example.com' />"
-        |> (service.ExtractImage >> Should.equal "http://example.com")        
+    let ``should resolve default values from received defaults service``() =    
+        
+        let defaults = Substitute.For<IDefaultsService>()
+        defaults.DefaultSettings.Returns(dict
+            [ "Foo", "StoredFoo"; 
+              "Bar", "StoredBar" ] |> Dictionary<_, _>) 
+            |> ignore
+
+        let service = produce<CachingSettingsService> [defaults]
+        service.GetAsync("Foo").Result |> Should.equal "StoredFoo"
+        service.GetAsync("Bar").Result |> Should.equal "StoredBar"
 
     [<Fact>]
-    member x.``should return null if there are no images``() =
-        "London is the capital of Great Britain"
-        |> (service.ExtractImage >> Should.equal null)
+    let ``should put new value into cache when set method is called``() =
 
-type XmlSerializerFixture(service: SerializationService) =
-    interface IClassFixture<SerializationService>
-
-    [<Fact>]
-    member x.``should serialize typed objects into xml``() =
-        let filename = "sample.xml"
-        let instance = Opml(Head=Head(Title="Foo"))
-        service.Serialize<Opml>(instance, File.OpenWrite filename)
-        Should.contain "Foo" (File.ReadAllText filename)
-        File.Delete filename
-
-    [<Fact>]
-    member x.``should deserialize typed objects from xml``() =
-        let filename = "sample.xml"
-        let instance = Opml(Head=Head(Title="Bar"))
-        service.Serialize<Opml>(instance, File.OpenWrite filename)
-        let opml = service.Deserialize<Opml>(File.OpenRead filename)
-        Should.equal "Bar" opml.Head.Title
-        File.Delete filename
-
-type FeedlySearchServiceFixture(service: FeedlySearchService) =
-    interface IClassFixture<FeedlySearchService>
-
-    [<Fact>]
-    member x.``should find something on feedly search engine``() =
-        service.Search("feedly").Result |> Should.notEqual null
-
-type BindablePropertyFixture() =
-
-    [<Fact>] 
-    member x.``property changed event should raise on value change``() =
-        let property = ObservableProperty(42)
-        let mutable fired = 0
-        property.PropertyChanged += fun e -> fired <- fired + 1
-        property.Value <- 3
-        Should.equal 1 fired 
-
-    [<Fact>]
-    member x.``property changed event should not fire if value is the same``() =
-        let property = ObservableProperty(42)
-        let mutable fired = 0
-        property.PropertyChanged += fun _ -> fired <- fired + 1
-        property.Value <- 42
-        Should.equal 0 fired
-
-    [<Fact>]
-    member x.``property name should be value``() =
-        let property = ObservableProperty(42)
-        property.PropertyChanged += fun e -> Should.equal "Value" e.PropertyName
-        property.Value <- 3    
+        let service = produce<CachingSettingsService> []
+        service.SetAsync("Zoo", "StoredZoo").Wait()
+        service.GetAsync("Zoo").Result |> Should.equal "StoredZoo"
         
     [<Fact>]
-    member x.``should slowly initialize value via fun of task``() =
-        let property = ObservableProperty<string>(fun () -> "Foo" |> Task.FromResult)
-        Should.equal "Foo" property.Value
+    let ``should support generic convertible numbers serialization``() =
 
-type BindableCommandFixture() =
-
-    [<Fact>]
-    member x.``should execute passed actions``() =
-        let mutable fired = 0
-        let command = Func<Task>(fun () -> fired <- fired + 1; Task.CompletedTask) |> ObservableCommand
-        command.Execute(null)
-        Should.equal true (command.CanExecute()) 
-        Should.equal 1 fired
+        let service = produce<CachingSettingsService> []
+        service.SetAsync("Foo", 42).Wait()
+        service.GetAsync<int>("Foo").Result |> Should.equal 42    
 
     [<Fact>]
-    member x.``should await previous execution``() =
-        let command = Func<Task>(fun () -> Task.Delay(1000)) |> ObservableCommand
-        command.Execute(null)
-        Should.equal false (command.CanExecute())
+    let ``should support floating point numbers serialization``() =
+
+        let service = produce<CachingSettingsService> []
+        service.SetAsync<float>("Foo", 42.53).Wait()
+        service.GetAsync<float>("Foo").Result |> Should.equal 42.53
+        
+    [<Fact>]
+    let ``should support bytes serialization also``() =
+
+        let service = produce<CachingSettingsService> []
+        service.SetAsync<byte>("Foo", 1uy).Wait()
+        service.GetAsync<byte>("Foo").Result |> Should.equal 1uy
 
     [<Fact>]
-    member x.``should raise state change event``() =
-        let mutable fired = 0
-        let command = Func<Task>(fun () -> Task.CompletedTask) |> ObservableCommand
-        command.CanExecuteChanged += fun _ -> fired <- fired + 1
-        command.Execute(null)
-        Should.equal 2 fired   
+    let ``should throw when trying to extract unknown value``() =    
 
-type SettingsServiceFixture() =
-    let settingsService = SettingsService(Substitute.For<_>(), Substitute.For<_>())
-
+        let service = produce<CachingSettingsService> []
+        fun () -> service.GetAsync("Unknown").Result |> ignore
+        |> Should.throw<AggregateException>
+        
     [<Fact>]
-    member x.``should be able to resolve strings``() = 
-        settingsService.Set<string>("FooStr", "Bar").Wait()
-        settingsService.Get<string>("FooStr").Result
-        |> Should.equal "Bar" 
+    let ``should query the database only once when using get method``() =
 
-    [<Fact>]
-    member x.``should be able to resolve booleans``() =
-        settingsService.Set<bool>("FooBool", true).Wait()
-        settingsService.Get<bool>("FooBool").Result
-        |> Should.equal true
-
-    [<Fact>]
-    member x.``should be able to resolve ints``() =
-        settingsService.Set<int>("FooInt", 42).Wait()
-        settingsService.Get<int>("FooInt").Result
-        |> Should.equal 42
-
-    [<Fact>]
-    member x.``should be able to resolve doubles``() =
-        settingsService.Set<double>("Foo", 42.).Wait()
-        settingsService.Get<double>("Foo").Result
-        |> Should.equal 42.
-
-    [<Fact>]
-    member x.``should be able to resolve floats``() =
-        settingsService.Set<float>("Foo", 42.).Wait()
-        settingsService.Get<float>("Foo").Result
-        |> Should.equal 42.
-
-    [<Fact>]
-    member x.``should be able to resolve bytes``() =
-        settingsService.Set<byte>("Boo", 1uy).Wait()
-        settingsService.Get<byte>("Boo").Result
-        |> Should.equal 1uy
-
-    [<Fact>]
-    member x.``should resolve default settings``() =
-        let defaultsService = Substitute.For<IDefaultsService>()
-        defaultsService.DefaultSettings.Returns(dict["Foo", "Bar"] 
-            |> Dictionary<string, string>) |> ignore
-        let service = SettingsService(Substitute.For<_>(), defaultsService)  
-        service.Get<string>("Foo").Result
-
-    [<Fact>]
-    member x.``should store recently fetched entities in cache``() =  
         let mutable counter = 0
-        let configurationRepository = Substitute.For<IConfigurationRepository>()
-        configurationRepository
-            .GetByNameAsync(Arg.Any())
-            .Returns(Task.FromResult "Foo")
-            .AndDoes(fun _ -> counter <- counter + 1) |> ignore
-        let service = SettingsService(configurationRepository, Substitute.For<_>())
-        Should.equal "Foo" (service.Get<string>("Any").Result)
-        Should.equal "Foo" (service.Get<string>("Any").Result)
-        Should.equal 1 counter
+        let settings = Substitute.For<ISettingsRepository>() 
+        settings.When(fun x -> x.GetByKeyAsync("Foo") |> ignore)
+                .Do(fun _ -> counter <- counter + 1)
 
-type FeedStoreServiceFixture() = 
-    let createService (stored: seq<_>) (response: seq<_>) =
-        let fetchService = Substitute.For<IFeedFetchService>()
-        fetchService.FetchAsync(Arg.Any()).Returns(Task.FromResult struct(null, response)) |> ignore
+        let defaults = Substitute.For<IDefaultsService>()
+        defaults.DefaultSettings.Returns(dict["Foo", "Bar"] |> Dictionary<_, _>) |> ignore
 
-        let articlesRepository = Substitute.For<IArticlesRepository>()
-        articlesRepository.InsertAsync(Arg.Any()).Returns(Task.CompletedTask) |> ignore
-        articlesRepository.GetAllAsync().Returns(Task.FromResult stored) |> ignore
+        let service = produce<CachingSettingsService> [settings; defaults]
+        service.GetAsync("Foo").Result |> Should.equal "Bar"
+        service.GetAsync("Foo").Result |> Should.equal "Bar"
+        service.GetAsync("Foo").Result |> Should.equal "Bar"
+        counter |> Should.equal 1
 
-        FeedStoreService(articlesRepository, fetchService)
+module OpmlServiceFixture =
 
     [<Fact>]
-    member x.``should sort and filter article entities``() =
-        let fakeSourceEntity = SourceEntity(Uri="http://foo.com")
-        let fakeStoredArticles =
-            [| ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue, Source=fakeSourceEntity);
-               ArticleEntity(Title="Kek", PublishedDate=DateTime.Now, Source=fakeSourceEntity) |]
-            |> also (Seq.iter fakeSourceEntity.Articles.Add)           
+    let ``should be able to export opml feeds``() =
 
-        let fakeFetchedEntities = 
-            [ ArticleEntity(Title="Foo", PublishedDate=DateTime.MinValue);
-              ArticleEntity(Title="Bar", PublishedDate=DateTime.MaxValue);
-              ArticleEntity(Title="Abc", PublishedDate=DateTime.Now-TimeSpan.FromDays(1.)) ] 
+        let categories = Substitute.For<ICategoriesRepository>()
+        categories.GetAllAsync().Returns(
+            [ Category(Title="Foo"); 
+              Category(Title="Bar", Channels=toList
+                [| Channel(Uri="http://example.com/rss") |]) ]
+            |> fun seq -> seq.OrderBy(fun i -> i.Title)
+            |> Task.FromResult) 
+            |> ignore
 
-        let service = createService fakeStoredArticles fakeFetchedEntities
-        let feed = (List.ofSeq << snd) <| service.GetAsync([| fakeSourceEntity |]).Result
+        let mutable opml = null
+        let serializer = Substitute.For<ISerializationService>()
+        serializer.When(fun x -> x.Serialize<Opml>(Arg.Any(), Arg.Any()) |> ignore)     
+                  .Do(fun x -> opml <- x.Arg<Opml>())
 
-        Should.equal 4 (feed.Count())
-        Should.equal "Bar" feed.[0].Title
-        Should.equal "Kek" feed.[1].Title
-        Should.equal "Abc" feed.[2].Title
-        Should.equal "Foo" feed.[3].Title
+        let service = produce<OpmlService> [categories; serializer]
+        let response = service.ExportOpmlFeedsAsync(new MemoryStream()).Result
 
-    [<Fact>]
-    member x.``should filter articles not related to any source``() =
-        let fakeSourceEntity = SourceEntity(Uri="http://foo.bar")
-        let fakeStoredArticles =
-            [ ArticleEntity(Title="Foo", PublishedDate=DateTime.Now, Source=fakeSourceEntity);
-              ArticleEntity(Title="Bar", PublishedDate=DateTime.Now) ]
-        fakeSourceEntity.Articles.Add fakeStoredArticles.[0]                 
-
-        let service = createService fakeStoredArticles []
-        let feed = (List.ofSeq << snd) <| service.GetAsync([| fakeSourceEntity |]).Result
-
-        Should.equal "Foo" feed.[0].Title
-        Should.equal 1 (feed.Count())
-
-    [<Fact>]
-    member x.``should fetch new articles and remove not related to any source``() =
-        let fakeSourceEntity = SourceEntity(Uri="http://foo.bar")
-        let fakeStoredArticles =
-            [ ArticleEntity(Title="Foo", Source=fakeSourceEntity);
-              ArticleEntity(Title="Bar", PublishedDate=DateTime.Now) ]
-        fakeSourceEntity.Articles.Add fakeStoredArticles.[0]            
-
-        let fakeFetchedArticles = 
-            [ ArticleEntity(Title="FooBar", PublishedDate=DateTime.Now);
-              ArticleEntity(Title="Jumba") ]
-
-        let service = createService fakeStoredArticles fakeFetchedArticles
-        let feed = (List.ofSeq << snd) <| service.GetAsync([| fakeSourceEntity |]).Result
-
-        Should.equal 3 (feed.Count())
-        Should.equal "FooBar" feed.[0].Title
-        Should.equal "Jumba" feed.[2].Title
-        Should.equal "Foo" feed.[1].Title
-
-type OpmlServiceFixture() =
-
-    [<Fact>]
-    member x.``should be able to export opml feeds``() =
-        let fakeResponse = 
-            [ SourceCategoryEntity(Title="Foo"); SourceCategoryEntity(Title="Bar", 
-                Sources=[| SourceEntity(Uri="http://example.com/rss") |]) ]
-            |> fun sequence -> sequence.OrderBy(fun i -> i.Title)
-            |> Task.FromResult
-
-        let sourcesRepository = Substitute.For<ISourcesRepository>()
-        sourcesRepository.GetAllAsync().Returns(fakeResponse) |> ignore
-        let filePickerService = Substitute.For<IFilePickerService>()
-        filePickerService.PickFileForWriteAsync().Returns(new MemoryStream() :> Stream |> Task.FromResult) |> ignore
-        let serializationService = Substitute.For<ISerializationService>()
-
-        let service = 
-            OpmlService(
-                Substitute.For<_>(),
-                sourcesRepository,
-                filePickerService,
-                Substitute.For<_>(),
-                serializationService)
-        service.ExportOpmlFeeds().Wait()
-
-        let opml = serializationService.ReceivedCalls().First().GetArguments().[0] :?> Opml
+        Should.equal true response
         Should.equal 2 opml.Body.Count
         Should.equal "Bar" opml.Body.[0].Title
         Should.equal "Foo" opml.Body.[1].Title
@@ -279,28 +120,204 @@ type OpmlServiceFixture() =
         Should.equal "http://example.com/rss" opml.Body.[0].ChildOutlines.[0].XmlUrl
 
     [<Fact>]
-    member x.``should be able to import opml feeds``() =    
-        let outlines = 
-            [ Outline(XmlUrl="http://foo.com");
-              Outline(XmlUrl="https://bar.com") ] |> List<_>
+    let ``should be able to import opml feeds``() =    
 
-        let filePickerService = Substitute.For<IFilePickerService>()
-        filePickerService.PickFileForReadAsync().Returns(new MemoryStream() :> Stream |> Task.FromResult) |> ignore
-        let serializationService = Substitute.For<ISerializationService>()
-        serializationService.Deserialize<Opml>(Arg.Any()).Returns(Opml(Body=outlines)) |> ignore
-        let sourcesRepository = Substitute.For<ISourcesRepository>()
-        sourcesRepository.InsertAsync(Arg.Any()).Returns(Task.CompletedTask) |> ignore
+        let serializer = Substitute.For<ISerializationService>()
+        serializer.Deserialize<Opml>(Arg.Any()).Returns(
+            Opml(Body=toList
+                [ OpmlOutline(XmlUrl="http://foo.com");
+                  OpmlOutline(XmlUrl="https://bar.com") ])) 
+            |> ignore
 
-        let service = 
-            OpmlService(
-                Substitute.For<_>(),
-                sourcesRepository,
-                filePickerService,
-                Substitute.For<_>(),
-                serializationService)
-        service.ImportOpmlFeeds().Wait()
+        let mutable category = null
+        let categories = Substitute.For<ICategoriesRepository>()
+        categories.When(fun x -> x.InsertAsync(Arg.Any()) |> ignore)
+                  .Do(fun x -> category <- x.Arg<Category>())
 
-        let entities = sourcesRepository.ReceivedCalls().First().GetArguments().[0] :?> SourceCategoryEntity[]
-        Should.equal 2 entities.[0].Sources.Count 
-        Should.equal "http://foo.com" (entities.[0].Sources |> Seq.item 0 |> fun i -> i.Uri)
-        Should.equal "https://bar.com" (entities.[0].Sources |> Seq.item 1 |> fun i -> i.Uri)
+        let service = produce<OpmlService> [serializer; categories]
+        let response = service.ImportOpmlFeedsAsync(new MemoryStream()).Result
+
+        Should.equal true response
+        Should.equal 2 category.Channels.Count 
+        Should.equal "http://foo.com" category.Channels.[0].Uri
+        Should.equal "https://bar.com" category.Channels.[1].Uri
+
+module FeedlySearchServiceFixture =
+
+    [<Fact>]
+    let ``should always return valid response``() =
+
+        let service = produce<FeedlySearchService> []
+        service.SearchAsync("Foo").Result 
+        |> Should.notEqual null
+
+module FeedReaderFetchServiceFixture =
+
+    [<Fact>]
+    let ``should always return valid response``() =
+
+        let service = produce<FeedReaderFetchService> []
+        service.FetchAsync("nonsense").Result 
+        |> also (fst >> Should.notEqual null)   
+        |> also (snd >> Should.notEqual null) 
+        |> ignore
+
+module RegexImageServiceFixture =
+
+    [<Fact>]
+    let ``should extract first image url from plain text``() =
+
+        let service = produce<RegexImageService> []
+        "Foo <bla a='42'></bla> \n<img foo='bar' src='http://example.com' />"
+        |> (service.ExtractImageUri >> Should.equal "http://example.com")        
+
+    [<Fact>]
+    let ``should return null if there are no images``() =
+    
+        let service = produce<RegexImageService> []
+        "London is the capital of Great Britain"
+        |> (service.ExtractImageUri >> Should.equal null)
+        
+module XmlSerializationServiceFixture =
+
+    [<Fact; CleanUpFile("sample")>]
+    let ``should serialize typed objects into xml``() =
+
+        let service = produce<XmlSerializationService> []
+        let instance = Opml(Head=OpmlHead(Title="Foo"))
+        service.Serialize<Opml>(instance, File.OpenWrite "sample")
+        Should.contain "Foo" (File.ReadAllText "sample")
+
+    [<Fact; CleanUpFile("sample")>]
+    let ``should deserialize typed objects from xml``() =
+
+        let service = produce<XmlSerializationService> []
+        let instance = Opml(Head=OpmlHead(Title="Bar"))
+        service.Serialize<Opml>(instance, File.OpenWrite "sample")
+        let opml = service.Deserialize<Opml>(File.OpenRead "sample")
+        Should.equal "Bar" opml.Head.Title
+
+module ParallelFeedStoreServiceFixture =
+
+    [<Fact>]
+    let ``should sort stored article entities``() = 
+
+        let fetcher = Substitute.For<IFeedFetchService>()
+        fetcher.FetchAsync(Arg.Any<_>()).Returns(
+            struct(null, Seq.empty<Article>) 
+            |> Task.FromResult)
+            |> ignore
+
+        let service = produce<ParallelFeedStoreService> [fetcher]
+        let articles =
+            service.LoadAsync(
+                [ Channel(Articles=toList
+                    [ Article(Title="Foo", PublishedDate=DateTime.Now);
+                      Article(Title="Bar", PublishedDate=DateTime.MinValue);
+                      Article(Title="Zoo", PublishedDate=DateTime.MaxValue) ]
+                  )]).Result
+            |> (snd >> List.ofSeq)              
+
+        Should.equal 3 articles.Length
+        Should.equal "Zoo" articles.[0].Title
+        Should.equal "Foo" articles.[1].Title
+        Should.equal "Bar" articles.[2].Title
+
+    [<Fact>]
+    let ``should save fetched article entities``() =    
+
+        let fetcher = Substitute.For<IFeedFetchService>()
+        fetcher.FetchAsync(Arg.Any<_>()).Returns(
+            struct(null, [Article(Title="Foo")] :> seq<_>) 
+            |> Task.FromResult)
+            |> ignore
+
+        let mutable articlesInserted = null
+        let categories = Substitute.For<ICategoriesRepository>()
+        categories.When(fun x -> x.InsertArticleRangeAsync(Arg.Any<_>(), Arg.Any<_>()) |> ignore)
+                  .Do(fun x -> articlesInserted <- x.Arg<seq<Article>>())       
+
+        let service = produce<ParallelFeedStoreService> [fetcher; categories]
+        let articles = 
+            service.LoadAsync(
+                [ Channel(Uri="http://foo.bar") ]).Result
+                |> (snd >> List.ofSeq)            
+
+        let article = Seq.item 0 articlesInserted
+        Should.equal 1 articles.Length
+        Should.equal "Foo" articles.[0].Title
+        Should.equal "Foo" article.Title
+
+    [<Fact>]
+    let ``should mix and order fetched and stored articles by date``() = 
+        
+        let fetcher = Substitute.For<IFeedFetchService>()
+        fetcher.FetchAsync(Arg.Any<_>()).Returns(
+            struct(null, [Article(Title="Foo", PublishedDate=DateTime.Now)] :> seq<_>) 
+            |> Task.FromResult)
+            |> ignore
+
+        let service = produce<ParallelFeedStoreService> [fetcher]
+        let articles =
+            service.LoadAsync(
+                [ Channel(Articles=toList
+                    [ Article(Title="Bar", PublishedDate=
+                        DateTime.MinValue)])]).Result
+            |> (snd >> List.ofSeq)
+
+        Should.equal 2 articles.Length
+        Should.equal "Foo" articles.[0].Title
+        Should.equal "Bar" articles.[1].Title                                              
+
+module FavoritesServiceFixture =
+
+    [<Fact>]
+    let ``should update article entity fave value when adding and removing``() =
+        
+        let article = Article(Fave=false)        
+        let service = produce<FavoritesService> []
+        
+        service.Insert(article).Wait()
+        Should.equal article.Fave true
+
+        service.Remove(article).Wait()
+        Should.equal article.Fave false
+
+    [<Fact>]
+    let ``should insert and remove article via repository``() =
+    
+        let mutable deleted = 0
+        let mutable inserted = 0
+
+        let favorites = Substitute.For<IFavoritesRepository>()
+        favorites.When(fun x -> x.InsertAsync(Arg.Any<_>()) |> ignore)
+                 .Do(fun x -> inserted <- inserted + 1)
+        favorites.When(fun x -> x.RemoveAsync(Arg.Any<_>()) |> ignore)
+                 .Do(fun x -> deleted <- deleted + 1)             
+
+        let article = Article(Fave=false)
+        let service = produce<FavoritesService> [favorites]
+
+        service.Insert(article).Wait()
+        service.Insert(article).Wait()
+        service.Remove(article).Wait()
+        service.Remove(article).Wait()
+
+        Should.equal 1 deleted
+        Should.equal 1 inserted
+
+module AutofacFactoryServiceFixture =
+
+    type Sample(name: string) = member x.Name = name
+
+    [<Fact>]
+    let ``should inject parameters with given type``() =
+
+        let containerBuilder = ContainerBuilder()
+        containerBuilder.RegisterType<Sample>().AsSelf() |> ignore
+        let lifetimeScope = containerBuilder.Build()
+
+        let factory = produce<AutofacFactoryService> [lifetimeScope]
+        let instance = factory.CreateInstance<Sample> "Foo"
+        Should.equal "Foo" instance.Name
+        

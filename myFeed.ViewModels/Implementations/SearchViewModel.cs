@@ -1,36 +1,31 @@
 ﻿using System.Collections.ObjectModel;
-using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
-using myFeed.ViewModels.Extensions;
+using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
     public sealed class SearchViewModel
     {
         public SearchViewModel(
-            ISourcesRepository sourcesRepository,
-            IPlatformService platformService,
-            IDialogService dialogService,
+            IFactoryService factoryService,
             ISearchService searchService)
         {
+            IsEmpty = true;
+            IsLoading = false;
+            IsGreeting = true;
+            SearchQuery = string.Empty;
+            
             Items = new ObservableCollection<SearchItemViewModel>();
-            SearchQuery = new ObservableProperty<string>(string.Empty);
-            IsGreeting = new ObservableProperty<bool>(true);
-            IsLoading = new ObservableProperty<bool>(false);
-            IsEmpty = new ObservableProperty<bool>(true);
             Fetch = new ObservableCommand(async () =>
             {
                 IsLoading.Value = true;
                 var query = SearchQuery.Value;
-                var searchResults = await searchService.Search(query);
+                var searchResults = await searchService.SearchAsync(query);
                 IsGreeting.Value = false;
                 Items.Clear();
-                foreach (var result in searchResults.Results)
-                {
-                    var viewModel = new SearchItemViewModel(result, 
-                        dialogService, platformService, sourcesRepository);
-                    Items.Add(viewModel);
-                }
+                foreach (var feedlyItem in searchResults.Results)
+                    Items.Add(factoryService.CreateInstance<
+                        SearchItemViewModel>(feedlyItem));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });

@@ -1,20 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace myFeed.Services.Abstractions
 {
-    /// <summary>
-    /// OPML manager.
-    /// </summary>
     public interface IOpmlService
     {
-        /// <summary>
-        /// Imports feeds from OPML format.
-        /// </summary>
-        Task ImportOpmlFeeds();
-
-        /// <summary>
-        /// Exports feeds to popular OPML format.
-        /// </summary>
-        Task ExportOpmlFeeds();
+        Task<bool> ImportOpmlFeedsAsync(Stream stream);
+        
+        Task<bool> ExportOpmlFeedsAsync(Stream stream);
     }
 }

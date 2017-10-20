@@ -1,34 +1,29 @@
 using System.Collections.ObjectModel;
-using myFeed.Services.Abstractions;
-using myFeed.ViewModels.Extensions;
 using myFeed.Repositories.Abstractions;
+using myFeed.Services.Abstractions;
+using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
     public sealed class FaveViewModel
     {
         public FaveViewModel(
-            IDialogService dialogService,
-            ISettingsService settingsService,
-            IPlatformService platformService,
-            INavigationService navigationService,
-            IArticlesRepository articlesRepository,
-            ITranslationsService translationsService)
+            IFavoritesRepository favoritesReposirory,
+            IFactoryService factoryService)
         {
+            IsEmpty = false;
+            IsLoading = true;
+            
             Items = new ObservableCollection<ArticleViewModel>();
-            IsLoading = new ObservableProperty<bool>(true);
-            IsEmpty = new ObservableProperty<bool>(false);
             Load = new ObservableCommand(async () =>
             {
                 IsLoading.Value = true;
-                var articles = await articlesRepository.GetAllAsync();
+                var articles = await favoritesReposirory.GetAllAsync();
                 Items.Clear();
                 foreach (var article in articles)
                 {
                     if (!article.Fave) continue;
-                    var viewModel = new ArticleViewModel(article,
-                        dialogService, settingsService, platformService,
-                        navigationService, articlesRepository, translationsService);
+                    var viewModel = factoryService.CreateInstance<ArticleViewModel>(article);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
                     {
                         if (viewModel.IsFavorite.Value) Items.Add(viewModel);
@@ -43,7 +38,7 @@ namespace myFeed.ViewModels.Implementations
         }
 
         /// <summary>
-        /// Contains favorite items.
+        /// Contains items saved as favorite ones.
         /// </summary>
         public ObservableCollection<ArticleViewModel> Items { get; }
 

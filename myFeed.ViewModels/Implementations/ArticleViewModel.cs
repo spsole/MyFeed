@@ -1,34 +1,45 @@
 ﻿using System;
-using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
+using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
-using myFeed.ViewModels.Extensions;
+using myFeed.Services.Platform;
+using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
     public sealed class ArticleViewModel
     {
         public ArticleViewModel(
-            ArticleEntity article, 
-            IDialogService dialogService,
+            ICategoriesRepository categoriesRepository,
+            ITranslationsService translationsService,
+            INavigationService navigationService,
+            IFavoritesService favoritesService,
             ISettingsService settingsService,
             IPlatformService platformService,
-            INavigationService navigationService,
-            IArticlesRepository articlesRepository,
-            ITranslationsService translationsService)
+            IDialogService dialogService,
+            Article article)
         {
-            IsRead = new ObservableProperty<bool>(article.Read);
-            Title = new ObservableProperty<string>(article.Title);
-            IsFavorite = new ObservableProperty<bool>(article.Fave);
-            Feed = new ObservableProperty<string>(article.FeedTitle);
-            Content = new ObservableProperty<string>(article.Content);
-            PublishedDate = new ObservableProperty<DateTime>(article.PublishedDate);
-            Image = new ObservableProperty<string>(async () => await settingsService
-                .Get<bool>("LoadImages") ? article.ImageUri : null);
-
+            Title = article.Title; 
+            Feed = article.FeedTitle;
+            Content = article.Content;
+            PublishedDate = article.PublishedDate;
+            IsFavorite = article.Fave;
+            IsRead = article.Read;
+            
             Open = new ObservableCommand(() => navigationService.Navigate(this));
-            Share = new ObservableCommand(() => platformService.Share(string.Concat(article.Title,
-                Environment.NewLine, article.Uri, Environment.NewLine, "via myFeed for Windows")));
+            Image = new ObservableProperty<string>(async () =>
+            {
+                var shouldLoadImages = await settingsService.GetAsync<bool>("LoadImages");
+                return shouldLoadImages ? article.ImageUri : null;
+            });
+            Share = new ObservableCommand(() =>
+            {
+                var shareMessage = string.Concat(
+                    article.Title, Environment.NewLine,
+                    article.Uri, Environment.NewLine,
+                    "via myFeed for Windows Universal");
+                return platformService.Share(shareMessage);
+            });
             CopyLink = new ObservableCommand(async () => 
             {
                 await platformService.CopyTextToClipboard(article.Uri);
@@ -44,12 +55,13 @@ namespace myFeed.ViewModels.Implementations
             MarkRead = new ObservableCommand(async () =>
             {
                 IsRead.Value = article.Read = !IsRead.Value;
-                await articlesRepository.UpdateAsync(article);
+                await categoriesRepository.UpdateArticleAsync(article);
             });
             MarkFavorite = new ObservableCommand(async () =>
             {
-                IsFavorite.Value = article.Fave = !IsFavorite.Value;
-                await articlesRepository.UpdateAsync(article);
+                IsFavorite.Value = !IsFavorite.Value;
+                if (IsFavorite.Value) await favoritesService.Insert(article);
+                else await favoritesService.Remove(article);
             });
         }
         
@@ -79,14 +91,14 @@ namespace myFeed.ViewModels.Implementations
         public ObservableProperty<string> Image { get; }
 
         /// <summary>
-        /// Article title.
-        /// </summary>
-        public ObservableProperty<string> Title { get; }
-
-        /// <summary>
         /// Source feed title.
         /// </summary>
         public ObservableProperty<string> Feed { get; }
+
+        /// <summary>
+        /// Article title.
+        /// </summary>
+        public ObservableProperty<string> Title { get; }
 
         /// <summary>
         /// Adds article to favorites.

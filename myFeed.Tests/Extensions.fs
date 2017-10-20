@@ -1,49 +1,99 @@
 namespace myFeed.Tests.Extensions
 
 open System
+open System.IO
 open System.Linq
 open System.Reflection
-open System.Threading.Tasks
-open System.Collections.Generic
-
-open Microsoft.Extensions.Logging
-open Microsoft.EntityFrameworkCore
-open Microsoft.EntityFrameworkCore.Storage
 
 open Xunit
-open Autofac
+open Xunit.Sdk
 open NSubstitute
-open myFeed.Entities
+open Autofac
+open LiteDB
 
 [<AutoOpen>]
-module Tools =
+module StandardLibraryExtensions =
 
-    /// Converts sequence to collection.    
-    let collection (sequence: seq<'a>) = sequence.ToList()
+    /// Converts sequence to list.
+    let toList (sequence: seq<'a>) = sequence.ToList()
 
-    /// Disposes IDisposable in func style. 
+    /// Disposes disposable in functional style.
     let dispose (disposable: IDisposable) = disposable.Dispose()
 
-    /// Attaches handler to IEvent.
+    /// C#-like event subscription operator.
     let inline (+=) (event: IEvent<'a, 'b>) (handler: 'b -> unit) = event.Add handler
+
+    /// Applies function to argument and continues.
+    let inline also defun arguments = defun arguments; arguments
+
+    /// Extracts first element from tuple.
+    let fst struct (first, _) = first 
+
+    /// Extracts second element from tuple.
+    let snd struct (_, second) = second   
+
+    /// Produces instance of an object with dependencies supplied.
+    let produce<'T when 'T : not struct> (injectables: obj seq) =
+        let substituteIfNone (parameterInfo: ParameterInfo) =
+            let parameterType = parameterInfo.ParameterType
+            injectables 
+            |> Seq.tryFind (fun x -> 
+                let objectType = x.GetType() 
+                objectType = parameterType ||
+                objectType.GetInterfaces()
+                |> Seq.contains parameterType)
+            |> function
+            | Some some -> some
+            | None -> Substitute.For([| parameterType |], null)
+
+        let objectType = typeof<'T>
+        let ctor = Seq.item 0 <| objectType.GetConstructors()
+        ctor.GetParameters()
+        |> Seq.map substituteIfNone
+        |> Seq.cast<obj>
+        |> Array.ofSeq
+        |> ctor.Invoke :?> 'T         
+
+/// Fluent assertions.
+module Should =
+
+    /// Asserts that a is nothing.
+    let beNull<'a> (a: 'a) = Assert.Null(a)
+
+    /// Asserts that a is not nothing.
+    let notBeNull<'a> (a: 'a) = Assert.NotNull(a)
+
+    /// Asserts that a equals b.
+    let equal<'a> (a: 'a) (b: 'a) = Assert.Equal(a, b)
     
-    /// C#-like await operator.
-    let await (task: Task<'a>) = task.Result
+    /// Asserts that a does not equal b.
+    let notEqual<'a> (a: 'a) (b: 'a) = Assert.NotEqual(a, b)
 
-    /// C#-like task await operator.
-    let awaitTask (task: Task) = task.Wait()
+    /// Asserts that a string contains b substring.
+    let contain (a: string) (b: string) = Assert.Contains(a, b)
+        
+    /// Asserts that particular method throws an exception of a given type.    
+    let throw<'e when 'e :> exn> act = Assert.Throws<'e>(Action(act))   
 
-    /// "Tee" functions.
-    let inline also f x = f x; x  
+    /// Asserts that action throws inner exception of certain type.
+    let throwInner<'e when 'e :> exn> (action: unit -> unit) =
+        try
+            action()
+            failwith "Failure! No errors occured."
+        with
+        | :? AggregateException as aggregateExn ->
+            let innerExn = aggregateExn.InnerException 
+            let innerExnType = innerExn.GetType()
+            equal innerExnType typeof<'e>
 
-    /// First for structs.
-    let fst struct (a, b) = a 
+    /// Ensures that sequence is not empty.    
+    let notBeEmpty<'a, 'b when 'a :> seq<'b>> (ls: 'a) = Assert.NotEmpty   
 
-    /// Second for structs.
-    let snd struct (a, b) = b
+    /// Ensures that particular component has been already registered.
+    let resolve<'a> (scope: ILifetimeScope) = scope.Resolve<'a>() |> Assert.NotNull  
 
 /// Dependency injection module.
-module Dep =
+module Dependency =
 
     /// Registers type as abstraction.
     let registerAs<'a, 'i> (builder: ContainerBuilder) =
@@ -81,118 +131,48 @@ module Dep =
 
     /// Builds scope from a builder.        
     let buildScope (builder: ContainerBuilder) = 
-        builder.Build()   
+        builder.Build()
 
-/// FSharpy fluent assertions.
-module Should =
+/// Functions for myFeed domain model.
+module Domain =   
 
-    /// Ensures a is null.
-    let beNull<'a> (a: 'a) = 
-        Assert.Null(a)
+    open Dependency
+    open myFeed.Services
+    open myFeed.Services.Platform
+    open myFeed.Repositories
+    open myFeed.ViewModels       
 
-    /// Ensures a is not null.
-    let notBeNull<'a> (a: 'a) = 
-        Assert.NotNull(a)
+    /// Single instance LiteDatabase connection.
+    let connection = new LiteDatabase("Database.db")
 
-    /// Ensures a equals b.
-    let equal<'a> (a: 'a) (b: 'a) = 
-        Assert.Equal(a, b)
-    
-    /// Ensures a not equals b.
-    let notEqual<'a> (a: 'a) (b: 'a) = 
-        Assert.NotEqual(a, b)
+    /// Injects mocks into container builder.
+    let registerMocks (builder: ContainerBuilder) =
+        builder 
+        |> also (registerInstanceAs<LiteDatabase> (new LiteDatabase("_.db")))
+        |> also registerMock<ITranslationsService>
+        |> also registerMock<IFilePickerService>       
+        |> also registerMock<IPlatformService>
+        |> also registerMock<IDialogService>
+        |> also registerMock<IDefaultsService>
+        |> also registerMock<INavigationService>
+        |> ignore
 
-    /// Ensures string contains substring.
-    let contain (a: string) (b: string) =
-        Assert.Contains(a, b)
+    /// Creates builder for integration testing.
+    let createBuilderForIntegrationTesting() =
+        ContainerBuilder()  
+        |> also registerModule<RepositoriesModule>
+        |> also registerModule<ServicesModule>
+        |> also registerModule<ViewModelsModule> 
+        |> also registerMocks
 
-    /// Ensures instance can be resolved from scope.
-    let resolve<'a> = Dep.resolve<'a> >> notBeNull
+    /// Attribute that cleans database up before and after test.
+    type CleanUpCollectionAttribute (name: string) =
+        inherit BeforeAfterTestAttribute() 
+        override __.Before _ = connection.DropCollection name |> ignore
+        override __.After _ = connection.DropCollection name |> ignore
 
-/// Helpers making work with EF contexts easier.
-module EFCoreHelpers =         
-
-    // Saves changes to hard disk.
-    let save (context: DbContext) = 
-        context.SaveChanges() |> ignore
-
-    // Counts elements in DbSet.
-    let count<'a when 'a: not struct> (context: DbContext) =
-        context.Set<'a>().CountAsync() |> await
-
-    // Clears given DbSet.
-    let clear<'a when 'a: not struct> (context: DbContext) =
-        let set = context.Set<'a>()
-        set |> set.RemoveRange
-        save context |> ignore
-
-    /// Populates context with data.
-    let populate<'a when 'a: not struct> (values: seq<'a>) (context: DbContext) =
-        values |> context.Set<'a>().AddRange
-        save context |> ignore
-
-    // Migrates database if it's not migrated.
-    let migrate (context: DbContext) =
-        if (not <| context.Database.GetAppliedMigrations().Any()) then
-            context.Database.MigrateAsync() |> awaitTask  
-
-    /// Purges physical data using type args.
-    let purge<'a when 'a: not struct> () =
-        use context = new EntityContext()
-        clear<'a> context
-
-    // Builds context using LoggerFactory.
-    let buildLoggableContext() =
-        let logger = {
-            new ILogger with 
-                member x.IsEnabled lvl = true
-                member x.BeginScope state = Substitute.For<IDisposable>()
-                member x.Log (level, eventId, state: 'a, ex, formatter) =
-                    if (not <| Object.Equals(state, null)) then 
-                        match level with
-                        | LogLevel.Debug -> ()
-                        | LogLevel.Information -> 
-                            match box state with 
-                            | :? DbCommandLogData as cmd ->
-                                cmd.CommandText.Replace("\r\n", " ") 
-                                |> sprintf "[myFeed.Tests] %s" 
-                                |> (Console.WriteLine >> also System.Diagnostics.Debug.WriteLine)
-                            | _ -> ()
-                        | _ -> () }
-        let provider = { 
-            new ILoggerProvider with
-                member x.Dispose () = ()
-                member x.CreateLogger name = logger }
-        let factory = new LoggerFactory()
-        factory.AddProvider provider        
-        new EntityContext(factory) 
-        |> also migrate 
-
-/// Factory producer.
-module Factory =
-    open System.Reflection
-    
-    /// Produces instance of a given type using 
-    /// mocks if none parameter specified.
-    let produce<'T when 'T : not struct> (injectables: obj seq) =
-        let substituteIfNone (parameterInfo: ParameterInfo) =
-            let parameterType = parameterInfo.ParameterType
-            Console.WriteLine(parameterType)
-            injectables 
-            |> Seq.tryFind (fun x -> 
-                let objectType = x.GetType() 
-                objectType = parameterType ||
-                objectType.GetInterfaces()
-                |> Seq.contains parameterType)
-            |> function
-            | Some some -> some
-            | None -> Substitute.For([| parameterType |], null)
-
-        let objectType = typeof<'T>
-        let ctor = Seq.item 0 <| objectType.GetConstructors()
-        ctor.GetParameters()
-        |> Seq.map substituteIfNone
-        |> Seq.cast<obj>
-        |> Array.ofSeq
-        |> ctor.Invoke :?> 'T
-        
+    /// Deletes the entire file from disk to prevent collisions.
+    type CleanUpFileAttribute (name: string) =
+        inherit BeforeAfterTestAttribute()
+        override __.Before _ = File.Delete name      
+        override __.After _ = File.Delete name     

@@ -5,9 +5,9 @@
   <ItemGroup>
     <Compile Include="Extensions.fs" />
     <Compile Include="Models.fs" />
-    <Compile Include="Modules.fs" />
     <Compile Include="Repositories.fs" />
     <Compile Include="Services.fs" />
+    <Compile Include="Modules.fs" />
     <Compile Include="ViewModels.fs" />
   </ItemGroup>
   <ItemGroup>
@@ -18,7 +18,6 @@
   <ItemGroup>
     <PackageReference Include="FSharp.Core" Version="4.2.1" />
     <PackageReference Include="FSharp.NET.Sdk" Version="1.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="1.1.1" />
     <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="15.0.0" />
     <PackageReference Include="nsubstitute" Version="2.0.3" />
     <PackageReference Include="xunit" Version="2.3.0-beta2-build3683" />

@@ -186,8 +186,11 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AngleSharp">
+      <Version>0.9.9</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>5.4.0</Version>
+      <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
       <Version>2.0.0</Version>
@@ -259,31 +262,27 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\myFeed.Entities\myFeed.Entities.csproj">
-      <Project>{52fa8970-69d4-4ae6-8471-caf62b6ff016}</Project>
-      <Name>myFeed.Entities</Name>
-    </ProjectReference>
+    <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj">
-      <Project>{7905a6f6-84c1-4a79-97fa-e9abf586cbed}</Project>
+      <Project>{e7a4d548-bd3a-4046-a444-87490d609f64}</Project>
       <Name>myFeed.Repositories</Name>
     </ProjectReference>
     <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj">
-      <Project>{c92e164b-4611-4770-9520-df974255fc8a}</Project>
+      <Project>{1ccb0e94-64ab-4634-8425-648e8752f66e}</Project>
       <Name>myFeed.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\myFeed.ViewModels\myFeed.ViewModels.csproj">
-      <Project>{36ea26e4-720c-44be-8a7a-25e35f739344}</Project>
+      <Project>{6fd11ba0-23b5-45d2-8c70-3c7fd21f0252}</Project>
       <Name>myFeed.ViewModels</Name>
     </ProjectReference>
     <ProjectReference Include="..\myFeed.Views.Uwp.Notifications\myFeed.Views.Uwp.Notifications.csproj">
       <Project>{74fa52ef-b4da-4ebe-a49b-ba843b5c7e3b}</Project>
       <Name>myFeed.Views.Uwp.Notifications</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
-      <Name>Windows Mobile Extensions for the UWP</Name>
-    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
-using myFeed.Entities.Feedly;
 using myFeed.Services.Abstractions;
+using myFeed.Services.Models;
 using Newtonsoft.Json;
 
 namespace myFeed.Services.Implementations
@@ -14,7 +14,7 @@ namespace myFeed.Services.Implementations
         private static readonly Lazy<HttpClient> Client = new Lazy<HttpClient>(() => new HttpClient());
         private const string QueryUrl = @"http://cloud.feedly.com/v3/search/feeds?count=40&query=:";
 
-        public Task<SearchRootEntity> Search(string query) => Task.Run(async () =>
+        public Task<FeedlyRoot> SearchAsync(string query) => Task.Run(async () =>
         {
             try
             {
@@ -25,15 +25,15 @@ namespace myFeed.Services.Implementations
                 using (var jsonReader = new JsonTextReader(streamReader))
                 {
                     var serializer = new JsonSerializer();
-                    var response = serializer.Deserialize<SearchRootEntity>(jsonReader);
+                    var response = serializer.Deserialize<FeedlyRoot>(jsonReader);
                     return response;
                 }
             }
             catch (Exception)
             {
-                return new SearchRootEntity
+                return new FeedlyRoot
                 {
-                    Results = new List<SearchItemEntity>()
+                    Results = new List<FeedlyItem>()
                 };
             }
         });

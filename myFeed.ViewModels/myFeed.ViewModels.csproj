@@ -6,4 +6,7 @@
     <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj" />
     <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Implementations\" />
+  </ItemGroup>
 </Project>

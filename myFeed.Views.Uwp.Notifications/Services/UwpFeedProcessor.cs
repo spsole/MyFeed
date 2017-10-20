@@ -5,24 +5,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
-using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
+using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
 
 namespace myFeed.Views.Uwp.Notifications.Services
 {
     internal sealed class UwpFeedProcessor
     {
-        private readonly ISourcesRepository _sourcesRepository;
+        private readonly ICategoriesRepository _categoriesRepository;
         private readonly IFeedStoreService _feedStoreService;
         private readonly ISettingsService _settingsService;
 
         public UwpFeedProcessor(
             IFeedStoreService feedStoreService, 
-            ISourcesRepository sourcesRepository,
+            ICategoriesRepository categoriesRepository,
             ISettingsService settingsService)
         {
-            _sourcesRepository = sourcesRepository;
+            _categoriesRepository = categoriesRepository;
             _feedStoreService = feedStoreService;
             _settingsService = settingsService;
         }
@@ -30,15 +30,15 @@ namespace myFeed.Views.Uwp.Notifications.Services
         public async Task ProcessFeeds()
         {
             // Fetch feed for all existing sources where user allowed notifications.
-            var categories = await _sourcesRepository.GetAllAsync().ConfigureAwait(false);
-            var sources = categories.SelectMany(i => i.Sources).Where(i => i.Notify);
-            var feed = await _feedStoreService.GetAsync(sources).ConfigureAwait(false);
+            var categories = await _categoriesRepository.GetAllAsync().ConfigureAwait(false);
+            var sources = categories.SelectMany(i => i.Channels).Where(i => i.Notify);
+            var feed = await _feedStoreService.LoadAsync(sources).ConfigureAwait(false);
 
             // Get preferences settings.
-            var recentFetchDateTime = await _settingsService.Get<string>("LastFetched");
+            var recentFetchDateTime = await _settingsService.GetAsync<string>("LastFetched");
             var recentFetch = DateTime.Parse(recentFetchDateTime, CultureInfo.InvariantCulture);
-            var needBanners = await _settingsService.Get<bool>("NeedBanners");
-            var needImages = await _settingsService.Get<bool>("LoadImages");
+            var needBanners = await _settingsService.GetAsync<bool>("NeedBanners");
+            var needImages = await _settingsService.GetAsync<bool>("LoadImages");
 
             // Get recent items.
             var recentItems = feed.Item2
@@ -52,10 +52,10 @@ namespace myFeed.Views.Uwp.Notifications.Services
             SendTileNotifications(recentItems);
 
             // Update last fetch date.
-            await _settingsService.Set("LastFetched", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+            await _settingsService.SetAsync("LastFetched", DateTime.Now.ToString(CultureInfo.InvariantCulture));
         }
 
-        private static void SendTileNotifications(IEnumerable<ArticleEntity> receivedArticles)
+        private static void SendTileNotifications(IEnumerable<Article> receivedArticles)
         {
             var updateManager = TileUpdateManager.CreateTileUpdaterForApplication();
             updateManager.EnableNotificationQueue(true);
@@ -71,7 +71,7 @@ namespace myFeed.Views.Uwp.Notifications.Services
             }
         }
 
-        private static void SendToastNotification(ArticleEntity article, bool needBanners, bool needImages)
+        private static void SendToastNotification(Article article, bool needBanners, bool needImages)
         {
             var identifier = article.Id.ToString();
             var uri = needImages ? article.ImageUri : string.Empty;

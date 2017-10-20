@@ -1,5 +1,5 @@
 ﻿using Windows.ApplicationModel.Resources;
-using myFeed.Services.Abstractions;
+using myFeed.Services.Platform;
 
 namespace myFeed.Views.Uwp.Services
 {

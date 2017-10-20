@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using myFeed.Services.Abstractions;
+using myFeed.Services.Platform;
 using myFeed.ViewModels.Implementations;
 using myFeed.Views.Uwp.Services;
-using myFeed.Views.Uwp.Views;
 
 namespace myFeed.Views.Uwp
 {

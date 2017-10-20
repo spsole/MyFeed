@@ -1,41 +1,32 @@
 ﻿using System.Collections.ObjectModel;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
-using myFeed.ViewModels.Extensions;
+using myFeed.Services.Platform;
+using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
     public sealed class FeedViewModel
     {
         public FeedViewModel(
-            IDialogService dialogService,
-            ISettingsService settingsService,
-            IPlatformService platformService,
-            IFeedStoreService feedStoreService,
+            ICategoriesRepository categoriesRepository,
             INavigationService navigationService,
-            ISourcesRepository sourcesRepository,
-            IArticlesRepository articlesRepository,
-            ITranslationsService translationsService)
+            IFactoryService factoryService)
         {
-            OpenSources = new ObservableCommand(navigationService.Navigate<SourcesViewModel>);
+            IsEmpty = false;
+            IsLoading = true;
+            
+            OpenSources = new ObservableCommand(navigationService.Navigate<ChannelsViewModel>);
             Items = new ObservableCollection<FeedCategoryViewModel>();
-            IsLoading = new ObservableProperty<bool>(true);
-            IsEmpty = new ObservableProperty<bool>(false);
             Load = new ObservableCommand(async () =>
             {
                 IsEmpty.Value = false;
                 IsLoading.Value = true;
-                await articlesRepository.RemoveUnreferencedArticles();
                 Items.Clear();
-                var sources = await sourcesRepository.GetAllAsync();
-                foreach (var source in sources)
-                {
-                    var viewModel = new FeedCategoryViewModel(source,
-                        dialogService, settingsService, platformService,
-                        feedStoreService, navigationService,
-                        articlesRepository, translationsService);
-                    Items.Add(viewModel);
-                }
+                var categories = await categoriesRepository.GetAllAsync();
+                foreach (var category in categories)
+                    Items.Add(factoryService.CreateInstance<
+                        FeedCategoryViewModel>(category));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });

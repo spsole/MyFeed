@@ -118,10 +118,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\myFeed.Entities\myFeed.Entities.csproj">
-      <Project>{52fa8970-69d4-4ae6-8471-caf62b6ff016}</Project>
-      <Name>myFeed.Entities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj">
       <Project>{7905a6f6-84c1-4a79-97fa-e9abf586cbed}</Project>
       <Name>myFeed.Repositories</Name>

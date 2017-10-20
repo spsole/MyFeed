@@ -5,31 +5,29 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Windows.Storage;
-using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
+using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
+using myFeed.Services.Platform;
 
 namespace myFeed.Views.Uwp.Services
 {
     public class UwpLegacyFileService
     {
         private readonly ISerializationService _serializationService;
+        private readonly ICategoriesRepository _categoriesRepository;
         private readonly ITranslationsService _translationsService;
-        private readonly IArticlesRepository _articlesRepository;
-        private readonly ISourcesRepository _sourcesRepository;
         private readonly IDialogService _dialogService;
 
         public UwpLegacyFileService(
             IDialogService dialogService,
-            ISourcesRepository sourcesRepository,
-            IArticlesRepository articlesRepository,
+            ICategoriesRepository sourcesRepository,
             ITranslationsService translationsService,
             ISerializationService serializationService)
         {
             _serializationService = serializationService;
             _translationsService = translationsService;
-            _articlesRepository = articlesRepository;
-            _sourcesRepository = sourcesRepository;
+            _categoriesRepository = sourcesRepository;
             _dialogService = dialogService;
         }
 
@@ -79,17 +77,18 @@ namespace myFeed.Views.Uwp.Services
             var legacyCategories = _serializationService.Deserialize<LegacyCategories>(stream);
             if (legacyCategories?.Categories?.Any() == true)
             {
-                var categories = legacyCategories.Categories.Select(category => new SourceCategoryEntity
+                var categories = legacyCategories.Categories.Select(category => new Category
                 {
                     Title = category.Title,
-                    Sources = category.Websites?.Select(source => new SourceEntity
+                    Channels = category.Websites?.Select(source => new Channel
                     {
                         Notify = source.Notify,
                         Uri = source.Uri
                     })
                     .ToList()
                 });
-                await _sourcesRepository.InsertAsync(categories.ToArray());
+                foreach (var category in categories)
+                    await _categoriesRepository.InsertAsync(category);
             }
 
             var files = new[] {"config", "datecutoff", "read.txt", "saved_cache", "sites"};
@@ -115,7 +114,7 @@ namespace myFeed.Views.Uwp.Services
                 models.Add(model);
             }
 
-            var articleEntities = models.Select(model => new ArticleEntity
+            var articleEntities = models.Select(model => new Article
             {
                 Content = model.Content,
                 FeedTitle = model.FeedTitle,
@@ -127,12 +126,12 @@ namespace myFeed.Views.Uwp.Services
                 Fave = true
             });
 
-            var temporarySource = new SourceEntity();
-            var temporaryCategory = new SourceCategoryEntity();
-            await _sourcesRepository.InsertAsync(temporaryCategory);
-            await _sourcesRepository.AddSourceAsync(temporaryCategory, temporarySource);
-            await _articlesRepository.InsertAsync(temporarySource, articleEntities.ToArray());
-            await _sourcesRepository.RemoveAsync(temporaryCategory);
+            var temporarySource = new Channel();
+            var temporaryCategory = new Category();
+            await _categoriesRepository.InsertAsync(temporaryCategory);
+            await _categoriesRepository.InsertChannelAsync(temporaryCategory, temporarySource);
+            await _categoriesRepository.InsertArticleRangeAsync(temporarySource, articleEntities.ToArray());
+            await _categoriesRepository.RemoveAsync(temporaryCategory);
             await favoritesFolder.DeleteAsync();
             return true;
         });

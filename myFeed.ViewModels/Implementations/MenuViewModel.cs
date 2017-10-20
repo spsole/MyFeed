@@ -2,33 +2,34 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using myFeed.Services.Abstractions;
-using myFeed.ViewModels.Extensions;
+using myFeed.Services.Platform;
+using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
     public sealed class MenuViewModel
     {
         public MenuViewModel(
-            IPlatformService platformService,
-            ISettingsService settingsService,
+            ITranslationsService translationsService,
             INavigationService navigationService,
-            ITranslationsService translationsService)
+            IPlatformService platformService,
+            ISettingsService settingsService)
         {
+            SelectedIndex = 0;
             Items = new ObservableCollection<Tuple<string, object, ObservableCommand, Type>>();
-            SelectedIndex = new ObservableProperty<int>();
             Load = new ObservableCommand(async () =>
             {
                 await navigationService.Navigate<FeedViewModel>();
-                var theme = await settingsService.Get<string>("Theme");
+                var theme = await settingsService.GetAsync<string>("Theme");
                 await platformService.RegisterTheme(theme);
-                var freq = await settingsService.Get<int>("NotifyPeriod");
+                var freq = await settingsService.GetAsync<int>("NotifyPeriod");
                 await platformService.RegisterBackgroundTask(freq);
-                await settingsService.Set("LastFetched", DateTime.Now);
+                await settingsService.SetAsync("LastFetched", DateTime.Now);
             });
             
             CreateItem<FeedViewModel>("FeedViewMenuItem");
             CreateItem<FaveViewModel>("FaveViewMenuItem");
-            CreateItem<SourcesViewModel>("SourcesViewMenuItem");
+            CreateItem<ChannelsViewModel>("SourcesViewMenuItem");
             CreateItem<SearchViewModel>("SearchViewMenuItem");
             CreateItem<SettingsViewModel>("SettingsViewMenuItem");
             navigationService.Navigated += (sender, args) =>

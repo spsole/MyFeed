@@ -1,21 +1,23 @@
-﻿using Autofac;
-using myFeed.Services;
+using Autofac;
 using myFeed.ViewModels.Implementations;
 
 namespace myFeed.ViewModels
 {
-    public sealed class ViewModelsModule : Module
+    public sealed class ViewModelsModule : Module 
     {
-        protected override void Load(ContainerBuilder builder)
+        protected override void Load(ContainerBuilder builder) 
         {
-            builder.RegisterModule<ServicesModule>();
-            builder.RegisterType<SettingsViewModel>().AsSelf();
-            builder.RegisterType<SourcesViewModel>().AsSelf();
-            builder.RegisterType<SearchViewModel>().AsSelf();
-            builder.RegisterType<FeedViewModel>().AsSelf();
+            builder.RegisterType<ArticleViewModel>().AsSelf();
+            builder.RegisterType<ChannelCategoryViewModel>().AsSelf();
+            builder.RegisterType<ChannelsViewModel>().AsSelf();
+            builder.RegisterType<ChannelViewModel>().AsSelf();
             builder.RegisterType<FaveViewModel>().AsSelf();
+            builder.RegisterType<FeedCategoryViewModel>().AsSelf();
+            builder.RegisterType<FeedViewModel>().AsSelf();
             builder.RegisterType<MenuViewModel>().AsSelf();
-            base.Load(builder);
+            builder.RegisterType<SearchItemViewModel>().AsSelf();
+            builder.RegisterType<SearchViewModel>().AsSelf();
+            builder.RegisterType<SettingsViewModel>().AsSelf();
         }
     }
 }

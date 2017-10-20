@@ -1,7 +1,7 @@
 ﻿using Windows.ApplicationModel.Background;
 using Autofac;
 using myFeed.Services;
-using myFeed.Services.Abstractions;
+using myFeed.Services.Platform;
 using myFeed.Views.Uwp.Notifications.Services;
 
 namespace myFeed.Views.Uwp.Notifications

@@ -1,0 +1,106 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using myFeed.Repositories.Abstractions;
+using myFeed.Repositories.Models;
+using myFeed.Services.Abstractions;
+using myFeed.Services.Platform;
+using myFeed.ViewModels.Bindables;
+
+namespace myFeed.ViewModels.Implementations
+{
+    public sealed class ChannelCategoryViewModel
+    {
+        public ChannelCategoryViewModel(
+            ICategoriesRepository categoriesRepository,
+            ITranslationsService translationsService,
+            IFactoryService factoryService,
+            IDialogService dialogService,
+            ChannelsViewModel channelsViewModel,
+            Category category)
+        {
+            Category = category;
+            Title = category.Title;
+            SourceUri = string.Empty;
+            
+            Items = new ObservableCollection<ChannelViewModel>();
+            RenameCategory = new ObservableCommand(async () =>
+            {
+                var name = await dialogService.ShowDialogForResults(
+                    translationsService.Resolve("EnterNameOfNewCategory"),
+                    translationsService.Resolve("EnterNameOfNewCategoryTitle"));
+                if (string.IsNullOrWhiteSpace(name)) return;
+                category.Title = name;
+                await categoriesRepository.UpdateAsync(category);
+                category.Title = Title.Value = name;
+            });
+            RemoveCategory = new ObservableCommand(async () =>
+            {
+                var shouldDelete = await dialogService.ShowDialogForConfirmation(
+                    translationsService.Resolve("DeleteCategory"),
+                    translationsService.Resolve("DeleteElement"));
+                if (!shouldDelete) return;
+                await categoriesRepository.RemoveAsync(category);
+                channelsViewModel.Items.Remove(this);
+            });
+            AddSource = new ObservableCommand(async () =>
+            {
+                var sourceUri = SourceUri.Value;
+                if (string.IsNullOrWhiteSpace(sourceUri) ||
+                    !Uri.IsWellFormedUriString(sourceUri, UriKind.Absolute))
+                    return;
+                SourceUri.Value = string.Empty;
+                var model = new Channel {Uri = sourceUri, Notify = true};
+                await categoriesRepository.InsertChannelAsync(category, model);
+                Items.Add(factoryService.CreateInstance<
+                    ChannelViewModel>(model, this));
+            });
+            Load = new ObservableCommand(() =>
+            {
+                Items.Clear();
+                foreach (var channel in category.Channels) 
+                    Items.Add(factoryService.CreateInstance<
+                        ChannelViewModel>(channel, this));
+            });
+        }
+
+        /// <summary>
+        /// Inner items collection.
+        /// </summary>
+        public ObservableCollection<ChannelViewModel> Items { get; }
+
+        /// <summary>
+        /// Read-only category entity.
+        /// </summary>
+        public ObservableProperty<Category> Category { get; }
+
+        /// <summary>
+        /// Source Uri for new category user input.
+        /// </summary>
+        public ObservableProperty<string> SourceUri { get; }
+
+        /// <summary>
+        /// Grouping title.
+        /// </summary>
+        public ObservableProperty<string> Title { get; }
+
+        /// <summary>
+        /// Removes the entire category.
+        /// </summary>
+        public ObservableCommand RemoveCategory { get; }
+
+        /// <summary>
+        /// Renames the category.
+        /// </summary>
+        public ObservableCommand RenameCategory { get; }
+
+        /// <summary>
+        /// Adds new source to this category.
+        /// </summary>
+        public ObservableCommand AddSource { get; }
+
+        /// <summary>
+        /// Loads items.
+        /// </summary>
+        public ObservableCommand Load { get; }
+    }
+}

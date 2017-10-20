@@ -4,16 +4,17 @@ using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations
 {
-    public sealed class RegexExtractImageService : IExtractImageService
+    public sealed class RegexImageService : IImageService
     {
         private const string Pattern = "<img.*?src=[\"'](.+?)[\"'].*?>";
         private const RegexOptions Options = RegexOptions.Compiled 
             | RegexOptions.CultureInvariant 
-            | RegexOptions.IgnoreCase;
+            | RegexOptions.IgnoreCase
+            | RegexOptions.Multiline;
 
         private static readonly Lazy<Regex> Matcher = new Lazy<Regex>(() => new Regex(Pattern, Options));
 
-        public string ExtractImage(string html)
+        public string ExtractImageUri(string html)
         {
             var regularExpression = Matcher.Value;
             var match = regularExpression.Match(html);

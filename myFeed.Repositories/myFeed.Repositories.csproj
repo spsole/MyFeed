@@ -3,9 +3,8 @@
     <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.6.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\myFeed.Entities\myFeed.Entities.csproj" />
+    <PackageReference Include="Autofac" Version="4.6.2" />
+    <PackageReference Include="LiteDB" Version="4.0.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
 </Project>

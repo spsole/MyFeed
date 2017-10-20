@@ -3,35 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CodeHollow.FeedReader;
-using myFeed.Entities.Local;
-using myFeed.Repositories.Abstractions;
+using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations
 {
     public sealed class FeedReaderFetchService : IFeedFetchService
     {
-        private readonly IExtractImageService _extractImageService;
-        
-        public FeedReaderFetchService(IExtractImageService extractImageService)
-        {
-            _extractImageService = extractImageService;
-        }
+        private readonly IImageService _imageService;
 
-        public async Task<(Exception, IEnumerable<ArticleEntity>)> FetchAsync(string uri) 
+        public FeedReaderFetchService(IImageService imageService) => _imageService = imageService;
+
+        public async Task<(Exception, IEnumerable<Article>)> FetchAsync(string uri) 
         {
             try
             {
-                // Fetch RSS/Atom feeds using CodeHollow.FeedReader library.
-                // Github: https://github.com/codehollow/FeedReader
                 var feed = await FeedReader.ReadAsync(uri);
                 var articles =
                     from feedItem in feed.Items
                     let content = feedItem.Content
                     let contents = string.IsNullOrWhiteSpace(content) ? feedItem.Description : content
                     let publishedDate = feedItem.PublishingDate ?? DateTime.MinValue
-                    let imageUri = _extractImageService.ExtractImage(contents)
-                    select new ArticleEntity
+                    let imageUri = _imageService.ExtractImageUri(contents)
+                    select new Article
                     {
                         ImageUri = imageUri,
                         PublishedDate = publishedDate,
@@ -46,7 +40,7 @@ namespace myFeed.Services.Implementations
             }
             catch (Exception exception)
             {
-                return (exception, new List<ArticleEntity>());
+                return (exception, new List<Article>());
             }
         }
     }

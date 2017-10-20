@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
-using myFeed.Services.Abstractions;
+using myFeed.Services.Platform;
 
 namespace myFeed.Views.Uwp.Services
 {

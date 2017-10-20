@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using myFeed.Services.Abstractions;
-using myFeed.ViewModels.Extensions;
+using myFeed.Services.Platform;
+using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
@@ -12,15 +13,25 @@ namespace myFeed.ViewModels.Implementations
             IDialogService dialogService,
             ISettingsService settingsService,
             IPlatformService platformService,
+            IFilePickerService filePickerService,
             ITranslationsService translationsService)
         {
-            Theme = new ObservableProperty<string>();
-            FontSize = new ObservableProperty<int>();
-            LoadImages = new ObservableProperty<bool>();
-            NotifyPeriod = new ObservableProperty<int>();
-            NeedBanners = new ObservableProperty<bool>();
-            ImportOpml = new ObservableCommand(opmlService.ImportOpmlFeeds);
-            ExportOpml = new ObservableCommand(opmlService.ExportOpmlFeeds);
+            FontSize = 0;
+            NotifyPeriod = 0;
+            LoadImages = true;
+            NeedBanners = true;
+            Theme = string.Empty;
+            
+            ImportOpml = new ObservableCommand(async () =>
+            {
+                var stream = await filePickerService.PickFileForReadAsync();
+                await opmlService.ImportOpmlFeedsAsync(stream);
+            });
+            ExportOpml = new ObservableCommand(async () =>
+            {
+                var stream = await filePickerService.PickFileForWriteAsync();
+                await opmlService.ExportOpmlFeedsAsync(stream);
+            });
             Reset = new ObservableCommand(async () =>
             {
                 var response = await dialogService.ShowDialogForConfirmation(
@@ -30,11 +41,11 @@ namespace myFeed.ViewModels.Implementations
             });
             Load = new ObservableCommand(async () =>
             {
-                NotifyPeriod.Value = await settingsService.Get<int>("NotifyPeriod");
-                NeedBanners.Value = await settingsService.Get<bool>("NeedBanners"); 
-                LoadImages.Value = await settingsService.Get<bool>("LoadImages");
-                FontSize.Value = await settingsService.Get<int>("FontSize");
-                Theme.Value = await settingsService.Get<string>("Theme");
+                NotifyPeriod.Value = await settingsService.GetAsync<int>("NotifyPeriod");
+                NeedBanners.Value = await settingsService.GetAsync<bool>("NeedBanners"); 
+                LoadImages.Value = await settingsService.GetAsync<bool>("LoadImages");
+                FontSize.Value = await settingsService.GetAsync<int>("FontSize");
+                Theme.Value = await settingsService.GetAsync<string>("Theme");
                 
                 Subscribe(Theme, "Theme", platformService.RegisterTheme);
                 Subscribe(FontSize, "FontSize", o => Task.CompletedTask);
@@ -47,7 +58,7 @@ namespace myFeed.ViewModels.Implementations
                     prop.PropertyChanged += async (o, args) =>
                     {
                         await clb.Invoke(prop.Value);
-                        await settingsService.Set(key, prop.Value);
+                        await settingsService.SetAsync(key, prop.Value);
                     };
                 }
             });

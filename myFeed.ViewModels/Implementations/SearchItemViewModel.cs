@@ -1,40 +1,41 @@
 ﻿using System;
-using myFeed.Entities.Feedly;
-using myFeed.Entities.Local;
 using myFeed.Repositories.Abstractions;
-using myFeed.Services.Abstractions;
-using myFeed.ViewModels.Extensions;
+using myFeed.Repositories.Models;
+using myFeed.Services.Models;
+using myFeed.Services.Platform;
+using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
     public sealed class SearchItemViewModel
     {
         public SearchItemViewModel(
-            SearchItemEntity entity,
-            IDialogService dialogService,
+            ICategoriesRepository categoriesRepository,
             IPlatformService platformService,
-            ISourcesRepository sourcesRepository)
+            IDialogService dialogService,
+            FeedlyItem feedlyItem)
         {
-            Url = new ObservableProperty<string>(entity.Website);
-            Title = new ObservableProperty<string>(entity.Title);
-            ImageUri = new ObservableProperty<string>(entity.IconUrl);
-            Description = new ObservableProperty<string>(entity.Description);
-            FeedUrl = new ObservableProperty<string>(entity.FeedId?.Substring(5));
-            CopyLink = new ObservableCommand(() => platformService.CopyTextToClipboard(entity.Website));
+            Url = feedlyItem.Website;
+            Title = feedlyItem.Title;
+            ImageUri = feedlyItem.IconUrl;
+            Description = feedlyItem.Description;
+            FeedUrl = feedlyItem.FeedId?.Substring(5);
+            
+            CopyLink = new ObservableCommand(() => platformService.CopyTextToClipboard(feedlyItem.Website));
             OpenInEdge = new ObservableCommand(async () =>
             {
-                if (Uri.IsWellFormedUriString(entity.Website, UriKind.Absolute))
-                    await platformService.LaunchUri(new Uri(entity.Website));
+                if (Uri.IsWellFormedUriString(feedlyItem.Website, UriKind.Absolute))
+                    await platformService.LaunchUri(new Uri(feedlyItem.Website));
             });
             AddToSources = new ObservableCommand(async () =>
             {
                 if (!Uri.IsWellFormedUriString(FeedUrl.Value, UriKind.Absolute)) return;
-                var categories = await sourcesRepository.GetAllAsync();
+                var categories = await categoriesRepository.GetAllAsync();
                 var response = await dialogService.ShowDialogForSelection(categories);
-                if (response is SourceCategoryEntity sourceCategoryEntity)
+                if (response is Category category)
                 {
-                    var source = new SourceEntity {Notify = true, Uri = FeedUrl.Value};
-                    await sourcesRepository.AddSourceAsync(sourceCategoryEntity, source);
+                    var source = new Channel {Notify = true, Uri = FeedUrl.Value};
+                    await categoriesRepository.InsertChannelAsync(category, source);
                 }
             });
         }

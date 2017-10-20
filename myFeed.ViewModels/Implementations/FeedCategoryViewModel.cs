@@ -1,41 +1,34 @@
 using System.Collections.ObjectModel;
-using myFeed.Entities.Local;
-using myFeed.Repositories.Abstractions;
+using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
-using myFeed.ViewModels.Extensions;
+using myFeed.Services.Platform;
+using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
     public sealed class FeedCategoryViewModel
     {
         public FeedCategoryViewModel(
-            SourceCategoryEntity entity,
-            IDialogService dialogService,
-            ISettingsService settingsService,
-            IPlatformService platformService,
-            IFeedStoreService feedStoreService,
             INavigationService navigationService,
-            IArticlesRepository articlesRepository,
-            ITranslationsService translationsService)
+            IFeedStoreService feedStoreService,
+            IFactoryService factoryService,
+            Category category)
         {
-            OpenSources = new ObservableCommand(navigationService.Navigate<SourcesViewModel>);
+            Title = category.Title;
+            IsLoading = true;
+            IsEmpty = false;
+            
             Items = new ObservableCollection<ArticleViewModel>();
-            Title = new ObservableProperty<string>(entity.Title);
-            IsLoading = new ObservableProperty<bool>(true);
-            IsEmpty = new ObservableProperty<bool>(false);
+            OpenSources = new ObservableCommand(navigationService.Navigate<ChannelsViewModel>);
             Fetch = new ObservableCommand(async () =>
             {
                 IsLoading.Value = true;
-                var sources = entity.Sources;
-                (var errors, var articles) = await feedStoreService.GetAsync(sources);
+                var sources = category.Channels;
+                (var errors, var articles) = await feedStoreService.LoadAsync(sources);
                 Items.Clear();
                 foreach (var article in articles)
-                {
-                    var viewModel = new ArticleViewModel(article,
-                        dialogService, settingsService, platformService,
-                        navigationService, articlesRepository, translationsService);
-                    Items.Add(viewModel);
-                }
+                    Items.Add(factoryService.CreateInstance<
+                        ArticleViewModel>(article));
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
             });

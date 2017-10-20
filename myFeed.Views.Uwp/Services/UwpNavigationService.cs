@@ -7,7 +7,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using myFeed.Services.Abstractions;
+using myFeed.Services.Platform;
 using myFeed.ViewModels.Implementations;
 using myFeed.Views.Uwp.Views;
 using Microsoft.Toolkit.Uwp.UI.Extensions;
@@ -21,7 +21,7 @@ namespace myFeed.Views.Uwp.Services
         {
             {typeof(SettingsViewModel), typeof(SettingsView)},
             {typeof(ArticleViewModel), typeof(ArticleView)},
-            {typeof(SourcesViewModel), typeof(SourcesView)},
+            {typeof(ChannelsViewModel), typeof(SourcesView)},
             {typeof(SearchViewModel), typeof(SearchView)},
             {typeof(MenuViewModel), typeof(MenuView)},
             {typeof(FaveViewModel), typeof(FaveView)},
@@ -32,7 +32,7 @@ namespace myFeed.Views.Uwp.Services
             {typeof(FaveViewModel), Symbol.OutlineStar},
             {typeof(SettingsViewModel), Symbol.Setting},
             {typeof(FeedViewModel), Symbol.PostUpdate},
-            {typeof(SourcesViewModel), Symbol.List},
+            {typeof(ChannelsViewModel), Symbol.List},
             {typeof(SearchViewModel), Symbol.Zoom}
         };
 
@@ -63,7 +63,7 @@ namespace myFeed.Views.Uwp.Services
                 case nameof(FeedViewModel):
                 case nameof(FaveViewModel):
                 case nameof(SearchViewModel):
-                case nameof(SourcesViewModel):
+                case nameof(ChannelsViewModel):
                 case nameof(SettingsViewModel):
                     NavigateFrame(GetChild<Frame>(Window.Current.Content, 0), instance);
                     break;

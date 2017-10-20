@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using myFeed.Services.Abstractions;
+using myFeed.Services.Platform;
 
 namespace myFeed.Views.Uwp.Notifications.Services
 {

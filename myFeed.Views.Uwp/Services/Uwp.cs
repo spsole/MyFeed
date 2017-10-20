@@ -1,8 +1,13 @@
 ﻿using System;
+using System.IO;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Autofac;
-using myFeed.Services.Abstractions;
+using LiteDB;
+using myFeed.Repositories;
+using myFeed.Services;
 using myFeed.ViewModels;
+using myFeed.Services.Platform;
 
 namespace myFeed.Views.Uwp.Services
 {
@@ -14,16 +19,25 @@ namespace myFeed.Views.Uwp.Services
 
         private static ContainerBuilder Load(ContainerBuilder builder)
         {
+            builder.RegisterModule<RepositoriesModule>();
+            builder.RegisterModule<ServicesModule>();
             builder.RegisterModule<ViewModelsModule>();
+
             builder.RegisterType<UwpNavigationService>().As<INavigationService>().SingleInstance();
             builder.RegisterType<UwpTranslationsService>().As<ITranslationsService>();
             builder.RegisterType<UwpFilePickerService>().As<IFilePickerService>();
             builder.RegisterType<UwpPlatformService>().As<IPlatformService>();
             builder.RegisterType<UwpDefaultsService>().As<IDefaultsService>();
             builder.RegisterType<UwpDialogService>().As<IDialogService>();
+
             builder.RegisterType<UwpHtmlParserService>().AsSelf();
             builder.RegisterType<UwpLauncherService>().AsSelf();
             builder.RegisterType<UwpLegacyFileService>().AsSelf();
+
+            var localFolder = ApplicationData.Current.LocalFolder;
+            var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
+            builder.Register(x => new LiteDatabase(filePath)).AsSelf().SingleInstance();
+
             return builder;
         }
 

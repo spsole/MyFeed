@@ -5,7 +5,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using myFeed.Services.Abstractions;
+using myFeed.Services.Platform;
 
 namespace myFeed.Views.Uwp.Services
 {
