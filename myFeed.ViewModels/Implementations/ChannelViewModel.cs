@@ -8,6 +8,14 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class ChannelViewModel
     { 
+        public ObservableProperty<string> Url { get; }
+        public ObservableProperty<string> Name { get; }
+        public ObservableProperty<bool> Notify { get; }
+
+        public ObservableCommand DeleteSource { get; }
+        public ObservableCommand OpenInBrowser { get; }
+        public ObservableCommand CopyLink { get; }
+
         public ChannelViewModel(
             IPlatformService platformService,
             ICategoriesRepository categoriesRepository,
@@ -39,35 +47,5 @@ namespace myFeed.ViewModels.Implementations
                     parentViewModel.Category.Value);
             };
         }
-
-        /// <summary>
-        /// Are notifications enabled or not?
-        /// </summary>
-        public ObservableProperty<bool> Notify { get; }
-
-        /// <summary>
-        /// Model url.
-        /// </summary>
-        public ObservableProperty<string> Url { get; }
-
-        /// <summary>
-        /// Website name.
-        /// </summary>
-        public ObservableProperty<string> Name { get; }
-
-        /// <summary>
-        /// Deletes the source.
-        /// </summary>
-        public ObservableCommand DeleteSource { get; }
-
-        /// <summary>
-        /// Opens the website in edge.
-        /// </summary>
-        public ObservableCommand OpenInBrowser { get; }
-
-        /// <summary>
-        /// Copies link location.
-        /// </summary>
-        public ObservableCommand CopyLink { get; }
     }
 }

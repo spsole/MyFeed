@@ -7,6 +7,13 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class FaveViewModel
     {
+        public ObservableCollection<ArticleViewModel> Items { get; }
+
+        public ObservableProperty<bool> IsLoading { get; }
+        public ObservableProperty<bool> IsEmpty { get; }
+
+        public ObservableCommand Load { get; }
+
         public FaveViewModel(
             IFavoritesRepository favoritesReposirory,
             IFactoryService factoryService)
@@ -36,25 +43,5 @@ namespace myFeed.ViewModels.Implementations
                 IsLoading.Value = false;
             });
         }
-
-        /// <summary>
-        /// Contains items saved as favorite ones.
-        /// </summary>
-        public ObservableCollection<ArticleViewModel> Items { get; }
-
-        /// <summary>
-        /// Indicates if fetcher is loading data right now.
-        /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
-
-        /// <summary>
-        /// Indicates if the collection is empty.
-        /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; }
-
-        /// <summary>
-        /// Loads favorites collection.
-        /// </summary>
-        public ObservableCommand Load { get; }
     }
 }

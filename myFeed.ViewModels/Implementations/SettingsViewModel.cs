@@ -8,6 +8,17 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class SettingsViewModel
     {
+        public ObservableProperty<string> Theme { get; }
+        public ObservableProperty<bool> LoadImages { get; }
+        public ObservableProperty<bool> NeedBanners { get; }
+        public ObservableProperty<int> NotifyPeriod { get; }
+        public ObservableProperty<int> FontSize { get; }
+
+        public ObservableCommand ImportOpml { get; }
+        public ObservableCommand ExportOpml { get; }
+        public ObservableCommand Reset { get; }
+        public ObservableCommand Load { get; }
+
         public SettingsViewModel(
             IOpmlService opmlService,
             IDialogService dialogService,
@@ -63,50 +74,5 @@ namespace myFeed.ViewModels.Implementations
                 }
             });
         }
-
-        /// <summary>
-        /// Selected theme.
-        /// </summary>
-        public ObservableProperty<string> Theme { get; }
-
-        /// <summary>
-        /// Download images or not?
-        /// </summary>
-        public ObservableProperty<bool> LoadImages { get; }
-
-        /// <summary>
-        /// True if need banners.
-        /// </summary>
-        public ObservableProperty<bool> NeedBanners { get; }
-
-        /// <summary> 
-        /// True if notifications needed. 
-        /// </summary>
-        public ObservableProperty<int> NotifyPeriod { get; }
-
-        /// <summary>
-        /// Selected font size.
-        /// </summary>
-        public ObservableProperty<int> FontSize { get; }
-
-        /// <summary>
-        /// Imports feeds from Opml.
-        /// </summary>
-        public ObservableCommand ImportOpml { get; }
-
-        /// <summary>
-        /// Exports feeds to Opml.
-        /// </summary>
-        public ObservableCommand ExportOpml { get; }
-
-        /// <summary>
-        /// Resets application settings.
-        /// </summary>
-        public ObservableCommand Reset { get; }
-
-        /// <summary>
-        /// Loads settings into UI.
-        /// </summary>
-        public ObservableCommand Load { get; }
     }
 }

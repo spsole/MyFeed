@@ -9,6 +9,12 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class MenuViewModel
     {
+        public ObservableCollection<Tuple<string, object, ObservableCommand, Type>> Items { get; }
+
+        public ObservableProperty<int> SelectedIndex { get; }
+
+        public ObservableCommand Load { get; }
+
         public MenuViewModel(
             ITranslationsService translationsService,
             INavigationService navigationService,
@@ -49,20 +55,5 @@ namespace myFeed.ViewModels.Implementations
                 Items.Add(tuple);
             }
         }
-
-        /// <summary>
-        /// Menu items implemented as tuple-based records.
-        /// </summary>
-        public ObservableCollection<Tuple<string, object, ObservableCommand, Type>> Items { get; }
-
-        /// <summary>
-        /// Selected item index.
-        /// </summary>
-        public ObservableProperty<int> SelectedIndex { get; }
-
-        /// <summary>
-        /// Loads application settings into view.
-        /// </summary>
-        public ObservableCommand Load { get; }
     }
 }

@@ -10,6 +10,15 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class ChannelsViewModel
     {
+        public ObservableCollection<ChannelCategoryViewModel> Items { get; }
+
+        public ObservableProperty<bool> IsLoading { get; }
+        public ObservableProperty<bool> IsEmpty { get; }
+
+        public ObservableCommand AddCategory { get; }
+        public ObservableCommand OpenSearch { get; }
+        public ObservableCommand Load { get; }
+
         public ChannelsViewModel(
             ICategoriesRepository categoriesRepository,
             ITranslationsService translationsService,
@@ -44,6 +53,7 @@ namespace myFeed.ViewModels.Implementations
                 IsEmpty.Value = Items.Count == 0;
                 IsLoading.Value = false;
                 
+                // Subscribe on collection changed to perform items rearranging.
                 Items.CollectionChanged += async (s, a) =>
                 {
                     IsEmpty.Value = Items.Count == 0;
@@ -52,36 +62,5 @@ namespace myFeed.ViewModels.Implementations
                 };
             });
         }
-
-        /// <summary>
-        /// A collection of inner models.
-        /// </summary>
-        public ObservableCollection<ChannelCategoryViewModel> Items { get; }
-
-        /// <summary>
-        /// Is collection being loaded or not.
-        /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
-
-        /// <summary>
-        /// Indicates if welcome screen is visible.
-        /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; }
-
-        /// <summary>
-        /// Adds new category to list.
-        /// </summary>
-        public ObservableCommand AddCategory { get; }
-
-        /// <summary>
-        /// Opens search view when user'd like to add
-        /// new items to his channel collection.
-        /// </summary>
-        public ObservableCommand OpenSearch { get; }
-
-        /// <summary>
-        /// Loads categories into view.
-        /// </summary>
-        public ObservableCommand Load { get; }
     }
 }

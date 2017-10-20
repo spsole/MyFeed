@@ -9,6 +9,16 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class SearchItemViewModel
     {
+        public ObservableProperty<string> Title { get; }
+        public ObservableProperty<string> ImageUri { get; }
+        public ObservableProperty<string> Description { get; }
+        public ObservableProperty<string> FeedUrl { get; }
+        public ObservableProperty<string> Url { get; }
+
+        public ObservableCommand AddToSources { get; }
+        public ObservableCommand OpenInEdge { get; }
+        public ObservableCommand CopyLink { get; }
+        
         public SearchItemViewModel(
             ICategoriesRepository categoriesRepository,
             IPlatformService platformService,
@@ -39,45 +49,5 @@ namespace myFeed.ViewModels.Implementations
                 }
             });
         }
-
-        /// <summary>
-        /// Search result title.
-        /// </summary>
-        public ObservableProperty<string> Title { get; }
-
-        /// <summary>
-        /// Favicon.
-        /// </summary>
-        public ObservableProperty<string> ImageUri { get; }
-
-        /// <summary>
-        /// Search result description.
-        /// </summary>
-        public ObservableProperty<string> Description { get; }
-
-        /// <summary>
-        /// Returns feed url.
-        /// </summary>
-        public ObservableProperty<string> FeedUrl { get; }
-
-        /// <summary>
-        /// Full website url.
-        /// </summary>
-        public ObservableProperty<string> Url { get; }
-
-        /// <summary>
-        /// Adds model to sources.
-        /// </summary>
-        public ObservableCommand AddToSources { get; }
-
-        /// <summary>
-        /// Opens link to website in default browser.
-        /// </summary>
-        public ObservableCommand OpenInEdge { get; }
-
-        /// <summary>
-        /// Copies website link to clipboard.
-        /// </summary>
-        public ObservableCommand CopyLink { get; }
     }
 }

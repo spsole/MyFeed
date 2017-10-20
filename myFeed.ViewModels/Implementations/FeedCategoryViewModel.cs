@@ -8,6 +8,15 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class FeedCategoryViewModel
     {
+        public ObservableCollection<ArticleViewModel> Items { get; }
+
+        public ObservableProperty<bool> IsLoading { get; }
+        public ObservableProperty<bool> IsEmpty { get; }
+        public ObservableProperty<string> Title { get; }
+
+        public ObservableCommand OpenSources { get; }
+        public ObservableCommand Fetch { get; }
+
         public FeedCategoryViewModel(
             INavigationService navigationService,
             IFeedStoreService feedStoreService,
@@ -33,36 +42,5 @@ namespace myFeed.ViewModels.Implementations
                 IsLoading.Value = false;
             });
         }
-
-        /// <summary>
-        /// Feed items received from fetcher.
-        /// </summary>
-        public ObservableCollection<ArticleViewModel> Items { get; }
-
-        /// <summary>
-        /// Indicates if fetcher is loading data right now.
-        /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
-
-        /// <summary>
-        /// Indicates if the collection is empty.
-        /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; }
-
-        /// <summary>
-        /// Feed category title.
-        /// </summary>
-        public ObservableProperty<string> Title { get; }
-
-        /// <summary>
-        /// Opens sources page as a proposal for user 
-        /// to add new RSS channels into this category.
-        /// </summary>
-        public ObservableCommand OpenSources { get; }
-
-        /// <summary>
-        /// Fetches data for current feed.
-        /// </summary>
-        public ObservableCommand Fetch { get; }
     }
 }

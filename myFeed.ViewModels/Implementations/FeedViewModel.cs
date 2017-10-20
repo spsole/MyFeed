@@ -8,6 +8,14 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class FeedViewModel
     {
+        public ObservableCollection<FeedCategoryViewModel> Items { get; }
+
+        public ObservableProperty<bool> IsLoading { get; }
+        public ObservableProperty<bool> IsEmpty { get; }
+
+        public ObservableCommand OpenSources { get; }
+        public ObservableCommand Load { get; }
+
         public FeedViewModel(
             ICategoriesRepository categoriesRepository,
             INavigationService navigationService,
@@ -31,31 +39,5 @@ namespace myFeed.ViewModels.Implementations
                 IsLoading.Value = false;
             });
         }
-
-        /// <summary>
-        /// Feed categories viewmodels.
-        /// </summary>
-        public ObservableCollection<FeedCategoryViewModel> Items { get; }
-
-        /// <summary>
-        /// Indicates if viewmodel is loading items from disk.
-        /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
-
-        /// <summary>
-        /// True if collection is empty.
-        /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; }
-
-        /// <summary>
-        /// Opens sources page as a proposal for user 
-        /// to add new RSS categories into myFeed.
-        /// </summary>
-        public ObservableCommand OpenSources { get; }
-
-        /// <summary>
-        /// Loads all feeds into items property.
-        /// </summary>
-        public ObservableCommand Load { get; }
     }
 }

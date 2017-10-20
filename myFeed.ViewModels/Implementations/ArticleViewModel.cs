@@ -9,6 +9,21 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class ArticleViewModel
     {
+        public ObservableProperty<DateTime> PublishedDate { get; }
+        public ObservableProperty<string> Content { get; }
+        public ObservableProperty<string> Image { get; }
+        public ObservableProperty<string> Feed { get; }
+        public ObservableProperty<string> Title { get; }
+        public ObservableProperty<bool> IsFavorite { get; }
+        public ObservableProperty<bool> IsRead { get; }
+
+        public ObservableCommand MarkFavorite { get; }
+        public ObservableCommand LaunchUri { get; }
+        public ObservableCommand MarkRead { get; }
+        public ObservableCommand CopyLink { get; }
+        public ObservableCommand Share { get; }
+        public ObservableCommand Open { get; }
+
         public ArticleViewModel(
             ICategoriesRepository categoriesRepository,
             ITranslationsService translationsService,
@@ -64,70 +79,5 @@ namespace myFeed.ViewModels.Implementations
                 else await favoritesService.Remove(article);
             });
         }
-        
-        /// <summary>
-        /// Human-readable date.
-        /// </summary>
-        public ObservableProperty<DateTime> PublishedDate { get; }
-
-        /// <summary>
-        /// Is article added to favorites or not?
-        /// </summary>
-        public ObservableProperty<bool> IsFavorite { get; }
-        
-        /// <summary>
-        /// Is article read or not?
-        /// </summary>
-        public ObservableProperty<bool> IsRead { get; }
-
-        /// <summary>
-        /// Contains article content.
-        /// </summary>
-        public ObservableProperty<string> Content { get; }
-
-        /// <summary>
-        /// Image url.
-        /// </summary>
-        public ObservableProperty<string> Image { get; }
-
-        /// <summary>
-        /// Source feed title.
-        /// </summary>
-        public ObservableProperty<string> Feed { get; }
-
-        /// <summary>
-        /// Article title.
-        /// </summary>
-        public ObservableProperty<string> Title { get; }
-
-        /// <summary>
-        /// Adds article to favorites.
-        /// </summary>
-        public ObservableCommand MarkFavorite { get; }
-
-        /// <summary>
-        /// Opens article in web browser.
-        /// </summary>
-        public ObservableCommand LaunchUri { get; }
-
-        /// <summary>
-        /// Marks article as read.
-        /// </summary>
-        public ObservableCommand MarkRead { get; }
-
-        /// <summary>
-        /// Copies link to clipboard.
-        /// </summary>
-        public ObservableCommand CopyLink { get; }
-
-        /// <summary>
-        /// Shows share UI for article.
-        /// </summary>
-        public ObservableCommand Share { get; }
-
-        /// <summary>
-        /// Opens this FeedItem.
-        /// </summary>
-        public ObservableCommand Open { get; }
     }
 }

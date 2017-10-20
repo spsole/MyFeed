@@ -10,6 +10,17 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class ChannelCategoryViewModel
     {
+        public ObservableCollection<ChannelViewModel> Items { get; }
+
+        public ObservableProperty<Category> Category { get; }
+        public ObservableProperty<string> SourceUri { get; }
+        public ObservableProperty<string> Title { get; }
+
+        public ObservableCommand RemoveCategory { get; }
+        public ObservableCommand RenameCategory { get; }
+        public ObservableCommand AddSource { get; }
+        public ObservableCommand Load { get; }
+
         public ChannelCategoryViewModel(
             ICategoriesRepository categoriesRepository,
             ITranslationsService translationsService,
@@ -62,45 +73,5 @@ namespace myFeed.ViewModels.Implementations
                         ChannelViewModel>(channel, this));
             });
         }
-
-        /// <summary>
-        /// Inner items collection.
-        /// </summary>
-        public ObservableCollection<ChannelViewModel> Items { get; }
-
-        /// <summary>
-        /// Read-only category entity.
-        /// </summary>
-        public ObservableProperty<Category> Category { get; }
-
-        /// <summary>
-        /// Source Uri for new category user input.
-        /// </summary>
-        public ObservableProperty<string> SourceUri { get; }
-
-        /// <summary>
-        /// Grouping title.
-        /// </summary>
-        public ObservableProperty<string> Title { get; }
-
-        /// <summary>
-        /// Removes the entire category.
-        /// </summary>
-        public ObservableCommand RemoveCategory { get; }
-
-        /// <summary>
-        /// Renames the category.
-        /// </summary>
-        public ObservableCommand RenameCategory { get; }
-
-        /// <summary>
-        /// Adds new source to this category.
-        /// </summary>
-        public ObservableCommand AddSource { get; }
-
-        /// <summary>
-        /// Loads items.
-        /// </summary>
-        public ObservableCommand Load { get; }
     }
 }

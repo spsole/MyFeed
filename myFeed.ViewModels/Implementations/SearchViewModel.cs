@@ -6,6 +6,15 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class SearchViewModel
     {
+        public ObservableCollection<SearchItemViewModel> Items { get; }
+
+        public ObservableProperty<string> SearchQuery { get; }
+        public ObservableProperty<bool> IsGreeting { get; }
+        public ObservableProperty<bool> IsLoading { get; }
+        public ObservableProperty<bool> IsEmpty { get; }
+
+        public ObservableCommand Fetch { get; }
+
         public SearchViewModel(
             IFactoryService factoryService,
             ISearchService searchService)
@@ -30,35 +39,5 @@ namespace myFeed.ViewModels.Implementations
                 IsLoading.Value = false;
             });
         }
-
-        /// <summary>
-        /// Loaded models.
-        /// </summary>
-        public ObservableCollection<SearchItemViewModel> Items { get; }
-
-        /// <summary>
-        /// Contains search query.
-        /// </summary>
-        public ObservableProperty<string> SearchQuery { get; }
-
-        /// <summary>
-        /// Indicates if ViewModel is showing greeting.
-        /// </summary>
-        public ObservableProperty<bool> IsGreeting { get; }
-
-        /// <summary>
-        /// Is collection being loaded or not.
-        /// </summary>
-        public ObservableProperty<bool> IsLoading { get; }
-
-        /// <summary>
-        /// Is collection empty or not?
-        /// </summary>
-        public ObservableProperty<bool> IsEmpty { get; }
-
-        /// <summary>
-        /// Fetches results from Feedly search engine.
-        /// </summary>
-        public ObservableCommand Fetch { get; }
     }
 }
