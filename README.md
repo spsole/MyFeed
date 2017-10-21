@@ -28,7 +28,6 @@ All modules are combined together using <a href="https://en.wikipedia.org/wiki/I
 - <a href="http://xunit.github.io/">xUnit</a> tests on <a href="https://www.microsoft.com/net/core">.NET Core</a> with <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a>
 - <a href="https://autofac.org/">Autofac</a> for <a href="https://en.wikipedia.org/wiki/Dependency_injection">Dependency Injection</a>
 - <a href="https://github.com/mbdavid/LiteDB">LiteDB</a> as a NoSQL database engine
-- <a href="https://github.com/AngleSharp/AngleSharp">AngleSharp</a> to parse html
 - <a href="https://github.com/codehollow/FeedReader">CodeHollow.FeedReader</a> to parse feeds
 - <a href="https://www.newtonsoft.com/json">Newtonsoft.Json</a> to parse Json objects
 - <a href="https://developer.microsoft.com/en-us/windows/apps">Universal Windows Platform</a>

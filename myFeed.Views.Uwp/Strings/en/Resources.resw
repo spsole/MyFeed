@@ -334,4 +334,10 @@
   <data name="SearchWelcomeSubTitle">
     <value>Enter search query into the text field above, for example "News", and press "Search"!</value>
   </data>
+  <data name="ImageOpenFullSize">
+    <value>Open in browser</value>
+  </data>
+  <data name="ImageCopyLink">
+    <value>Copy link</value>
+  </data>
 </root>

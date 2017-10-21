@@ -334,4 +334,10 @@
   <data name="SearchWelcomeSubTitle">
     <value>Введите запрос в текстовое поле выше, например "Новости", и нажмите "Найти"!</value>
   </data>
+  <data name="ImageOpenFullSize">
+    <value>Открыть в браузере</value>
+  </data>
+  <data name="ImageCopyLink">
+    <value>Скопировать ссылку</value>
+  </data>
 </root>

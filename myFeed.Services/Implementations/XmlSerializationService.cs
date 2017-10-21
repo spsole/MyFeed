@@ -18,10 +18,6 @@ namespace myFeed.Services.Implementations
             {
                 // ignore
             }
-            finally
-            {
-                stream.Dispose();
-            }
         }
 
         public TObject Deserialize<TObject>(Stream stream)
@@ -34,10 +30,6 @@ namespace myFeed.Services.Implementations
             catch (Exception)
             {
                 return default(TObject);
-            }
-            finally
-            {
-                stream.Dispose();
             }
         }
     }

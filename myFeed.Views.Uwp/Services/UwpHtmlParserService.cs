@@ -2,213 +2,173 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
-using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
+using HtmlAgilityPack;
 using myFeed.Services.Abstractions;
-using HorizontalAlignment = Windows.UI.Xaml.HorizontalAlignment;
-using VerticalAlignment = Windows.UI.Xaml.VerticalAlignment;
+using myFeed.Services.Platform;
+using Microsoft.Toolkit.Uwp.UI.Animations;
 
 namespace myFeed.Views.Uwp.Services
 {
     public sealed class UwpHtmlParserService
     {
-        private readonly ISettingsService _service;
-        private readonly HtmlParser _htmlParser;
+        private readonly ITranslationsService _translationsService;
+        private readonly IPlatformService _platformService;
+        private readonly ISettingsService _settingsService;
 
-        public UwpHtmlParserService(ISettingsService settingsService)
+        private double _fontSize;
+        private bool _loadImages;
+
+        public UwpHtmlParserService(
+            ITranslationsService translationsService,
+            IPlatformService platformService,
+            ISettingsService settingsService)
         {
-            _service = settingsService;
-            _htmlParser = new HtmlParser();
+            _translationsService = translationsService;
+            _platformService = platformService;
+            _settingsService = settingsService;
         }
 
         public async Task<IEnumerable<Block>> ParseAsync(string html)
         {
-            var size = await _service.GetAsync<int>("FontSize");
-            var document = await Task.Run(() => _htmlParser.ParseAsync(html));
-            var paragraph = new Paragraph
+            var htmlDocument = new HtmlDocument();
+            await Task.Run(async () =>
             {
-                FontSize = size,
-                LineHeight = size * 1.5
-            };
-            var node = GenerateNode(document.DocumentElement);
-            paragraph.Inlines.Add(node);
-            return new[] {paragraph};
+                _loadImages = await _settingsService.GetAsync<bool>("LoadImages");
+                _fontSize = await _settingsService.GetAsync<double>("FontSize");
+                htmlDocument.LoadHtml(html);
+            });
+            var paragraph = new Paragraph { FontSize = _fontSize, LineHeight = _fontSize * 1.5 };
+            paragraph.Inlines.Add(AddChildren(new Span(), htmlDocument.DocumentNode));
+            return new List<Block> { paragraph };
         }
 
-        private Inline GenerateHeader(IElement element)
+        private Span AddChildren(Span span, HtmlNode node)
         {
-            var span = new Span();
-            var bold = GenerateBold(element);
-            span.Inlines.Add(new LineBreak());
-            span.Inlines.Add(new LineBreak());
-            span.Inlines.Add(bold);
-            span.Inlines.Add(new LineBreak());
+            var xamlNodesList = node.ChildNodes.Select(GenerateBlockForNode).Where(i => i != null).ToList();
+            foreach (var xamlNode in xamlNodesList) span.Inlines.Add(xamlNode);
+            if (xamlNodesList.Count == 0) span.Inlines.Add(new Run { Text = node.InnerText });
             return span;
         }
 
-        private Inline GenerateImage(IElement element)
+        private Inline GenerateBlockForNode(HtmlNode node)
         {
-            var span = new Span();
-            var inlineUiContainer = new InlineUIContainer();
-            var imageElement = (IHtmlImageElement)element;
-            if (!Uri.IsWellFormedUriString(
-                imageElement.Source, UriKind.Absolute))
-                return span;
-
-            var bitmap = new BitmapImage(new Uri(imageElement.Source));
-            var image = new Image
+            switch (node.Name.ToLower())
             {
-                Source = bitmap,
-                Stretch = Stretch.Uniform,
-                VerticalAlignment = VerticalAlignment.Top,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(-12, 12, -12, 12),
-                MaxHeight = 500
-            };
-            inlineUiContainer.Child = image;
-            span.Inlines.Add(new LineBreak());
-            span.Inlines.Add(inlineUiContainer);
-            span.Inlines.Add(new LineBreak());
-            return span;
-        }
-
-        private Inline GenerateHyperLink(IElement element)
-        {
-            var span = new Span();
-            var hyperlink = new Hyperlink();
-            var linkElement = (IHtmlAnchorElement)element;
-            if (Uri.IsWellFormedUriString(linkElement.Href, UriKind.Absolute))
-                hyperlink.NavigateUri = new Uri(linkElement.Href, UriKind.Absolute);
-            hyperlink.Inlines.Add(new Run { Text = element.TextContent });
-            if (!string.IsNullOrWhiteSpace(element.TextContent))
-                span.Inlines.Add(hyperlink);
-            return span;
-        }
-
-        private Inline GenerateLi(IElement element)
-        {
-            var span = new Span();
-            var inlineUiContainer = new InlineUIContainer();
-            var brush = (SolidColorBrush)Application.Current
-                .Resources["SystemControlBackgroundAccentBrush"];
-            var ellipse = new Ellipse
-            {
-                Fill = brush,
-                Width = 6,
-                Height = 6,
-                Margin = new Thickness(0, 0, 9, 2)
-            };
-            inlineUiContainer.Child = ellipse;
-            span.Inlines.Add(new LineBreak());
-            span.Inlines.Add(inlineUiContainer);
-            AttachChildren(span.Inlines, element);
-            return span;
-        }
-
-        private Inline GenerateBlockQuote(IElement element)
-        {
-            var italic = new Italic();
-            italic.Inlines.Add(new LineBreak());
-            AttachChildren(italic.Inlines, element);
-            italic.Inlines.Add(new LineBreak());
-            return italic;
-        }
-
-        private Inline GenerateBold(IElement element)
-        {
-            var bold = new Bold();
-            AttachChildren(bold.Inlines, element);
-            return bold;
-        }
-
-        private Inline GenerateItalic(IElement element)
-        {
-            var italic = new Italic();
-            AttachChildren(italic.Inlines, element);
-            return italic;
-        }
-
-        private Inline GenerateSpan(IElement element)
-        {
-            var span = new Span();
-            AttachChildren(span.Inlines, element);
-            return span;
-        }
-
-        private Inline GenerateFrame(IElement element)
-        {
-            var span = new Span();
-            var inlineUiContainer = new InlineUIContainer();
-            var frameElement = (IHtmlInlineFrameElement)element;
-            if (!Uri.IsWellFormedUriString(
-                frameElement.Source, UriKind.Absolute))
-                return span;
-            var webView = new WebView(WebViewExecutionMode.SeparateThread)
-            {
-                Width = frameElement.DisplayWidth,
-                Height = frameElement.DisplayHeight
-            };
-            inlineUiContainer.Child = webView;
-            span.Inlines.Add(new LineBreak());
-            span.Inlines.Add(inlineUiContainer);
-            span.Inlines.Add(new LineBreak());
-            webView.Navigate(new Uri(frameElement.Source));
-            return span;
-        }
-
-        private void AttachChildren(InlineCollection collection, INode element)
-        {
-            foreach (var node in element.ChildNodes) collection.Add(GenerateNode(node));
-            if (!collection.Any()) collection.Add(new Run {Text = element.TextContent});
-        }
-
-        private Inline GenerateNode(INode node)
-        {
-            if (node is IElement element)
-                return GenerateElement(element);
-            return new Run {Text=node.TextContent};
-        }
-
-        private Inline GenerateElement(IElement element)
-        {
-            switch (element.TagName.ToLowerInvariant())
-            {
+                case "p": 
+                case "div":
+                    return GenerateInnerParagraph(node);
                 case "a":
-                    return GenerateHyperLink(element);
+                    if (node.ChildNodes.Count >= 1 && node.FirstChild?.Name?.ToLower() == "img")
+                        return GenerateImage(node.FirstChild);
+                    return GenerateHyperLink(node);
                 case "img":
-                    return GenerateImage(element);
+                    return GenerateImage(node);
                 case "br":
                     return new Span();
                 case "i":
                 case "em":
-                    return GenerateItalic(element);
                 case "blockquote":
-                    return GenerateBlockQuote(element);
+                    return AddChildren(new Italic(), node);
                 case "b":
                 case "strong":
-                    return GenerateBold(element);
+                    return AddChildren(new Bold(), node);
                 case "li":
                 case "dt":
-                    return GenerateLi(element);
+                    return GenerateLi(node);
                 case "h1":
                 case "h2":
                 case "h3":
                 case "h4":
                 case "h5":
                 case "h6":
-                    return GenerateHeader(element);
-                case "iframe":
-                    return GenerateFrame(element);
+                    return GenerateH(node);
                 default:
-                    return GenerateSpan(element);
+                    return AddChildren(new Span(), node);
             }
+        }
+
+        private Inline GenerateLi(HtmlNode node)
+        {
+            var span = new Span();
+            span.Inlines.Add(new LineBreak());
+            span.Inlines.Add(new InlineUIContainer { Child = new Ellipse
+            {
+                Fill = (SolidColorBrush)Application.Current.Resources["SystemControlBackgroundAccentBrush"],
+                Width = 6, Height = 6, Margin = new Thickness(0, 0, 9, 2)
+            }});
+            AddChildren(span, node);
+            span.Inlines.Add(new LineBreak());
+            return span;
+        }
+
+        private Inline GenerateH(HtmlNode node)
+        {
+            var span = new Span { FontSize = _fontSize * 1.5, FontWeight = FontWeights.SemiBold };
+            span.Inlines.Add(new LineBreak());
+            span.Inlines.Add(new Run { Text = node.InnerText });
+            span.Inlines.Add(new LineBreak());
+            return span;
+        }
+
+        private Inline GenerateInnerParagraph(HtmlNode node)
+        {
+            if (!node.HasChildNodes && string.IsNullOrWhiteSpace(node.InnerText)) return null;
+            var span = AddChildren(new Span(), node);
+            span.Inlines.Add(new LineBreak());
+            return span;
+        }
+
+        private static Inline GenerateHyperLink(HtmlNode node)
+        {
+            var link = new Hyperlink();
+            var reference = node.Attributes["href"]?.Value;
+            if (Uri.IsWellFormedUriString(reference, UriKind.Absolute))
+                link.NavigateUri = new Uri(reference, UriKind.Absolute);
+            link.Inlines.Add(new Run { Text = node.InnerText });
+            var span = new Span();
+            span.Inlines.Add(link);
+            return span;
+        }
+
+        private Inline GenerateImage(HtmlNode node)
+        {
+            if (!_loadImages) return new Span();
+            var reference = node.Attributes["src"]?.Value; 
+            if (!Uri.IsWellFormedUriString(reference, UriKind.Absolute)) return new Span();
+            var sourceUri = new Uri(reference, UriKind.Absolute);
+            var image = new Image
+            {
+                Source = new BitmapImage(sourceUri) { CreateOptions = BitmapCreateOptions.IgnoreImageCache },
+                Stretch = Stretch.Uniform, VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Center, MaxHeight = 500,
+                Margin = new Thickness(-12, 12, -12, 12), Opacity = 0
+            };
+            image.ImageOpened += (sender, e) =>
+            {
+                var bmp = (BitmapImage)image.Source;
+                if (bmp.PixelHeight >= bmp.PixelWidth) image.Margin = new Thickness(0, 12, 0, 12);
+                image.Fade(1, 300, 300).Start();
+            };
+            image.RightTapped += (sender, e) =>
+            {
+                var launcher = new MenuFlyoutItem { Text = _translationsService.Resolve("ImageOpenFullSize") };
+                var copier = new MenuFlyoutItem { Text = _translationsService.Resolve("ImageCopyLink") };
+                copier.Click += (s, o) => _platformService.CopyTextToClipboard(sourceUri.AbsoluteUri);
+                launcher.Click += (s, o) => _platformService.LaunchUri(sourceUri);
+                new MenuFlyout {Items = {launcher, copier}}.ShowAt(image);
+            };
+            var inlineUiContainer = new InlineUIContainer { Child = image };
+            var span = new Span();
+            span.Inlines.Add(inlineUiContainer);
+            span.Inlines.Add(new LineBreak());
+            return span;
         }
     }
 }
