@@ -16,6 +16,8 @@ namespace myFeed.Services.Implementations
 
         public string ExtractImageUri(string html)
         {
+            if (string.IsNullOrWhiteSpace(html)) return null;
+
             var regularExpression = Matcher.Value;
             var match = regularExpression.Match(html);
             if (!match.Success) return null;

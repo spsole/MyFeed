@@ -37,6 +37,7 @@ namespace myFeed.Views.Uwp.Services
 
         public async Task<IEnumerable<Block>> ParseAsync(string html)
         {
+            if (html == null) return new Block[] {};
             var htmlDocument = new HtmlDocument();
             await Task.Run(async () =>
             {
