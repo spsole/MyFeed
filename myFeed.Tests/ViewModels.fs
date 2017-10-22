@@ -16,7 +16,7 @@ module ObservablePropertyFixture =
 
         let mutable fired = 0
         let property = ObservableProperty(42)
-        property.PropertyChanged += fun e -> fired <- fired + 1
+        property.PropertyChanged += fun _ -> fired <- fired + 1
         property.Value <- 3
         Should.equal 1 fired 
 

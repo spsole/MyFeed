@@ -325,9 +325,9 @@ module FavoritesServiceFixture =
 
         let favorites = Substitute.For<IFavoritesRepository>()
         favorites.When(fun x -> x.InsertAsync(Arg.Any<_>()) |> ignore)
-                 .Do(fun x -> inserted <- inserted + 1)
+                 .Do(fun _ -> inserted <- inserted + 1)
         favorites.When(fun x -> x.RemoveAsync(Arg.Any<_>()) |> ignore)
-                 .Do(fun x -> deleted <- deleted + 1)             
+                 .Do(fun _ -> deleted <- deleted + 1)             
 
         let article = Article(Fave=false)
         let service = produce<FavoritesService> [favorites]
@@ -342,7 +342,7 @@ module FavoritesServiceFixture =
 
 module AutofacFactoryServiceFixture =
 
-    type Sample(name: string) = member x.Name = name
+    type Sample(name: string) = member __.Name = name
 
     [<Fact>]
     let ``should inject parameters with given type``() =

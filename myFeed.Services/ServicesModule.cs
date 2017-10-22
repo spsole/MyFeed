@@ -8,11 +8,11 @@ namespace myFeed.Services
     {
         protected override void Load(ContainerBuilder builder) 
         {
+            builder.RegisterType<CachingSettingsService>().As<ISettingsService>().SingleInstance();
+            builder.RegisterType<AutofacFactoryService>().As<IFactoryService>().SingleInstance();
             builder.RegisterType<XmlSerializationService>().As<ISerializationService>();
             builder.RegisterType<ParallelFeedStoreService>().As<IFeedStoreService>();
             builder.RegisterType<FeedReaderFetchService>().As<IFeedFetchService>();
-            builder.RegisterType<CachingSettingsService>().As<ISettingsService>();
-            builder.RegisterType<AutofacFactoryService>().As<IFactoryService>();
             builder.RegisterType<FeedlySearchService>().As<ISearchService>();
             builder.RegisterType<FavoritesService>().As<IFavoritesService>();
             builder.RegisterType<RegexImageService>().As<IImageService>();
