@@ -88,6 +88,27 @@ module CachingSettingsServiceFixture =
         service.GetAsync("Foo").Result |> Should.equal "Bar"
         counter |> Should.equal 1
 
+    [<Fact>]
+    let ``should lock repository access from multiple threads and query db only once``() =    
+
+        let mutable counter = 0
+        let settings = Substitute.For<ISettingsRepository>() 
+        settings.When(fun x -> x.GetByKeyAsync("Foo") |> ignore)
+                .Do(fun _ -> counter <- counter + 1)
+
+        let defaults = Substitute.For<IDefaultsService>()
+        defaults.DefaultSettings.Returns(dict["Foo", "Bar"] |> Dictionary<_, _>) |> ignore
+
+        let service = produce<CachingSettingsService> [settings; defaults]
+
+        // Access service getter 3 times at once from different threads.
+        let thread = fun () -> Task.Run(fun () -> service.GetAsync("Foo").Result)
+        Task.WhenAll([thread(); thread(); thread()]) |> ignore
+
+        // Counter should equal 1, not four. Lock should work properly.
+        service.GetAsync("Foo").Result |> Should.equal "Bar"
+        Should.equal 1 counter
+
 module OpmlServiceFixture =
 
     [<Fact>]
@@ -333,4 +354,3 @@ module AutofacFactoryServiceFixture =
         let factory = produce<AutofacFactoryService> [lifetimeScope]
         let instance = factory.CreateInstance<Sample> "Foo"
         Should.equal "Foo" instance.Name
-        

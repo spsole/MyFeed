@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Bindables;
+using System.Linq;
 
 namespace myFeed.ViewModels.Implementations
 {
@@ -27,9 +28,8 @@ namespace myFeed.ViewModels.Implementations
                 IsLoading.Value = true;
                 var articles = await favoritesReposirory.GetAllAsync();
                 Items.Clear();
-                foreach (var article in articles)
+                foreach (var article in articles.OrderByDescending(i => i.PublishedDate))
                 {
-                    if (!article.Fave) continue;
                     var viewModel = factoryService.CreateInstance<ArticleViewModel>(article);
                     viewModel.IsFavorite.PropertyChanged += (o, args) =>
                     {

@@ -6,14 +6,8 @@ open System
 open System.Threading.Tasks
 
 open myFeed.Tests.Extensions
-open myFeed.Tests.Extensions.Domain
-open myFeed.Tests.Extensions.Dependency 
-
-open myFeed.Repositories.Models
-open myFeed.Repositories.Abstractions
 
 open myFeed.ViewModels.Bindables
-open myFeed.ViewModels.Implementations
 
 module ObservablePropertyFixture =
 

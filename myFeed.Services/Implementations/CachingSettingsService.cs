@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using myFeed.Repositories.Abstractions;
 using myFeed.Repositories.Models;
@@ -14,6 +15,7 @@ namespace myFeed.Services.Implementations
         private readonly IReadOnlyDictionary<string, string> _defaultConfiguration;
         private readonly IDictionary<string, string> _cachedConfiguration;
         private readonly ISettingsRepository _settingsRepository;
+        private readonly SemaphoreSlim _semaphoreSlim;
         
         public CachingSettingsService(
             ISettingsRepository settingsRepository,
@@ -22,55 +24,48 @@ namespace myFeed.Services.Implementations
             _settingsRepository = settingsRepository;
             _cachedConfiguration = new Dictionary<string, string>();
             _defaultConfiguration = defaultsService.DefaultSettings;
+            _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
         
-        public async Task<TValue> GetAsync<TValue>(string key) where TValue : IConvertible
+        public async Task<T> GetAsync<T>(string key) where T : IConvertible
         {
+            await _semaphoreSlim.WaitAsync();
             if (_cachedConfiguration.TryGetValue(key, out var cachedValue)) 
-                return SwitchType<TValue>(cachedValue);
+                return ReleaseAndRetype(cachedValue);
             
             var storedSetting = await _settingsRepository.GetByKeyAsync(key);
-            if (storedSetting?.Value == null) 
-            {
-                if (!_defaultConfiguration.TryGetValue(key, out var value))
-                    throw new ArgumentOutOfRangeException(
-                        "No default value found: " + key);
-                
-                _cachedConfiguration[key] = value;
-                await _settingsRepository.InsertAsync(new Setting 
-                {
-                    Key = key, Value = value
-                });
-                return SwitchType<TValue>(value);
-            }
+            if (storedSetting?.Value != null) return ReleaseAndRetype(
+                _cachedConfiguration[key] = storedSetting.Value);
             
-            _cachedConfiguration[key] = storedSetting.Value;
-            return SwitchType<TValue>(storedSetting.Value);
+            if (!_defaultConfiguration.TryGetValue(key, out var value))
+                throw new ArgumentOutOfRangeException($"No defaults: {key}");
+            
+            _cachedConfiguration[key] = value;
+            await _settingsRepository.InsertAsync(new Setting {Key = key, Value = value});
+            return ReleaseAndRetype(value);
+
+            T ReleaseAndRetype(string convertible)
+            {
+                _semaphoreSlim.Release();
+                return (T) Convert.ChangeType(convertible, 
+                    typeof(T), CultureInfo.InvariantCulture);
+            }
         }
 
-        public async Task SetAsync<TValue>(string key, TValue value) where TValue : IConvertible
+        public async Task SetAsync<T>(string key, T value) where T : IConvertible
         {
             var existingSetting = await _settingsRepository.GetByKeyAsync(key);
-            var stringifiedValue = value.ToString(CultureInfo.InvariantCulture);
-            _cachedConfiguration[key] = stringifiedValue;
-            
+            var converted = value.ToString(CultureInfo.InvariantCulture);
+            _cachedConfiguration[key] = converted;
             if (existingSetting == null)
             {
-                await _settingsRepository.InsertAsync(new Setting
-                {
-                    Key = key, Value = stringifiedValue
-                });
+                await _settingsRepository.InsertAsync(new Setting {
+                    Key = key, Value = converted });
+                return;
             }
-            else
-            {
-                existingSetting.Value = stringifiedValue;
-                await _settingsRepository.UpdateAsync(existingSetting);
-            }
-        }
-        
-        private static TValue SwitchType<TValue>(string value) where TValue : IConvertible
-        {
-            return (TValue) Convert.ChangeType(value, typeof(TValue), CultureInfo.InvariantCulture);
+
+            existingSetting.Value = converted;
+            await _settingsRepository.UpdateAsync(existingSetting);
         }
     }
 }
