@@ -1,8 +1,8 @@
-﻿using Windows.ApplicationModel.Background;
+﻿using System;
 using Autofac;
 using myFeed.Services;
-using myFeed.Services.Platform;
-using myFeed.Views.Uwp.Notifications.Services;
+using myFeed.Services.Abstractions;
+using Windows.ApplicationModel.Background;
 
 namespace myFeed.Views.Uwp.Notifications
 {
@@ -11,20 +11,19 @@ namespace myFeed.Views.Uwp.Notifications
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             var defferal = taskInstance.GetDeferral();
-            using (var scope = Load(new ContainerBuilder()).Build())
+            using (var scope = Load(new ContainerBuilder()))
             {
-                var processor = scope.Resolve<UwpFeedProcessor>();
-                await processor.ProcessFeeds().ConfigureAwait(false);
+                var processor = scope.Resolve<IBackgroundService>();
+                await processor.CheckForUpdates(DateTime.Now);
             }
             defferal.Complete();
         }
 
-        private static ContainerBuilder Load(ContainerBuilder builder)
+        private static ILifetimeScope Load(ContainerBuilder builder)
         {
             builder.RegisterModule<ServicesModule>();
-            builder.RegisterType<UwpDefaultsService>().As<IDefaultsService>();
-            builder.RegisterType<UwpFeedProcessor>().AsSelf();
-            return builder;
+            builder.RegisterType<UwpNotificationService>().AsSelf();
+            return builder.Build();
         }
     }
 }

@@ -47,6 +47,8 @@ module CombinedUnitsFixture =
         |> also Should.resolve<IFactoryService>
         |> also Should.resolve<IFeedStoreService>
         |> also Should.resolve<ISettingsService>
+        |> also Should.resolve<IDefaultsService>
+        |> also Should.resolve<IBackgroundService>
         |> dispose
 
     [<Fact>]

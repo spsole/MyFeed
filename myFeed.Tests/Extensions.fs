@@ -153,8 +153,8 @@ module Domain =
         |> also registerMock<IFilePickerService>       
         |> also registerMock<IPlatformService>
         |> also registerMock<IDialogService>
-        |> also registerMock<IDefaultsService>
         |> also registerMock<INavigationService>
+        |> also registerMock<INotificationService>
         |> ignore
 
     /// Creates builder for integration testing.

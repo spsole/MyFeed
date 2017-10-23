@@ -13,8 +13,10 @@ namespace myFeed.Services
             builder.RegisterType<XmlSerializationService>().As<ISerializationService>();
             builder.RegisterType<ParallelFeedStoreService>().As<IFeedStoreService>();
             builder.RegisterType<FeedReaderFetchService>().As<IFeedFetchService>();
+            builder.RegisterType<BackgroundService>().As<IBackgroundService>();
             builder.RegisterType<FeedlySearchService>().As<ISearchService>();
             builder.RegisterType<FavoritesService>().As<IFavoritesService>();
+            builder.RegisterType<DefaultsService>().As<IDefaultsService>();
             builder.RegisterType<RegexImageService>().As<IImageService>();
             builder.RegisterType<OpmlService>().As<IOpmlService>();
         }

@@ -113,7 +113,6 @@
     <Compile Include="Extensions\TruthyToVisibleConverter.cs" />
     <Compile Include="Extensions\UpperStringConverter.cs" />
     <Compile Include="Services\Uwp.cs" />
-    <Compile Include="Services\UwpDefaultsService.cs" />
     <Compile Include="Services\UwpDialogService.cs" />
     <Compile Include="Services\UwpFilePickerService.cs" />
     <Compile Include="Services\UwpLauncherService.cs" />

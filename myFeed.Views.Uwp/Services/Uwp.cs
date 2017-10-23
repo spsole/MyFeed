@@ -27,7 +27,6 @@ namespace myFeed.Views.Uwp.Services
             builder.RegisterType<UwpTranslationsService>().As<ITranslationsService>();
             builder.RegisterType<UwpFilePickerService>().As<IFilePickerService>();
             builder.RegisterType<UwpPlatformService>().As<IPlatformService>();
-            builder.RegisterType<UwpDefaultsService>().As<IDefaultsService>();
             builder.RegisterType<UwpDialogService>().As<IDialogService>();
 
             builder.RegisterType<UwpHtmlParserService>().AsSelf();

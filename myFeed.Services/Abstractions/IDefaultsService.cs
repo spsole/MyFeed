@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace myFeed.Services.Platform
+namespace myFeed.Services.Abstractions
 {
     public interface IDefaultsService
     {

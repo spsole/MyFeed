@@ -354,3 +354,67 @@ module AutofacFactoryServiceFixture =
         let factory = produce<AutofacFactoryService> [lifetimeScope]
         let instance = factory.CreateInstance<Sample> "Foo"
         Should.equal "Foo" instance.Name
+
+module DefaultsServiceFixture =
+
+    [<Fact>]
+    let ``should resolve all needed default settings``() =
+
+        let service = produce<DefaultsService> []
+        let settings = service.DefaultSettings
+        
+        settings.["LoadImages"] |> Should.notBeNull
+        settings.["NeedBanners"] |> Should.notBeNull
+        settings.["NotifyPeriod"] |> Should.notBeNull
+        settings.["LastFetched"] |> Should.notBeNull
+        settings.["FontSize"] |> Should.notBeNull
+        settings.["Theme"] |> Should.notBeNull
+
+module BackgroundServiceFixture = 
+
+    [<Fact>]
+    let ``should send ordered notifications for articles with greater date``() =
+
+        let articles = [ Article(Title="Foo", PublishedDate=DateTime.Now);
+                         Article(Title="Bar", PublishedDate=DateTime.MaxValue) ]
+        let store = Substitute.For<IFeedStoreService>()
+        store.LoadAsync(Arg.Any()).Returns(
+            struct(null, articles.OrderBy(fun x -> x.Id)) 
+            |> Task.FromResult) 
+            |> ignore
+
+        let settings = Substitute.For<ISettingsService>()
+        settings.GetAsync(Arg.Any()).Returns(
+            DateTime.MinValue |> Task.FromResult)
+            |> ignore      
+
+        let mutable received = null
+        let notify = Substitute.For<INotificationService>()
+        notify.When(fun x -> x.SendNotifications(Arg.Any()) |> ignore)
+              .Do(fun x -> received <- x.Arg<List<Article>>())
+
+        let service = produce<BackgroundService> [store; settings; notify]
+        service.CheckForUpdates(DateTime.Now).Wait()
+
+        Should.equal "Foo" received.[0].Title
+        Should.equal "Bar" received.[1].Title
+
+    [<Fact>]
+    let ``should not send notifications for outdated old articles``() =
+
+        let articles = [ Article(Title="Foo", PublishedDate=DateTime.MinValue) ]
+        let store = Substitute.For<IFeedStoreService>()
+        store.LoadAsync(Arg.Any()).Returns(
+            struct(null, articles.OrderBy(fun x -> x.Id)) 
+            |> Task.FromResult) 
+            |> ignore
+
+        let mutable received = null
+        let notify = Substitute.For<INotificationService>()
+        notify.When(fun x -> x.SendNotifications(Arg.Any()) |> ignore)
+              .Do(fun x -> received <- x.Arg<List<Article>>())
+
+        let service = produce<BackgroundService> [store; notify]
+        service.CheckForUpdates(DateTime.Now).Wait()
+
+        Should.equal 0 received.Count 
