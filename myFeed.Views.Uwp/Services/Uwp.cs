@@ -28,15 +28,12 @@ namespace myFeed.Views.Uwp.Services
             builder.RegisterType<UwpFilePickerService>().As<IFilePickerService>();
             builder.RegisterType<UwpPlatformService>().As<IPlatformService>();
             builder.RegisterType<UwpDialogService>().As<IDialogService>();
-
             builder.RegisterType<UwpHtmlParserService>().AsSelf();
-            builder.RegisterType<UwpLauncherService>().AsSelf();
             builder.RegisterType<UwpLegacyFileService>().AsSelf();
 
             var localFolder = ApplicationData.Current.LocalFolder;
             var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
             builder.Register(x => new LiteDatabase(filePath)).AsSelf().SingleInstance();
-
             return builder;
         }
 

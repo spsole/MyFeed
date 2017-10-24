@@ -33,8 +33,8 @@ namespace myFeed.Views.Uwp
             if (Window.Current.Content == null) Window.Current.Content = new Frame();
             var frame = (Frame)Window.Current.Content;
             if (frame.Content == null) await Services.Uwp.Current
-                    .Resolve<INavigationService>()
-                    .Navigate<MenuViewModel>();
+                .Resolve<INavigationService>()
+                .Navigate<MenuViewModel>();
             Window.Current.Activate();
 
             var legacyService = Services.Uwp.Current.Resolve<UwpLegacyFileService>();
@@ -42,11 +42,8 @@ namespace myFeed.Views.Uwp
             await legacyService.ImportArticlesFromLegacyFormat();
         }
 
-        private static async void OpenArticleViewForPinnedArticleUsingGuid(Guid id)
-        {
-            await Services.Uwp.Current
-                .Resolve<UwpLauncherService>()
-                .LaunchArticleById(id);
-        }
+        private static async void OpenArticleViewForPinnedArticleUsingGuid(Guid id) => await Services.Uwp.Current
+            .Resolve<UwpNavigationService>()
+            .Navigate<ArticleViewModel>(id);
     }
 }

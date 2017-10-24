@@ -1,8 +1,13 @@
 ﻿using System;
+using System.IO;
 using Autofac;
 using myFeed.Services;
 using myFeed.Services.Abstractions;
 using Windows.ApplicationModel.Background;
+using Windows.Storage;
+using LiteDB;
+using myFeed.Repositories;
+using myFeed.Services.Platform;
 
 namespace myFeed.Views.Uwp.Notifications
 {
@@ -21,8 +26,12 @@ namespace myFeed.Views.Uwp.Notifications
 
         private static ILifetimeScope Load(ContainerBuilder builder)
         {
+            var localFolder = ApplicationData.Current.LocalFolder;
+            var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
+            builder.Register(x => new LiteDatabase(filePath)).AsSelf().SingleInstance();
+            builder.RegisterType<UwpNotificationService>().As<INotificationService>();
+            builder.RegisterModule<RepositoriesModule>();
             builder.RegisterModule<ServicesModule>();
-            builder.RegisterType<UwpNotificationService>().AsSelf();
             return builder.Build();
         }
     }

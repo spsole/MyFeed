@@ -7,6 +7,8 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using myFeed.Repositories.Abstractions;
+using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
 using myFeed.ViewModels.Implementations;
 using myFeed.Views.Uwp.Views;
@@ -27,7 +29,7 @@ namespace myFeed.Views.Uwp.Services
             {typeof(FaveViewModel), typeof(FaveView)},
             {typeof(FeedViewModel), typeof(FeedView)}
         };
-        public IReadOnlyDictionary<Type, object> Icons => new Dictionary<Type, object>
+        private static readonly IReadOnlyDictionary<Type, object> Symbols = new Dictionary<Type, object>
         {
             {typeof(FaveViewModel), Symbol.OutlineStar},
             {typeof(SettingsViewModel), Symbol.Setting},
@@ -35,17 +37,20 @@ namespace myFeed.Views.Uwp.Services
             {typeof(ChannelsViewModel), Symbol.List},
             {typeof(SearchViewModel), Symbol.Zoom}
         };
+        private readonly ICategoriesRepository _categoriesRepository;
+        private readonly IFactoryService _factoryService;
 
-        public UwpNavigationService()
+        public UwpNavigationService(
+            ICategoriesRepository categoriesRepository,
+            IFactoryService factoryService)
         {
+            _factoryService = factoryService;
+            _categoriesRepository = categoriesRepository;
+
             var systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             systemNavigationManager.BackRequested += NavigateBack;
-            EnsureStatusBarIsEnabled();
-        }
 
-        private static void EnsureStatusBarIsEnabled()
-        {
             var page = (Page)((Frame)Window.Current.Content).Content;
             var color = (Color)Application.Current.Resources["SystemChromeLowColor"];
             StatusBar.SetBackgroundColor(page, color);
@@ -54,36 +59,45 @@ namespace myFeed.Views.Uwp.Services
 
         public event EventHandler<Type> Navigated;
 
-        public Task Navigate<T>() where T : class => Navigate(Uwp.Current.Resolve<T>());
+        public IReadOnlyDictionary<Type, object> Icons => Symbols;
 
-        public Task Navigate<T>(T instance) where T : class
+        public Task Navigate<TViewModel>() where TViewModel : class => Navigate<TViewModel>(Uwp.Current.Resolve<TViewModel>());
+
+        public async Task Navigate<TViewModel>(object arg) where TViewModel : class
         {
-            switch (typeof(T).Name)
+            switch (typeof(TViewModel).Name)
             {
                 case nameof(FeedViewModel):
                 case nameof(FaveViewModel):
                 case nameof(SearchViewModel):
                 case nameof(ChannelsViewModel):
                 case nameof(SettingsViewModel):
-                    NavigateFrame(GetChild<Frame>(Window.Current.Content, 0), instance);
-                    break;
-                case nameof(ArticleViewModel):
-                    NavigateFrame(GetChild<Frame>(Window.Current.Content, 1), instance);
+                    NavigateFrame(GetChild<Frame>(Window.Current.Content, 0));
                     break;
                 case nameof(MenuViewModel):
-                    NavigateFrame((Frame)Window.Current.Content, instance);
+                    NavigateFrame((Frame)Window.Current.Content);
+                    break;
+                case nameof(ArticleViewModel) when arg is Guid guid:
+                    var article = await _categoriesRepository.GetArticleByIdAsync(guid);
+                    if (article == null) return;
+                    var viewModel = _factoryService.CreateInstance<ArticleViewModel>(article);
+                    if (GetChild<Frame>(Window.Current.Content, 1) == null) await Navigate<FeedViewModel>();
+                    await Task.Delay(150);
+                    await Navigate<ArticleViewModel>(viewModel);
+                    break;
+                case nameof(ArticleViewModel):
+                    NavigateFrame(GetChild<Frame>(Window.Current.Content, 1));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            return Task.CompletedTask; 
-        }
 
-        private void NavigateFrame<T>(Frame frame, T viewModel) where T : class 
-        {
-            frame.Navigate(Pages[typeof(T)], viewModel);
-            ((Page)frame.Content).DataContext = viewModel;
-            RaiseNavigated(viewModel);
+            void NavigateFrame(Frame frame)
+            {
+                frame.Navigate(Pages[typeof(TViewModel)], arg);
+                ((Page) frame.Content).DataContext = arg;
+                RaiseNavigated(arg);
+            }
         }
 
         private void RaiseNavigated(object instance) => Navigated?.Invoke(this, instance?.GetType());
@@ -115,7 +129,7 @@ namespace myFeed.Views.Uwp.Services
             RaiseNavigated(instance);
         }
 
-        public static T GetChild<T>(DependencyObject root, int depth) where T : DependencyObject
+        private static T GetChild<T>(DependencyObject root, int depth) where T : DependencyObject
         {
             var childrenCount = VisualTreeHelper.GetChildrenCount(root);
             for (var x = 0; x < childrenCount; x++)

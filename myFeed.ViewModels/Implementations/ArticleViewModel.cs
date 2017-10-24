@@ -41,7 +41,7 @@ namespace myFeed.ViewModels.Implementations
             IsFavorite = article.Fave;
             IsRead = article.Read;
             
-            Open = new ObservableCommand(() => navigationService.Navigate(this));
+            Open = new ObservableCommand(() => navigationService.Navigate<ArticleViewModel>(this));
             Image = new ObservableProperty<string>(async () =>
             {
                 var shouldLoadImages = await settingsService.GetAsync<bool>("LoadImages");

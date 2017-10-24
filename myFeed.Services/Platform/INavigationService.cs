@@ -8,7 +8,7 @@ namespace myFeed.Services.Platform
     {
         Task Navigate<TViewModel>() where TViewModel : class;
         
-        Task Navigate<TViewModel>(TViewModel parameter) where TViewModel : class;
+        Task Navigate<TViewModel>(object parameter) where TViewModel : class;
 
         event EventHandler<Type> Navigated;
 
