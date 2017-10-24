@@ -20,30 +20,18 @@ namespace myFeed.Services.Implementations
 
         public async Task Insert(Article article)
         {
-            if (article.Fave == true) return;
+            if (article.Fave) return;
             article.Fave = true;
             await _favoritesRepository.InsertAsync(article);
-            await UpdateIfExists(article);
+            await _categoriesRepository.UpdateArticleAsync(article);
         }
 
         public async Task Remove(Article article)
         {
-            if (article.Fave == false) return;
+            if (!article.Fave) return;
             article.Fave = false;
             await _favoritesRepository.RemoveAsync(article);
-            await UpdateIfExists(article);
-        }
-
-        private async Task UpdateIfExists(Article article)
-        {
-            try 
-            {
-                await _categoriesRepository.UpdateArticleAsync(article);
-            }
-            catch  
-            {
-                // ignored
-            }
+            await _categoriesRepository.UpdateArticleAsync(article);
         }
     }
 }

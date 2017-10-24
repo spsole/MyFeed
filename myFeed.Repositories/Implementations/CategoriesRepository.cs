@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using LiteDB;
 using myFeed.Repositories.Abstractions;
 using myFeed.Repositories.Models;
+using LiteDB;
 
 namespace myFeed.Repositories.Implementations
 {
@@ -66,9 +66,7 @@ namespace myFeed.Repositories.Implementations
             var collection = _liteDatabase.GetCollection<Category>();
             var query = Query.EQ("Channels[*]._id", channel.Id);
             var category = collection.FindOne(query);
-            if (category == null) 
-                throw new ArgumentOutOfRangeException(
-                    "This channel doesn't exist in database!");
+            if (category == null) return;
 
             category.Channels.RemoveAll(i => i.Id == channel.Id);
             category.Channels.Add(channel);
@@ -92,9 +90,7 @@ namespace myFeed.Repositories.Implementations
             var collection = _liteDatabase.GetCollection<Category>();
             var query = Query.EQ("Channels[*].Articles[*]._id", article.Id);
             var category = collection.FindOne(query);
-            if (category == null) 
-                throw new ArgumentOutOfRangeException(
-                    "This article doesn't exist in database!");
+            if (category == null) return;
 
             var channel = category.Channels.First(i => i.Articles.Any(x => x.Id == article.Id));
             channel.Articles.RemoveAll(i => i.Id == article.Id);

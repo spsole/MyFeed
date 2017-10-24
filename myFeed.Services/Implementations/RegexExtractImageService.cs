@@ -12,14 +12,13 @@ namespace myFeed.Services.Implementations
             | RegexOptions.IgnoreCase
             | RegexOptions.Multiline;
 
-        private static readonly Lazy<Regex> Matcher = new Lazy<Regex>(() => new Regex(Pattern, Options));
+        private static readonly Regex Matcher = new Regex(Pattern, Options);
 
         public string ExtractImageUri(string html)
         {
             if (string.IsNullOrWhiteSpace(html)) return null;
 
-            var regularExpression = Matcher.Value;
-            var match = regularExpression.Match(html);
+            var match = Matcher.Match(html);
             if (!match.Success) return null;
 
             var imageUrl = match.Groups[1].Value;

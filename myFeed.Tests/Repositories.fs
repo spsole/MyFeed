@@ -253,21 +253,19 @@ module CategoriesRepositoryFixture =
         Should.equal "Foo" category.Channels.[0].Articles.[0].Title 
 
     [<Fact; CleanUpCollection("Category")>]
-    let ``should fail with exception if no article exists``() =
+    let ``should not fail with exception if no article exists``() =
 
         let article = Article(Title="Foo")
-        fun () -> repository.UpdateArticleAsync(article).Wait()
-        |> (Should.throwInner<ArgumentOutOfRangeException> >> ignore)
+        repository.UpdateArticleAsync(article).Wait()
 
         let response = List.ofSeq <| repository.GetAllAsync().Result
         Should.equal 0 response.Length
 
     [<Fact; CleanUpCollection("Category")>]
-    let ``should fail with exception if no channel exists``() =    
+    let ``should not fail with exception if no channel exists``() =    
 
         let channel = Channel(Uri="Foo")  
-        fun () -> repository.UpdateChannelAsync(channel).Wait()
-        |> (Should.throwInner<ArgumentOutOfRangeException> >> ignore)
+        repository.UpdateChannelAsync(channel).Wait()
 
         let response = List.ofSeq <| repository.GetAllAsync().Result
         Should.equal 0 response.Length

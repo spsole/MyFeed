@@ -17,14 +17,17 @@ namespace myFeed.Views.Uwp.Services
         private readonly ISerializationService _serializationService;
         private readonly ICategoriesRepository _categoriesRepository;
         private readonly ITranslationsService _translationsService;
+        private readonly IFavoritesService _favoritesService;
         private readonly IDialogService _dialogService;
 
         public UwpLegacyFileService(
             IDialogService dialogService,
+            IFavoritesService favoritesService,
             ICategoriesRepository sourcesRepository,
             ITranslationsService translationsService,
             ISerializationService serializationService)
         {
+            _favoritesService = favoritesService;
             _serializationService = serializationService;
             _translationsService = translationsService;
             _categoriesRepository = sourcesRepository;
@@ -80,15 +83,9 @@ namespace myFeed.Views.Uwp.Services
                 var categories = legacyCategories.Categories.Select(category => new Category
                 {
                     Title = category.Title,
-                    Channels = category.Websites?.Select(source => new Channel
-                    {
-                        Notify = source.Notify,
-                        Uri = source.Uri
-                    })
-                    .ToList()
+                    Channels = category.Websites?.Select(source => new Channel {Notify = source.Notify, Uri = source.Uri}).ToList()
                 });
-                foreach (var category in categories)
-                    await _categoriesRepository.InsertAsync(category);
+                foreach (var category in categories) await _categoriesRepository.InsertAsync(category);
             }
 
             var files = new[] {"config", "datecutoff", "read.txt", "saved_cache", "sites"};
@@ -116,22 +113,12 @@ namespace myFeed.Views.Uwp.Services
 
             var articleEntities = models.Select(model => new Article
             {
-                Content = model.Content,
-                FeedTitle = model.FeedTitle,
-                ImageUri = model.ImageUri,
+                Content = model.Content, FeedTitle = model.FeedTitle, ImageUri = model.ImageUri,
                 PublishedDate = DateTime.TryParse(model.PublishedDate, out var o) ? o : DateTime.Now,
-                Title = model.Title,
-                Uri = model.Uri,
-                Read = false,
-                Fave = true
+                Title = model.Title, Uri = model.Uri
             });
 
-            var temporarySource = new Channel();
-            var temporaryCategory = new Category();
-            await _categoriesRepository.InsertAsync(temporaryCategory);
-            await _categoriesRepository.InsertChannelAsync(temporaryCategory, temporarySource);
-            await _categoriesRepository.InsertArticleRangeAsync(temporarySource, articleEntities.ToArray());
-            await _categoriesRepository.RemoveAsync(temporaryCategory);
+            foreach (var article in articleEntities) await _favoritesService.Insert(article);
             await favoritesFolder.DeleteAsync();
             return true;
         });
