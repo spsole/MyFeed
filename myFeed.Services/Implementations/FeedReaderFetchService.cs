@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using CodeHollow.FeedReader;
 using myFeed.Repositories.Models;
@@ -29,9 +30,9 @@ namespace myFeed.Services.Implementations
                     {
                         ImageUri = imageUri,
                         PublishedDate = publishedDate,
-                        FeedTitle = feed.Title,
-                        Content = contents,
-                        Title = feedItem.Title,
+                        Content = WebUtility.HtmlDecode(contents),
+                        FeedTitle = WebUtility.HtmlDecode(feed.Title),
+                        Title = WebUtility.HtmlDecode(feedItem.Title),
                         Uri = feedItem.Link,
                         Read = false,
                         Fave = false

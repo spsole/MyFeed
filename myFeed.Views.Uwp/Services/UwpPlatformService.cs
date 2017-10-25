@@ -64,7 +64,6 @@ namespace myFeed.Views.Uwp.Services
             var builder = new BackgroundTaskBuilder();
             builder.SetTrigger(new TimeTrigger((uint)freq * 60, false));
             builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
-            builder.AddCondition(new SystemCondition(SystemConditionType.UserNotPresent));
             builder.TaskEntryPoint = "myFeed.Views.Uwp.Notifications.Runner";
             builder.Name = "myFeedNotify";
             builder.Register();

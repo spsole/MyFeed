@@ -301,7 +301,35 @@ module ParallelFeedStoreServiceFixture =
 
         Should.equal 2 articles.Length
         Should.equal "Foo" articles.[0].Title
-        Should.equal "Bar" articles.[1].Title                                              
+        Should.equal "Bar" articles.[1].Title         
+
+    [<Fact>]
+    let ``should remove outdated articles if count is greater than 100``() = 
+
+        let articles = Seq.init 200 (fun _ -> Article())
+        let channel = Channel(Articles=toList articles)
+
+        let fetcher = Substitute.For<IFeedFetchService>()
+        fetcher.FetchAsync(Arg.Any()).Returns(struct(null, Seq.empty) 
+            |> Task.FromResult) |> ignore
+        
+        let service = produce<ParallelFeedStoreService> [fetcher]
+        let articles = service.LoadAsync([channel]).Result |> (snd >> List.ofSeq)
+
+        Should.equal 70 articles.Length
+
+    [<Fact>]
+    let ``should remove articles with minimum publishing date only``() =    
+    
+        let articles = Seq.init 200 (fun _ -> Article())
+        let fetcher = Substitute.For<IFeedFetchService>()
+        fetcher.FetchAsync(Arg.Any()).Returns(struct(null, articles) 
+            |> Task.FromResult) |> ignore
+        
+        let service = produce<ParallelFeedStoreService> [fetcher]
+        let articles = service.LoadAsync([Channel()]).Result |> (snd >> List.ofSeq)
+
+        Should.equal 70 articles.Length
 
 module FavoritesServiceFixture =
 
