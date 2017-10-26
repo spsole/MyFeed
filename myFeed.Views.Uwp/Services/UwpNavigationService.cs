@@ -23,7 +23,7 @@ namespace myFeed.Views.Uwp.Services
         {
             {typeof(SettingsViewModel), typeof(SettingsView)},
             {typeof(ArticleViewModel), typeof(ArticleView)},
-            {typeof(ChannelsViewModel), typeof(SourcesView)},
+            {typeof(ChannelsViewModel), typeof(ChannelsView)},
             {typeof(SearchViewModel), typeof(SearchView)},
             {typeof(MenuViewModel), typeof(MenuView)},
             {typeof(FaveViewModel), typeof(FaveView)},
@@ -61,11 +61,11 @@ namespace myFeed.Views.Uwp.Services
 
         public IReadOnlyDictionary<Type, object> Icons => Symbols;
 
-        public Task Navigate<TViewModel>() where TViewModel : class => Navigate<TViewModel>(Uwp.Current.Resolve<TViewModel>());
+        public Task Navigate<T>() where T : class => Navigate<T>(Uwp.Current.Resolve<T>());
 
-        public async Task Navigate<TViewModel>(object arg) where TViewModel : class
+        public async Task Navigate<T>(object arg) where T : class
         {
-            switch (typeof(TViewModel).Name)
+            switch (typeof(T).Name)
             {
                 case nameof(FeedViewModel):
                 case nameof(FaveViewModel):
@@ -94,7 +94,7 @@ namespace myFeed.Views.Uwp.Services
 
             void NavigateFrame(Frame frame)
             {
-                frame.Navigate(Pages[typeof(TViewModel)], arg);
+                frame.Navigate(Pages[typeof(T)], arg);
                 ((Page) frame.Content).DataContext = arg;
                 RaiseNavigated(arg);
             }

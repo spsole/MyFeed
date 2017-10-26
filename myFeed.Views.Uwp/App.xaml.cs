@@ -43,7 +43,7 @@ namespace myFeed.Views.Uwp
         }
 
         private static async void OpenArticleViewForPinnedArticleUsingGuid(Guid id) => await Services.Uwp.Current
-            .Resolve<UwpNavigationService>()
+            .Resolve<INavigationService>()
             .Navigate<ArticleViewModel>(id);
     }
 }

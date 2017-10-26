@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Autofac;
 using myFeed.Services;
@@ -16,12 +17,11 @@ namespace myFeed.Views.Uwp.Notifications
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             var defferal = taskInstance.GetDeferral();
-            using (var scope = Load(new ContainerBuilder()))
-            {
-                var processor = scope.Resolve<IBackgroundService>();
-                await processor.CheckForUpdates(DateTime.Now);
-            }
-            defferal.Complete();
+            try { using (var scope = Load(new ContainerBuilder()))
+                    await scope.Resolve<IBackgroundService>()
+                               .CheckForUpdates(DateTime.Now); }
+            catch { /* ignored */ }
+            finally { defferal.Complete(); }
         }
 
         private static ILifetimeScope Load(ContainerBuilder builder)

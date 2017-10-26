@@ -19,7 +19,7 @@ namespace myFeed.ViewModels.Implementations
             IFactoryService factoryService,
             ISearchService searchService)
         {
-            IsEmpty = true;
+            IsEmpty = false;
             IsLoading = false;
             IsGreeting = true;
             SearchQuery = string.Empty;

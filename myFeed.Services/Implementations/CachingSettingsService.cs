@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using myFeed.Repositories.Abstractions;
 using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
-using myFeed.Services.Platform;
 
 namespace myFeed.Services.Implementations
 {
