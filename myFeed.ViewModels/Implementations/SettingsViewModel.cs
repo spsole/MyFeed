@@ -20,19 +20,16 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Load { get; }
 
         public SettingsViewModel(
-            IOpmlService opmlService,
-            IDialogService dialogService,
+            ITranslationsService translationsService,
+            IFilePickerService filePickerService,
             ISettingsService settingsService,
             IPlatformService platformService,
-            IFilePickerService filePickerService,
-            ITranslationsService translationsService)
+            IDialogService dialogService,
+            IOpmlService opmlService)
         {
-            FontSize = 0;
-            NotifyPeriod = 0;
-            LoadImages = true;
-            NeedBanners = true;
             Theme = string.Empty;
-            
+            (FontSize, NotifyPeriod) = (0, 0);
+            (LoadImages, NeedBanners) = (true, true);
             ImportOpml = new ObservableCommand(async () =>
             {
                 var stream = await filePickerService.PickFileForReadAsync();

@@ -206,7 +206,7 @@
     <value>Notifications</value>
   </data>
   <data name="NotifyCheckTime">
-    <value>How often notifications service should check your feeds for recent updates?</value>
+    <value>How often notifications service should check your feeds for recent updates (in minutes)? Set slider value to 0 (zero) if you would like to completely disable notifications.</value>
   </data>
   <data name="NotifyBannersTitle">
     <value>Banners</value>
