@@ -49,24 +49,22 @@ namespace myFeed.ViewModels.Implementations
             });
             Load = new ObservableCommand(async () =>
             {
-                NotifyPeriod.Value = await settingsService.GetAsync<int>("NotifyPeriod");
-                NeedBanners.Value = await settingsService.GetAsync<bool>("NeedBanners"); 
-                LoadImages.Value = await settingsService.GetAsync<bool>("LoadImages");
-                FontSize.Value = await settingsService.GetAsync<int>("FontSize");
-                Theme.Value = await settingsService.GetAsync<string>("Theme");
-                
-                Subscribe(Theme, "Theme", platformService.RegisterTheme);
-                Subscribe(FontSize, "FontSize", o => Task.CompletedTask);
-                Subscribe(LoadImages, "LoadImages", o => Task.CompletedTask);
-                Subscribe(NeedBanners, "NeedBanners", o => Task.CompletedTask);
-                Subscribe(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask);
-                
-                void Subscribe<T>(ObservableProperty<T> prop, string key, Func<T, Task> clb) where T : IConvertible
+                await Task.WhenAll(
+                    StartTracking(NotifyPeriod, nameof(NotifyPeriod), platformService.RegisterBackgroundTask),
+                    StartTracking(NeedBanners, nameof(NeedBanners), o => Task.CompletedTask),
+                    StartTracking(LoadImages, nameof(LoadImages), o => Task.CompletedTask),
+                    StartTracking(FontSize, nameof(FontSize), o => Task.CompletedTask),
+                    StartTracking(Theme, nameof(Theme), platformService.RegisterTheme)
+                );
+                async Task StartTracking<T>(ObservableProperty<T> property, string key, 
+                    Func<T, Task> callback) where T : IConvertible
                 {
-                    prop.PropertyChanged += async (o, args) =>
+                    property.Value = await settingsService.GetAsync<T>(key);
+                    property.PropertyChanged += async (o, args) =>
                     {
-                        await clb.Invoke(prop.Value);
-                        await settingsService.SetAsync(key, prop.Value);
+                        var value = property.Value;
+                        await callback.Invoke(value);
+                        await settingsService.SetAsync(key, value);
                     };
                 }
             });
