@@ -61,7 +61,7 @@ module DatabaseConnectionFixture =
         let collection = connection.GetCollection<Setting>()
         collection.Insert(Setting(Key="Foo", Value="Bar")) |> ignore
 
-        let query = Query.EQ("Key", BsonValue("Foo"))
+        let query = Query.EQ("$.Key", BsonValue("Foo"))
         let setting = collection.FindOne(query)
         Should.equal "Foo" setting.Key
         Should.equal "Bar" setting.Value
@@ -74,7 +74,7 @@ module DatabaseConnectionFixture =
             Category(Title="Foo", Channels=toList
                 ([Channel(Uri="http://foo.bar")]))) |> ignore
 
-        let query = Query.EQ("Channels[*].Uri", BsonValue("http://foo.bar")) 
+        let query = Query.EQ("$.Channels[*].Uri", BsonValue("http://foo.bar")) 
         let category = collection.FindOne(query)
         Should.equal "Foo" category.Title
         Should.equal "http://foo.bar" category.Channels.[0].Uri    
@@ -89,7 +89,7 @@ module DatabaseConnectionFixture =
                 ([Channel(Articles=toList
                     ([Article(Title="Foo")]))]))) |> ignore      
 
-        let query = Query.EQ("Channels[*].Articles[*].Title", BsonValue("Foo"))
+        let query = Query.EQ("$.Channels[*].Articles[*].Title", BsonValue("Foo"))
         let category = collection.FindOne(query)
         Should.equal "Foo" category.Channels.[0].Articles.[0].Title   
 
@@ -100,7 +100,7 @@ module DatabaseConnectionFixture =
         let collection = connection.GetCollection<Category>()
         collection.Insert(category) |> ignore
 
-        let query = Query.EQ("_id", BsonValue(category.Id))
+        let query = Query.EQ("$._id", BsonValue(category.Id))
         let response = collection.FindOne(query)
         Should.equal category.Id response.Id        
         Should.equal "Foo" response.Title                      
@@ -111,7 +111,7 @@ module DatabaseConnectionFixture =
         // Replaces channel and returns count of replaces items.
         let update (channel: Channel) =
             let collection = connection.GetCollection<Category>()
-            let query = Query.EQ("Channels[*]._id", BsonValue(channel.Id))
+            let query = Query.EQ("$.Channels[*]._id", BsonValue(channel.Id))
             let category = collection.FindOne(query)
             category.Channels.RemoveAll(fun x -> x.Id = channel.Id) |> ignore
             category.Channels.Add(channel)   
@@ -147,7 +147,7 @@ module DatabaseConnectionFixture =
         let collection = connection.GetCollection<Setting>()
         collection.Insert(Setting(Key="Foo", Value="Important")) |> ignore
         
-        let query = Query.EQ("Key", BsonValue("Foo"))
+        let query = Query.EQ("$.Key", BsonValue("Foo"))
         let response = collection.FindOne(query)
         Should.equal "Important" response.Value
         Should.equal "Foo" response.Key
@@ -161,7 +161,7 @@ module DatabaseConnectionFixture =
                 ([Channel(Articles=toList
                     ([Article(Title="Foo")]))]))) |> ignore  
 
-        let query = Query.EQ("Channels[*].Articles[*].Title", BsonValue("Foo"))
+        let query = Query.EQ("$.Channels[*].Articles[*].Title", BsonValue("Foo"))
         let response = collection.FindOne(query)
         Should.equal "Foo" response.Channels.[0].Articles.[0].Title
 
@@ -175,7 +175,7 @@ module DatabaseConnectionFixture =
                 ([Channel(Articles=toList
                     ([Article(Id=uniqueIdentifier)]))]))) |> ignore  
 
-        let query = Query.EQ("Channels[*].Articles[*]._id", BsonValue(uniqueIdentifier))
+        let query = Query.EQ("$.Channels[*].Articles[*]._id", BsonValue(uniqueIdentifier))
         let response = collection.FindOne(query)
         Should.equal uniqueIdentifier response.Channels.[0].Articles.[0].Id
 
@@ -189,7 +189,7 @@ module DatabaseConnectionFixture =
                 ([Channel(Articles=toList
                     ([Article(Title="Foo", Id=identifier)]))]))) |> ignore  
 
-        let query = Query.EQ("Channels[*].Articles[*]._id", BsonValue(identifier))
+        let query = Query.EQ("$.Channels[*].Articles[*]._id", BsonValue(identifier))
         collection.FindOne(query).Channels
         |> Seq.collect (fun x -> x.Articles)
         |> Seq.find (fun x -> x.Id = identifier)
@@ -209,4 +209,3 @@ module DatabaseConnectionFixture =
         Should.notEqual Guid.Empty response.Id
         Should.notEqual Guid.Empty response.Channels.[0].Id    
         Should.notEqual Guid.Empty response.Channels.[0].Articles.[0].Id      
-        

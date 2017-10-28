@@ -21,7 +21,7 @@ namespace myFeed.Repositories.Implementations
 
         public Task<Article> GetArticleByIdAsync(Guid guid) => Task.Run(() => _liteDatabase
             .GetCollection<Category>() 
-            .FindOne(Query.EQ("Channels[*].Articles[*]._id", guid))
+            .FindOne(Query.EQ("$.Channels[*].Articles[*]._id", guid))
             ?.Channels
             ?.SelectMany(i => i.Articles)
             ?.First(i => i.Id == guid));
@@ -64,7 +64,7 @@ namespace myFeed.Repositories.Implementations
         public Task UpdateChannelAsync(Channel channel) => Task.Run(() =>
         {
             var collection = _liteDatabase.GetCollection<Category>();
-            var query = Query.EQ("Channels[*]._id", channel.Id);
+            var query = Query.EQ("$.Channels[*]._id", channel.Id);
             var category = collection.FindOne(query);
             if (category == null) return;
 
@@ -88,7 +88,7 @@ namespace myFeed.Repositories.Implementations
         public Task UpdateArticleAsync(Article article) => Task.Run(() =>
         {
             var collection = _liteDatabase.GetCollection<Category>();
-            var query = Query.EQ("Channels[*].Articles[*]._id", article.Id);
+            var query = Query.EQ("$.Channels[*].Articles[*]._id", article.Id);
             var category = collection.FindOne(query);
             if (category == null) return;
 

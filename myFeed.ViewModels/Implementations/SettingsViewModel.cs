@@ -50,11 +50,11 @@ namespace myFeed.ViewModels.Implementations
             Load = new ObservableCommand(async () =>
             {
                 await Task.WhenAll(
-                    StartTracking(NotifyPeriod, nameof(NotifyPeriod), platformService.RegisterBackgroundTask),
-                    StartTracking(NeedBanners, nameof(NeedBanners), o => Task.CompletedTask),
-                    StartTracking(LoadImages, nameof(LoadImages), o => Task.CompletedTask),
-                    StartTracking(FontSize, nameof(FontSize), o => Task.CompletedTask),
-                    StartTracking(Theme, nameof(Theme), platformService.RegisterTheme)
+                    StartTracking(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask),
+                    StartTracking(NeedBanners, "NeedBanners", o => Task.CompletedTask),
+                    StartTracking(LoadImages, "LoadImages", o => Task.CompletedTask),
+                    StartTracking(FontSize, "FontSize", o => Task.CompletedTask),
+                    StartTracking(Theme, "Theme", platformService.RegisterTheme)
                 );
                 async Task StartTracking<T>(ObservableProperty<T> property, string key, 
                     Func<T, Task> callback) where T : IConvertible
