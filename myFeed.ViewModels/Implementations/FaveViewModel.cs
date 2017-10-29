@@ -14,14 +14,14 @@ namespace myFeed.ViewModels.Implementations
         public ObservableProperty<bool> IsEmpty { get; }
 
         public ObservableCommand Load { get; }
+        public ObservableCommand OrderByDate { get; }
+        public ObservableCommand OrderByName { get; }
 
         public FaveViewModel(
             IFavoritesRepository favoritesReposirory,
             IFactoryService factoryService)
         {
-            IsEmpty = false;
-            IsLoading = true;
-            
+            (IsEmpty, IsLoading) = (false, true);
             Items = new ObservableCollection<ArticleViewModel>();
             Load = new ObservableCommand(async () =>
             {
@@ -40,6 +40,20 @@ namespace myFeed.ViewModels.Implementations
                     Items.Add(viewModel);
                 }
                 IsEmpty.Value = Items.Count == 0;
+                IsLoading.Value = false;
+            });
+            OrderByDate = new ObservableCommand(() =>
+            {
+                IsLoading.Value = true;
+                var articles = Items.OrderByDescending(i => i.PublishedDate.Value).ToList();
+                Items.Clear(); foreach (var article in articles) Items.Add(article);
+                IsLoading.Value = false;
+            });
+            OrderByName = new ObservableCommand(() =>
+            {
+                IsLoading.Value = true;
+                var articles = Items.OrderBy(i => i.Title.Value).ToList();
+                Items.Clear(); foreach (var article in articles) Items.Add(article);
                 IsLoading.Value = false;
             });
         }

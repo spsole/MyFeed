@@ -1,10 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Style TargetType="ListBoxItem">
+    <Style x:Key="MenuListBoxItem" TargetType="ListBoxItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="TabNavigation" Value="Local" />
         <Setter Property="Padding" Value="0" />
@@ -154,11 +152,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="PivotHeaderItem">
-                    <Grid x:Name="Grid" Background="{TemplateBinding Background}" Opacity="0"
+                    <Grid x:Name="Grid" Background="{TemplateBinding Background}"
                         BorderBrush="Transparent" BorderThickness="0 0 0 3" Padding="0 0 0 3">
-                        <interactivity:Interaction.Behaviors>
-                            <animations:Fade Duration="1000" Value="1"/>
-                        </interactivity:Interaction.Behaviors>
                         <Grid.Resources>
                             <Style x:Key="BaseContentPresenterStyle" TargetType="ContentPresenter">
                                 <Setter Property="FontFamily" Value="XamlAutoFontFamily"/>

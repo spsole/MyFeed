@@ -38,8 +38,8 @@ namespace myFeed.Services.Implementations
                 .OrderByDescending(i => i.PublishedDate).Take(15).Reverse().ToList();
 
             await _notificationService.SendNotifications(recentItems);
-            await _settingsService.SetAsync("LastFetched", dateTime.ToString(
-                CultureInfo.InvariantCulture));
+            if (recentItems.Any()) await _settingsService.SetAsync("LastFetched", 
+                dateTime.ToString(CultureInfo.InvariantCulture));
         }
     }
 }

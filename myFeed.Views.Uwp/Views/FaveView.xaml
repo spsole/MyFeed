@@ -53,6 +53,21 @@
             </Grid.RowDefinitions>
             <controls:TitleBlock Count="{Binding Items.Count, Mode=OneWay}" Text="{Binding 
                 Converter={StaticResource Locale}, ConverterParameter=FaveViewTitle}"/>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                <controls:TransparentButton Symbol="Sort">
+                    <controls:TransparentButton.Flyout>
+                        <MenuFlyout>
+                            <controls:MenuFlyoutItemWithIcon Icon="Calendar" Command="{Binding OrderByDate}"
+                                Text="{Binding ConverterParameter=OrderByDate, Converter={StaticResource Locale}}"/>
+                            <controls:MenuFlyoutItemWithIcon Icon="FontSize" Command="{Binding OrderByName}"
+                                Text="{Binding ConverterParameter=OrderByName, Converter={StaticResource Locale}}"/>
+                        </MenuFlyout>
+                    </controls:TransparentButton.Flyout>
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding ConverterParameter=OrderBy, Converter={StaticResource Locale}}"/>
+                    </ToolTipService.ToolTip>
+                </controls:TransparentButton>
+            </StackPanel>
             <Grid Grid.Row="1">
                 <ListView ItemsSource="{Binding Items}" IsItemClickEnabled="True" 
                     ShowsScrollingPlaceholders="False" SelectionMode="None">

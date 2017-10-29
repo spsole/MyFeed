@@ -130,8 +130,15 @@ module Dependency =
         dispose scope; instance    
 
     /// Builds scope from a builder.        
-    let buildScope (builder: ContainerBuilder) = 
-        builder.Build()
+    let build (builder: ContainerBuilder) = builder.Build()
+
+    /// Builds scope from a builder with additional registrations.
+    let buildWith (objects: seq<obj>) (builder: ContainerBuilder) =
+        for object in objects do
+            let abstraction = object.GetType().GetInterfaces().[0]
+            builder.RegisterInstance(object).As(abstraction) 
+            |> ignore
+        build builder        
 
 /// Functions for myFeed domain model.
 module Domain =   
@@ -176,3 +183,4 @@ module Domain =
         inherit BeforeAfterTestAttribute()
         override __.Before _ = File.Delete name      
         override __.After _ = File.Delete name     
+        

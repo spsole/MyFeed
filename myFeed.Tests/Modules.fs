@@ -24,7 +24,7 @@ module CombinedUnitsFixture =
         ContainerBuilder() 
         |> also registerModule<RepositoriesModule>
         |> also registerMocks
-        |> buildScope
+        |> build
         |> also Should.resolve<IFavoritesRepository>
         |> also Should.resolve<ICategoriesRepository>
         |> also Should.resolve<ISettingsRepository>
@@ -37,7 +37,7 @@ module CombinedUnitsFixture =
         |> also registerModule<RepositoriesModule>
         |> also registerModule<ServicesModule> 
         |> also registerMocks
-        |> buildScope
+        |> build
         |> also Should.resolve<ISearchService>
         |> also Should.resolve<IOpmlService>
         |> also Should.resolve<ISerializationService>
@@ -59,7 +59,7 @@ module CombinedUnitsFixture =
         |> also registerModule<ServicesModule> 
         |> also registerModule<ViewModelsModule>
         |> also registerMocks
-        |> buildScope
+        |> build
         |> also Should.resolve<FaveViewModel>
         |> also Should.resolve<FeedViewModel>
         |> also Should.resolve<SearchViewModel>

@@ -340,4 +340,16 @@
   <data name="ImageCopyLink">
     <value>Copy link</value>
   </data>
+  <data name="OrderByDate">
+    <value>Order by publishing date</value>
+  </data>
+  <data name="OrderByName">
+    <value>Order by article title</value>
+  </data>
+  <data name="SelectCategory">
+    <value>Go to category</value>
+  </data>
+  <data name="OrderBy">
+    <value>Order by</value>
+  </data>
 </root>

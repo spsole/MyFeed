@@ -53,13 +53,41 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedViewTitle}"/>
-            <controls:TransparentButton HorizontalAlignment="Right" Grid.Row="0" Symbol="Sync" Command="{Binding Load}">
-                <ToolTipService.ToolTip>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}" />
-                </ToolTipService.ToolTip>
-            </controls:TransparentButton>
+            <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+                <controls:TransparentButton Symbol="Bookmarks" Visibility="{Binding 
+                    IsEmpty.Value, Converter={StaticResource FalsyToVisible}}">
+                    <controls:TransparentButton.Flyout>
+                        <Flyout Placement="Bottom">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Margin" Value="0"/>
+                                    <Setter Property="IsTabStop" Value="True"/>
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            <ListBox ItemsSource="{Binding Items}" MinWidth="200"
+                                SelectedItem="{Binding Selected.Value, Mode=TwoWay}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Title.Value}"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Flyout>
+                    </controls:TransparentButton.Flyout>
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding ConverterParameter=SelectCategory, 
+                            Converter={StaticResource Locale}}"/>
+                    </ToolTipService.ToolTip>
+                </controls:TransparentButton>
+                <controls:TransparentButton Symbol="Sync" Command="{Binding Load}">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}" />
+                    </ToolTipService.ToolTip>
+                </controls:TransparentButton>
+            </StackPanel>
             <Grid Grid.Row="1" Height="48" VerticalAlignment="Top" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
-            <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}">
+            <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}" SelectedItem="{Binding Selected.Value, Mode=TwoWay}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Loaded">
                         <core:InvokeCommandAction Command="{Binding Load}"/>

@@ -61,6 +61,11 @@
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         CanDrag="{Binding ElementName=SourcesListView, Path=CanReorderItems, Converter={StaticResource NegateBool}}"
                         IsEnabled="{Binding ElementName=SourcesListView, Path=CanReorderItems, Converter={StaticResource NegateBool}}">
+                        <controls:Expander.Transitions>
+                            <TransitionCollection>
+                                <EntranceThemeTransition FromVerticalOffset="0" FromHorizontalOffset="30"/>
+                            </TransitionCollection>
+                        </controls:Expander.Transitions>
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Loaded">
                                 <core:InvokeCommandAction Command="{Binding Load}"/>

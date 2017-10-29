@@ -71,8 +71,8 @@
                         Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                         Grid.Row="1" ManipulationMode="System, TranslateX" 
                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                        ScrollViewer.VerticalScrollMode="Disabled" 
-                        ItemsSource="{Binding Items}"
+                        ScrollViewer.VerticalScrollMode="Disabled" ItemsSource="{Binding Items}" 
+                        ItemContainerStyle="{StaticResource MenuListBoxItem}"
                         SelectedIndex="{Binding SelectedIndex.Value, Mode=TwoWay}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
