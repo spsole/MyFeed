@@ -1,14 +1,13 @@
 ﻿using System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace myFeed.Views.Uwp.Extensions
+namespace myFeed.Views.Uwp.Converters
 {
-    public class FalsyToVisibleConverter : IValueConverter
+    public class UpperStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return TruthyToVisibleConverter.IsDefault(value) ? Visibility.Visible : Visibility.Collapsed;
+            return ((string) value).ToUpperInvariant();
         }
         public object ConvertBack(object value, Type targetType, object parameter, string language) => null;
     }

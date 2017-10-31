@@ -2,7 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace myFeed.Views.Uwp.Extensions
+namespace myFeed.Views.Uwp.Converters
 {
     public class TruthyToVisibleConverter : IValueConverter
     {

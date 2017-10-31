@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Data;
 
-namespace myFeed.Views.Uwp.Extensions
+namespace myFeed.Views.Uwp.Converters
 {
     public class NegateBoolConverter : IValueConverter
     {

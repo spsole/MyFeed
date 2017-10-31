@@ -8,10 +8,10 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
-    xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
     xmlns:views="using:myFeed.Views.Uwp.Views"
     xmlns:implementations="using:myFeed.ViewModels.Implementations"
     xmlns:media="using:Microsoft.Xaml.Interactions.Media"
+    xmlns:behaviors="using:myFeed.Views.Uwp.Behaviors"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -115,14 +115,14 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ListViewHeaderItem">
-                                                        <StackPanel Background="{TemplateBinding Background}">
+                                                        <Grid Background="Transparent">
                                                             <ContentPresenter x:Name="ContentPresenter"
-                                                                Content="{TemplateBinding Content}" Padding="12"
+                                                                Content="{TemplateBinding Content}" Padding="12 18 12 6"
                                                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                                                 ContentTransitions="{TemplateBinding ContentTransitions}"
                                                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                                        </StackPanel>
+                                                        </Grid>
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
@@ -144,10 +144,10 @@
                                     <Grid Padding="0 12" Background="Transparent">
                                         <interactivity:Interaction.Behaviors>
                                             <core:EventTriggerBehavior EventName="Holding">
-                                                <extensions:OpenFlyoutAction/>
+                                                <behaviors:OpenFlyoutAction/>
                                             </core:EventTriggerBehavior>
                                             <core:EventTriggerBehavior EventName="RightTapped">
-                                                <extensions:OpenFlyoutAction/>
+                                                <behaviors:OpenFlyoutAction/>
                                             </core:EventTriggerBehavior>
                                             <core:EventTriggerBehavior EventName="Tapped">
                                                 <core:InvokeCommandAction Command="{Binding Open}"/>

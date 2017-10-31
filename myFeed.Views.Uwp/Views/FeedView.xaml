@@ -11,8 +11,8 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Views.Uwp.Controls"
     xmlns:views="using:myFeed.Views.Uwp.Views"
-    xmlns:extensions="using:myFeed.Views.Uwp.Extensions"
     xmlns:media="using:Microsoft.Xaml.Interactions.Media"
+    xmlns:behaviors="using:myFeed.Views.Uwp.Behaviors"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -54,8 +54,8 @@
             </Grid.RowDefinitions>
             <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedViewTitle}"/>
             <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
-                <controls:TransparentButton Symbol="Bookmarks" Visibility="{Binding 
-                    IsEmpty.Value, Converter={StaticResource FalsyToVisible}}">
+                <controls:TransparentButton Symbol="Bookmarks" Visibility="{
+                    Binding IsEmpty.Value, Converter={StaticResource FalsyToVisible}}">
                     <controls:TransparentButton.Flyout>
                         <Flyout Placement="Bottom">
                             <Flyout.FlyoutPresenterStyle>
@@ -65,8 +65,13 @@
                                     <Setter Property="IsTabStop" Value="True"/>
                                 </Style>
                             </Flyout.FlyoutPresenterStyle>
-                            <ListBox ItemsSource="{Binding Items}" MinWidth="200"
+                            <ListBox ItemsSource="{Binding Items}" MinWidth="200" 
                                 SelectedItem="{Binding Selected.Value, Mode=TwoWay}">
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Tapped">
+                                        <behaviors:CloseFlyoutAction/>
+                                    </core:EventTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Title.Value}"/>
@@ -140,10 +145,10 @@
                                             Mode=OneWay, Converter={StaticResource TruthyToTransparent}}">
                                             <interactivity:Interaction.Behaviors>
                                                 <core:EventTriggerBehavior EventName="Holding">
-                                                    <extensions:OpenFlyoutAction/>
+                                                    <behaviors:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
                                                 <core:EventTriggerBehavior EventName="RightTapped">
-                                                    <extensions:OpenFlyoutAction/>
+                                                    <behaviors:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
                                                 <core:EventTriggerBehavior EventName="Tapped">
                                                     <core:InvokeCommandAction Command="{Binding Open}"/>
