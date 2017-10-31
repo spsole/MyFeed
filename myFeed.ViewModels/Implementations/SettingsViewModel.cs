@@ -12,6 +12,7 @@ namespace myFeed.ViewModels.Implementations
         public ObservableProperty<bool> LoadImages { get; }
         public ObservableProperty<bool> NeedBanners { get; }
         public ObservableProperty<int> NotifyPeriod { get; }
+        public ObservableProperty<int> MaxArticlesPerFeed { get; }
         public ObservableProperty<int> FontSize { get; }
 
         public ObservableCommand ImportOpml { get; }
@@ -28,8 +29,8 @@ namespace myFeed.ViewModels.Implementations
             IOpmlService opmlService)
         {
             Theme = string.Empty;
-            (FontSize, NotifyPeriod) = (0, 0);
             (LoadImages, NeedBanners) = (true, true);
+            (FontSize, NotifyPeriod, MaxArticlesPerFeed) = (0, 0, 0);
             ImportOpml = new ObservableCommand(async () =>
             {
                 var stream = await filePickerService.PickFileForReadAsync();
@@ -51,23 +52,24 @@ namespace myFeed.ViewModels.Implementations
             {
                 await Task.WhenAll(
                     StartTracking(NotifyPeriod, "NotifyPeriod", platformService.RegisterBackgroundTask),
+                    StartTracking(MaxArticlesPerFeed, "MaxArticlesPerFeed", o => Task.CompletedTask),
                     StartTracking(NeedBanners, "NeedBanners", o => Task.CompletedTask),
                     StartTracking(LoadImages, "LoadImages", o => Task.CompletedTask),
                     StartTracking(FontSize, "FontSize", o => Task.CompletedTask),
                     StartTracking(Theme, "Theme", platformService.RegisterTheme)
                 );
-                async Task StartTracking<T>(ObservableProperty<T> property, string key, 
-                    Func<T, Task> callback) where T : IConvertible
-                {
-                    property.Value = await settingsService.GetAsync<T>(key);
-                    property.PropertyChanged += async (o, args) =>
-                    {
-                        var value = property.Value;
-                        await callback.Invoke(value);
-                        await settingsService.SetAsync(key, value);
-                    };
-                }
             });
+            async Task StartTracking<T>(ObservableProperty<T> property, string key, 
+                Func<T, Task> callback) where T : IConvertible
+            {
+                property.Value = await settingsService.GetAsync<T>(key);
+                property.PropertyChanged += async (o, args) =>
+                {
+                    var value = property.Value;
+                    await callback.Invoke(value);
+                    await settingsService.SetAsync(key, value);
+                };
+            }
         }
     }
 }

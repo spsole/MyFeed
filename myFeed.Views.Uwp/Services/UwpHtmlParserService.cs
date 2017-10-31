@@ -155,7 +155,7 @@ namespace myFeed.Views.Uwp.Services
             {
                 var bmp = (BitmapImage)image.Source;
                 if (bmp.PixelHeight >= bmp.PixelWidth) image.Margin = new Thickness(0, 12, 0, 12);
-                image.Fade(1, 300, 300).Start();
+                image.Fade(1, 300, 100).Start();
             };
             image.RightTapped += (sender, e) =>
             {

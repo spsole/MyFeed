@@ -12,26 +12,30 @@ namespace myFeed.Services.Implementations
     {
         private readonly ICategoriesRepository _categoriesRepository;
         private readonly IFeedFetchService _feedFetchService;
+        private readonly ISettingsService _settingsService;
         
         public ParallelFeedStoreService(
             ICategoriesRepository categoriesRepository,
-            IFeedFetchService feedFetchService)
+            IFeedFetchService feedFetchService,
+            ISettingsService settingsService)
         {
             _categoriesRepository = categoriesRepository;
             _feedFetchService = feedFetchService;
+            _settingsService = settingsService;
         }
         
         public Task<(IEnumerable<Exception>, IOrderedEnumerable<Article>)> LoadAsync(
             IEnumerable<Channel> channels) => Task.Run(async () =>
         {
-            const int maxArticleCountAllowed = 70;
+            const string setting = "MaxArticlesPerFeed";
+            var maxArticleCount = await _settingsService.GetAsync<int>(setting);
             var fetchables = channels.Select(i => 
             {
                 // Remove extra saved articles and save changes.
-                if (i.Articles.Count <= maxArticleCountAllowed) return i;
+                if (i.Articles.Count <= maxArticleCount) return i;
                 i.Articles = i.Articles
                     .OrderByDescending(x => x.PublishedDate)
-                    .Take(maxArticleCountAllowed).ToList();
+                    .Take(maxArticleCount).ToList();
                 _categoriesRepository.UpdateChannelAsync(i);
                 return i;
             });
@@ -42,7 +46,8 @@ namespace myFeed.Services.Implementations
                 .ToLookup(i => (i.Title, i.FeedTitle));
 
             // Retrieve feed based on single fetcher implementation.
-            var grouppedArticles = await Task.WhenAll(fetchables.Select(FetchAsync));
+            var fetchTasks = fetchables.Select(i => FetchAsync(i, maxArticleCount));
+            var grouppedArticles = await Task.WhenAll(fetchTasks);
             var distinctGroupping = grouppedArticles
                 .Select(i => (i.Item1, i.Item3
                     .Where(x => !existingLookup.Contains((x.Title, x.FeedTitle)))
@@ -64,14 +69,14 @@ namespace myFeed.Services.Implementations
         });
 
         private Task<(Channel, Exception, IEnumerable<Article>)> FetchAsync(
-            Channel fetchableChannel) => Task.Run(async () =>
+            Channel fetchableChannel, int maxArticleCount) => Task.Run(async () =>
         {
             // Fetches single feed in a separate thread.
             var uriToFetch = fetchableChannel.Uri;
             (var exception, var articles) = await _feedFetchService.FetchAsync(uriToFetch);
             return (fetchableChannel, exception, articles
                 .OrderByDescending(i => i.PublishedDate)
-                .Take(70));
+                .Take(maxArticleCount));
         });
     }
 }

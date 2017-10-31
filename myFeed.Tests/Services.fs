@@ -236,13 +236,16 @@ module ParallelFeedStoreServiceFixture =
     [<Fact>]
     let ``should sort stored article entities``() = 
 
+        let settings = Substitute.For<ISettingsService>()
+        settings.GetAsync<_>(Arg.Any()).Returns(5) |> ignore
+
         let fetcher = Substitute.For<IFeedFetchService>()
         fetcher.FetchAsync(Arg.Any<_>()).Returns(
             struct(null, Seq.empty<Article>) 
             |> Task.FromResult)
             |> ignore
 
-        let service = produce<ParallelFeedStoreService> [fetcher]
+        let service = produce<ParallelFeedStoreService> [fetcher; settings]
         let articles =
             service.LoadAsync(
                 [ Channel(Articles=toList
@@ -260,6 +263,9 @@ module ParallelFeedStoreServiceFixture =
     [<Fact>]
     let ``should save fetched article entities``() =    
 
+        let settings = Substitute.For<ISettingsService>()
+        settings.GetAsync<_>(Arg.Any()).Returns(5) |> ignore
+
         let fetcher = Substitute.For<IFeedFetchService>()
         fetcher.FetchAsync(Arg.Any<_>()).Returns(
             struct(null, [Article(Title="Foo")] :> seq<_>) 
@@ -271,7 +277,7 @@ module ParallelFeedStoreServiceFixture =
         categories.When(fun x -> x.InsertArticleRangeAsync(Arg.Any<_>(), Arg.Any<_>()) |> ignore)
                   .Do(fun x -> articlesInserted <- x.Arg<seq<Article>>())       
 
-        let service = produce<ParallelFeedStoreService> [fetcher; categories]
+        let service = produce<ParallelFeedStoreService> [fetcher; categories; settings]
         let articles = 
             service.LoadAsync(
                 [ Channel(Uri="http://foo.bar") ]).Result
@@ -285,13 +291,16 @@ module ParallelFeedStoreServiceFixture =
     [<Fact>]
     let ``should mix and order fetched and stored articles by date``() = 
         
+        let settings = Substitute.For<ISettingsService>()
+        settings.GetAsync<_>(Arg.Any()).Returns(5) |> ignore
+
         let fetcher = Substitute.For<IFeedFetchService>()
         fetcher.FetchAsync(Arg.Any<_>()).Returns(
             struct(null, [Article(Title="Foo", PublishedDate=DateTime.Now)] :> seq<_>) 
             |> Task.FromResult)
             |> ignore
 
-        let service = produce<ParallelFeedStoreService> [fetcher]
+        let service = produce<ParallelFeedStoreService> [fetcher; settings]
         let articles =
             service.LoadAsync(
                 [ Channel(Articles=toList
@@ -304,16 +313,18 @@ module ParallelFeedStoreServiceFixture =
         Should.equal "Bar" articles.[1].Title         
 
     [<Fact>]
-    let ``should remove outdated articles if count is greater than 100``() = 
+    let ``should remove outdated articles if count is greater than custom``() = 
+
+        let settings = Substitute.For<ISettingsService>()
+        settings.GetAsync<_>(Arg.Any()).Returns(70) |> ignore
 
         let articles = Seq.init 200 (fun _ -> Article())
         let channel = Channel(Articles=toList articles)
-
         let fetcher = Substitute.For<IFeedFetchService>()
         fetcher.FetchAsync(Arg.Any()).Returns(struct(null, Seq.empty) 
             |> Task.FromResult) |> ignore
         
-        let service = produce<ParallelFeedStoreService> [fetcher]
+        let service = produce<ParallelFeedStoreService> [fetcher; settings]
         let articles = service.LoadAsync([channel]).Result |> (snd >> List.ofSeq)
 
         Should.equal 70 articles.Length
@@ -321,12 +332,15 @@ module ParallelFeedStoreServiceFixture =
     [<Fact>]
     let ``should remove articles with minimum publishing date only``() =    
     
+        let settings = Substitute.For<ISettingsService>()
+        settings.GetAsync<_>(Arg.Any()).Returns(70) |> ignore
+
         let articles = Seq.init 200 (fun _ -> Article())
         let fetcher = Substitute.For<IFeedFetchService>()
         fetcher.FetchAsync(Arg.Any()).Returns(struct(null, articles) 
             |> Task.FromResult) |> ignore
         
-        let service = produce<ParallelFeedStoreService> [fetcher]
+        let service = produce<ParallelFeedStoreService> [fetcher; settings]
         let articles = service.LoadAsync([Channel()]).Result |> (snd >> List.ofSeq)
 
         Should.equal 70 articles.Length
@@ -394,6 +408,7 @@ module DefaultsServiceFixture =
         settings.["LoadImages"] |> Should.notBeNull
         settings.["NeedBanners"] |> Should.notBeNull
         settings.["NotifyPeriod"] |> Should.notBeNull
+        settings.["MaxArticlesPerFeed"] |> Should.notBeNull
         settings.["LastFetched"] |> Should.notBeNull
         settings.["FontSize"] |> Should.notBeNull
         settings.["Theme"] |> Should.notBeNull

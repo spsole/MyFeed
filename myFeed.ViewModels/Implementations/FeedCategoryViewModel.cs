@@ -33,7 +33,7 @@ namespace myFeed.ViewModels.Implementations
             {
                 IsLoading.Value = true;
                 var sources = category.Channels;
-                (var errors, var articles) = await feedStoreService.LoadAsync(sources);
+                (var _, var articles) = await feedStoreService.LoadAsync(sources);
                 Items.Clear();
                 foreach (var article in articles)
                     Items.Add(factoryService.CreateInstance<

@@ -81,6 +81,15 @@ module ObservableCommandFixture =
         command.Execute()
         Should.equal 2 fired 
 
+module ObservableGroupingTests =
+
+    [<Fact>]
+    let ``should create truly observable grouping``() =
+
+        let grouping = ObservableGrouping<_, _>("Foo", [])
+        grouping.CollectionChanged += fun _ -> Should.equal grouping.[0] 42 
+        grouping.Add 42
+
 module FaveViewModelFixture =
 
     [<Fact>]
@@ -97,12 +106,10 @@ module FaveViewModelFixture =
         let faveViewModel = produce<FaveViewModel> [favorites; factory]
         faveViewModel.Load.CanExecuteChanged += fun _ -> 
             if faveViewModel.Load.CanExecute() then
-
                 Should.equal 1 faveViewModel.Items.Count
-                Should.equal "Foo" faveViewModel.Items.[0].Title.Value 
-                
+                Should.equal "Foo" faveViewModel.Items.[0].[0].Title.Value 
         faveViewModel.Load.Execute()
-
+        
     [<Fact>]
     let ``should order items in view model by name descending``() =    
         
@@ -120,15 +127,13 @@ module FaveViewModelFixture =
             if faveViewModel.Load.CanExecute() then
                 faveViewModel.OrderByName.CanExecuteChanged += fun _ -> 
                     if faveViewModel.OrderByName.CanExecute() then
-
                         Should.equal 3 faveViewModel.Items.Count
-                        Should.equal "A" faveViewModel.Items.[0].Title.Value
-                        Should.equal "B" faveViewModel.Items.[1].Title.Value
-                        Should.equal "C" faveViewModel.Items.[2].Title.Value
-
+                        Should.equal "A" faveViewModel.Items.[0].[0].Title.Value
+                        Should.equal "B" faveViewModel.Items.[1].[0].Title.Value
+                        Should.equal "C" faveViewModel.Items.[2].[0].Title.Value
                 faveViewModel.OrderByName.Execute() 
         faveViewModel.Load.Execute() 
-              
+
     [<Fact>]
     let ``should order items in view model by date descending``() =    
         
@@ -148,11 +153,33 @@ module FaveViewModelFixture =
             if faveViewModel.Load.CanExecute() then
                 faveViewModel.OrderByDate.CanExecuteChanged += fun _ -> 
                     if faveViewModel.OrderByDate.CanExecute() then
-
                         Should.equal 3 faveViewModel.Items.Count
-                        Should.equal "A" faveViewModel.Items.[0].Title.Value
-                        Should.equal "B" faveViewModel.Items.[1].Title.Value
-                        Should.equal "C" faveViewModel.Items.[2].Title.Value
-
+                        Should.equal "A" faveViewModel.Items.[0].[0].Title.Value
+                        Should.equal "B" faveViewModel.Items.[1].[0].Title.Value
+                        Should.equal "C" faveViewModel.Items.[2].[0].Title.Value
                 faveViewModel.OrderByDate.Execute() 
         faveViewModel.Load.Execute()       
+
+    [<Fact>]
+    let ``should be able to delete and restore items from groupings``() =    
+
+        let favorites = Substitute.For<IFavoritesRepository>()
+        favorites.GetAllAsync().Returns(
+            [ Article(Fave=true, PublishedDate=DateTime.MinValue); 
+              Article(Fave=true, PublishedDate=DateTime.Now);] 
+            :> seq<_> |> Task.FromResult) |> ignore
+            
+        let factory = Substitute.For<IFactoryService>()    
+        factory.CreateInstance<ArticleViewModel>(Arg.Any()).Returns(fun x -> 
+            [x.Arg<obj[]>().[0]] |> produce<ArticleViewModel>) |> ignore
+
+        let faveViewModel = produce<FaveViewModel> [favorites; factory]
+        faveViewModel.Load.CanExecuteChanged += fun _ ->
+            if faveViewModel.Load.CanExecute() then
+                let item = faveViewModel.Items.[0].[0]
+                item.IsFavorite.Value <- false
+                Should.equal 1 faveViewModel.Items.Count
+                Should.equal 1 faveViewModel.Items.[0].Count
+                item.IsFavorite.Value <- true
+                Should.equal 2 faveViewModel.Items.Count
+        faveViewModel.Load.Execute()

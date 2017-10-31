@@ -69,6 +69,14 @@
                             <ToggleSwitch IsOn="{Binding NeedBanners.Value, Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
+                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding
+                                Converter={StaticResource Locale}, ConverterParameter=MaxArticlesPerFeedTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource
+                                Locale}, ConverterParameter=MaxArticlesPerFeed}"/>
+                            <Slider Value="{Binding MaxArticlesPerFeed.Value, Mode=TwoWay}" Minimum="50"
+                                Maximum="300" Width="300" HorizontalAlignment="Left" StepFrequency="50"/>
+                        </StackPanel>
+                        <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
                                 Converter={StaticResource Locale}, ConverterParameter=ChangeThemeTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 

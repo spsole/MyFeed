@@ -131,7 +131,7 @@
                     </DataTemplate>
                 </toolkit:PullToRefreshListView.ItemTemplate>
             </toolkit:PullToRefreshListView>
-            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"
                 Visibility="{Binding IsEmpty.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE783;" FontSize="50" TextAlignment="Center" 
@@ -145,7 +145,7 @@
                         HorizontalAlignment="Center" Margin="0 12 0 0" Command="{Binding Fetch}"/>
                 </StackPanel>
             </Grid>
-            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"
                 Visibility="{Binding IsGreeting.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE71E;" FontSize="50" TextAlignment="Center" 

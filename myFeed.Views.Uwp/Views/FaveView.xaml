@@ -51,8 +51,7 @@
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <controls:TitleBlock Count="{Binding Items.Count, Mode=OneWay}" Text="{Binding 
-                Converter={StaticResource Locale}, ConverterParameter=FaveViewTitle}"/>
+            <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveViewTitle}"/>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
                 <controls:TransparentButton Symbol="Sort">
                     <controls:TransparentButton.Flyout>
@@ -69,105 +68,159 @@
                 </controls:TransparentButton>
             </StackPanel>
             <Grid Grid.Row="1">
-                <ListView ItemsSource="{Binding Items}" IsItemClickEnabled="True" 
-                    ShowsScrollingPlaceholders="False" SelectionMode="None">
-                    <interactivity:Interaction.Behaviors>
-                        <core:EventTriggerBehavior EventName="Loaded">
-                            <core:InvokeCommandAction Command="{Binding Load}"/>
-                        </core:EventTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                    <ListView.ItemContainerTransitions>
-                        <TransitionCollection>
-                            <ContentThemeTransition VerticalOffset="0" HorizontalOffset="30"/>
-                            <EntranceThemeTransition FromHorizontalOffset="30" FromVerticalOffset="0"/>
-                        </TransitionCollection>
-                    </ListView.ItemContainerTransitions>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="Padding" Value="0"/>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Padding="0 12" Background="Transparent">
-                                <interactivity:Interaction.Behaviors>
-                                    <core:EventTriggerBehavior EventName="Holding">
-                                        <extensions:OpenFlyoutAction/>
-                                    </core:EventTriggerBehavior>
-                                    <core:EventTriggerBehavior EventName="RightTapped">
-                                        <extensions:OpenFlyoutAction/>
-                                    </core:EventTriggerBehavior>
-                                    <core:EventTriggerBehavior EventName="Tapped">
-                                        <core:InvokeCommandAction Command="{Binding Open}"/>
-                                    </core:EventTriggerBehavior>
-                                </interactivity:Interaction.Behaviors>
-                                <FlyoutBase.AttachedFlyout>
-                                    <MenuFlyout>
-                                        <controls:MenuFlyoutItemWithIcon Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
-                                        <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding LaunchUri}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
-                                        <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
-                                        <controls:MenuFlyoutItemWithIcon Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
-                                        <MenuFlyoutSeparator />
-                                        <controls:MenuFlyoutItemWithIcon Icon="Delete" Command="{Binding MarkFavorite}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
-                                    </MenuFlyout>
-                                </FlyoutBase.AttachedFlyout>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="94" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <Grid Margin="12 0" VerticalAlignment="Top">
-                                    <Ellipse Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                        Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
-                                    <SymbolIcon Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                        Visibility="{Binding Image.Value, Converter={StaticResource FalsyToVisible}}"
-                                        VerticalAlignment="Center" HorizontalAlignment="Center" Symbol="PostUpdate"/>
-                                    <Ellipse x:Name="PictureEllipse" Opacity="0" Width="70" Height="70" 
-                                             HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Ellipse.Fill>
-                                            <ImageBrush Stretch="UniformToFill">
-                                                <interactivity:Interaction.Behaviors>
-                                                    <core:EventTriggerBehavior EventName="ImageOpened">
-                                                        <media:ControlStoryboardAction>
-                                                            <media:ControlStoryboardAction.Storyboard>
-                                                                <Storyboard TargetName="PictureEllipse" TargetProperty="(UIElement.Opacity)">
-                                                                    <DoubleAnimationUsingKeyFrames>
-                                                                        <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
-                                                                        <EasingDoubleKeyFrame Value="1" KeyTime="0:0:1"/>
-                                                                    </DoubleAnimationUsingKeyFrames>
-                                                                </Storyboard>
-                                                            </media:ControlStoryboardAction.Storyboard>
-                                                        </media:ControlStoryboardAction>
-                                                    </core:EventTriggerBehavior>
-                                                </interactivity:Interaction.Behaviors>
-                                                <ImageBrush.ImageSource>
-                                                    <BitmapImage DecodePixelType="Logical" 
-                                                        UriSource="{Binding Image.Value}" 
-                                                        DecodePixelHeight="70"/>
-                                                </ImageBrush.ImageSource>
-                                            </ImageBrush>
-                                        </Ellipse.Fill>
-                                    </Ellipse>
-                                </Grid>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0 0 12 0">
-                                    <Grid>
+                <Grid.Resources>
+                    <CollectionViewSource x:Name="GrouppedCollection" Source="{Binding Items}" IsSourceGrouped="true"/>
+                </Grid.Resources>
+                <SemanticZoom>
+                    <SemanticZoom.ZoomedOutView>
+                        <ListView ItemsSource="{Binding View.CollectionGroups, ElementName=GrouppedCollection}" 
+                            ShowsScrollingPlaceholders="False" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="ICollectionViewGroup">
+                                    <TextBlock FontSize="15" Margin="24 12" Text="{Binding Group.Key}">
+                                        <TextBlock.Foreground>
+                                            <SolidColorBrush Color="{ThemeResource SystemAccentColorLight2}"/>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </SemanticZoom.ZoomedOutView>
+                    <SemanticZoom.ZoomedInView>
+                        <ListView ItemsSource="{Binding Source={StaticResource GrouppedCollection}}" 
+                            IsItemClickEnabled="True" ShowsScrollingPlaceholders="False" SelectionMode="None">
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="Loaded">
+                                    <core:InvokeCommandAction Command="{Binding Load}"/>
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                            <ListView.ItemContainerTransitions>
+                                <TransitionCollection>
+                                    <ContentThemeTransition VerticalOffset="0" HorizontalOffset="30"/>
+                                    <EntranceThemeTransition FromHorizontalOffset="30" FromVerticalOffset="0"/>
+                                    <AddDeleteThemeTransition/>
+                                </TransitionCollection>
+                            </ListView.ItemContainerTransitions>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="0"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.GroupStyle>
+                                <GroupStyle HidesIfEmpty="True">
+                                    <GroupStyle.HeaderContainerStyle>
+                                        <Style TargetType="ListViewHeaderItem">
+                                            <Setter Property="Margin" Value="0"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListViewHeaderItem">
+                                                        <StackPanel Background="{TemplateBinding Background}">
+                                                            <ContentPresenter x:Name="ContentPresenter"
+                                                                Content="{TemplateBinding Content}" Padding="12"
+                                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                        </StackPanel>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </GroupStyle.HeaderContainerStyle>
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="14" Text="{Binding Key}">
+                                                <TextBlock.Foreground>
+                                                    <SolidColorBrush Color="{ThemeResource SystemAccentColorLight2}"/>
+                                                </TextBlock.Foreground>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </ListView.GroupStyle>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Padding="0 12" Background="Transparent">
+                                        <interactivity:Interaction.Behaviors>
+                                            <core:EventTriggerBehavior EventName="Holding">
+                                                <extensions:OpenFlyoutAction/>
+                                            </core:EventTriggerBehavior>
+                                            <core:EventTriggerBehavior EventName="RightTapped">
+                                                <extensions:OpenFlyoutAction/>
+                                            </core:EventTriggerBehavior>
+                                            <core:EventTriggerBehavior EventName="Tapped">
+                                                <core:InvokeCommandAction Command="{Binding Open}"/>
+                                            </core:EventTriggerBehavior>
+                                        </interactivity:Interaction.Behaviors>
+                                        <FlyoutBase.AttachedFlyout>
+                                            <MenuFlyout>
+                                                <controls:MenuFlyoutItemWithIcon Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
+                                                <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding LaunchUri}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
+                                                <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
+                                                <controls:MenuFlyoutItemWithIcon Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
+                                                <MenuFlyoutSeparator />
+                                                <controls:MenuFlyoutItemWithIcon Icon="Delete" Command="{Binding MarkFavorite}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
+                                            </MenuFlyout>
+                                        </FlyoutBase.AttachedFlyout>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="94" />
+                                            <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Grid.Column="0" Text="{Binding Feed.Value, Converter={StaticResource StrToUpper}}" 
-                                            FontSize="11" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                            TextTrimming="CharacterEllipsis" FontWeight="SemiBold"/>
-                                        <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top"
-                                            Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                            Text="{Binding PublishedDate.Value}" FontSize="11" FontWeight="SemiBold"/>
+                                        <Grid Margin="12 0" VerticalAlignment="Top">
+                                            <Ellipse Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
+                                            <SymbolIcon Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
+                                                Visibility="{Binding Image.Value, Converter={StaticResource FalsyToVisible}}"
+                                                VerticalAlignment="Center" HorizontalAlignment="Center" Symbol="PostUpdate"/>
+                                            <Ellipse x:Name="PictureEllipse" Opacity="0" Width="70" Height="70" 
+                                                HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Ellipse.Fill>
+                                                    <ImageBrush Stretch="UniformToFill">
+                                                        <interactivity:Interaction.Behaviors>
+                                                            <core:EventTriggerBehavior EventName="ImageOpened">
+                                                                <media:ControlStoryboardAction>
+                                                                    <media:ControlStoryboardAction.Storyboard>
+                                                                        <Storyboard TargetName="PictureEllipse" TargetProperty="(UIElement.Opacity)">
+                                                                            <DoubleAnimationUsingKeyFrames>
+                                                                                <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
+                                                                                <EasingDoubleKeyFrame Value="1" KeyTime="0:0:1"/>
+                                                                            </DoubleAnimationUsingKeyFrames>
+                                                                        </Storyboard>
+                                                                    </media:ControlStoryboardAction.Storyboard>
+                                                                </media:ControlStoryboardAction>
+                                                            </core:EventTriggerBehavior>
+                                                        </interactivity:Interaction.Behaviors>
+                                                        <ImageBrush.ImageSource>
+                                                            <BitmapImage DecodePixelType="Logical" 
+                                                                UriSource="{Binding Image.Value}" 
+                                                                DecodePixelHeight="70"/>
+                                                        </ImageBrush.ImageSource>
+                                                    </ImageBrush>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Grid>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0 0 12 0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" Text="{Binding Feed.Value, Converter={StaticResource StrToUpper}}" 
+                                                    FontSize="11" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                                    TextTrimming="CharacterEllipsis" FontWeight="SemiBold"/>
+                                                <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                    Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                                    Text="{Binding PublishedDate.Value}" FontSize="11" FontWeight="SemiBold"/>
+                                            </Grid>
+                                            <TextBlock Text="{Binding Title.Value}" TextWrapping="Wrap"/>
+                                        </StackPanel>
                                     </Grid>
-                                    <TextBlock Text="{Binding Title.Value}" TextWrapping="Wrap"/>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </SemanticZoom.ZoomedInView>
+                </SemanticZoom>
                 <controls:LoadingScreen IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
                 <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding 
                     IsEmpty.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">

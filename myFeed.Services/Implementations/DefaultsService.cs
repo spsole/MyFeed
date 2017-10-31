@@ -10,6 +10,7 @@ namespace myFeed.Services.Implementations
         public IReadOnlyDictionary<string, string> DefaultSettings => new Dictionary<string, string>
         {
             {"LastFetched", DateTime.Now.ToString(CultureInfo.InvariantCulture)},
+            {"MaxArticlesPerFeed", "100"},
             {"NeedBanners", "true"},
             {"LoadImages", "true"},
             {"NotifyPeriod", "14"},

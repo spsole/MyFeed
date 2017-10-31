@@ -352,4 +352,10 @@
   <data name="OrderBy">
     <value>Сортировать по</value>
   </data>
+  <data name="MaxArticlesPerFeedTitle">
+    <value>Размер кеша</value>
+  </data>
+  <data name="MaxArticlesPerFeed">
+    <value>Установите максимальное количество загружаемых и сохраняемых статей на один источник. Большее число позволит вам хранить больше статей, меньшее число может ускорить работу приложения.</value>
+  </data>
 </root>
