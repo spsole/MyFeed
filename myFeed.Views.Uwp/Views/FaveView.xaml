@@ -58,8 +58,8 @@
                         <MenuFlyout>
                             <controls:MenuFlyoutItemWithIcon Icon="Calendar" Command="{Binding OrderByDate}"
                                 Text="{Binding ConverterParameter=OrderByDate, Converter={StaticResource Locale}}"/>
-                            <controls:MenuFlyoutItemWithIcon Icon="FontSize" Command="{Binding OrderByName}"
-                                Text="{Binding ConverterParameter=OrderByName, Converter={StaticResource Locale}}"/>
+                            <controls:MenuFlyoutItemWithIcon Icon="FontSize" Command="{Binding OrderByFeed}"
+                                Text="{Binding ConverterParameter=OrderByFeed, Converter={StaticResource Locale}}"/>
                         </MenuFlyout>
                     </controls:TransparentButton.Flyout>
                     <ToolTipService.ToolTip>
@@ -111,13 +111,14 @@
                                 <GroupStyle HidesIfEmpty="True">
                                     <GroupStyle.HeaderContainerStyle>
                                         <Style TargetType="ListViewHeaderItem">
+                                            <Setter Property="MinHeight" Value="30"/>
                                             <Setter Property="Margin" Value="0"/>
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ListViewHeaderItem">
-                                                        <Grid Background="Transparent">
+                                                        <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
                                                             <ContentPresenter x:Name="ContentPresenter"
-                                                                Content="{TemplateBinding Content}" Padding="12 18 12 6"
+                                                                Content="{TemplateBinding Content}" Padding="12 6"
                                                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                                                 ContentTransitions="{TemplateBinding ContentTransitions}"
                                                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -130,11 +131,8 @@
                                     </GroupStyle.HeaderContainerStyle>
                                     <GroupStyle.HeaderTemplate>
                                         <DataTemplate>
-                                            <TextBlock FontSize="14" Text="{Binding Key}">
-                                                <TextBlock.Foreground>
-                                                    <SolidColorBrush Color="{ThemeResource SystemAccentColorLight2}"/>
-                                                </TextBlock.Foreground>
-                                            </TextBlock>
+                                            <TextBlock FontSize="11" Text="{Binding Key, Converter={StaticResource StrToUpper}}" 
+                                                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold"/>
                                         </DataTemplate>
                                     </GroupStyle.HeaderTemplate>
                                 </GroupStyle>

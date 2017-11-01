@@ -115,7 +115,7 @@ module FaveViewModelFixture =
         
         let favorites = Substitute.For<IFavoritesRepository>()
         favorites.GetAllAsync().Returns(
-            [ Article(Title="C"); Article(Title="A"); Article(Title="B"); ] 
+            [ Article(FeedTitle="C"); Article(FeedTitle="A"); Article(FeedTitle="B"); ] 
             :> seq<_> |> Task.FromResult) |> ignore
             
         let factory = Substitute.For<IFactoryService>()    
@@ -125,13 +125,13 @@ module FaveViewModelFixture =
         let faveViewModel = produce<FaveViewModel> [favorites; factory]
         faveViewModel.Load.CanExecuteChanged += fun _ ->
             if faveViewModel.Load.CanExecute() then
-                faveViewModel.OrderByName.CanExecuteChanged += fun _ -> 
-                    if faveViewModel.OrderByName.CanExecute() then
+                faveViewModel.OrderByFeed.CanExecuteChanged += fun _ -> 
+                    if faveViewModel.OrderByFeed.CanExecute() then
                         Should.equal 3 faveViewModel.Items.Count
-                        Should.equal "A" faveViewModel.Items.[0].[0].Title.Value
-                        Should.equal "B" faveViewModel.Items.[1].[0].Title.Value
-                        Should.equal "C" faveViewModel.Items.[2].[0].Title.Value
-                faveViewModel.OrderByName.Execute() 
+                        Should.equal "A" faveViewModel.Items.[0].[0].Feed.Value
+                        Should.equal "B" faveViewModel.Items.[1].[0].Feed.Value
+                        Should.equal "C" faveViewModel.Items.[2].[0].Feed.Value
+                faveViewModel.OrderByFeed.Execute() 
         faveViewModel.Load.Execute() 
 
     [<Fact>]

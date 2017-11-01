@@ -15,7 +15,7 @@ namespace myFeed.ViewModels.Implementations
         public ObservableProperty<bool> IsEmpty { get; }
 
         public ObservableCommand OrderByDate { get; }
-        public ObservableCommand OrderByName { get; }
+        public ObservableCommand OrderByFeed { get; }
         public ObservableCommand Load { get; }
 
         public FaveViewModel(
@@ -59,13 +59,13 @@ namespace myFeed.ViewModels.Implementations
                 groupings.ForEach(Items.Add);
                 IsLoading.Value = false;
             });
-            OrderByName = new ObservableCommand(() =>
+            OrderByFeed = new ObservableCommand(() =>
             {
                 IsLoading.Value = true;
                 var groupings = Items
                     .SelectMany(i => i)
-                    .OrderBy(i => i.Title.Value)
-                    .GroupBy(i => i.Title.Value.FirstOrDefault().ToString())
+                    .OrderBy(i => i.Feed.Value)
+                    .GroupBy(i => i.Feed.Value.ToString())
                     .Select(i => new ObservableGrouping<string, ArticleViewModel>(i))
                     .ToList();
 

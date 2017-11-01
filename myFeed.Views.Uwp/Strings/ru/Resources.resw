@@ -343,8 +343,8 @@
   <data name="OrderByDate">
     <value>Сортировать по дате публикации</value>
   </data>
-  <data name="OrderByName">
-    <value>Сортировать по названию статьи</value>
+  <data name="OrderByFeed">
+    <value>Сортировать по названию ленты</value>
   </data>
   <data name="SelectCategory">
     <value>Перейти к категории</value>
