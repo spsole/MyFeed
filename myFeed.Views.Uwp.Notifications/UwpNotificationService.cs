@@ -21,19 +21,6 @@ namespace myFeed.Views.Uwp.Notifications
             // Prevent possible multiple enumeration of enumerable.
             var articlesList = articles.ToList();
 
-            // Send windows tile notifications to display on home screen.
-            var updateManager = TileUpdateManager.CreateTileUpdaterForApplication();
-            updateManager.EnableNotificationQueue(true);
-            updateManager.Clear();
-            foreach (var article in articlesList.Take(5))
-            {
-                var template = GetTileTemplate(article.FeedTitle, article.Title);
-                var xmlDocument = new XmlDocument();
-                xmlDocument.LoadXml(template);
-                var notification = new TileNotification(xmlDocument);
-                updateManager.Update(notification);
-            }
-
             // Send toast notifications for notifications and action center.
             var needImages = await _settingsService.GetAsync<bool>("LoadImages");
             var needBanners = await _settingsService.GetAsync<bool>("NeedBanners");
@@ -48,6 +35,19 @@ namespace myFeed.Views.Uwp.Notifications
                 xmlDocument.LoadXml(template);
                 var notification = new ToastNotification(xmlDocument) { SuppressPopup = !needBanners };
                 ToastNotificationManager.CreateToastNotifier().Show(notification);
+            }
+
+            // Send windows tile notifications to display on home screen.
+            var updateManager = TileUpdateManager.CreateTileUpdaterForApplication();
+            updateManager.EnableNotificationQueue(true);
+            updateManager.Clear();
+            foreach (var article in articlesList.Take(5))
+            {
+                var template = GetTileTemplate(article.FeedTitle, article.Title);
+                var xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(template);
+                var notification = new TileNotification(xmlDocument);
+                updateManager.Update(notification);
             }
         }
 

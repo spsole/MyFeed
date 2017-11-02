@@ -8,6 +8,7 @@ using Windows.Storage;
 using LiteDB;
 using myFeed.Repositories;
 using myFeed.Services.Platform;
+using System.Diagnostics;
 
 namespace myFeed.Views.Uwp.Notifications
 {
@@ -16,17 +17,17 @@ namespace myFeed.Views.Uwp.Notifications
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             var defferal = taskInstance.GetDeferral();
-            try { using (var scope = Load(new ContainerBuilder()))
-                    await scope.Resolve<IBackgroundService>()
-                               .CheckForUpdates(DateTime.Now); }
-            catch { /* ignored */ }
-            finally { defferal.Complete(); }
+            using (var scope = Load(new ContainerBuilder()))
+                await scope.Resolve<IBackgroundService>()
+                    .CheckForUpdates(DateTime.Now);
+            defferal.Complete();
         }
 
         private static ILifetimeScope Load(ContainerBuilder builder)
         {
+            var connection = "MyFeed.db";
             var localFolder = ApplicationData.Current.LocalFolder;
-            var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
+            var filePath = Path.Combine(localFolder.Path, connection);
             builder.Register(x => new LiteDatabase(filePath)).AsSelf().SingleInstance();
             builder.RegisterType<UwpNotificationService>().As<INotificationService>();
             builder.RegisterModule<RepositoriesModule>();

@@ -8,6 +8,7 @@ namespace myFeed.ViewModels.Implementations
 {
     public sealed class SettingsViewModel
     {
+        public ObservableProperty<string> Version { get; }
         public ObservableProperty<string> Theme { get; }
         public ObservableProperty<bool> LoadImages { get; }
         public ObservableProperty<bool> NeedBanners { get; }
@@ -15,6 +16,8 @@ namespace myFeed.ViewModels.Implementations
         public ObservableProperty<int> MaxArticlesPerFeed { get; }
         public ObservableProperty<int> FontSize { get; }
 
+        public ObservableCommand LeaveFeedback { get; }
+        public ObservableCommand LeaveReview { get; }
         public ObservableCommand ImportOpml { get; }
         public ObservableCommand ExportOpml { get; }
         public ObservableCommand Reset { get; }
@@ -23,14 +26,18 @@ namespace myFeed.ViewModels.Implementations
         public SettingsViewModel(
             ITranslationsService translationsService,
             IFilePickerService filePickerService,
+            IPackagingService packagingService,
             ISettingsService settingsService,
             IPlatformService platformService,
             IDialogService dialogService,
             IOpmlService opmlService)
         {
             Theme = string.Empty;
+            Version = packagingService.Version;
             (LoadImages, NeedBanners) = (true, true);
             (FontSize, NotifyPeriod, MaxArticlesPerFeed) = (0, 0, 0);
+            LeaveFeedback = new ObservableCommand(packagingService.LeaveFeedback);
+            LeaveReview = new ObservableCommand(packagingService.LeaveReview);
             ImportOpml = new ObservableCommand(async () =>
             {
                 var stream = await filePickerService.PickFileForReadAsync();

@@ -150,7 +150,7 @@ module Domain =
     open myFeed.ViewModels       
 
     /// Single instance LiteDatabase connection.
-    let connection = new LiteDatabase("Database.db")
+    let connection = new LiteDatabase("MyFeed.db")
 
     /// Injects mocks into container builder.
     let registerMocks (builder: ContainerBuilder) =
@@ -162,6 +162,7 @@ module Domain =
         |> also registerMock<IDialogService>
         |> also registerMock<INavigationService>
         |> also registerMock<INotificationService>
+        |> also registerMock<IPackagingService>
         |> ignore
 
     /// Creates builder for integration testing.

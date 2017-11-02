@@ -179,12 +179,13 @@
                                 <HyperlinkButton Content="worldbeater.github.io" Margin="0 6"
                                     Style="{StaticResource TextBlockButtonStyle}" Padding="0"
                                     NavigateUri="https://worldbeater.github.io"/>
+                                <TextBlock Text="{Binding Version.Value}"/>
                             </StackPanel>
                         </Grid>
                         <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMail}"/>
-                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMailButton}"/>
+                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMailButton}" Command="{Binding LeaveFeedback}"/>
                         <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedback}"/>
-                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedbackButton}"/>
+                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedbackButton}" Command="{Binding LeaveReview}"/>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

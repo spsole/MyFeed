@@ -36,6 +36,8 @@ myFeed.ViewModels/bin
 myFeed.Services/obj
 myFeed.Services/bin
 myFeed.Views.Uwp/Assets
+myFeed.Views.Uwp/AppPackages
+myFeed.Views.Uwp/Package.StoreAssociation.xml
 myFeed.Views.Uwp/obj
 myFeed.Views.Uwp/bin
 myFeed.Views.Uwp/BundleArtifacts
@@ -83,3 +85,4 @@ Temporary Items
 *.appx
 *.pfx
 *.appxmanifest
+myFeed.Views.Uwp/Package.StoreAssociation.xml

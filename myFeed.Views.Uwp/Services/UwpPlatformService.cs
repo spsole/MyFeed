@@ -53,20 +53,16 @@ namespace myFeed.Views.Uwp.Services
         public async Task RegisterBackgroundTask(int freq)
         {
             var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
-            if (backgroundAccessStatus != BackgroundAccessStatus.AlwaysAllowed &&
-                backgroundAccessStatus != BackgroundAccessStatus.AllowedSubjectToSystemPolicy)
-                return;
-
-            foreach (var task in BackgroundTaskRegistration.AllTasks.Values)
-                if (task.Name == "myFeedNotify") task.Unregister(true);
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+                if (task.Value.Name == "myFeedNotify")
+                    task.Value.Unregister(true);
 
             if (freq == 0) return;
             if (freq < 15) freq = 15;
-            var builder = new BackgroundTaskBuilder();
+            var builder = new BackgroundTaskBuilder {Name="myFeedNotify"};
             builder.SetTrigger(new TimeTrigger((uint)freq, false));
             builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
             builder.TaskEntryPoint = "myFeed.Views.Uwp.Notifications.Runner";
-            builder.Name = "myFeedNotify";
             builder.Register();
         }
 
