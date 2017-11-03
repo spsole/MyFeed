@@ -241,7 +241,7 @@ module ParallelFeedStoreServiceFixture =
 
         let fetcher = Substitute.For<IFeedFetchService>()
         fetcher.FetchAsync(Arg.Any<_>()).Returns(
-            struct(null, Seq.empty<Article>) 
+            (null, Seq.empty<Article>) 
             |> Task.FromResult)
             |> ignore
 
@@ -268,7 +268,7 @@ module ParallelFeedStoreServiceFixture =
 
         let fetcher = Substitute.For<IFeedFetchService>()
         fetcher.FetchAsync(Arg.Any<_>()).Returns(
-            struct(null, [Article(Title="Foo")] :> seq<_>) 
+            (null, [Article(Title="Foo")] :> seq<_>) 
             |> Task.FromResult)
             |> ignore
 
@@ -296,7 +296,7 @@ module ParallelFeedStoreServiceFixture =
 
         let fetcher = Substitute.For<IFeedFetchService>()
         fetcher.FetchAsync(Arg.Any<_>()).Returns(
-            struct(null, [Article(Title="Foo", PublishedDate=DateTime.Now)] :> seq<_>) 
+            (null, [Article(Title="Foo", PublishedDate=DateTime.Now)] :> seq<_>) 
             |> Task.FromResult)
             |> ignore
 
@@ -321,7 +321,7 @@ module ParallelFeedStoreServiceFixture =
         let articles = Seq.init 200 (fun _ -> Article())
         let channel = Channel(Articles=toList articles)
         let fetcher = Substitute.For<IFeedFetchService>()
-        fetcher.FetchAsync(Arg.Any()).Returns(struct(null, Seq.empty) 
+        fetcher.FetchAsync(Arg.Any()).Returns((null, Seq.empty) 
             |> Task.FromResult) |> ignore
         
         let service = produce<ParallelFeedStoreService> [fetcher; settings]
@@ -337,7 +337,7 @@ module ParallelFeedStoreServiceFixture =
 
         let articles = Seq.init 200 (fun _ -> Article())
         let fetcher = Substitute.For<IFeedFetchService>()
-        fetcher.FetchAsync(Arg.Any()).Returns(struct(null, articles) 
+        fetcher.FetchAsync(Arg.Any()).Returns((null, articles) 
             |> Task.FromResult) |> ignore
         
         let service = produce<ParallelFeedStoreService> [fetcher; settings]
@@ -422,7 +422,7 @@ module BackgroundServiceFixture =
                          Article(Title="Bar", PublishedDate=DateTime.MaxValue) ]
         let store = Substitute.For<IFeedStoreService>()
         store.LoadAsync(Arg.Any()).Returns(
-            struct(null, articles.OrderBy(fun x -> x.Id)) 
+            (null, articles.OrderBy(fun x -> x.Id)) 
             |> Task.FromResult) 
             |> ignore
 
@@ -448,7 +448,7 @@ module BackgroundServiceFixture =
         let articles = [ Article(Title="Foo", PublishedDate=DateTime.MinValue) ]
         let store = Substitute.For<IFeedStoreService>()
         store.LoadAsync(Arg.Any()).Returns(
-            struct(null, articles.OrderBy(fun x -> x.Id)) 
+            (null, articles.OrderBy(fun x -> x.Id)) 
             |> Task.FromResult) 
             |> ignore
 

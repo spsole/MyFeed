@@ -8,6 +8,6 @@ namespace myFeed.Services.Abstractions
 {
     public interface IFeedStoreService
     {
-        Task<(IEnumerable<Exception>, IOrderedEnumerable<Article>)> LoadAsync(IEnumerable<Channel> channels);
+        Task<Tuple<IEnumerable<Exception>, IOrderedEnumerable<Article>>> LoadAsync(IEnumerable<Channel> channels);
     }
 }

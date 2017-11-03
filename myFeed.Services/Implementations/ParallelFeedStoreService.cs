@@ -24,12 +24,11 @@ namespace myFeed.Services.Implementations
             _settingsService = settingsService;
         }
         
-        public Task<(IEnumerable<Exception>, IOrderedEnumerable<Article>)> LoadAsync(
-            IEnumerable<Channel> channels) => Task.Run(async () =>
+        public Task<Tuple<IEnumerable<Exception>, IOrderedEnumerable<Article>>> LoadAsync(
+            IEnumerable<Channel> fetchableChannelsEnumerable) => Task.Run(async () =>
         {
-            const string setting = "MaxArticlesPerFeed";
-            var maxArticleCount = await _settingsService.GetAsync<int>(setting);
-            var fetchables = channels.Select(i => 
+            var maxArticleCount = await _settingsService.GetAsync<int>("MaxArticlesPerFeed");
+            var channels = fetchableChannelsEnumerable.Select(i => 
             {
                 // Remove extra saved articles and save changes.
                 if (i.Articles.Count <= maxArticleCount) return i;
@@ -41,12 +40,11 @@ namespace myFeed.Services.Implementations
             });
 
             // Read items into lookup using title and date as keys.
-            var existingLookup = fetchables
-                .SelectMany(i => i.Articles)
+            var existingLookup = channels.SelectMany(i => i.Articles)
                 .ToLookup(i => (i.Title?.Trim(), i.FeedTitle?.Trim()));
 
             // Retrieve feed based on single fetcher implementation.
-            var fetchTasks = fetchables.Select(i => FetchAsync(i, maxArticleCount));
+            var fetchTasks = channels.Select(i => FetchAsync(i, maxArticleCount));
             var grouppedArticles = await Task.WhenAll(fetchTasks);
             var distinctGroupping = grouppedArticles
                 .Select(i => (i.Item1, i.Item3
@@ -63,19 +61,21 @@ namespace myFeed.Services.Implementations
             // Return global join with both old and new articles.
             var flatternedArticles = distinctGroupping.SelectMany(i => i.Item2);
             var errors = grouppedArticles.Select(i => i.Item2);
-            return (errors, existingLookup
+            return new Tuple<IEnumerable<Exception>, IOrderedEnumerable<Article>>(
+                errors, existingLookup
                 .SelectMany(i => i)
                 .Concat(flatternedArticles)
                 .OrderByDescending(i => i.PublishedDate));
         });
 
-        private Task<(Channel, Exception, IEnumerable<Article>)> FetchAsync(
+        private Task<Tuple<Channel, Exception, IEnumerable<Article>>> FetchAsync(
             Channel fetchableChannel, int maxArticleCount) => Task.Run(async () =>
         {
             // Fetches single feed in a separate thread.
             var uriToFetch = fetchableChannel.Uri;
             (var exception, var articles) = await _feedFetchService.FetchAsync(uriToFetch);
-            return (fetchableChannel, exception, articles
+            return new Tuple<Channel, Exception, IEnumerable<Article>>(
+                fetchableChannel, exception, articles
                 .OrderByDescending(i => i.PublishedDate)
                 .Take(maxArticleCount));
         });

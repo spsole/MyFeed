@@ -358,4 +358,7 @@
   <data name="MaxArticlesPerFeed">
     <value>Set maximum articles count related to a single feed. Higher number can allow you to keep more articles stored, lower number can potentially improve app performance.</value>
   </data>
+  <data name="Published">
+    <value>Published:</value>
+  </data>
 </root>

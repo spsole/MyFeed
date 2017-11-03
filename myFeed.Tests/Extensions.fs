@@ -27,10 +27,10 @@ module StandardLibraryExtensions =
     let inline also defun arguments = defun arguments; arguments
 
     /// Extracts first element from tuple.
-    let fst struct (first, _) = first 
+    let fst (first, _) = first 
 
     /// Extracts second element from tuple.
-    let snd struct (_, second) = second   
+    let snd (_, second) = second   
 
     /// Produces instance of an object with dependencies supplied.
     let produce<'T when 'T : not struct> (injectables: obj seq) =

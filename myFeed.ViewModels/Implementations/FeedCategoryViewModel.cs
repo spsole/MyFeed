@@ -24,18 +24,16 @@ namespace myFeed.ViewModels.Implementations
             Category category)
         {
             Title = category.Title;
-            IsLoading = true;
-            IsEmpty = false;
-            
+            (IsLoading, IsEmpty) = (true, false);
             Items = new ObservableCollection<ArticleViewModel>();
             OpenSources = new ObservableCommand(navigationService.Navigate<ChannelsViewModel>);
             Fetch = new ObservableCommand(async () =>
             {
                 IsLoading.Value = true;
                 var sources = category.Channels;
-                (var _, var articles) = await feedStoreService.LoadAsync(sources);
+                var response = await feedStoreService.LoadAsync(sources);
                 Items.Clear();
-                foreach (var article in articles)
+                foreach (var article in response.Item2)
                     Items.Add(factoryService.CreateInstance<
                         ArticleViewModel>(article));
                 IsEmpty.Value = Items.Count == 0;

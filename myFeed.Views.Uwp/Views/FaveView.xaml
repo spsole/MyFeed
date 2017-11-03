@@ -74,12 +74,17 @@
                 <SemanticZoom>
                     <SemanticZoom.ZoomedOutView>
                         <ListView ItemsSource="{Binding View.CollectionGroups, ElementName=GrouppedCollection}" 
-                            ShowsScrollingPlaceholders="False" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            ShowsScrollingPlaceholders="False" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="Background" Value="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="ICollectionViewGroup">
-                                    <TextBlock FontSize="15" Margin="24 12" Text="{Binding Group.Key}">
+                                    <TextBlock FontSize="15" Margin="0 12" Text="{Binding Group.Key}">
                                         <TextBlock.Foreground>
-                                            <SolidColorBrush Color="{ThemeResource SystemAccentColorLight2}"/>
+                                            <SolidColorBrush Color="{ThemeResource SystemAccentColorLight1}"/>
                                         </TextBlock.Foreground>
                                     </TextBlock>
                                 </DataTemplate>

@@ -7,6 +7,6 @@ namespace myFeed.Services.Abstractions
 {
     public interface IFeedFetchService
     {
-        Task<(Exception, IEnumerable<Article>)> FetchAsync(string uri);
+        Task<Tuple<Exception, IEnumerable<Article>>> FetchAsync(string uri);
     }
 }

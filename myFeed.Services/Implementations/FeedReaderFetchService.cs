@@ -15,7 +15,7 @@ namespace myFeed.Services.Implementations
 
         public FeedReaderFetchService(IImageService imageService) => _imageService = imageService;
 
-        public async Task<(Exception, IEnumerable<Article>)> FetchAsync(string uri) 
+        public async Task<Tuple<Exception, IEnumerable<Article>>> FetchAsync(string uri) 
         {
             try
             {
@@ -37,11 +37,11 @@ namespace myFeed.Services.Implementations
                         Read = false,
                         Fave = false
                     };
-                return (default(Exception), articles);
+                return new Tuple<Exception, IEnumerable<Article>>(default(Exception), articles);
             }
             catch (Exception exception)
             {
-                return (exception, new List<Article>());
+                return new Tuple<Exception, IEnumerable<Article>>(exception, new List<Article>());
             }
         }
     }
