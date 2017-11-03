@@ -43,14 +43,15 @@ namespace myFeed.Services.Implementations
             // Read items into lookup using title and date as keys.
             var existingLookup = fetchables
                 .SelectMany(i => i.Articles)
-                .ToLookup(i => (i.Title, i.FeedTitle));
+                .ToLookup(i => (i.Title?.Trim(), i.FeedTitle?.Trim()));
 
             // Retrieve feed based on single fetcher implementation.
             var fetchTasks = fetchables.Select(i => FetchAsync(i, maxArticleCount));
             var grouppedArticles = await Task.WhenAll(fetchTasks);
             var distinctGroupping = grouppedArticles
                 .Select(i => (i.Item1, i.Item3
-                    .Where(x => !existingLookup.Contains((x.Title, x.FeedTitle)))
+                    .Where(x => !existingLookup.Contains(
+                        (x.Title?.Trim(), x.FeedTitle?.Trim())))
                     .ToArray()))
                 .ToList();
                 

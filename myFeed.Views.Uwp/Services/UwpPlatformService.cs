@@ -45,8 +45,8 @@ namespace myFeed.Views.Uwp.Services
 
         public async Task ResetApp()
         {
-            var database = await ApplicationData.Current.LocalFolder.GetFileAsync("MyFeed.db");
-            await database.DeleteAsync(StorageDeleteOption.Default);
+            var files = await ApplicationData.Current.LocalFolder.GetFilesAsync();
+            foreach (var file in files) await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
             Application.Current.Exit();
         }
         
