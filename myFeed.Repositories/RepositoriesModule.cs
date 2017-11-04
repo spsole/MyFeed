@@ -1,7 +1,6 @@
 using Autofac;
 using myFeed.Repositories.Abstractions;
 using myFeed.Repositories.Implementations;
-using LiteDB;
 
 namespace myFeed.Repositories
 {

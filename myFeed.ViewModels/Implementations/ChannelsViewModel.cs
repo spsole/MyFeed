@@ -26,9 +26,7 @@ namespace myFeed.ViewModels.Implementations
             IFactoryService factoryService,
             IDialogService dialogService)
         {
-            IsEmpty = false; 
-            IsLoading = true;
-            
+            (IsEmpty, IsLoading) = (false, true); 
             Items = new ObservableCollection<ChannelCategoryViewModel>();
             OpenSearch = new ObservableCommand(navigationService.Navigate<SearchViewModel>);
             AddCategory = new ObservableCommand(async () =>

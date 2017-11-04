@@ -8,7 +8,6 @@ using Windows.Storage;
 using LiteDB;
 using myFeed.Repositories;
 using myFeed.Services.Platform;
-using System.Diagnostics;
 
 namespace myFeed.Views.Uwp.Notifications
 {
@@ -17,10 +16,11 @@ namespace myFeed.Views.Uwp.Notifications
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             var defferal = taskInstance.GetDeferral();
-            using (var scope = Load(new ContainerBuilder()))
-                await scope.Resolve<IBackgroundService>()
-                    .CheckForUpdates(DateTime.Now);
-            defferal.Complete();
+            try { using (var scope = Load(new ContainerBuilder()))
+                      await scope.Resolve<IBackgroundService>()
+                          .CheckForUpdates(DateTime.Now); }
+            catch { /* ignored */ }
+            finally { defferal.Complete(); }
         }
 
         private static ILifetimeScope Load(ContainerBuilder builder)

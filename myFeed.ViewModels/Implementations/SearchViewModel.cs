@@ -19,10 +19,9 @@ namespace myFeed.ViewModels.Implementations
             IFactoryService factoryService,
             ISearchService searchService)
         {
-            IsEmpty = false;
-            IsLoading = false;
             IsGreeting = true;
             SearchQuery = string.Empty;
+            (IsEmpty, IsLoading) = (false, false);
             
             Items = new ObservableCollection<SearchItemViewModel>();
             Fetch = new ObservableCommand(async () =>

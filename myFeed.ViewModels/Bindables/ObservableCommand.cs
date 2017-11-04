@@ -23,10 +23,16 @@ namespace myFeed.ViewModels.Bindables
 
         public async void Execute(object parameter)
         {
-            UpdateCanExecute(false);
-            await _task.Invoke();
-            UpdateCanExecute(true);
-
+            try
+            {
+                UpdateCanExecute(false);
+                await _task.Invoke();
+                UpdateCanExecute(true);
+            }
+            catch
+            {
+                // ignored
+            }
             void UpdateCanExecute(bool value)
             {
                 _canExecute = value;

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Microsoft.Xaml.Interactivity;
 
