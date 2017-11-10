@@ -58,7 +58,7 @@ namespace myFeed.Views.Uwp.Services
                     task.Value.Unregister(true);
 
             if (freq == 0) return;
-            if (freq < 15) freq = 15;
+            if (freq < 30) freq = 30;
             var builder = new BackgroundTaskBuilder {Name="myFeedNotify"};
             builder.SetTrigger(new TimeTrigger((uint)freq, false));
             builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));

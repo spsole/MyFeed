@@ -2,18 +2,13 @@ namespace myFeed.Tests.ViewModels
 
 open Xunit    
 open NSubstitute
-
 open System
 open System.Threading.Tasks
-
-open myFeed.Tests.Extensions
-
 open myFeed.ViewModels.Bindables
 open myFeed.ViewModels.Implementations
-
+open myFeed.Tests.Extensions
 open myFeed.Tests.Extensions.Domain
 open myFeed.Tests.Extensions.Dependency
-
 open myFeed.Repositories.Abstractions
 open myFeed.Repositories.Models
 

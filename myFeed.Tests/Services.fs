@@ -3,19 +3,15 @@ namespace myFeed.Tests.Services
 open Xunit
 open Autofac
 open NSubstitute
-
 open System
 open System.IO
 open System.Linq
 open System.Threading.Tasks
 open System.Collections.Generic
-
 open myFeed.Tests.Extensions
 open myFeed.Tests.Extensions.Domain
-
 open myFeed.Repositories.Abstractions
 open myFeed.Repositories.Models
-
 open myFeed.Services.Abstractions
 open myFeed.Services.Implementations
 open myFeed.Services.Platform
@@ -344,6 +340,32 @@ module ParallelFeedStoreServiceFixture =
         let articles = service.LoadAsync([Channel()]).Result |> (snd >> List.ofSeq)
 
         Should.equal 70 articles.Length
+        
+    [<Fact>]
+    let ``should ignore whitespaces while comparing titles``() =
+        
+        let settings = Substitute.For<ISettingsService>()
+        settings.GetAsync<_>(Arg.Any()).Returns(70) |> ignore
+        
+        let fetcher = Substitute.For<IFeedFetchService>()
+        fetcher.FetchAsync(Arg.Any<_>()).Returns(
+            (null, [ Article(Title="Foo  ", FeedTitle="Bar");
+                     Article(Title="Bar\r\n", FeedTitle="Foo")] :> seq<_>) 
+            |> Task.FromResult) |> ignore
+        
+        let service = produce<ParallelFeedStoreService> [fetcher; settings]
+        let articles = 
+            service.LoadAsync(
+                [ Channel(Articles=toList 
+                    [ Article(Title="Foo", FeedTitle="Bar");
+                      Article(Title="Bar", FeedTitle="Foo") ]) ]).Result 
+                    |> (snd >> List.ofSeq)
+        
+        Should.equal 2 articles.Length
+        Should.equal "Foo" articles.[0].Title
+        Should.equal "Bar" articles.[1].Title
+        Should.equal "Bar" articles.[0].FeedTitle
+        Should.equal "Foo" articles.[1].FeedTitle
 
 module FavoritesServiceFixture =
 

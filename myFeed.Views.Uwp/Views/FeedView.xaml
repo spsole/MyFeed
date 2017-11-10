@@ -186,27 +186,28 @@
                                                     Visibility="{Binding Image.Value, Converter={StaticResource FalsyToVisible}}"
                                                     VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="1" Symbol="PostUpdate"/>
                                                 <Ellipse x:Name="PictureEllipse" Opacity="0" Width="70" Height="70" 
-                                                         VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    VerticalAlignment="Center" HorizontalAlignment="Center">
                                                     <Ellipse.Fill>
                                                         <ImageBrush Stretch="UniformToFill">
-                                                            <interactivity:Interaction.Behaviors>
-                                                                <core:EventTriggerBehavior EventName="ImageOpened">
-                                                                    <media:ControlStoryboardAction>
-                                                                        <media:ControlStoryboardAction.Storyboard>
-                                                                            <Storyboard TargetName="PictureEllipse" TargetProperty="(UIElement.Opacity)">
-                                                                                <DoubleAnimationUsingKeyFrames>
-                                                                                    <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
-                                                                                    <EasingDoubleKeyFrame Value="1" KeyTime="0:0:1"/>
-                                                                                </DoubleAnimationUsingKeyFrames>
-                                                                            </Storyboard>
-                                                                        </media:ControlStoryboardAction.Storyboard>
-                                                                    </media:ControlStoryboardAction>
-                                                                </core:EventTriggerBehavior>
-                                                            </interactivity:Interaction.Behaviors>
                                                             <ImageBrush.ImageSource>
-                                                                <BitmapImage DecodePixelType="Logical" 
-                                                                    UriSource="{Binding Image.Value}"
-                                                                    DecodePixelHeight="70"/>
+                                                                <BitmapImage DecodePixelType="Logical"
+                                                                    DecodePixelHeight="70" CreateOptions="None"
+                                                                    UriSource="{Binding Image.Value}">
+                                                                    <interactivity:Interaction.Behaviors>
+                                                                        <core:EventTriggerBehavior EventName="ImageOpened">
+                                                                            <media:ControlStoryboardAction>
+                                                                                <media:ControlStoryboardAction.Storyboard>
+                                                                                    <Storyboard TargetName="PictureEllipse" TargetProperty="(UIElement.Opacity)">
+                                                                                        <DoubleAnimationUsingKeyFrames>
+                                                                                            <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
+                                                                                            <EasingDoubleKeyFrame Value="1" KeyTime="0:0:1"/>
+                                                                                        </DoubleAnimationUsingKeyFrames>
+                                                                                    </Storyboard>
+                                                                                </media:ControlStoryboardAction.Storyboard>
+                                                                            </media:ControlStoryboardAction>
+                                                                        </core:EventTriggerBehavior>
+                                                                    </interactivity:Interaction.Behaviors>
+                                                                </BitmapImage>
                                                             </ImageBrush.ImageSource>
                                                         </ImageBrush>
                                                     </Ellipse.Fill>

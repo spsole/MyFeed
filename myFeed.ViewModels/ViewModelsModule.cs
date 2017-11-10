@@ -1,4 +1,5 @@
 using Autofac;
+using myFeed.Services;
 using myFeed.ViewModels.Implementations;
 
 namespace myFeed.ViewModels
@@ -7,6 +8,7 @@ namespace myFeed.ViewModels
     {
         protected override void Load(ContainerBuilder builder) 
         {
+            builder.RegisterModule<ServicesModule>();
             builder.RegisterType<ArticleViewModel>().AsSelf();
             builder.RegisterType<ChannelCategoryViewModel>().AsSelf();
             builder.RegisterType<ChannelsViewModel>().AsSelf();

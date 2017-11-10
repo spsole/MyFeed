@@ -19,10 +19,7 @@ namespace myFeed.Views.Uwp.Services
 
         private static ContainerBuilder Load(ContainerBuilder builder)
         {
-            builder.RegisterModule<RepositoriesModule>();
-            builder.RegisterModule<ServicesModule>();
             builder.RegisterModule<ViewModelsModule>();
-
             builder.RegisterType<UwpTranslationsService>().As<ITranslationsService>().SingleInstance();
             builder.RegisterType<UwpNavigationService>().As<INavigationService>().SingleInstance();
             builder.RegisterType<UwpFilePickerService>().As<IFilePickerService>();

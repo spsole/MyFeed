@@ -59,7 +59,7 @@
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=NotifyCheckTime}"/>
                             <Slider Value="{Binding NotifyPeriod.Value, Mode=TwoWay}" Minimum="0" 
-                                Maximum="180" Width="300" HorizontalAlignment="Left" StepFrequency="15"/>
+                                Maximum="180" Width="300" HorizontalAlignment="Left" StepFrequency="30"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding

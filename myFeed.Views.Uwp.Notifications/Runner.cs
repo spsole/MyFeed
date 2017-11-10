@@ -30,7 +30,6 @@ namespace myFeed.Views.Uwp.Notifications
             var filePath = Path.Combine(localFolder.Path, connection);
             builder.Register(x => new LiteDatabase(filePath)).AsSelf().SingleInstance();
             builder.RegisterType<UwpNotificationService>().As<INotificationService>();
-            builder.RegisterModule<RepositoriesModule>();
             builder.RegisterModule<ServicesModule>();
             return builder.Build();
         }

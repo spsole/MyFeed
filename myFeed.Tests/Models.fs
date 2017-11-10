@@ -3,9 +3,7 @@ namespace myFeed.Tests.Models
 open Xunit
 open LiteDB
 open System
-
 open myFeed.Repositories.Models
-
 open myFeed.Tests.Extensions
 open myFeed.Tests.Extensions.Domain
 

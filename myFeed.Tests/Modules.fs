@@ -2,17 +2,13 @@ namespace myFeed.Tests.Modules
     
 open Xunit
 open Autofac
-
 open myFeed.Repositories
 open myFeed.Repositories.Abstractions
-
 open myFeed.Tests.Extensions
 open myFeed.Tests.Extensions.Dependency
 open myFeed.Tests.Extensions.Domain
-
 open myFeed.Services
 open myFeed.Services.Abstractions
-
 open myFeed.ViewModels.Implementations
 open myFeed.ViewModels
 
@@ -34,7 +30,6 @@ module CombinedUnitsFixture =
     let ``all default services should be registered``() = 
 
         ContainerBuilder()
-        |> also registerModule<RepositoriesModule>
         |> also registerModule<ServicesModule> 
         |> also registerMocks
         |> build
@@ -55,8 +50,6 @@ module CombinedUnitsFixture =
     let ``all default viewmodels should be registered``() =
 
         ContainerBuilder()
-        |> also registerModule<RepositoriesModule>
-        |> also registerModule<ServicesModule> 
         |> also registerModule<ViewModelsModule>
         |> also registerMocks
         |> build

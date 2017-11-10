@@ -1,4 +1,5 @@
 using Autofac;
+using myFeed.Repositories;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Implementations;
 
@@ -8,6 +9,7 @@ namespace myFeed.Services
     {
         protected override void Load(ContainerBuilder builder) 
         {
+            builder.RegisterModule<RepositoriesModule>();
             builder.RegisterType<CachingSettingsService>().As<ISettingsService>().SingleInstance();
             builder.RegisterType<AutofacFactoryService>().As<IFactoryService>().SingleInstance();
             builder.RegisterType<XmlSerializationService>().As<ISerializationService>();

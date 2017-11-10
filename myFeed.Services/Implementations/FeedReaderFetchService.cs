@@ -31,8 +31,8 @@ namespace myFeed.Services.Implementations
                         ImageUri = imageUri,
                         PublishedDate = publishedDate,
                         Content = WebUtility.HtmlDecode(contents),
-                        FeedTitle = WebUtility.HtmlDecode(feed.Title),
-                        Title = WebUtility.HtmlDecode(feedItem.Title),
+                        FeedTitle = WebUtility.HtmlDecode(feed.Title) ?? string.Empty,
+                        Title = WebUtility.HtmlDecode(feedItem.Title) ?? string.Empty,
                         Uri = feedItem.Link,
                         Read = false,
                         Fave = false

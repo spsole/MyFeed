@@ -13,7 +13,7 @@ namespace myFeed.Services.Implementations
             {"MaxArticlesPerFeed", "100"},
             {"NeedBanners", "true"},
             {"LoadImages", "true"},
-            {"NotifyPeriod", "14"},
+            {"NotifyPeriod", "60"},
             {"Theme", "default"},
             {"FontSize", "17"}
         };

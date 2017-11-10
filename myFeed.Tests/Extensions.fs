@@ -4,7 +4,6 @@ open System
 open System.IO
 open System.Linq
 open System.Reflection
-
 open Xunit
 open Xunit.Sdk
 open NSubstitute

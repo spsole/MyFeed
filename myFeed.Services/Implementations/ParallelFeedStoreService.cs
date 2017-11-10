@@ -27,19 +27,19 @@ namespace myFeed.Services.Implementations
         public Task<Tuple<IEnumerable<Exception>, IOrderedEnumerable<Article>>> LoadAsync(
             IEnumerable<Channel> fetchableChannelsEnumerable) => Task.Run(async () =>
         {
+            // Remove extra saved articles and save changes based on max articles allowed.
             var maxArticleCount = await _settingsService.GetAsync<int>("MaxArticlesPerFeed");
-            var channels = fetchableChannelsEnumerable.Select(i => 
-            {
-                // Remove extra saved articles and save changes.
-                if (i.Articles.Count <= maxArticleCount) return i;
-                i.Articles = i.Articles
-                    .OrderByDescending(x => x.PublishedDate)
-                    .Take(maxArticleCount).ToList();
-                _categoriesRepository.UpdateChannelAsync(i);
-                return i;
-            });
+            var channels = fetchableChannelsEnumerable.ToList();
+            await Task.WhenAll(channels
+                .Where(i => i.Articles.Count > maxArticleCount)
+                .Select(i => {
+                    i.Articles = i.Articles
+                        .OrderByDescending(x => x.PublishedDate)
+                        .Take(maxArticleCount).ToList();
+                    return _categoriesRepository.UpdateChannelAsync(i);
+                }));
 
-            // Read items into lookup using title and date as keys.
+            // Form lookup with trimmed title and feed as keys.
             var existingLookup = channels.SelectMany(i => i.Articles)
                 .ToLookup(i => (i.Title?.Trim(), i.FeedTitle?.Trim()));
 
@@ -52,11 +52,10 @@ namespace myFeed.Services.Implementations
                         (x.Title?.Trim(), x.FeedTitle?.Trim())))
                     .ToArray()))
                 .ToList();
-                
+
             // Save received distinct items into database.
-            foreach (var grouping in distinctGroupping) 
-                await _categoriesRepository.InsertArticleRangeAsync(
-                    grouping.Item1, grouping.Item2);
+            await Task.WhenAll(distinctGroupping.Select(i => _categoriesRepository
+                .InsertArticleRangeAsync(i.Item1, i.Item2)));
 
             // Return global join with both old and new articles.
             var flatternedArticles = distinctGroupping.SelectMany(i => i.Item2);
