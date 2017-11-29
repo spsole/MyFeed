@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using myFeed.Repositories.Models;
+using myFeed.Services.Models;
 
-namespace myFeed.Repositories.Abstractions
+namespace myFeed.Services.Abstractions
 {
     public interface ICategoriesRepository
     {
@@ -21,7 +21,6 @@ namespace myFeed.Repositories.Abstractions
         Task UpdateChannelAsync(Channel channel);
 
         Task InsertArticleRangeAsync(Channel channel, IEnumerable<Article> articles);
-        Task RemoveArticleRangeAsync(Channel channel, IEnumerable<Article> articles);
         Task UpdateArticleAsync(Article article);
     }
 }

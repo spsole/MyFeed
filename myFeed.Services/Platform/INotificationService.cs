@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using myFeed.Repositories.Models;
+using myFeed.Services.Models;
 
 namespace myFeed.Services.Platform
 {

@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using myFeed.Repositories.Models;
+using myFeed.Services.Models;
 
 namespace myFeed.Services.Abstractions
 {
     public interface IFeedStoreService
     {
-        Task<Tuple<IEnumerable<Exception>, IOrderedEnumerable<Article>>> LoadAsync(IEnumerable<Channel> channels);
+        Task<Tuple<IEnumerable<Exception>, IEnumerable<Article>>> LoadAsync(IEnumerable<Channel> channels);
     }
 }

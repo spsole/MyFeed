@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
 using myFeed.ViewModels.Bindables;

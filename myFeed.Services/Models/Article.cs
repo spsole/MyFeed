@@ -1,7 +1,7 @@
 ﻿using System;
 using LiteDB;
 
-namespace myFeed.Repositories.Models
+namespace myFeed.Services.Models
 {
     public sealed class Article
     {

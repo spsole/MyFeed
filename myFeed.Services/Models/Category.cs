@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using LiteDB;
 
-namespace myFeed.Repositories.Models
+namespace myFeed.Services.Models
 {
     public sealed class Category
     {

@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
-using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Bindables;
 using System.Linq;

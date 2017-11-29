@@ -1,29 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>netcoreapp1.0</TargetFramework>
-    </PropertyGroup>
-    <ItemGroup>
-        <Compile Include="Extensions.fs" />
-        <Compile Include="Models.fs" />
-        <Compile Include="Repositories.fs" />
-        <Compile Include="Services.fs" />
-        <Compile Include="Modules.fs" />
-        <Compile Include="ViewModels.fs" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj" />
-        <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj" />
-        <ProjectReference Include="..\myFeed.ViewModels\myFeed.ViewModels.csproj" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="NSubstitute" Version="3.1.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170628-02" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
-        <PackageReference Include="xunit" Version="2.2.0" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="xunit.runner.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Extensions.fs" />
+    <Compile Include="Models.fs" />
+    <Compile Include="Repositories.fs" />
+    <Compile Include="Services.fs" />
+    <Compile Include="Modules.fs" />
+    <Compile Include="Services\CachingSettingsServiceFixture.fs" />
+    <Compile Include="Services\OpmlServiceFixture.fs" />
+    <Compile Include="ViewModels.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj" />
+    <ProjectReference Include="..\myFeed.ViewModels\myFeed.ViewModels.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NSubstitute" Version="3.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170628-02" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="xunit" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

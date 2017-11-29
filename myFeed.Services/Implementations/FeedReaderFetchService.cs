@@ -4,8 +4,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using CodeHollow.FeedReader;
-using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
+using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {

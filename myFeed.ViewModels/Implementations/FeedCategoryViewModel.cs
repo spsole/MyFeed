@@ -1,9 +1,8 @@
 using System.Collections.ObjectModel;
-using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
 using myFeed.ViewModels.Bindables;
-using System.Threading.Tasks;
+using myFeed.Services.Models;
 
 namespace myFeed.ViewModels.Implementations
 {

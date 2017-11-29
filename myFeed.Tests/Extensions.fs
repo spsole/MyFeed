@@ -145,7 +145,6 @@ module Domain =
     open Dependency
     open myFeed.Services
     open myFeed.Services.Platform
-    open myFeed.Repositories
     open myFeed.ViewModels       
 
     /// Single instance LiteDatabase connection.
@@ -167,7 +166,6 @@ module Domain =
     /// Creates builder for integration testing.
     let createBuilderForIntegrationTesting() =
         ContainerBuilder()  
-        |> also registerModule<RepositoriesModule>
         |> also registerModule<ServicesModule>
         |> also registerModule<ViewModelsModule> 
         |> also registerMocks

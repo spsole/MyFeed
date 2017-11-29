@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
+using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
@@ -24,7 +23,7 @@ namespace myFeed.Services.Implementations
             _settingsService = settingsService;
         }
         
-        public Task<Tuple<IEnumerable<Exception>, IOrderedEnumerable<Article>>> LoadAsync(
+        public Task<Tuple<IEnumerable<Exception>, IEnumerable<Article>>> LoadAsync(
             IEnumerable<Channel> fetchableChannelsEnumerable) => Task.Run(async () =>
         {
             // Remove extra saved articles and save changes based on max articles allowed.
@@ -60,7 +59,7 @@ namespace myFeed.Services.Implementations
             // Return global join with both old and new articles.
             var flatternedArticles = distinctGroupping.SelectMany(i => i.Item2);
             var errors = grouppedArticles.Select(i => i.Item2);
-            return new Tuple<IEnumerable<Exception>, IOrderedEnumerable<Article>>(
+            return new Tuple<IEnumerable<Exception>, IEnumerable<Article>>(
                 errors, existingLookup
                 .SelectMany(i => i)
                 .Concat(flatternedArticles)

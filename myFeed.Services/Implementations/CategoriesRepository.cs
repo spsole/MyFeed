@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Models;
 using LiteDB;
+using myFeed.Services.Abstractions;
+using myFeed.Services.Models;
 
-namespace myFeed.Repositories.Implementations
+namespace myFeed.Services.Implementations
 {
     public sealed class CategoriesRepository : ICategoriesRepository
     {

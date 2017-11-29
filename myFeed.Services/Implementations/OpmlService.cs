@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 

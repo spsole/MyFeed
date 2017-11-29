@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
+using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {

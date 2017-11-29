@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using myFeed.Repositories.Models;
+using myFeed.Services.Models;
 
-namespace myFeed.Repositories.Abstractions
+namespace myFeed.Services.Abstractions
 {
     public interface ISettingsRepository
     {

@@ -1,6 +1,6 @@
 ﻿using System;
-using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Models;
+using myFeed.Services.Abstractions;
+using myFeed.Services.Models;
 using myFeed.Services.Platform;
 using myFeed.ViewModels.Bindables;
 

@@ -3,7 +3,6 @@
     <TargetFramework>netstandard1.3</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj" />
     <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj" />
   </ItemGroup>
   <ItemGroup>

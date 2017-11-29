@@ -10,154 +10,10 @@ open System.Threading.Tasks
 open System.Collections.Generic
 open myFeed.Tests.Extensions
 open myFeed.Tests.Extensions.Domain
-open myFeed.Repositories.Abstractions
-open myFeed.Repositories.Models
 open myFeed.Services.Abstractions
 open myFeed.Services.Implementations
 open myFeed.Services.Platform
 open myFeed.Services.Models
-
-module CachingSettingsServiceFixture =
-
-    [<Fact>]
-    let ``should resolve default values from received defaults service``() =    
-        
-        let defaults = Substitute.For<IDefaultsService>()
-        defaults.DefaultSettings.Returns(dict
-            [ "Foo", "StoredFoo"; 
-              "Bar", "StoredBar" ] |> Dictionary<_, _>) 
-            |> ignore
-
-        let service = produce<CachingSettingsService> [defaults]
-        service.GetAsync("Foo").Result |> Should.equal "StoredFoo"
-        service.GetAsync("Bar").Result |> Should.equal "StoredBar"
-
-    [<Fact>]
-    let ``should put new value into cache when set method is called``() =
-
-        let service = produce<CachingSettingsService> []
-        service.SetAsync("Zoo", "StoredZoo").Wait()
-        service.GetAsync("Zoo").Result |> Should.equal "StoredZoo"
-        
-    [<Fact>]
-    let ``should support generic convertible numbers serialization``() =
-
-        let service = produce<CachingSettingsService> []
-        service.SetAsync("Foo", 42).Wait()
-        service.GetAsync<int>("Foo").Result |> Should.equal 42    
-
-    [<Fact>]
-    let ``should support floating point numbers serialization``() =
-
-        let service = produce<CachingSettingsService> []
-        service.SetAsync<float>("Foo", 42.53).Wait()
-        service.GetAsync<float>("Foo").Result |> Should.equal 42.53
-        
-    [<Fact>]
-    let ``should support bytes serialization also``() =
-
-        let service = produce<CachingSettingsService> []
-        service.SetAsync<byte>("Foo", 1uy).Wait()
-        service.GetAsync<byte>("Foo").Result |> Should.equal 1uy
-
-    [<Fact>]
-    let ``should throw when trying to extract unknown value``() =    
-
-        let service = produce<CachingSettingsService> []
-        fun () -> service.GetAsync("Unknown").Result |> ignore
-        |> Should.throw<AggregateException>
-        
-    [<Fact>]
-    let ``should query the database only once when using get method``() =
-
-        let mutable counter = 0
-        let settings = Substitute.For<ISettingsRepository>() 
-        settings.When(fun x -> x.GetByKeyAsync("Foo") |> ignore)
-                .Do(fun _ -> counter <- counter + 1)
-
-        let defaults = Substitute.For<IDefaultsService>()
-        defaults.DefaultSettings.Returns(dict["Foo", "Bar"] |> Dictionary<_, _>) |> ignore
-
-        let service = produce<CachingSettingsService> [settings; defaults]
-        service.GetAsync("Foo").Result |> Should.equal "Bar"
-        service.GetAsync("Foo").Result |> Should.equal "Bar"
-        service.GetAsync("Foo").Result |> Should.equal "Bar"
-        counter |> Should.equal 1
-
-    [<Fact>]
-    let ``should lock repository access from multiple threads and query db only once``() =    
-
-        let mutable counter = 0
-        let settings = Substitute.For<ISettingsRepository>() 
-        settings.When(fun x -> x.GetByKeyAsync("Foo") |> ignore)
-                .Do(fun _ -> counter <- counter + 1)
-
-        let defaults = Substitute.For<IDefaultsService>()
-        defaults.DefaultSettings.Returns(dict["Foo", "Bar"] |> Dictionary<_, _>) |> ignore
-
-        let service = produce<CachingSettingsService> [settings; defaults]
-
-        // Access service getter 3 times at once from different threads.
-        let thread = fun () -> Task.Run(fun () -> service.GetAsync("Foo").Result)
-        Task.WhenAll([thread(); thread(); thread()]) |> ignore
-
-        // Counter should equal 1, not four. Lock should work properly.
-        service.GetAsync("Foo").Result |> Should.equal "Bar"
-        Should.equal 1 counter
-
-module OpmlServiceFixture =
-
-    [<Fact>]
-    let ``should be able to export opml feeds``() =
-
-        let categories = Substitute.For<ICategoriesRepository>()
-        categories.GetAllAsync().Returns(
-            [ Category(Title="Foo"); 
-              Category(Title="Bar", Channels=toList
-                [| Channel(Uri="http://example.com/rss") |]) ]
-            |> fun seq -> seq.OrderBy(fun i -> i.Title)
-            |> Task.FromResult) 
-            |> ignore
-
-        let mutable opml = null
-        let serializer = Substitute.For<ISerializationService>()
-        serializer.When(fun x -> x.Serialize<Opml>(Arg.Any(), Arg.Any()) |> ignore)     
-                  .Do(fun x -> opml <- x.Arg<Opml>())
-
-        let service = produce<OpmlService> [categories; serializer]
-        let response = service.ExportOpmlFeedsAsync(new MemoryStream()).Result
-
-        Should.equal true response
-        Should.equal 2 opml.Body.Count
-        Should.equal "Bar" opml.Body.[0].Title
-        Should.equal "Foo" opml.Body.[1].Title
-        Should.equal 1 opml.Body.[0].ChildOutlines.Count
-        Should.equal "example.com" opml.Body.[0].ChildOutlines.[0].Title
-        Should.equal "http://example.com" opml.Body.[0].ChildOutlines.[0].HtmlUrl
-        Should.equal "http://example.com/rss" opml.Body.[0].ChildOutlines.[0].XmlUrl
-
-    [<Fact>]
-    let ``should be able to import opml feeds``() =    
-
-        let serializer = Substitute.For<ISerializationService>()
-        serializer.Deserialize<Opml>(Arg.Any()).Returns(
-            Opml(Body=toList
-                [ OpmlOutline(XmlUrl="http://foo.com");
-                  OpmlOutline(XmlUrl="https://bar.com") ])) 
-            |> ignore
-
-        let mutable category = null
-        let categories = Substitute.For<ICategoriesRepository>()
-        categories.When(fun x -> x.InsertAsync(Arg.Any()) |> ignore)
-                  .Do(fun x -> category <- x.Arg<Category>())
-
-        let service = produce<OpmlService> [serializer; categories]
-        let response = service.ImportOpmlFeedsAsync(new MemoryStream()).Result
-
-        Should.equal true response
-        Should.equal 2 category.Channels.Count 
-        Should.equal "http://foo.com" category.Channels.[0].Uri
-        Should.equal "https://bar.com" category.Channels.[1].Uri
 
 module FeedlySearchServiceFixture =
 
@@ -443,8 +299,8 @@ module BackgroundServiceFixture =
         let articles = [ Article(Title="Foo", PublishedDate=DateTime.Now);
                          Article(Title="Bar", PublishedDate=DateTime.MaxValue) ]
         let store = Substitute.For<IFeedStoreService>()
-        store.LoadAsync(Arg.Any()).Returns(
-            (null, articles.OrderBy(fun x -> x.Id)) 
+        store.LoadAsync(Arg.Any()).Returns( 
+            (null, articles :> seq<_>) 
             |> Task.FromResult) 
             |> ignore
 
@@ -470,7 +326,7 @@ module BackgroundServiceFixture =
         let articles = [ Article(Title="Foo", PublishedDate=DateTime.MinValue) ]
         let store = Substitute.For<IFeedStoreService>()
         store.LoadAsync(Arg.Any()).Returns(
-            (null, articles.OrderBy(fun x -> x.Id)) 
+            (null, articles :> seq<_>) 
             |> Task.FromResult) 
             |> ignore
 

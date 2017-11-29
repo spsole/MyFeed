@@ -1,5 +1,5 @@
-﻿using myFeed.Repositories.Models;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using myFeed.Services.Models;
 
 namespace myFeed.Services.Abstractions
 {

@@ -87,3 +87,6 @@ Temporary Items
 *.pfx
 *.appxmanifest
 myFeed.Views.Uwp/Package.StoreAssociation.xml
+
+myFeed.Tests/Services/OpmlServiceFixture.fs
+myFeed.Tests/Services/CachingSettingsServiceFixture.fs

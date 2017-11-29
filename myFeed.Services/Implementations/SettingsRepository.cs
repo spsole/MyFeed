@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using LiteDB;
-using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Models;
+using myFeed.Services.Abstractions;
+using myFeed.Services.Models;
 
-namespace myFeed.Repositories.Implementations
+namespace myFeed.Services.Implementations
 {
     public sealed class SettingsRepository : ISettingsRepository
     {
