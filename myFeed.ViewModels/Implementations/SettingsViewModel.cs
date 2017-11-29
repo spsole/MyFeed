@@ -27,7 +27,7 @@ namespace myFeed.ViewModels.Implementations
             ITranslationsService translationsService,
             IFilePickerService filePickerService,
             IPackagingService packagingService,
-            ISettingsService settingsService,
+            ISettingService settingsService,
             IPlatformService platformService,
             IDialogService dialogService,
             IOpmlService opmlService)

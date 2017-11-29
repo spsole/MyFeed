@@ -18,7 +18,7 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Load { get; }
 
         public FaveViewModel(
-            IFavoritesRepository favoritesReposirory,
+            IFavoriteStoreService favoritesReposirory,
             IFactoryService factoryService)
         {
             (IsEmpty, IsLoading) = (false, true);

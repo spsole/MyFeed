@@ -24,11 +24,11 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Open { get; }
 
         public ArticleViewModel(
-            ICategoriesRepository categoriesRepository,
+            ICategoryStoreService categoriesRepository,
             ITranslationsService translationsService,
             INavigationService navigationService,
-            IFavoritesService favoritesService,
-            ISettingsService settingsService,
+            IFavoriteService favoritesService,
+            ISettingService settingsService,
             IPlatformService platformService,
             IDialogService dialogService,
             Article article)

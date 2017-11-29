@@ -8,18 +8,18 @@ namespace myFeed.Services
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<CategoriesRepository>().As<ICategoriesRepository>();
-            builder.RegisterType<FavoritesRepository>().As<IFavoritesRepository>();
-            builder.RegisterType<SettingsRepository>().As<ISettingsRepository>();
+            builder.RegisterType<LiteDbCategoryStoreService>().As<ICategoryStoreService>();
+            builder.RegisterType<LiteDbFavoriteStoreService>().As<IFavoriteStoreService>();
+            builder.RegisterType<LiteDbSettingStoreService>().As<ISettingStoreService>();
             
-            builder.RegisterType<CachingSettingsService>().As<ISettingsService>().SingleInstance();
+            builder.RegisterType<CacheableSettingService>().As<ISettingService>().SingleInstance();
             builder.RegisterType<AutofacFactoryService>().As<IFactoryService>().SingleInstance();
             builder.RegisterType<XmlSerializationService>().As<ISerializationService>();
             builder.RegisterType<ParallelFeedStoreService>().As<IFeedStoreService>();
             builder.RegisterType<FeedReaderFetchService>().As<IFeedFetchService>();
             builder.RegisterType<BackgroundService>().As<IBackgroundService>();
             builder.RegisterType<FeedlySearchService>().As<ISearchService>();
-            builder.RegisterType<FavoritesService>().As<IFavoritesService>();
+            builder.RegisterType<FavoriteService>().As<IFavoriteService>();
             builder.RegisterType<DefaultsService>().As<IDefaultsService>();
             builder.RegisterType<RegexImageService>().As<IImageService>();
             builder.RegisterType<OpmlService>().As<IOpmlService>();

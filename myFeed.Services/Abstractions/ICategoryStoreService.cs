@@ -6,7 +6,7 @@ using myFeed.Services.Models;
 
 namespace myFeed.Services.Abstractions
 {
-    public interface ICategoriesRepository
+    public interface ICategoryStoreService
     {
         Task<IOrderedEnumerable<Category>> GetAllAsync();
         Task<Article> GetArticleByIdAsync(Guid guid);

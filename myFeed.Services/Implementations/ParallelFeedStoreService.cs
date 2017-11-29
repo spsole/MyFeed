@@ -9,14 +9,14 @@ namespace myFeed.Services.Implementations
 {
     public sealed class ParallelFeedStoreService : IFeedStoreService
     {
-        private readonly ICategoriesRepository _categoriesRepository;
+        private readonly ICategoryStoreService _categoriesRepository;
         private readonly IFeedFetchService _feedFetchService;
-        private readonly ISettingsService _settingsService;
+        private readonly ISettingService _settingsService;
         
         public ParallelFeedStoreService(
-            ICategoriesRepository categoriesRepository,
+            ICategoryStoreService categoriesRepository,
             IFeedFetchService feedFetchService,
-            ISettingsService settingsService)
+            ISettingService settingsService)
         {
             _categoriesRepository = categoriesRepository;
             _feedFetchService = feedFetchService;

@@ -5,32 +5,31 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Windows.Storage;
-using myFeed.Repositories.Abstractions;
-using myFeed.Repositories.Models;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
+using myFeed.Services.Models;
 
 namespace myFeed.Views.Uwp.Services
 {
     public class UwpLegacyFileService
     {
         private readonly ISerializationService _serializationService;
-        private readonly ICategoriesRepository _categoriesRepository;
+        private readonly ICategoryStoreService _categoryStoreService;
         private readonly ITranslationsService _translationsService;
-        private readonly IFavoritesService _favoritesService;
+        private readonly IFavoriteService _favoriteService;
         private readonly IDialogService _dialogService;
 
         public UwpLegacyFileService(
-            IDialogService dialogService,
-            IFavoritesService favoritesService,
-            ICategoriesRepository sourcesRepository,
+            ICategoryStoreService categoryStoreService,
+            ISerializationService serializationService,
             ITranslationsService translationsService,
-            ISerializationService serializationService)
+            IFavoriteService favoriteService,
+            IDialogService dialogService)
         {
-            _favoritesService = favoritesService;
-            _serializationService = serializationService;
+            _favoriteService = favoriteService;
             _translationsService = translationsService;
-            _categoriesRepository = sourcesRepository;
+            _serializationService = serializationService;
+            _categoryStoreService = categoryStoreService;
             _dialogService = dialogService;
         }
 
@@ -85,7 +84,7 @@ namespace myFeed.Views.Uwp.Services
                     Title = category.Title,
                     Channels = category.Websites?.Select(source => new Channel {Notify = source.Notify, Uri = source.Uri}).ToList()
                 });
-                foreach (var category in categories) await _categoriesRepository.InsertAsync(category);
+                foreach (var category in categories) await _categoryStoreService.InsertAsync(category);
             }
 
             var files = new[] {"config", "datecutoff", "read.txt", "saved_cache", "sites"};
@@ -118,7 +117,7 @@ namespace myFeed.Views.Uwp.Services
                 Title = model.Title, Uri = model.Uri
             });
 
-            foreach (var article in articleEntities) await _favoritesService.Insert(article);
+            foreach (var article in articleEntities) await _favoriteService.Insert(article);
             await favoritesFolder.DeleteAsync();
             return true;
         });

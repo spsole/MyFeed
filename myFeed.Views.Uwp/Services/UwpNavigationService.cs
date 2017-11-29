@@ -7,7 +7,6 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using myFeed.Repositories.Abstractions;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
 using myFeed.ViewModels.Implementations;
@@ -37,15 +36,15 @@ namespace myFeed.Views.Uwp.Services
             {typeof(ChannelsViewModel), Symbol.List},
             {typeof(SearchViewModel), Symbol.Zoom}
         };
-        private readonly ICategoriesRepository _categoriesRepository;
+        private readonly ICategoryStoreService _categoryStoreService;
         private readonly IFactoryService _factoryService;
 
         public UwpNavigationService(
-            ICategoriesRepository categoriesRepository,
+            ICategoryStoreService categoryStoreService,
             IFactoryService factoryService)
         {
             _factoryService = factoryService;
-            _categoriesRepository = categoriesRepository;
+            _categoryStoreService = categoryStoreService;
 
             var systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -78,7 +77,7 @@ namespace myFeed.Views.Uwp.Services
                     NavigateFrame((Frame)Window.Current.Content);
                     break;
                 case nameof(ArticleViewModel) when arg is Guid guid:
-                    var article = await _categoriesRepository.GetArticleByIdAsync(guid);
+                    var article = await _categoryStoreService.GetArticleByIdAsync(guid);
                     if (article == null) return;
                     var viewModel = _factoryService.CreateInstance<ArticleViewModel>(article);
                     if (GetChild<Frame>(Window.Current.Content, 1) == null) await Navigate<FeedViewModel>();

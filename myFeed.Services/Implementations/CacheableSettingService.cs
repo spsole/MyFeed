@@ -8,20 +8,20 @@ using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
-    public sealed class CachingSettingsService : ISettingsService
+    public sealed class CacheableSettingService : ISettingService
     {
         private readonly IReadOnlyDictionary<string, string> _defaultConfiguration;
         private readonly IDictionary<string, string> _cachedConfiguration;
-        private readonly ISettingsRepository _settingsRepository;
+        private readonly ISettingStoreService _settingsRepository;
         private readonly SemaphoreSlim _semaphoreSlim;
         
-        public CachingSettingsService(
-            ISettingsRepository settingsRepository,
+        public CacheableSettingService(
+            ISettingStoreService settingsRepository,
             IDefaultsService defaultsService)
         {
             _settingsRepository = settingsRepository;
-            _cachedConfiguration = new Dictionary<string, string>();
             _defaultConfiguration = defaultsService.DefaultSettings;
+            _cachedConfiguration = new Dictionary<string, string>();
             _semaphoreSlim = new SemaphoreSlim(1, 1);
         }
         

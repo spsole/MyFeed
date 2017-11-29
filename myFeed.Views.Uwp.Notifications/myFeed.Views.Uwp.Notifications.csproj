@@ -117,10 +117,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj">
-      <Project>{7905a6f6-84c1-4a79-97fa-e9abf586cbed}</Project>
-      <Name>myFeed.Repositories</Name>
-    </ProjectReference>
     <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj">
       <Project>{c92e164b-4611-4770-9520-df974255fc8a}</Project>
       <Name>myFeed.Services</Name>

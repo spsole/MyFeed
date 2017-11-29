@@ -4,14 +4,14 @@ using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
-    public sealed class FavoritesService : IFavoritesService
+    public sealed class FavoriteService : IFavoriteService
     {
-        private readonly ICategoriesRepository _categoriesRepository;
-        private readonly IFavoritesRepository _favoritesRepository;
+        private readonly ICategoryStoreService _categoriesRepository;
+        private readonly IFavoriteStoreService _favoritesRepository;
 
-        public FavoritesService(
-            ICategoriesRepository categoriesRepository,
-            IFavoritesRepository favoritesRepository)
+        public FavoriteService(
+            ICategoryStoreService categoriesRepository,
+            IFavoriteStoreService favoritesRepository)
         {
             _categoriesRepository = categoriesRepository;
             _favoritesRepository = favoritesRepository;

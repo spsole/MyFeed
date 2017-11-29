@@ -5,22 +5,19 @@ using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
-    public sealed class SettingsRepository : ISettingsRepository
+    public sealed class LiteDbSettingStoreService : ISettingStoreService
     {
         private readonly LiteDatabase _liteDatabase;
         
-        public SettingsRepository(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
+        public LiteDbSettingStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
 
         public Task<Setting> GetByKeyAsync(string key) => Task.Run(() => _liteDatabase
-            .GetCollection<Setting>()
-            .FindOne(i => i.Key == key));
+            .GetCollection<Setting>().FindOne(i => i.Key == key));
 
         public Task InsertAsync(Setting setting) => Task.Run(() => _liteDatabase
-            .GetCollection<Setting>()
-            .Insert(setting));
+            .GetCollection<Setting>().Insert(setting));
 
         public Task UpdateAsync(Setting setting) => Task.Run(() => _liteDatabase
-            .GetCollection<Setting>()
-            .Update(setting));
+            .GetCollection<Setting>().Update(setting));
     }
 }

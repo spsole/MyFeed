@@ -4,7 +4,7 @@ using myFeed.Services.Models;
 
 namespace myFeed.Services.Abstractions
 {
-    public interface IFavoritesRepository
+    public interface IFavoriteStoreService
     {
         Task<IEnumerable<Article>> GetAllAsync();
         Task InsertAsync(Article article);

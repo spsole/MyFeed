@@ -19,7 +19,7 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Load { get; }
 
         public ChannelsViewModel(
-            ICategoriesRepository categoriesRepository,
+            ICategoryStoreService categoriesRepository,
             ITranslationsService translationsService,
             INavigationService navigationService,
             IFactoryService factoryService,

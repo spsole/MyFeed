@@ -11,10 +11,10 @@ namespace myFeed.Services.Implementations
     public sealed class OpmlService : IOpmlService
     {
         private readonly ISerializationService _serializationService;
-        private readonly ICategoriesRepository _categoriesRepository;
+        private readonly ICategoryStoreService _categoriesRepository;
 
         public OpmlService(
-            ICategoriesRepository categoriesRepository,
+            ICategoryStoreService categoriesRepository,
             ISerializationService serializationService)
         {
             _categoriesRepository = categoriesRepository;

@@ -8,31 +8,24 @@ using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
-    public sealed class CategoriesRepository : ICategoriesRepository
+    public sealed class LiteDbCategoryStoreService : ICategoryStoreService
     {
         private readonly LiteDatabase _liteDatabase;
         
-        public CategoriesRepository(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
+        public LiteDbCategoryStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
 
         public Task<IOrderedEnumerable<Category>> GetAllAsync() => Task.Run(() => _liteDatabase
-            .GetCollection<Category>()
-            .FindAll()
-            .OrderBy(i => i.Order));
+            .GetCollection<Category>().FindAll().OrderBy(i => i.Order));
 
         public Task<Article> GetArticleByIdAsync(Guid guid) => Task.Run(() => _liteDatabase
-            .GetCollection<Category>() 
-            .FindOne(Query.EQ("$.Channels[*].Articles[*]._id", guid))
-            ?.Channels
-            ?.SelectMany(i => i.Articles)
-            ?.First(i => i.Id == guid));
+            .GetCollection<Category>().FindOne(Query.EQ("$.Channels[*].Articles[*]._id", guid))?
+            .Channels?.SelectMany(i => i.Articles).First(i => i.Id == guid));
 
         public Task RemoveAsync(Category category) => Task.Run(() => _liteDatabase
-            .GetCollection<Category>()
-            .Delete(i => i.Id == category.Id));
+            .GetCollection<Category>().Delete(i => i.Id == category.Id));
 
         public Task UpdateAsync(Category category) => Task.Run(() => _liteDatabase
-            .GetCollection<Category>()
-            .Update(category));
+            .GetCollection<Category>().Update(category));
 
         public Task InsertAsync(Category category) => Task.Run(() =>
         {
@@ -78,12 +71,6 @@ namespace myFeed.Services.Implementations
             channel.Articles.AddRange(articles);
             return UpdateChannelAsync(channel);
         });
-
-        public Task RemoveArticleRangeAsync(Channel channel, IEnumerable<Article> articles)
-        {
-            channel.Articles.RemoveAll(i => articles.Any(x => x.Id == i.Id));
-            return UpdateChannelAsync(channel);
-        }
 
         public Task UpdateArticleAsync(Article article) => Task.Run(() =>
         {

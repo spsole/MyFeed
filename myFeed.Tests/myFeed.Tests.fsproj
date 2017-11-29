@@ -3,14 +3,27 @@
     <TargetFramework>netcoreapp1.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Extensions.fs" />
-    <Compile Include="Models.fs" />
-    <Compile Include="Repositories.fs" />
-    <Compile Include="Services.fs" />
-    <Compile Include="Modules.fs" />
-    <Compile Include="Services\CachingSettingsServiceFixture.fs" />
-    <Compile Include="Services\OpmlServiceFixture.fs" />
-    <Compile Include="ViewModels.fs" />
+    <Compile Include="Extensions\Default.fs" />
+    <Compile Include="Extensions\Dependency.fs" />
+    <Compile Include="Extensions\Domain.fs" />
+    <Compile Include="Services\AutofacFactoryTests.fs" />
+    <Compile Include="Services\BackgroundTests.fs" />
+    <Compile Include="Services\CachingSettingsTests.fs" />
+    <Compile Include="Services\DefaultsTests.fs" />
+    <Compile Include="Services\FavoritesTests.fs" />
+    <Compile Include="Services\OpmlTests.fs" />
+    <Compile Include="Services\ParallelFeedStoreTests.fs" />
+    <Compile Include="Services\RegexImageTests.fs" />
+    <Compile Include="Services\XmlSerializationTests.fs" />
+    <Compile Include="Stores\CategoryStoreTests.fs" />
+    <Compile Include="Stores\DatabaseConnectionTests.fs" />
+    <Compile Include="Stores\FavoriteStoreTests.fs" />
+    <Compile Include="Stores\SettingStoreTests.fs" />
+    <Compile Include="ViewModels\FaveViewModelTests.fs" />
+    <Compile Include="ViewModels\CombinedUnitsTests.fs" />
+    <Compile Include="ViewModels\ObervableCommandTests.fs" />
+    <Compile Include="ViewModels\ObservableGroupingTests.fs" />
+    <Compile Include="ViewModels\ObservablePropertyTests.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj" />

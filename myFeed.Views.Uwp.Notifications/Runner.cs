@@ -1,13 +1,12 @@
 ﻿using System;
 using System.IO;
 using Autofac;
-using myFeed.Services;
-using myFeed.Services.Abstractions;
 using Windows.ApplicationModel.Background;
 using Windows.Storage;
 using LiteDB;
-using myFeed.Repositories;
+using myFeed.Services;
 using myFeed.Services.Platform;
+using myFeed.Services.Abstractions;
 
 namespace myFeed.Views.Uwp.Notifications
 {

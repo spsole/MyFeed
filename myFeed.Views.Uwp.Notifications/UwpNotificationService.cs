@@ -4,17 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
-using myFeed.Repositories.Models;
-using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
+using myFeed.Services.Models;
+using myFeed.Services.Abstractions;
 
 namespace myFeed.Views.Uwp.Notifications
 {
     internal sealed class UwpNotificationService : INotificationService
     {
-        private readonly ISettingsService _settingsService;
+        private readonly ISettingService _settingsService;
 
-        public UwpNotificationService(ISettingsService settingsService) => _settingsService = settingsService;
+        public UwpNotificationService(ISettingService settingsService) => _settingsService = settingsService;
 
         public async Task SendNotifications(IEnumerable<Article> articles)
         {
@@ -69,14 +69,14 @@ namespace myFeed.Views.Uwp.Notifications
                 </visual>
             </tile>";
 
-        private static string GetNotificationTemplate(string title, string message, string imageUri, string id) => $@"
+        private static string GetNotificationTemplate(string title, string message, string image, string id) => $@"
             <toast launch='{id}'>
                 <visual>
                     <binding template='ToastGeneric'>
                         <text>{title}</text>
                         <text>{message}</text>
-                        {(Uri.IsWellFormedUriString(imageUri, UriKind.Absolute) 
-                          ? $@"<image src='{imageUri}' placement='appLogoOverride' hint-crop='circle'/>"
+                        {(Uri.IsWellFormedUriString(image, UriKind.Absolute) 
+                          ? $@"<image src='{image}' placement='appLogoOverride' hint-crop='circle'/>"
                           : string.Empty)}
                     </binding>
                 </visual>

@@ -281,10 +281,6 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\myFeed.Repositories\myFeed.Repositories.csproj">
-      <Project>{e7a4d548-bd3a-4046-a444-87490d609f64}</Project>
-      <Name>myFeed.Repositories</Name>
-    </ProjectReference>
     <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj">
       <Project>{1ccb0e94-64ab-4634-8425-648e8752f66e}</Project>
       <Name>myFeed.Services</Name>

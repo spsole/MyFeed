@@ -18,7 +18,7 @@ namespace myFeed.ViewModels.Implementations
 
         public ChannelViewModel(
             IPlatformService platformService,
-            ICategoriesRepository categoriesRepository,
+            ICategoryStoreService categoriesRepository,
             ChannelCategoryViewModel parentViewModel,
             Channel channel)
         {

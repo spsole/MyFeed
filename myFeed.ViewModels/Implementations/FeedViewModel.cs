@@ -18,7 +18,7 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Load { get; }
 
         public FeedViewModel(
-            ICategoriesRepository categoriesRepository,
+            ICategoryStoreService categoriesRepository,
             INavigationService navigationService,
             IFactoryService factoryService)
         {

@@ -3,7 +3,7 @@ using myFeed.Services.Models;
 
 namespace myFeed.Services.Abstractions
 {
-    public interface IFavoritesService
+    public interface IFavoriteService
     {
         Task Insert(Article article);
 

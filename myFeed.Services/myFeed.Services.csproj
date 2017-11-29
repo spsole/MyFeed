@@ -4,10 +4,6 @@
     <ApplicationIcon />
     <Win32Resource />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>
-    </DocumentationFile>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />
     <PackageReference Include="LiteDB" Version="4.0.0" />

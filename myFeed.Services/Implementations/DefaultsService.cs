@@ -5,7 +5,7 @@ using System;
 
 namespace myFeed.Services.Implementations
 {
-    public class DefaultsService : IDefaultsService
+    public sealed class DefaultsService : IDefaultsService
     {
         public IReadOnlyDictionary<string, string> DefaultSettings => new Dictionary<string, string>
         {

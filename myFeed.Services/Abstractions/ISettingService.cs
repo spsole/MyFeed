@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace myFeed.Services.Abstractions
 {
-    public interface ISettingsService
+    public interface ISettingService
     {
         Task SetAsync<TValue>(string key, TValue value) where TValue : IConvertible;
         

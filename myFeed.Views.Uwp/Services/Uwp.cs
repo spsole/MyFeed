@@ -4,8 +4,6 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Autofac;
 using LiteDB;
-using myFeed.Repositories;
-using myFeed.Services;
 using myFeed.ViewModels;
 using myFeed.Services.Platform;
 
@@ -15,10 +13,9 @@ namespace myFeed.Views.Uwp.Services
     {
         private readonly ILifetimeScope _lifetimeScope;
 
-        public Uwp() => _lifetimeScope = Load(new ContainerBuilder()).Build();
-
-        private static ContainerBuilder Load(ContainerBuilder builder)
+        public Uwp()
         {
+            var builder = new ContainerBuilder();
             builder.RegisterModule<ViewModelsModule>();
             builder.RegisterType<UwpTranslationsService>().As<ITranslationsService>().SingleInstance();
             builder.RegisterType<UwpNavigationService>().As<INavigationService>().SingleInstance();
@@ -32,7 +29,7 @@ namespace myFeed.Views.Uwp.Services
             var localFolder = ApplicationData.Current.LocalFolder;
             var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
             builder.Register(x => new LiteDatabase(filePath)).AsSelf().SingleInstance();
-            return builder;
+            _lifetimeScope = builder.Build();
         }
 
         public static Uwp Current => (Uwp)Application.Current.Resources["Locator"];

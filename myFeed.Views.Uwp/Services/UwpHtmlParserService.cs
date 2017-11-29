@@ -20,7 +20,7 @@ namespace myFeed.Views.Uwp.Services
     {
         private readonly ITranslationsService _translationsService;
         private readonly IPlatformService _platformService;
-        private readonly ISettingsService _settingsService;
+        private readonly ISettingService _settingService;
 
         private double _fontSize;
         private bool _loadImages;
@@ -28,11 +28,11 @@ namespace myFeed.Views.Uwp.Services
         public UwpHtmlParserService(
             ITranslationsService translationsService,
             IPlatformService platformService,
-            ISettingsService settingsService)
+            ISettingService settingService)
         {
             _translationsService = translationsService;
             _platformService = platformService;
-            _settingsService = settingsService;
+            _settingService = settingService;
         }
 
         public async Task<IEnumerable<Block>> ParseAsync(string html)
@@ -41,8 +41,8 @@ namespace myFeed.Views.Uwp.Services
             var htmlDocument = new HtmlDocument();
             await Task.Run(async () =>
             {
-                _loadImages = await _settingsService.GetAsync<bool>("LoadImages");
-                _fontSize = await _settingsService.GetAsync<double>("FontSize");
+                _loadImages = await _settingService.GetAsync<bool>("LoadImages");
+                _fontSize = await _settingService.GetAsync<double>("FontSize");
                 htmlDocument.LoadHtml(html);
             });
             var paragraph = new Paragraph { FontSize = _fontSize, LineHeight = _fontSize * 1.5 };

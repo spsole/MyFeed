@@ -19,7 +19,7 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand CopyLink { get; }
         
         public SearchItemViewModel(
-            ICategoriesRepository categoriesRepository,
+            ICategoryStoreService categoriesRepository,
             IPlatformService platformService,
             IDialogService dialogService,
             FeedlyItem feedlyItem)

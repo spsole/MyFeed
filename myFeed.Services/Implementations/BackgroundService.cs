@@ -9,16 +9,16 @@ namespace myFeed.Services.Implementations
 {
     public class BackgroundService : IBackgroundService
     {
-        private readonly ICategoriesRepository _categoriesRepository;
+        private readonly ICategoryStoreService _categoriesRepository;
         private readonly INotificationService _notificationService;
         private readonly IFeedStoreService _feedStoreService;
-        private readonly ISettingsService _settingsService;
+        private readonly ISettingService _settingsService;
 
         public BackgroundService(
-            ICategoriesRepository categoriesRepository,
+            ICategoryStoreService categoriesRepository,
             INotificationService notificationService,
             IFeedStoreService feedStoreService, 
-            ISettingsService settingsService)
+            ISettingService settingsService)
         {
             _categoriesRepository = categoriesRepository;
             _notificationService = notificationService;

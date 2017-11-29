@@ -19,7 +19,7 @@ namespace myFeed.ViewModels.Implementations
             ITranslationsService translationsService,
             INavigationService navigationService,
             IPlatformService platformService,
-            ISettingsService settingsService)
+            ISettingService settingsService)
         {
             SelectedIndex = 0;
             Items = new ObservableCollection<Tuple<string, object, ObservableCommand, Type>>();
