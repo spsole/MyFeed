@@ -9,88 +9,109 @@ open System.Collections.Generic
 open System.Threading.Tasks
 open System
 
-[<Fact>]
-let ``should resolve default values from received defaults service``() =    
+[<Theory>]
+[<InlineData("Byte", 1uy)>]
+[<InlineData("Char", 'x')>]
+[<InlineData("Integer", 42)>]
+[<InlineData("Float", 42.53)>]
+[<InlineData("Boolean", true)>]
+let ``should support all convertible values serialization`` key value =
+
+    let service = produce<CacheableSettingService> []
+    service.SetAsync<IConvertible>(key, value).Wait()
+    Should.equal (string value) (service.GetAsync<string>(key).Result)
+    
+[<Theory>]
+[<InlineData("Foo", "StoredFoo")>]
+[<InlineData("Bar", "StoredBar")>]
+let ``should resolve values from defaults`` key value =    
     
     let defaults = Substitute.For<IDefaultsService>()
-    defaults.DefaultSettings.Returns(dict
-        [ "Foo", "StoredFoo"; 
-          "Bar", "StoredBar" ] |> Dictionary<_, _>) 
-        |> ignore
-
+    defaults.DefaultSettings.Returns(dict [ key, value ] |> Dictionary<_, _>) |> ignore
     let service = produce<CacheableSettingService> [defaults]
-    service.GetAsync("Foo").Result |> Should.equal "StoredFoo"
-    service.GetAsync("Bar").Result |> Should.equal "StoredBar"
+    Should.equal value (service.GetAsync<string>(key).Result)
 
-[<Fact>]
-let ``should put new value into cache when set method is called``() =
+[<Theory>]
+[<InlineData("Foo", "StoredFoo")>]
+[<InlineData("Bar", "StoredBar")>]
+let ``should put new value into cache when set method is called`` key value =
 
     let service = produce<CacheableSettingService> []
-    service.SetAsync("Zoo", "StoredZoo").Wait()
-    service.GetAsync("Zoo").Result |> Should.equal "StoredZoo"
+    service.SetAsync<string>(key, value).Wait()
+    Should.equal value (service.GetAsync<string>(key).Result) 
+   
+[<Theory>]
+[<InlineData("Bar", 0)>]
+[<InlineData("Foo", 10)>]
+[<InlineData("Foo", 42)>]
+let ``should support integer numbers serialization`` key value =
+
+    let service = produce<CacheableSettingService> []
+    service.SetAsync<int>(key, value).Wait()
+    Should.equal value (service.GetAsync<int>(key).Result) 
+
+[<Theory>]
+[<InlineData("Foo", 42.53)>]
+[<InlineData("Bar", 0.123)>]
+let ``should support floating point numbers serialization`` key value =
+
+    let service = produce<CacheableSettingService> []
+    service.SetAsync<float>(key, value).Wait()
+    Should.equal value (service.GetAsync<float>(key).Result)
     
-[<Fact>]
-let ``should support generic convertible numbers serialization``() =
+[<Theory>]
+[<InlineData("Foo", 1uy)>]
+[<InlineData("Bar", 50uy)>]
+let ``should support bytes serialization`` key value =
 
     let service = produce<CacheableSettingService> []
-    service.SetAsync("Foo", 42).Wait()
-    service.GetAsync<int>("Foo").Result |> Should.equal 42    
-
-[<Fact>]
-let ``should support floating point numbers serialization``() =
-
-    let service = produce<CacheableSettingService> []
-    service.SetAsync<float>("Foo", 42.53).Wait()
-    service.GetAsync<float>("Foo").Result |> Should.equal 42.53
+    service.SetAsync<byte>(key, value).Wait()
+    Should.equal value (service.GetAsync<byte>(key).Result) 
     
-[<Fact>]
-let ``should support bytes serialization also``() =
+[<Theory>]
+[<InlineData("UnsetKey")>]
+[<InlineData("AnotherOne")>]
+let ``should throw when trying to extract unset value`` key =    
 
     let service = produce<CacheableSettingService> []
-    service.SetAsync<byte>("Foo", 1uy).Wait()
-    service.GetAsync<byte>("Foo").Result |> Should.equal 1uy
-
-[<Fact>]
-let ``should throw when trying to extract unknown value``() =    
-
-    let service = produce<CacheableSettingService> []
-    fun () -> service.GetAsync("Unknown").Result |> ignore
+    fun () -> service.GetAsync<string>(key).Wait()
     |> Should.throw<AggregateException>
     
-[<Fact>]
-let ``should query the database only once when using get method``() =
+[<Theory>]
+[<InlineData("Foo", "Bar")>]
+[<InlineData("Bar", "Foo")>]
+let ``should query the database only once`` key value =
 
     let mutable counter = 0
     let settings = Substitute.For<ISettingStoreService>() 
-    settings.When(fun x -> x.GetByKeyAsync("Foo") |> ignore)
+    settings.When(fun x -> x.GetByKeyAsync(key) |> ignore)
             .Do(fun _ -> counter <- counter + 1)
 
     let defaults = Substitute.For<IDefaultsService>()
-    defaults.DefaultSettings.Returns(dict["Foo", "Bar"] |> Dictionary<_, _>) |> ignore
+    defaults.DefaultSettings.Returns(dict[key, value] 
+        |> Dictionary<_, _>) |> ignore
 
     let service = produce<CacheableSettingService> [settings; defaults]
-    service.GetAsync("Foo").Result |> Should.equal "Bar"
-    service.GetAsync("Foo").Result |> Should.equal "Bar"
-    service.GetAsync("Foo").Result |> Should.equal "Bar"
-    counter |> Should.equal 1
+    service.GetAsync(key).Result |> Should.equal value
+    service.GetAsync(key).Result |> Should.equal value
+    service.GetAsync(key).Result |> Should.equal value
+    Should.equal 1 counter
 
-[<Fact>]
-let ``should lock repository access from multiple threads and query db only once``() =    
-
+[<Theory>]
+[<InlineData("Foo", "Bar")>]
+[<InlineData("Key", "Value")>]
+let ``should handle concurrent queries correctly`` key value =   
+    
     let mutable counter = 0
     let settings = Substitute.For<ISettingStoreService>() 
-    settings.When(fun x -> x.GetByKeyAsync("Foo") |> ignore)
+    settings.When(fun x -> x.GetByKeyAsync(key) |> ignore)
             .Do(fun _ -> counter <- counter + 1)
 
     let defaults = Substitute.For<IDefaultsService>()
-    defaults.DefaultSettings.Returns(dict["Foo", "Bar"] |> Dictionary<_, _>) |> ignore
+    defaults.DefaultSettings.Returns(dict[key, value] 
+        |> Dictionary<_, _>) |> ignore
 
     let service = produce<CacheableSettingService> [settings; defaults]
-
-    // Access service getter 3 times at once from different threads.
-    let thread = fun () -> Task.Run(fun () -> service.GetAsync("Foo").Result)
-    Task.WhenAll([thread(); thread(); thread()]) |> ignore
-
-    // Counter should equal 1, not four. Lock should work properly.
-    service.GetAsync("Foo").Result |> Should.equal "Bar"
+    let thread = fun () -> Task.Run(fun () -> service.GetAsync<string>(key).Wait())
+    Task.WhenAll([thread(); thread(); thread()]).Wait() |> ignore
     Should.equal 1 counter

@@ -7,7 +7,7 @@ open myFeed.Services.Abstractions
 open myFeed.Services.Models
 open System
 
-let private repository = LiteDbCategoryStoreService <| connection
+let private repository = LiteDbCategoryStoreService connection
 
 [<Fact>]
 [<CleanUpCollection("Category")>]

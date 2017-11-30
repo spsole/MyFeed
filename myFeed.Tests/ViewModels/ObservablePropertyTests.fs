@@ -24,7 +24,7 @@ let ``should not fire property canged event if value is the same``() =
     Should.equal 0 fired
 
 [<Fact>]
-let ``should treat property name as value string``() =
+let ``should treat property name as 'value' string``() =
 
     let property = ObservableProperty(42)
     property.PropertyChanged += fun e -> Should.equal "Value" e.PropertyName

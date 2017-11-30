@@ -8,23 +8,25 @@ open myFeed.Services.Implementations
 open myFeed.Services.Abstractions
  
 [<Fact>]
-let ``should update article entity fave value when adding and removing``() =
-      
-    let article = Article(Fave=false)        
+let ``should update fave property when inserting``() =
+            
     let service = produce<FavoriteService> []
-     
+    let article = Article(Fave=false)  
     service.Insert(article).Wait()
     Should.equal article.Fave true
       
+[<Fact>]
+let ``should update fave property when removing``() =
+    
+    let service = produce<FavoriteService> []
+    let article = Article(Fave=true)  
     service.Remove(article).Wait()
     Should.equal article.Fave false
 
 [<Fact>]
-let ``should insert and remove article via repository``() =
+let ``should insert and remove articles``() =
       
-    let mutable deleted = 0
-    let mutable inserted = 0
-     
+    let mutable deleted, inserted = 0, 0
     let favorites = Substitute.For<IFavoriteStoreService>()
     favorites.When(fun x -> x.InsertAsync(Arg.Any<_>()) |> ignore)
              .Do(fun _ -> inserted <- inserted + 1)

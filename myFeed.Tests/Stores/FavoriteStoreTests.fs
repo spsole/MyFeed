@@ -6,7 +6,7 @@ open myFeed.Services.Implementations
 open myFeed.Services.Models
 open myFeed.Tests.Extensions
 
-let private repository = LiteDbFavoriteStoreService <| connection
+let private repository = LiteDbFavoriteStoreService connection
 
 [<Fact>]
 [<CleanUpCollection("Article")>]

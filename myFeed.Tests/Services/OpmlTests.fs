@@ -10,14 +10,18 @@ open System.Linq
 open System.IO
 open System.Threading.Tasks
 
-[<Fact>]
-let ``should be able to export opml feeds``() =
+[<Theory>]
+[<InlineData("Bar", "Foo", "https://", "site.com", "/feed")>]
+[<InlineData("Abc", "Def", "https://", "example.com", "/news")>]
+[<InlineData("Yii", "Zoo", "http://", "sub.domained.web", "/rss")>]
+let ``should be able to export opml feeds`` first second protocol domain path =
 
+    let uri = sprintf "%s%s%s" protocol domain path
     let categories = Substitute.For<ICategoryStoreService>()
     categories.GetAllAsync().Returns(
-        [ Category(Title="Foo"); 
-          Category(Title="Bar", Channels=toList
-            [| Channel(Uri="http://example.com/rss") |]) ]
+        [ Category(Title=second); 
+          Category(Title=first, Channels=toList
+            [| Channel(Uri=uri) |]) ]
         |> fun seq -> seq.OrderBy(fun i -> i.Title)
         |> Task.FromResult) 
         |> ignore
@@ -32,22 +36,23 @@ let ``should be able to export opml feeds``() =
 
     Should.equal true response
     Should.equal 2 opml.Body.Count
-    Should.equal "Bar" opml.Body.[0].Title
-    Should.equal "Foo" opml.Body.[1].Title
+    Should.equal first opml.Body.[0].Title
+    Should.equal second opml.Body.[1].Title
     Should.equal 1 opml.Body.[0].ChildOutlines.Count
-    Should.equal "example.com" opml.Body.[0].ChildOutlines.[0].Title
-    Should.equal "http://example.com" opml.Body.[0].ChildOutlines.[0].HtmlUrl
-    Should.equal "http://example.com/rss" opml.Body.[0].ChildOutlines.[0].XmlUrl
+    Should.equal domain opml.Body.[0].ChildOutlines.[0].Title
+    Should.equal (protocol + domain) opml.Body.[0].ChildOutlines.[0].HtmlUrl
+    Should.equal uri opml.Body.[0].ChildOutlines.[0].XmlUrl
 
-[<Fact>]
-let ``should be able to import opml feeds``() =    
+[<Theory>]
+[<InlineData("http://foo.bar/rss")>]
+[<InlineData("https://buy.some.beer/feed")>]
+[<InlineData("https://long-domain.any/news")>]
+let ``should be able to import opml feeds`` url =    
 
     let serializer = Substitute.For<ISerializationService>()
     serializer.Deserialize<Opml>(Arg.Any()).Returns(
-        Opml(Body=toList
-            [ OpmlOutline(XmlUrl="http://foo.com");
-              OpmlOutline(XmlUrl="https://bar.com") ])) 
-        |> ignore
+        Opml(Body=toList [ OpmlOutline(XmlUrl=url);
+                           OpmlOutline(XmlUrl=url) ])) |> ignore
 
     let mutable category = null
     let categories = Substitute.For<ICategoryStoreService>()
@@ -59,6 +64,8 @@ let ``should be able to import opml feeds``() =
 
     Should.equal true response
     Should.equal 2 category.Channels.Count 
-    Should.equal "http://foo.com" category.Channels.[0].Uri
-    Should.equal "https://bar.com" category.Channels.[1].Uri
+    Should.equal url category.Channels.[0].Uri
+    Should.equal true category.Channels.[0].Notify
+    Should.equal true category.Channels.[1].Notify
+    Should.equal url category.Channels.[1].Uri
     

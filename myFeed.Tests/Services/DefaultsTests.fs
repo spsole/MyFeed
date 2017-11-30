@@ -4,16 +4,17 @@ open Xunit
 open myFeed.Tests.Extensions
 open myFeed.Services.Implementations
 
-[<Fact>]
-let ``should resolve all needed default settings``() =
+[<Theory>]
+[<InlineData("LoadImages")>]
+[<InlineData("NeedBanners")>]
+[<InlineData("NotifyPeriod")>]
+[<InlineData("MaxArticlesPerFeed")>]
+[<InlineData("LastFetched")>]
+[<InlineData("FontSize")>]
+[<InlineData("Theme")>]
+let ``should resolve all needed default settings`` setting =
 
     let service = produce<DefaultsService> []
     let settings = service.DefaultSettings
+    Should.notBeNull settings.[setting]
     
-    settings.["LoadImages"] |> Should.notBeNull
-    settings.["NeedBanners"] |> Should.notBeNull
-    settings.["NotifyPeriod"] |> Should.notBeNull
-    settings.["MaxArticlesPerFeed"] |> Should.notBeNull
-    settings.["LastFetched"] |> Should.notBeNull
-    settings.["FontSize"] |> Should.notBeNull
-    settings.["Theme"] |> Should.notBeNull

@@ -6,7 +6,7 @@ namespace myFeed.Services.Implementations
 {
     public sealed class RegexImageService : IImageService
     {
-        private const string Pattern = "<img.*?src=[\"'](.+?)[\"'].*?>";
+        private const string Pattern = "<img.*?src=[\"'](http.+?)[\"'].*?>";
         private const RegexOptions Options = RegexOptions.Compiled 
             | RegexOptions.CultureInvariant 
             | RegexOptions.IgnoreCase

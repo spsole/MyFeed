@@ -6,7 +6,8 @@ open myFeed.Services.Implementations
 open myFeed.Services.Models
 open System.IO
 
-[<Fact; CleanUpFile("sample")>]
+[<Fact>]
+[<CleanUpFile("sample")>]
 let ``should serialize typed objects into xml``() =
 
     let service = produce<XmlSerializationService> []
@@ -14,7 +15,8 @@ let ``should serialize typed objects into xml``() =
     service.Serialize<Opml>(instance, File.OpenWrite "sample")
     Should.contain "Foo" (File.ReadAllText "sample")
 
-[<Fact; CleanUpFile("sample")>]
+[<Fact>]
+[<CleanUpFile("sample")>]
 let ``should deserialize typed objects from xml``() =
 
     let service = produce<XmlSerializationService> []

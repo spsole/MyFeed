@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <ApplicationIcon />
-    <Win32Resource />
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.6.2" />

@@ -5,7 +5,7 @@ open myFeed.Services.Implementations
 open myFeed.Services.Models
 open myFeed.Tests.Extensions
 
-let private repository = LiteDbSettingStoreService <| connection
+let private repository = LiteDbSettingStoreService connection
 
 [<Fact>]
 [<CleanUpCollection("Setting")>]

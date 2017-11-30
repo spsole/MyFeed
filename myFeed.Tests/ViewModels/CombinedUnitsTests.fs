@@ -15,6 +15,9 @@ let ``all default services should be registered``() =
     |> also registerModule<ServicesModule> 
     |> also registerMocks
     |> build
+    |> also Should.resolve<ICategoryStoreService>
+    |> also Should.resolve<IFavoriteStoreService>
+    |> also Should.resolve<ISettingStoreService>
     |> also Should.resolve<ISearchService>
     |> also Should.resolve<IOpmlService>
     |> also Should.resolve<ISerializationService>

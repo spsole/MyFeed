@@ -14,9 +14,8 @@ open System
 [<Fact>]
 let ``should send ordered notifications for articles with greater date``() =
 
-    let articles = 
-        [ Article(Title="Foo", PublishedDate=DateTime.Now);
-          Article(Title="Bar", PublishedDate=DateTime.MaxValue) ]
+    let articles = [ Article(Title="Foo", PublishedDate=DateTime.Now);
+                     Article(Title="Bar", PublishedDate=DateTime.MaxValue) ]
           
     let store = Substitute.For<IFeedStoreService>()
     store.LoadAsync(Arg.Any()).Returns((null, articles :> seq<_>) 
@@ -40,10 +39,9 @@ let ``should send ordered notifications for articles with greater date``() =
 [<Fact>]
 let ``should not send notifications for outdated old articles``() =
 
-    let articles = [ Article(Title="Foo", PublishedDate=DateTime.MinValue) ]
+    let articles = Seq.singleton <| Article(PublishedDate=DateTime.MinValue)
     let store = Substitute.For<IFeedStoreService>()
-    store.LoadAsync(Arg.Any()).Returns((null, articles :> seq<_>) 
-        |> Task.FromResult) |> ignore
+    store.LoadAsync(Arg.Any()).Returns(Task.FromResult(null, articles)) |> ignore
 
     let mutable received = null
     let notify = Substitute.For<INotificationService>()
@@ -52,5 +50,4 @@ let ``should not send notifications for outdated old articles``() =
 
     let service = produce<BackgroundService> [store; notify]
     service.CheckForUpdates(DateTime.Now).Wait()
-
     Should.equal 0 received.Count 
