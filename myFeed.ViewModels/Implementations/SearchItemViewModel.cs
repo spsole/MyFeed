@@ -24,15 +24,16 @@ namespace myFeed.ViewModels.Implementations
         
         public SearchItemViewModel(
             ICategoryStoreService categoriesRepository,
+            IMediationService mediationService,
             IPlatformService platformService,
-            IDialogService dialogService,
-            FeedlyItem feedlyItem)
+            IDialogService dialogService)
         {
+            var feedlyItem = mediationService.Get<FeedlyItem>();
+            FeedUrl = feedlyItem.FeedId?.Substring(5);
+            Description = feedlyItem.Description;
+            ImageUri = feedlyItem.IconUrl;
             Url = feedlyItem.Website;
             Title = feedlyItem.Title;
-            ImageUri = feedlyItem.IconUrl;
-            Description = feedlyItem.Description;
-            FeedUrl = feedlyItem.FeedId?.Substring(5);
             
             CopyLink = new ObservableCommand(() => platformService.CopyTextToClipboard(feedlyItem.Website));
             OpenInEdge = new ObservableCommand(async () =>

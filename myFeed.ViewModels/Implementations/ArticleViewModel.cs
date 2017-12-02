@@ -31,12 +31,14 @@ namespace myFeed.ViewModels.Implementations
             ICategoryStoreService categoriesRepository,
             ITranslationsService translationsService,
             INavigationService navigationService,
+            IMediationService mediationService,
             IFavoriteService favoritesService,
-            ISettingService settingsService,
             IPlatformService platformService,
-            IDialogService dialogService,
-            Article article)
+            ISettingService settingsService,
+            IDialogService dialogService)
         {
+            var article = mediationService.Get<Article>();
+            
             Title = article.Title; 
             Feed = article.FeedTitle;
             Content = article.Content;

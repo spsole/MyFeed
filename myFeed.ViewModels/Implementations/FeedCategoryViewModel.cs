@@ -23,12 +23,14 @@ namespace myFeed.ViewModels.Implementations
 
         public FeedCategoryViewModel(
             INavigationService navigationService,
+            IMediationService mediationService,
             IFeedStoreService feedStoreService,
-            IFactoryService factoryService,
-            Category category)
+            IFactoryService factoryService)
         {
-            Title = category.Title;
+            var category = mediationService.Get<Category>();
             (IsLoading, IsEmpty) = (true, false);
+            Title = category.Title;
+            
             Items = new ObservableCollection<ArticleViewModel>();
             OpenSources = new ObservableCommand(navigationService.Navigate<ChannelsViewModel>);
             Fetch = new ObservableCommand(async () =>

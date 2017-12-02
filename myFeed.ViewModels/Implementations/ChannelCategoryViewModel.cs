@@ -27,11 +27,11 @@ namespace myFeed.ViewModels.Implementations
         public ChannelCategoryViewModel(
             ICategoryStoreService categoriesRepository,
             ITranslationsService translationsService,
+            IMediationService mediationService,
             IFactoryService factoryService,
-            IDialogService dialogService,
-            ChannelsViewModel channelsViewModel,
-            Category category)
+            IDialogService dialogService)
         {
+            var category = mediationService.Get<Category>();
             Category = category;
             Title = category.Title;
             SourceUri = string.Empty;
@@ -53,6 +53,7 @@ namespace myFeed.ViewModels.Implementations
                     translationsService.Resolve("DeleteCategory"),
                     translationsService.Resolve("DeleteElement"));
                 if (!shouldDelete) return;
+                var channelsViewModel = mediationService.Get<ChannelsViewModel>();
                 await categoriesRepository.RemoveAsync(category);
                 channelsViewModel.Items.Remove(this);
             });

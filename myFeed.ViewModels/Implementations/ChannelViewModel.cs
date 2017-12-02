@@ -21,14 +21,14 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand CopyLink { get; }
 
         public ChannelViewModel(
-            IPlatformService platformService,
             ICategoryStoreService categoriesRepository,
-            ChannelCategoryViewModel parentViewModel,
-            Channel channel)
-        {   
-            Url = channel.Uri;
-            Notify = channel.Notify;
+            IMediationService mediationService,
+            IPlatformService platformService)
+        {
+            var channel = mediationService.Get<Channel>();
             Name = new Uri(channel.Uri).Host;
+            Notify = channel.Notify;
+            Url = channel.Uri;
             
             CopyLink = new ObservableCommand(() => platformService.CopyTextToClipboard(channel.Uri));
             OpenInBrowser = new ObservableCommand(async () =>
@@ -40,6 +40,7 @@ namespace myFeed.ViewModels.Implementations
             });
             DeleteSource = new ObservableCommand(async () =>
             {
+                var parentViewModel = mediationService.Get<ChannelCategoryViewModel>();
                 parentViewModel.Items.Remove(this);
                 await categoriesRepository.RemoveChannelAsync(
                     parentViewModel.Category.Value, channel);
@@ -47,8 +48,8 @@ namespace myFeed.ViewModels.Implementations
             Notify.PropertyChanged += async (sender, args) =>
             {
                 channel.Notify = Notify.Value;
-                await categoriesRepository.UpdateAsync(
-                    parentViewModel.Category.Value);
+                var parentViewModel = mediationService.Get<ChannelCategoryViewModel>();
+                await categoriesRepository.UpdateAsync(parentViewModel.Category.Value);
             };
         }
     }
