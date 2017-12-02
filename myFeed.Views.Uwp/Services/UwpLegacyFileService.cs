@@ -8,10 +8,14 @@ using Windows.Storage;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
 using myFeed.Services.Models;
+using System.ComponentModel.Composition;
+using DryIocAttributes;
 
 namespace myFeed.Views.Uwp.Services
 {
-    public class UwpLegacyFileService
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(UwpLegacyFileService))]
+    public sealed class UwpLegacyFileService
     {
         private readonly ISerializationService _serializationService;
         private readonly ICategoryStoreService _categoryStoreService;

@@ -4,9 +4,13 @@ using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using myFeed.Services.Platform;
+using DryIocAttributes;
+using System.ComponentModel.Composition;
 
 namespace myFeed.Views.Uwp.Services
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IFilePickerService))]
     public sealed class UwpFilePickerService : IFilePickerService
     {
         public async Task<Stream> PickFileForReadAsync()

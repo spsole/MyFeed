@@ -13,10 +13,14 @@ using myFeed.ViewModels.Implementations;
 using myFeed.Views.Uwp.Views;
 using Microsoft.Toolkit.Uwp.UI.Extensions;
 using myFeed.Views.Uwp.Controls;
+using System.ComponentModel.Composition;
+using DryIocAttributes;
 
 namespace myFeed.Views.Uwp.Services
 {
-    public class UwpNavigationService : INavigationService
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(INavigationService))]
+    public sealed class UwpNavigationService : INavigationService
     {
         private static readonly IReadOnlyDictionary<Type, Type> Pages = new Dictionary<Type, Type>
         {

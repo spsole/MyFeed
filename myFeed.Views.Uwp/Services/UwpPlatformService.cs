@@ -8,12 +8,16 @@ using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Services.Platform;
+using DryIocAttributes;
+using System.ComponentModel.Composition;
 
 namespace myFeed.Views.Uwp.Services
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IPlatformService))]
     public sealed class UwpPlatformService : IPlatformService
     {
-        private static readonly Dictionary<string, ElementTheme> Themes = new Dictionary<string, ElementTheme>
+        private readonly Dictionary<string, ElementTheme> Themes = new Dictionary<string, ElementTheme>
         {
             {"dark", ElementTheme.Dark},
             {"light", ElementTheme.Light},

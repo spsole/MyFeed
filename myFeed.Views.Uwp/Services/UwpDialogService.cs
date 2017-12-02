@@ -6,9 +6,13 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using myFeed.Services.Platform;
+using System.ComponentModel.Composition;
+using DryIocAttributes;
 
 namespace myFeed.Views.Uwp.Services
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IDialogService))]
     public sealed class UwpDialogService : IDialogService
     {
         private readonly ITranslationsService _translationsService;

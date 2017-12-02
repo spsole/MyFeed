@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using Autofac;
-using Windows.ApplicationModel.Background;
-using Windows.Storage;
+using DryIoc;
 using LiteDB;
-using myFeed.Services;
-using myFeed.Services.Platform;
+using Windows.Storage;
+using Windows.ApplicationModel.Background;
 using myFeed.Services.Abstractions;
+using DryIoc.MefAttributedModel;
+using myFeed.Services;
 
 namespace myFeed.Views.Uwp.Notifications
 {
@@ -15,22 +15,23 @@ namespace myFeed.Views.Uwp.Notifications
         public async void Run(IBackgroundTaskInstance taskInstance)
         {
             var defferal = taskInstance.GetDeferral();
-            try { using (var scope = Load(new ContainerBuilder()))
+            try { using (var scope = Load(new Container()))
                       await scope.Resolve<IBackgroundService>()
                           .CheckForUpdates(DateTime.Now); }
             catch { /* ignored */ }
             finally { defferal.Complete(); }
         }
 
-        private static ILifetimeScope Load(ContainerBuilder builder)
+        private static IContainer Load(IContainer container)
         {
             var connection = "MyFeed.db";
             var localFolder = ApplicationData.Current.LocalFolder;
             var filePath = Path.Combine(localFolder.Path, connection);
-            builder.Register(x => new LiteDatabase(filePath)).AsSelf().SingleInstance();
-            builder.RegisterType<UwpNotificationService>().As<INotificationService>();
-            builder.RegisterModule<ServicesModule>();
-            return builder.Build();
+
+            container.RegisterServices();
+            container.RegisterDelegate(x => new LiteDatabase(filePath), Reuse.Singleton);
+            container.RegisterExports(new[] {typeof(Runner).GetType().GetAssembly()});
+            return container;
         }
     }
 }

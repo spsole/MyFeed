@@ -38,12 +38,11 @@ namespace myFeed.ViewModels.Implementations
             IDialogService dialogService)
         {
             var article = mediationService.Get<Article>();
-            
-            Title = article.Title; 
-            Feed = article.FeedTitle;
-            Content = article.Content;
             PublishedDate = article.PublishedDate;
+            Content = article.Content;
             IsFavorite = article.Fave;
+            Feed = article.FeedTitle;
+            Title = article.Title; 
             IsRead = article.Read;
             
             Open = new ObservableCommand(() => navigationService.Navigate<ArticleViewModel>(this));

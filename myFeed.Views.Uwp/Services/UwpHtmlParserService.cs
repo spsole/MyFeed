@@ -13,9 +13,13 @@ using HtmlAgilityPack;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
 using Microsoft.Toolkit.Uwp.UI.Animations;
+using DryIocAttributes;
+using System.ComponentModel.Composition;
 
 namespace myFeed.Views.Uwp.Services
 {
+    [Reuse(ReuseType.Transient)]
+    [Export(typeof(UwpHtmlParserService))]
     public sealed class UwpHtmlParserService
     {
         private readonly ITranslationsService _translationsService;

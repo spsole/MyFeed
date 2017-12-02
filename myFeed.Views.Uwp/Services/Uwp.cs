@@ -2,42 +2,36 @@
 using System.IO;
 using Windows.Storage;
 using Windows.UI.Xaml;
-using Autofac;
+using DryIoc;
 using LiteDB;
 using myFeed.ViewModels;
 using myFeed.Services.Platform;
+using myFeed.Services;
+using DryIoc.MefAttributedModel;
 
 namespace myFeed.Views.Uwp.Services
 {
-    public class Uwp : IDisposable
+    public class Uwp
     {
-        private readonly ILifetimeScope _lifetimeScope;
+        private readonly IResolver _resolver;
 
         public Uwp()
         {
-            var builder = new ContainerBuilder();
-            builder.RegisterModule<ViewModelsModule>();
-            builder.RegisterType<UwpTranslationsService>().As<ITranslationsService>().SingleInstance();
-            builder.RegisterType<UwpNavigationService>().As<INavigationService>().SingleInstance();
-            builder.RegisterType<UwpFilePickerService>().As<IFilePickerService>();
-            builder.RegisterType<UwpPackagingService>().As<IPackagingService>();
-            builder.RegisterType<UwpPlatformService>().As<IPlatformService>();
-            builder.RegisterType<UwpDialogService>().As<IDialogService>();
-            builder.RegisterType<UwpHtmlParserService>().AsSelf();
-            builder.RegisterType<UwpLegacyFileService>().AsSelf();
+            var container = new Container();
+            container.RegisterServices();
+            container.RegisterViewModels();
+            container.RegisterExports(new[] { typeof(Uwp).GetAssembly() });
 
             var localFolder = ApplicationData.Current.LocalFolder;
             var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
-            builder.Register(x => new LiteDatabase(filePath)).AsSelf().SingleInstance();
-            _lifetimeScope = builder.Build();
+            container.RegisterDelegate(x => new LiteDatabase(filePath), Reuse.Singleton);
+            _resolver = container.WithNoMoreRegistrationAllowed();
         }
 
         public static Uwp Current => (Uwp)Application.Current.Resources["Locator"];
 
-        public object Resolve(Type type) => _lifetimeScope.Resolve(type);
+        public object Resolve(Type type) => _resolver.Resolve(type);
 
-        public T Resolve<T>() => _lifetimeScope.Resolve<T>();
-
-        public void Dispose() => _lifetimeScope?.Dispose();
+        public T Resolve<T>() => _resolver.Resolve<T>();
     }
 }

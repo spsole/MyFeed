@@ -4,10 +4,14 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Email;
 using Windows.System;
 using myFeed.Services.Platform;
+using DryIocAttributes;
+using System.ComponentModel.Composition;
 
 namespace myFeed.Views.Uwp.Services
 {
-    public class UwpPackagingService : IPackagingService
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IPackagingService))]
+    public sealed class UwpPackagingService : IPackagingService
     {
         private const string WindowsMarketUri = "ms-windows-store://review/?ProductId=9nblggh4nw02";
         private const string MailAddress = "worldbeater-dev@yandex.ru";

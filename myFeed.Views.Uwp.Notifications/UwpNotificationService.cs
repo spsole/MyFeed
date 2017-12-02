@@ -7,9 +7,13 @@ using Windows.UI.Notifications;
 using myFeed.Services.Platform;
 using myFeed.Services.Models;
 using myFeed.Services.Abstractions;
+using System.ComponentModel.Composition;
+using DryIocAttributes;
 
 namespace myFeed.Views.Uwp.Notifications
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(INotificationService))]
     internal sealed class UwpNotificationService : INotificationService
     {
         private readonly ISettingService _settingsService;
@@ -52,37 +56,37 @@ namespace myFeed.Views.Uwp.Notifications
         }
 
         private static string GetTileTemplate(string title, string message) => $@"
-            <tile>
-                <visual>
-                    <binding template='TileMedium'>
-                        <text hint-style='captionSubtle'>{title}</text>
-                        <text hint-style='base' hint-wrap='true'>{message}</text>
-                    </binding>
-                    <binding template='TileWide'>
-                        <text hint-style='captionSubtle'>{title}</text>
-                        <text hint-style='base' hint-wrap='true'>{message}</text>
-                    </binding>
-                    <binding template='TileLarge'>
-                        <text hint-style='captionSubtle'>{title}</text>
-                        <text hint-style='base' hint-wrap='true'>{message}</text>
-                    </binding>
-                </visual>
-            </tile>";
+        <tile>
+            <visual>
+                <binding template='TileMedium'>
+                    <text hint-style='captionSubtle'>{title}</text>
+                    <text hint-style='base' hint-wrap='true'>{message}</text>
+                </binding>
+                <binding template='TileWide'>
+                    <text hint-style='captionSubtle'>{title}</text>
+                    <text hint-style='base' hint-wrap='true'>{message}</text>
+                </binding>
+                <binding template='TileLarge'>
+                    <text hint-style='captionSubtle'>{title}</text>
+                    <text hint-style='base' hint-wrap='true'>{message}</text>
+                </binding>
+            </visual>
+        </tile>";
 
         private static string GetNotificationTemplate(string title, string message, string image, string id) => $@"
-            <toast launch='{id}'>
-                <visual>
-                    <binding template='ToastGeneric'>
-                        <text>{title}</text>
-                        <text>{message}</text>
-                        {(Uri.IsWellFormedUriString(image, UriKind.Absolute) 
-                          ? $@"<image src='{image}' placement='appLogoOverride' hint-crop='circle'/>"
-                          : string.Empty)}
-                    </binding>
-                </visual>
-                <actions>
-                    <action activationType='foreground' content='Read more' arguments='{id}'/>
-                </actions>
-            </toast>";
+        <toast launch='{id}'>
+            <visual>
+                <binding template='ToastGeneric'>
+                    <text>{title}</text>
+                    <text>{message}</text>
+                    {(Uri.IsWellFormedUriString(image, UriKind.Absolute) 
+                        ? $@"<image src='{image}' placement='appLogoOverride' hint-crop='circle'/>"
+                        : string.Empty)}
+                </binding>
+            </visual>
+            <actions>
+                <action activationType='foreground' content='Read more' arguments='{id}'/>
+            </actions>
+        </toast>";
     }
 }
