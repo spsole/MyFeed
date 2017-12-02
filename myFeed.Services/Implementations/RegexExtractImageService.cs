@@ -1,9 +1,13 @@
 using System;
+using System.ComponentModel.Composition;
 using System.Text.RegularExpressions;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IImageService))]
     public sealed class RegexImageService : IImageService
     {
         private const string Pattern = "<img.*?src=[\"'](http.+?)[\"'].*?>";

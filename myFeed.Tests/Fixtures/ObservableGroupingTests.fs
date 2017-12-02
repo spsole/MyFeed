@@ -1,4 +1,4 @@
-﻿module ObservableGroupingTests
+﻿module myFeed.Tests.Fixtures.ObservableGroupingTests
 
 open Xunit
 open myFeed.ViewModels.Bindables

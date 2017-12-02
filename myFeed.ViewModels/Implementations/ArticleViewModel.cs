@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.Composition;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 using myFeed.Services.Platform;
@@ -6,6 +8,8 @@ using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
+    [Reuse(ReuseType.Transient)]
+    [Export(typeof(ArticleViewModel))]
     public sealed class ArticleViewModel
     {
         public ObservableProperty<DateTime> PublishedDate { get; }

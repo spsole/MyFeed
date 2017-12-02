@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.Composition;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 using myFeed.Services.Platform;
@@ -6,6 +8,8 @@ using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
+    [Reuse(ReuseType.Transient)]
+    [Export(typeof(ChannelViewModel))]
     public sealed class ChannelViewModel
     { 
         public ObservableProperty<string> Url { get; }
@@ -21,7 +25,7 @@ namespace myFeed.ViewModels.Implementations
             ICategoryStoreService categoriesRepository,
             ChannelCategoryViewModel parentViewModel,
             Channel channel)
-        {
+        {   
             Url = channel.Uri;
             Notify = channel.Notify;
             Name = new Uri(channel.Uri).Host;

@@ -1,7 +1,7 @@
-﻿module myFeed.Tests.ViewModels.CombinedUnitsTests
+﻿module myFeed.Tests.Fixtures.CombinedUnitsTests
 
 open Xunit
-open Autofac
+open DryIoc
 open myFeed.Tests.Extensions
 open myFeed.Services.Abstractions
 open myFeed.Services
@@ -11,10 +11,10 @@ open myFeed.ViewModels.Implementations
 [<Fact>]
 let ``all default services should be registered``() = 
 
-    ContainerBuilder()
-    |> also registerModule<ServicesModule> 
+    use container = new Container()
+    container.RegisterServices()
+    container
     |> also registerMocks
-    |> build
     |> also Should.resolve<ICategoryStoreService>
     |> also Should.resolve<IFavoriteStoreService>
     |> also Should.resolve<ISettingStoreService>
@@ -34,14 +34,14 @@ let ``all default services should be registered``() =
 [<Fact>]
 let ``all default viewmodels should be registered``() =
 
-    ContainerBuilder()
-    |> also registerModule<ViewModelsModule>
+    use container = new Container()
+    container.RegisterServices()
+    container.RegisterViewModels()
+    container    
     |> also registerMocks
-    |> build
     |> also Should.resolve<FaveViewModel>
     |> also Should.resolve<FeedViewModel>
     |> also Should.resolve<SearchViewModel>
     |> also Should.resolve<SettingsViewModel>
     |> also Should.resolve<ChannelsViewModel>
     |> dispose    
-        

@@ -1,4 +1,4 @@
-module myFeed.Tests.Services.BackgroundTests
+module myFeed.Tests.Fixtures.BackgroundTests
 
 open Xunit
 open NSubstitute
@@ -14,16 +14,13 @@ open System
 [<Fact>]
 let ``should send ordered notifications for articles with greater date``() =
 
-    let articles = [ Article(Title="Foo", PublishedDate=DateTime.Now);
-                     Article(Title="Bar", PublishedDate=DateTime.MaxValue) ]
-          
     let store = Substitute.For<IFeedStoreService>()
-    store.LoadAsync(Arg.Any()).Returns((null, articles :> seq<_>) 
-        |> Task.FromResult) |> ignore
+    store.LoadAsync(Arg.Any()).Returns(Task.FromResult(null, 
+        [ Article(Title="Foo", PublishedDate=DateTime.Now);
+          Article(Title="Bar", PublishedDate=DateTime.MaxValue) ] :> seq<_>)) |> ignore
 
     let settings = Substitute.For<ISettingService>()
-    settings.GetAsync(Arg.Any()).Returns(DateTime.MinValue 
-        |> Task.FromResult) |> ignore      
+    settings.GetAsync(Arg.Any()).Returns(Task.FromResult(DateTime.MinValue)) |> ignore      
 
     let mutable received = null
     let notify = Substitute.For<INotificationService>()
@@ -32,16 +29,15 @@ let ``should send ordered notifications for articles with greater date``() =
 
     let service = produce<BackgroundService> [store; settings; notify]
     service.CheckForUpdates(DateTime.Now).Wait()
-
     Should.equal "Foo" received.[0].Title
     Should.equal "Bar" received.[1].Title
 
 [<Fact>]
 let ``should not send notifications for outdated old articles``() =
 
-    let articles = Seq.singleton <| Article(PublishedDate=DateTime.MinValue)
     let store = Substitute.For<IFeedStoreService>()
-    store.LoadAsync(Arg.Any()).Returns(Task.FromResult(null, articles)) |> ignore
+    store.LoadAsync(Arg.Any()).Returns(Task.FromResult(null, 
+        [ Article(PublishedDate=DateTime.MinValue) ] :> seq<_>)) |> ignore
 
     let mutable received = null
     let notify = Substitute.For<INotificationService>()

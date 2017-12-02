@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IOpmlService))]
     public sealed class OpmlService : IOpmlService
     {
         private readonly ISerializationService _serializationService;
@@ -23,7 +27,6 @@ namespace myFeed.Services.Implementations
 
         public async Task<bool> ExportOpmlFeedsAsync(Stream stream)
         {
-            // Initialize new Opml instance and read categories from db.
             var opml = new Opml {Head = new OpmlHead {Title = "Feeds from myFeed App"}};
             var categories = await _categoriesRepository.GetAllAsync();
             var outlines = categories.Select(x => new OpmlOutline
@@ -44,7 +47,6 @@ namespace myFeed.Services.Implementations
                 Text = x.Title
             });
 
-            // Fill opml with categories.
             opml.Body = new List<OpmlOutline>(outlines);
             _serializationService.Serialize(opml, stream);
             return true;
@@ -52,11 +54,9 @@ namespace myFeed.Services.Implementations
 
         public async Task<bool> ImportOpmlFeedsAsync(Stream stream)
         {
-            // Deserialize object from file.
             var opml = _serializationService.Deserialize<Opml>(stream);
             if (opml == null) return false;
 
-            // Process potential categories.
             var categories = new List<Category>();
             opml.Body
                 .Where(i => i.XmlUrl == null && i.HtmlUrl == null)
@@ -76,7 +76,6 @@ namespace myFeed.Services.Implementations
                 .ToList()
                 .ForEach(i => categories.Add(i));
 
-            // Process plain feeds.
             var uncategorized = new Category
             {
                 Title = "Unknown category",
@@ -87,7 +86,6 @@ namespace myFeed.Services.Implementations
             };
             if (uncategorized.Channels.Any()) categories.Add(uncategorized);
 
-            // Insert into database and notify user.
             foreach (var category in categories) 
                 await _categoriesRepository.InsertAsync(category);
             return true;

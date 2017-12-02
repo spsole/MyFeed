@@ -1,9 +1,13 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
+    [Reuse(ReuseType.Transient)]
+    [Export(typeof(SearchViewModel))]
     public sealed class SearchViewModel
     {
         public ObservableCollection<SearchItemViewModel> Items { get; }

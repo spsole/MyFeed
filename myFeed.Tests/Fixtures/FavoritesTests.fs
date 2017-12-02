@@ -1,4 +1,4 @@
-﻿module myFeed.Tests.Services.FavoritesTests
+﻿module myFeed.Tests.Fixtures.FavoritesTests
  
 open Xunit
 open NSubstitute

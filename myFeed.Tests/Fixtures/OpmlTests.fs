@@ -1,4 +1,4 @@
-﻿module myFeed.Tests.Services.OpmlTests
+﻿module myFeed.Tests.Fixtures.OpmlTests
 
 open Xunit
 open NSubstitute
@@ -6,7 +6,6 @@ open myFeed.Services.Abstractions
 open myFeed.Services.Implementations
 open myFeed.Services.Models
 open myFeed.Tests.Extensions
-open System.Linq
 open System.IO
 open System.Threading.Tasks
 
@@ -19,10 +18,8 @@ let ``should be able to export opml feeds`` first second protocol domain path =
     let uri = sprintf "%s%s%s" protocol domain path
     let categories = Substitute.For<ICategoryStoreService>()
     categories.GetAllAsync().Returns(
-        [ Category(Title=second); 
-          Category(Title=first, Channels=toList
-            [| Channel(Uri=uri) |]) ]
-        |> fun seq -> seq.OrderBy(fun i -> i.Title)
+        [ Category(Title=first, Channels=toList[| Channel(Uri=uri) |]);
+          Category(Title=second) ] :> seq<_>
         |> Task.FromResult) 
         |> ignore
 

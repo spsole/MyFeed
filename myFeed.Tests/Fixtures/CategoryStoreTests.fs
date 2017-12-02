@@ -1,9 +1,8 @@
-module myFeed.Tests.Stores.CategoryStoreTests
+module myFeed.Tests.Fixtures.CategoryStoreTests
 
 open Xunit
 open myFeed.Tests.Extensions
 open myFeed.Services.Implementations
-open myFeed.Services.Abstractions
 open myFeed.Services.Models
 open System
 

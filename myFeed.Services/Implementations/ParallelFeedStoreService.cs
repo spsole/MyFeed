@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IFeedStoreService))]
     public sealed class ParallelFeedStoreService : IFeedStoreService
     {
         private readonly ICategoryStoreService _categoriesRepository;

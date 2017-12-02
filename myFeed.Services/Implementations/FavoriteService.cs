@@ -1,9 +1,13 @@
-﻿using myFeed.Services.Abstractions;
+﻿using System.ComponentModel.Composition;
+using myFeed.Services.Abstractions;
 using System.Threading.Tasks;
+using DryIocAttributes;
 using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IFavoriteService))]
     public sealed class FavoriteService : IFavoriteService
     {
         private readonly ICategoryStoreService _categoriesRepository;

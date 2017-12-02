@@ -1,4 +1,4 @@
-module myFeed.Tests.Services.CacheableSettingTests
+module myFeed.Tests.Fixtures.CacheableSettingTests
 
 open Xunit
 open NSubstitute

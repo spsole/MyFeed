@@ -1,4 +1,4 @@
-module myFeed.Tests.Services.ParallelFeedStoreTests
+module myFeed.Tests.Fixtures.ParallelFeedStoreTests
 
 open Xunit
 open NSubstitute

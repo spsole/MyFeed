@@ -2,21 +2,25 @@
 module myFeed.Tests.Extensions.Domain   
 
 open LiteDB
-open Autofac
+open DryIoc
 open Xunit.Sdk
 open System.IO
 open Default
-open Dependency
 open myFeed.Services.Platform
-open myFeed.ViewModels.Implementations
-open myFeed.Services
-open myFeed.ViewModels
+
+/// Registers instance as abstraction.
+let registerInstanceAs<'i> (instance: obj) (builder: Container) =
+    builder.RegisterDelegate<'i>(fun _ -> instance :?> 'i)
+    
+/// Registers mock instance info builder.
+let registerMock<'a when 'a: not struct> (builder: Container) =
+    builder.RegisterDelegate<'a>(fun _ -> NSubstitute.Substitute.For<'a>())
 
 /// Single instance LiteDatabase connection.
 let connection = new LiteDatabase("MyFeed.db")
 
 /// Injects mocks into container builder.
-let registerMocks (builder: ContainerBuilder) =
+let registerMocks (builder: Container) =
     builder 
     |> also (registerInstanceAs<LiteDatabase> (new LiteDatabase("_.db")))
     |> also registerMock<ITranslationsService>
@@ -27,13 +31,6 @@ let registerMocks (builder: ContainerBuilder) =
     |> also registerMock<INotificationService>
     |> also registerMock<IPackagingService>
     |> ignore
-
-/// Creates builder for integration testing.
-let createBuilderForIntegrationTesting() =
-    ContainerBuilder()  
-    |> also registerModule<ServicesModule>
-    |> also registerModule<ViewModelsModule> 
-    |> also registerMocks
 
 /// Attribute that cleans database up before and after test.
 type CleanUpCollectionAttribute (name: string) =

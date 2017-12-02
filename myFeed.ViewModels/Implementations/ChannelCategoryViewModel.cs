@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 using myFeed.Services.Platform;
@@ -7,6 +9,8 @@ using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
+    [Reuse(ReuseType.Transient)]
+    [Export(typeof(ChannelCategoryViewModel))]
     public sealed class ChannelCategoryViewModel
     {
         public ObservableCollection<ChannelViewModel> Items { get; }

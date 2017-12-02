@@ -1,13 +1,17 @@
 ﻿using System;
+using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
 
 namespace myFeed.Services.Implementations
 {
-    public class BackgroundService : IBackgroundService
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IBackgroundService))]
+    public sealed class BackgroundService : IBackgroundService
     {
         private readonly ICategoryStoreService _categoriesRepository;
         private readonly INotificationService _notificationService;

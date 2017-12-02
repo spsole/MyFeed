@@ -1,4 +1,4 @@
-module myFeed.Tests.ViewModels.FaveViewModelTests
+module myFeed.Tests.Fixtures.FaveViewModelTests
 
 open Xunit
 open NSubstitute

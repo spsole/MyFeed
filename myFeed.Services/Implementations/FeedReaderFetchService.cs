@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using CodeHollow.FeedReader;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IFeedFetchService))]
     public sealed class FeedReaderFetchService : IFeedFetchService
     {
         private readonly IImageService _imageService;

@@ -1,11 +1,15 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
 using System.Globalization;
 using myFeed.Services.Abstractions;
 using myFeed.ViewModels.Bindables;
 using System.Linq;
+using DryIocAttributes;
 
 namespace myFeed.ViewModels.Implementations
 {
+    [Reuse(ReuseType.Transient)]
+    [Export(typeof(FaveViewModel))]
     public sealed class FaveViewModel
     {
         public ObservableCollection<ObservableGrouping<string, ArticleViewModel>> Items { get; }

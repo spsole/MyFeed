@@ -2,9 +2,13 @@
 using myFeed.Services.Abstractions;
 using System.Globalization;
 using System;
+using System.ComponentModel.Composition;
+using DryIocAttributes;
 
 namespace myFeed.Services.Implementations
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(IDefaultsService))]
     public sealed class DefaultsService : IDefaultsService
     {
         public IReadOnlyDictionary<string, string> DefaultSettings => new Dictionary<string, string>

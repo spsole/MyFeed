@@ -2,7 +2,7 @@
 module myFeed.Tests.Extensions.Default
 
 open Xunit
-open Autofac
+open DryIoc
 open System
 open System.Linq
 open System.Reflection
@@ -73,7 +73,7 @@ type Should =
     static member notBeEmpty<'a, 'b when 'a :> seq<'b>> (ls: 'a) = Assert.NotEmpty   
     
     /// Ensures that particular component has been already registered.
-    static member resolve<'a> (scope: ILifetimeScope) = scope.Resolve<'a>() |> Assert.NotNull  
+    static member resolve<'a> (scope: IResolver) = scope.Resolve<'a>() |> Assert.NotNull  
     
     /// Asserts that action throws inner exception of certain type.
     static member throwInner<'e when 'e :> exn> (action: unit -> unit) =

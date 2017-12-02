@@ -1,31 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using DryIocAttributes;
 using LiteDB;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(ICategoryStoreService))]
     public sealed class LiteDbCategoryStoreService : ICategoryStoreService
     {
         private readonly LiteDatabase _liteDatabase;
         
         public LiteDbCategoryStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
 
-        public Task<IOrderedEnumerable<Category>> GetAllAsync() => Task.Run(() => _liteDatabase
-            .GetCollection<Category>().FindAll().OrderBy(i => i.Order));
+        public Task<IEnumerable<Category>> GetAllAsync() => Task.Run(() => 
+        {
+            var collection = _liteDatabase.GetCollection<Category>();
+            return collection.FindAll().OrderBy(i => i.Order).AsEnumerable();
+        });
 
-        public Task<Article> GetArticleByIdAsync(Guid guid) => Task.Run(() => _liteDatabase
-            .GetCollection<Category>().FindOne(Query.EQ("$.Channels[*].Articles[*]._id", guid))?
-            .Channels?.SelectMany(i => i.Articles).First(i => i.Id == guid));
+        public Task<Article> GetArticleByIdAsync(Guid guid) => Task.Run(() =>
+        {
+            var collection = _liteDatabase.GetCollection<Category>();
+            var category = collection.FindOne(Query.EQ("$.Channels[*].Articles[*]._id", guid));
+            return category?.Channels?.SelectMany(i => i.Articles).First(i => i.Id == guid);
+        });
 
-        public Task RemoveAsync(Category category) => Task.Run(() => _liteDatabase
-            .GetCollection<Category>().Delete(i => i.Id == category.Id));
+        public Task RemoveAsync(Category category) => Task.Run(() =>
+        {
+            var collection = _liteDatabase.GetCollection<Category>();
+            collection.Delete(i => i.Id == category.Id);
+        });
 
-        public Task UpdateAsync(Category category) => Task.Run(() => _liteDatabase
-            .GetCollection<Category>().Update(category));
+        public Task UpdateAsync(Category category) => Task.Run(() =>
+        {
+            var collection = _liteDatabase.GetCollection<Category>();
+            collection.Update(category);
+        });
 
         public Task InsertAsync(Category category) => Task.Run(() =>
         {

@@ -1,4 +1,4 @@
-module myFeed.Tests.Services.RegexImageTests
+module myFeed.Tests.Fixtures.RegexImageTests
 
 open Xunit
 open myFeed.Tests.Extensions

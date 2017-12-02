@@ -8,7 +8,7 @@ namespace myFeed.Services.Abstractions
 {
     public interface ICategoryStoreService
     {
-        Task<IOrderedEnumerable<Category>> GetAllAsync();
+        Task<IEnumerable<Category>> GetAllAsync();
         Task<Article> GetArticleByIdAsync(Guid guid);
         
         Task RearrangeAsync(IEnumerable<Category> categories);

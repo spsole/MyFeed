@@ -1,4 +1,4 @@
-module myFeed.Tests.ViewModels.ObservablePropertyTests
+module myFeed.Tests.Fixtures.ObservablePropertyTests
 
 open Xunit
 open myFeed.ViewModels.Bindables

@@ -1,10 +1,14 @@
 using System;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Xml.Serialization;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 
 namespace myFeed.Services.Implementations
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(ISerializationService))]
     public sealed class XmlSerializationService : ISerializationService
     {
         public void Serialize<TObject>(TObject instance, Stream stream)

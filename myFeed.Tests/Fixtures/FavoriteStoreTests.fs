@@ -1,20 +1,21 @@
-﻿module myFeed.Tests.Stores.FavoriteStoreTests
+﻿module myFeed.Tests.Fixtures.FavoriteStoreTests
 
 open Xunit
-open myFeed.Services.Abstractions
 open myFeed.Services.Implementations
 open myFeed.Services.Models
 open myFeed.Tests.Extensions
 
 let private repository = LiteDbFavoriteStoreService connection
 
-[<Fact>]
+[<Theory>]
+[<InlineData("Foo")>]
+[<InlineData("Bar")>]
 [<CleanUpCollection("Article")>]
-let ``should insert favorite articles into database``() =
+let ``should insert favorite articles into database`` title =
 
-    repository.InsertAsync(Article(Title="Foo")).Wait()
+    repository.InsertAsync(Article(Title=title)).Wait()
     let response = List.ofSeq <| repository.GetAllAsync().Result
-    Should.equal "Foo" response.[0].Title
+    Should.equal title response.[0].Title
 
 [<Fact>]
 [<CleanUpCollection("Article")>]
@@ -26,6 +27,20 @@ let ``should initialize unique ids when inserting articles``() =
     let response = List.ofSeq <| repository.GetAllAsync().Result
     Should.notEqual response.[0].Id response.[1].Id
 
+[<Theory>]
+[<InlineData("Foo", "Title with spaces")>]
+[<InlineData("Title with spaces", "Foo")>]
+[<CleanUpCollection("Article")>]
+let ``should update articles in article collection`` before after =
+
+    let article = Article(Title=before)
+    repository.InsertAsync(article).Wait()
+    article.Title <- after
+    repository.UpdateAsync(article).Wait()    
+
+    let response = List.ofSeq <| repository.GetAllAsync().Result
+    Should.equal after response.[0].Title
+
 [<Fact>]
 [<CleanUpCollection("Article")>]
 let ``should remove articles from article collection``() =  
@@ -36,16 +51,3 @@ let ``should remove articles from article collection``() =
 
     let response = List.ofSeq <| repository.GetAllAsync().Result
     Should.equal 0 response.Length
-
-[<Fact>]
-[<CleanUpCollection("Article")>]
-let ``should update articles in article collection``() =
-
-    let article = Article(Title="Foo")
-    repository.InsertAsync(article).Wait()
-
-    article.Title <- "Bar"
-    repository.UpdateAsync(article).Wait()    
-
-    let response = List.ofSeq <| repository.GetAllAsync().Result
-    Should.equal "Bar" response.[0].Title

@@ -1,4 +1,4 @@
-module myFeed.Tests.Services.DefaultsTests
+module myFeed.Tests.Fixtures.DefaultsTests
 
 open Xunit
 open myFeed.Tests.Extensions

@@ -1,11 +1,15 @@
 using System;
+using System.ComponentModel.Composition;
 using System.Threading.Tasks;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;
 using myFeed.ViewModels.Bindables;
 
 namespace myFeed.ViewModels.Implementations
 {
+    [Reuse(ReuseType.Transient)]
+    [Export(typeof(SettingsViewModel))]
     public sealed class SettingsViewModel
     {
         public ObservableProperty<string> Version { get; }

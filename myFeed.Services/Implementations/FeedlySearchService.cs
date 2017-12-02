@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 using Newtonsoft.Json;
 
 namespace myFeed.Services.Implementations
 {
+    [Reuse(ReuseType.Singleton)]
+    [Export(typeof(ISearchService))]
     public sealed class FeedlySearchService : ISearchService
     {
         private static readonly Lazy<HttpClient> Client = new Lazy<HttpClient>(() => new HttpClient());
