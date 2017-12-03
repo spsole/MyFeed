@@ -24,11 +24,11 @@ namespace myFeed.ViewModels.Implementations
         
         public SearchItemViewModel(
             ICategoryStoreService categoriesRepository,
-            IMediationService mediationService,
             IPlatformService platformService,
+            IStateContainer stateContainer,
             IDialogService dialogService)
         {
-            var feedlyItem = mediationService.Get<FeedlyItem>();
+            var feedlyItem = stateContainer.Pop<FeedlyItem>();
             FeedUrl = feedlyItem.FeedId?.Substring(5);
             Description = feedlyItem.Description;
             ImageUri = feedlyItem.IconUrl;

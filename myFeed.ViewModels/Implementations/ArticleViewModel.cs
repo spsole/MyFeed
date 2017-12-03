@@ -31,13 +31,13 @@ namespace myFeed.ViewModels.Implementations
             ICategoryStoreService categoriesRepository,
             ITranslationsService translationsService,
             INavigationService navigationService,
-            IMediationService mediationService,
             IFavoriteService favoritesService,
             IPlatformService platformService,
             ISettingService settingsService,
+            IStateContainer stateContainer,
             IDialogService dialogService)
         {
-            var article = mediationService.Get<Article>();
+            var article = stateContainer.Pop<Article>();
             PublishedDate = article.PublishedDate;
             Content = article.Content;
             IsFavorite = article.Fave;

@@ -16,12 +16,11 @@ namespace myFeed.Services.Implementations
         
         public TObject CreateInstance<TObject>(params object[] arguments)
         {
-            var mediationService = _resolver.Resolve<IMediationService>();
-            foreach (var argument in arguments) 
-                mediationService.Set(argument);
+            var mediationServiceFactory = _resolver.Resolve<Func<object[], IStateContainer>>();
+            var mediationService = mediationServiceFactory.Invoke(arguments);
             
-            var resolution = _resolver.Resolve<Func<IMediationService, TObject>>();
-            return resolution.Invoke(mediationService);
+            var resolutionFactory = _resolver.Resolve<Func<IStateContainer, TObject>>();
+            return resolutionFactory.Invoke(mediationService);
         }
     }
 }

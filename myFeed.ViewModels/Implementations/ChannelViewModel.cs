@@ -22,10 +22,13 @@ namespace myFeed.ViewModels.Implementations
 
         public ChannelViewModel(
             ICategoryStoreService categoriesRepository,
-            IMediationService mediationService,
-            IPlatformService platformService)
+            IPlatformService platformService,
+            IStateContainer stateContainer)
         {
-            var channel = mediationService.Get<Channel>();
+            var channel = stateContainer.Pop<Channel>();
+            var parentViewModel = stateContainer
+                .Pop<ChannelCategoryViewModel>();
+            
             Name = new Uri(channel.Uri).Host;
             Notify = channel.Notify;
             Url = channel.Uri;
@@ -40,7 +43,6 @@ namespace myFeed.ViewModels.Implementations
             });
             DeleteSource = new ObservableCommand(async () =>
             {
-                var parentViewModel = mediationService.Get<ChannelCategoryViewModel>();
                 parentViewModel.Items.Remove(this);
                 await categoriesRepository.RemoveChannelAsync(
                     parentViewModel.Category.Value, channel);
@@ -48,7 +50,6 @@ namespace myFeed.ViewModels.Implementations
             Notify.PropertyChanged += async (sender, args) =>
             {
                 channel.Notify = Notify.Value;
-                var parentViewModel = mediationService.Get<ChannelCategoryViewModel>();
                 await categoriesRepository.UpdateAsync(parentViewModel.Category.Value);
             };
         }

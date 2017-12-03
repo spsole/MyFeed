@@ -7,7 +7,7 @@ open myFeed.Services.Implementations
 open myFeed.Tests.Extensions
 
 type Sample (mediation: IMediationService) = 
-    member __.Name = mediation.Get<string>()
+    member __.Name = mediation.Pop<string>()
 
 [<Theory>]
 [<InlineData("Hello, world!")>]

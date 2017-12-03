@@ -23,11 +23,11 @@ namespace myFeed.ViewModels.Implementations
 
         public FeedCategoryViewModel(
             INavigationService navigationService,
-            IMediationService mediationService,
             IFeedStoreService feedStoreService,
+            IStateContainer stateContainer,
             IFactoryService factoryService)
         {
-            var category = mediationService.Get<Category>();
+            var category = stateContainer.Pop<Category>();
             (IsLoading, IsEmpty) = (true, false);
             Title = category.Title;
             
