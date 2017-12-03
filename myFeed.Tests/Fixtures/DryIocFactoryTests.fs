@@ -6,7 +6,7 @@ open myFeed.Services.Abstractions
 open myFeed.Services.Implementations
 open myFeed.Tests.Extensions
 
-type Sample (mediation: IMediationService) = 
+type Sample (mediation: IStateContainer) = 
     member __.Name = mediation.Pop<string>()
 
 [<Theory>]
@@ -16,7 +16,7 @@ let ``should inject parameters with given type`` (phrase: string) =
 
     use container = new Container()
     container.Register<Sample>()
-    container.Register<IMediationService, MediationService>()
+    container.Register<IStateContainer, DryIocStateContainer>()
 
     let factory = produce<DryIocFactoryService> [container]
     let instance = factory.CreateInstance<Sample> phrase
