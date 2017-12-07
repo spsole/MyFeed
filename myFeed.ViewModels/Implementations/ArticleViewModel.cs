@@ -77,8 +77,8 @@ namespace myFeed.ViewModels.Implementations
             MarkFavorite = new ObservableCommand(async () =>
             {
                 IsFavorite.Value = !IsFavorite.Value;
-                if (IsFavorite.Value) await favoritesService.Insert(article);
-                else await favoritesService.Remove(article);
+                if (IsFavorite.Value) await favoritesService.InsertAsync(article);
+                else await favoritesService.RemoveAsync(article);
             });
         }
     }

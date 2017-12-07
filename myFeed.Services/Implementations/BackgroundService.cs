@@ -37,7 +37,7 @@ namespace myFeed.Services.Implementations
                 .SelectMany(i => i.Channels).Where(i => i.Notify));
 
             var lastFetched = await _settingsService.GetAsync<DateTime>("LastFetched");
-            var recentItems = feed.Item2.Where(i => i.PublishedDate > lastFetched)
+            var recentItems = feed.Where(i => i.PublishedDate > lastFetched)
                 .OrderByDescending(i => i.PublishedDate).Take(15).Reverse().ToList();
 
             await _notificationService.SendNotifications(recentItems);

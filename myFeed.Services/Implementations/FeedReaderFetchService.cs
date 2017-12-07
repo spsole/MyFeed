@@ -19,13 +19,12 @@ namespace myFeed.Services.Implementations
 
         public FeedReaderFetchService(IImageService imageService) => _imageService = imageService;
 
-        public async Task<Tuple<Exception, IEnumerable<Article>>> FetchAsync(string uri) 
+        public async Task<IEnumerable<Article>> FetchAsync(string uri) 
         {
             try
             {
                 var feed = await FeedReader.ReadAsync(uri);
-                var articles =
-                    from feedItem in feed.Items
+                return from feedItem in feed.Items
                     let content = feedItem.Content
                     let contents = string.IsNullOrWhiteSpace(content) ? feedItem.Description : content
                     let publishedDate = feedItem.PublishingDate ?? DateTime.MinValue
@@ -41,11 +40,10 @@ namespace myFeed.Services.Implementations
                         Read = false,
                         Fave = false
                     };
-                return new Tuple<Exception, IEnumerable<Article>>(default(Exception), articles);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
-                return new Tuple<Exception, IEnumerable<Article>>(exception, new List<Article>());
+                return new List<Article>();
             }
         }
     }

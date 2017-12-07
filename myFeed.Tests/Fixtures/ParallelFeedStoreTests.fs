@@ -17,7 +17,7 @@ let ``should sort stored article entities``() =
 
     let fetcher = Substitute.For<IFeedFetchService>()
     fetcher.FetchAsync(Arg.Any<_>()).Returns(
-        (null, Seq.empty<Article>) 
+        Seq.empty<Article> 
         |> Task.FromResult)
         |> ignore
 
@@ -29,7 +29,7 @@ let ``should sort stored article entities``() =
                   Article(Title="Bar", PublishedDate=DateTime.MinValue);
                   Article(Title="Zoo", PublishedDate=DateTime.MaxValue) ]
               )]).Result
-        |> (snd >> List.ofSeq)              
+        |> List.ofSeq              
 
     Should.equal 3 articles.Length
     Should.equal "Zoo" articles.[0].Title
@@ -44,7 +44,7 @@ let ``should save fetched article entities``() =
 
     let fetcher = Substitute.For<IFeedFetchService>()
     fetcher.FetchAsync(Arg.Any<_>()).Returns(
-        (null, [Article(Title="Foo")] :> seq<_>) 
+        [Article(Title="Foo")] :> seq<_>
         |> Task.FromResult)
         |> ignore
 
@@ -57,7 +57,7 @@ let ``should save fetched article entities``() =
     let articles = 
         service.LoadAsync(
             [ Channel(Uri="http://foo.bar") ]).Result
-            |> (snd >> List.ofSeq)            
+            |> List.ofSeq            
 
     let article = Seq.item 0 articlesInserted
     Should.equal 1 articles.Length
@@ -72,7 +72,7 @@ let ``should mix and order fetched and stored articles by date``() =
 
     let fetcher = Substitute.For<IFeedFetchService>()
     fetcher.FetchAsync(Arg.Any<_>()).Returns(
-        (null, [Article(Title="Foo", PublishedDate=DateTime.Now)] :> seq<_>) 
+        [Article(Title="Foo", PublishedDate=DateTime.Now)] :> seq<_>
         |> Task.FromResult)
         |> ignore
 
@@ -82,7 +82,7 @@ let ``should mix and order fetched and stored articles by date``() =
             [ Channel(Articles=toList
                 [ Article(Title="Bar", PublishedDate=
                     DateTime.MinValue)])]).Result
-        |> (snd >> List.ofSeq)
+        |> List.ofSeq
 
     Should.equal 2 articles.Length
     Should.equal "Foo" articles.[0].Title
@@ -97,11 +97,11 @@ let ``should remove outdated articles if count is greater than custom``() =
     let articles = Seq.init 200 (fun _ -> Article())
     let channel = Channel(Articles=toList articles)
     let fetcher = Substitute.For<IFeedFetchService>()
-    fetcher.FetchAsync(Arg.Any()).Returns((null, Seq.empty) 
+    fetcher.FetchAsync(Arg.Any()).Returns(Seq.empty 
         |> Task.FromResult) |> ignore
     
     let service = produce<ParallelFeedStoreService> [fetcher; settings]
-    let articles = service.LoadAsync([channel]).Result |> (snd >> List.ofSeq)
+    let articles = service.LoadAsync([channel]).Result |> List.ofSeq
 
     Should.equal 70 articles.Length
 
@@ -113,11 +113,11 @@ let ``should remove articles with minimum publishing date only``() =
 
     let articles = Seq.init 200 (fun _ -> Article())
     let fetcher = Substitute.For<IFeedFetchService>()
-    fetcher.FetchAsync(Arg.Any()).Returns((null, articles) 
+    fetcher.FetchAsync(Arg.Any()).Returns(articles 
         |> Task.FromResult) |> ignore
     
     let service = produce<ParallelFeedStoreService> [fetcher; settings]
-    let articles = service.LoadAsync([Channel()]).Result |> (snd >> List.ofSeq)
+    let articles = service.LoadAsync([Channel()]).Result |> List.ofSeq
 
     Should.equal 70 articles.Length
     
@@ -129,8 +129,8 @@ let ``should ignore whitespaces while comparing titles``() =
     
     let fetcher = Substitute.For<IFeedFetchService>()
     fetcher.FetchAsync(Arg.Any<_>()).Returns(
-        (null, [ Article(Title="Foo  ", FeedTitle="Bar");
-                 Article(Title="Bar\r\n", FeedTitle="Foo")] :> seq<_>) 
+        [ Article(Title="Foo  ", FeedTitle="Bar");
+          Article(Title="Bar\r\n", FeedTitle="Foo")] :> seq<_>
         |> Task.FromResult) |> ignore
     
     let service = produce<ParallelFeedStoreService> [fetcher; settings]
@@ -139,7 +139,7 @@ let ``should ignore whitespaces while comparing titles``() =
             [ Channel(Articles=toList 
                 [ Article(Title="Foo", FeedTitle="Bar");
                   Article(Title="Bar", FeedTitle="Foo") ]) ]).Result 
-                |> (snd >> List.ofSeq)
+                |> List.ofSeq
     
     Should.equal 2 articles.Length
     Should.equal "Foo" articles.[0].Title

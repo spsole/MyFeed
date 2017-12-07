@@ -5,8 +5,8 @@ namespace myFeed.Services.Abstractions
 {
     public interface IFavoriteService
     {
-        Task Insert(Article article);
+        Task InsertAsync(Article article);
 
-        Task Remove(Article article);
+        Task RemoveAsync(Article article);
     }
 }

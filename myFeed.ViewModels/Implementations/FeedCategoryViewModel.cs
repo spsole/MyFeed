@@ -39,7 +39,7 @@ namespace myFeed.ViewModels.Implementations
                 var sources = category.Channels;
                 var response = await feedStoreService.LoadAsync(sources);
                 Items.Clear();
-                foreach (var article in response.Item2)
+                foreach (var article in response)
                     Items.Add(factoryService.CreateInstance<
                         ArticleViewModel>(article));
                 IsEmpty.Value = Items.Count == 0;

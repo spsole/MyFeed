@@ -121,7 +121,7 @@ namespace myFeed.Views.Uwp.Services
                 Title = model.Title, Uri = model.Uri
             });
 
-            foreach (var article in articleEntities) await _favoriteService.Insert(article);
+            foreach (var article in articleEntities) await _favoriteService.InsertAsync(article);
             await favoritesFolder.DeleteAsync();
             return true;
         });

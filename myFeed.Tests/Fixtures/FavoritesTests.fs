@@ -12,7 +12,7 @@ let ``should update fave property when inserting``() =
             
     let service = produce<FavoriteService> []
     let article = Article(Fave=false)  
-    service.Insert(article).Wait()
+    service.InsertAsync(article).Wait()
     Should.equal article.Fave true
       
 [<Fact>]
@@ -20,7 +20,7 @@ let ``should update fave property when removing``() =
     
     let service = produce<FavoriteService> []
     let article = Article(Fave=true)  
-    service.Remove(article).Wait()
+    service.RemoveAsync(article).Wait()
     Should.equal article.Fave false
 
 [<Fact>]
@@ -36,10 +36,10 @@ let ``should insert and remove articles``() =
     let article = Article(Fave=false)
     let service = produce<FavoriteService> [favorites]
       
-    service.Insert(article).Wait()
-    service.Insert(article).Wait()
-    service.Remove(article).Wait()
-    service.Remove(article).Wait()
+    service.InsertAsync(article).Wait()
+    service.InsertAsync(article).Wait()
+    service.RemoveAsync(article).Wait()
+    service.RemoveAsync(article).Wait()
       
     Should.equal 1 deleted
     Should.equal 1 inserted

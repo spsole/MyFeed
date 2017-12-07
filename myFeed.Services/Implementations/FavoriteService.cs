@@ -21,7 +21,7 @@ namespace myFeed.Services.Implementations
             _favoritesRepository = favoritesRepository;
         }
 
-        public async Task Insert(Article article)
+        public async Task InsertAsync(Article article)
         {
             if (article.Fave) return;
             article.Fave = true;
@@ -29,7 +29,7 @@ namespace myFeed.Services.Implementations
             await _categoriesRepository.UpdateArticleAsync(article);
         }
 
-        public async Task Remove(Article article)
+        public async Task RemoveAsync(Article article)
         {
             if (!article.Fave) return;
             article.Fave = false;
