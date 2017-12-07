@@ -5,7 +5,7 @@ open myFeed.Services.Implementations
 open myFeed.Services.Models
 open myFeed.Tests.Extensions
 
-let private repository = LiteDbFavoriteStoreService connection
+let private repository = LiteFavoriteStoreService connection
 
 [<Theory>]
 [<InlineData("Foo")>]

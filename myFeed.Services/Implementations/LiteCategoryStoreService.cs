@@ -12,11 +12,11 @@ namespace myFeed.Services.Implementations
 {
     [Reuse(ReuseType.Singleton)]
     [Export(typeof(ICategoryStoreService))]
-    public sealed class LiteDbCategoryStoreService : ICategoryStoreService
+    public sealed class LiteCategoryStoreService : ICategoryStoreService
     {
         private readonly LiteDatabase _liteDatabase;
         
-        public LiteDbCategoryStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
+        public LiteCategoryStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
 
         public Task<IEnumerable<Category>> GetAllAsync() => Task.Run(() => 
         {

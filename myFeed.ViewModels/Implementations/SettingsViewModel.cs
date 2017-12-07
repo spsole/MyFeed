@@ -31,8 +31,8 @@ namespace myFeed.ViewModels.Implementations
             ITranslationsService translationsService,
             IFilePickerService filePickerService,
             IPackagingService packagingService,
-            ISettingService settingsService,
             IPlatformService platformService,
+            ISettingService settingsService,
             IDialogService dialogService,
             IOpmlService opmlService)
         {
@@ -40,17 +40,24 @@ namespace myFeed.ViewModels.Implementations
             Version = packagingService.Version;
             (LoadImages, NeedBanners) = (true, true);
             (FontSize, NotifyPeriod, MaxArticlesPerFeed) = (0, 0, 0);
+
             LeaveFeedback = new ObservableCommand(packagingService.LeaveFeedback);
             LeaveReview = new ObservableCommand(packagingService.LeaveReview);
             ImportOpml = new ObservableCommand(async () =>
             {
                 var stream = await filePickerService.PickFileForReadAsync();
-                await opmlService.ImportOpmlFeedsAsync(stream);
+                var success = await opmlService.ImportOpmlFeedsAsync(stream);
+                if (success) await dialogService.ShowDialog(
+                    translationsService.Resolve("ImportOpmlSuccess"),
+                    translationsService.Resolve("Notification"));
             });
             ExportOpml = new ObservableCommand(async () =>
             {
                 var stream = await filePickerService.PickFileForWriteAsync();
-                await opmlService.ExportOpmlFeedsAsync(stream);
+                var success = await opmlService.ExportOpmlFeedsAsync(stream);
+                if (success) await dialogService.ShowDialog(
+                    translationsService.Resolve("ExportOpmlSuccess"),
+                    translationsService.Resolve("Notification"));
             });
             Reset = new ObservableCommand(async () =>
             {
@@ -70,6 +77,7 @@ namespace myFeed.ViewModels.Implementations
                     StartTracking(Theme, "Theme", platformService.RegisterTheme)
                 );
             });
+
             async Task StartTracking<T>(ObservableProperty<T> property, string key, 
                 Func<T, Task> callback) where T : IConvertible
             {

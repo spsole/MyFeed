@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using DryIoc;
 using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;

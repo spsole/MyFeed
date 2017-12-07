@@ -292,11 +292,17 @@
   <data name="SettingsNotification">
     <value>Notification</value>
   </data>
-  <data name="ExportFeedsSuccess">
+  <data name="ExportOpmlSuccess">
     <value>Feeds were successfully exported!</value>
   </data>
-  <data name="ImportFeedsSuccess">
+  <data name="ImportOpmlSuccess">
     <value>Feeds were successfully imported!</value>
+  </data>
+  <data name="ExportOpmlFailure">
+    <value>Failed to export OPML feeds.</value>
+  </data>
+  <data name="ImportOpmlFailure">
+    <value>Failed to import OPML feeds.</value>
   </data>
   <data name="SendMailButton">
     <value>Report an issue</value>
@@ -341,7 +347,10 @@
     <value>Copy link</value>
   </data>
   <data name="OrderByDate">
-    <value>Order by publishing date</value>
+    <value>Order by day</value>
+  </data>
+  <data name="OrderByMonth">
+    <value>Order by month</value>
   </data>
   <data name="OrderByFeed">
     <value>Order by feed title</value>

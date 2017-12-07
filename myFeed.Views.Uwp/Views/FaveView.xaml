@@ -56,8 +56,10 @@
                 <controls:TransparentButton Symbol="Sort">
                     <controls:TransparentButton.Flyout>
                         <MenuFlyout>
-                            <controls:MenuFlyoutItemWithIcon Icon="Calendar" Command="{Binding OrderByDate}"
+                            <controls:MenuFlyoutItemWithIcon Icon="CalendarDay" Command="{Binding OrderByDate}"
                                 Text="{Binding ConverterParameter=OrderByDate, Converter={StaticResource Locale}}"/>
+                            <controls:MenuFlyoutItemWithIcon Icon="CalendarWeek" Command="{Binding OrderByMonth}"
+                                Text="{Binding ConverterParameter=OrderByMonth, Converter={StaticResource Locale}}"/>
                             <controls:MenuFlyoutItemWithIcon Icon="FontSize" Command="{Binding OrderByFeed}"
                                 Text="{Binding ConverterParameter=OrderByFeed, Converter={StaticResource Locale}}"/>
                         </MenuFlyout>

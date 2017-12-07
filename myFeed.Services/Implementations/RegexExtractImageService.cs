@@ -16,7 +16,7 @@ namespace myFeed.Services.Implementations
             | RegexOptions.IgnoreCase
             | RegexOptions.Multiline;
 
-        private static readonly Regex Matcher = new Regex(Pattern, Options);
+        private readonly Regex Matcher = new Regex(Pattern, Options);
 
         public string ExtractImageUri(string html)
         {

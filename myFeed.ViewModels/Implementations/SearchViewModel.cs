@@ -12,7 +12,7 @@ namespace myFeed.ViewModels.Implementations
     {
         public ObservableCollection<SearchItemViewModel> Items { get; }
 
-        public ObservableProperty<string> SearchQuery { get; }
+        public ObservableProperty<string> SearchQuery { get; } 
         public ObservableProperty<bool> IsGreeting { get; }
         public ObservableProperty<bool> IsLoading { get; }
         public ObservableProperty<bool> IsEmpty { get; }

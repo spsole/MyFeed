@@ -24,13 +24,12 @@ namespace myFeed.Views.Uwp.Notifications
 
         private static IContainer Load(IContainer container)
         {
-            var connection = "MyFeed.db";
             var localFolder = ApplicationData.Current.LocalFolder;
-            var filePath = Path.Combine(localFolder.Path, connection);
+            var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
 
             container.RegisterServices();
             container.RegisterDelegate(x => new LiteDatabase(filePath), Reuse.Singleton);
-            container.RegisterExports(new[] {typeof(Runner).GetType().GetAssembly()});
+            container.RegisterExports(new[] {typeof(Runner).GetAssembly()});
             return container;
         }
     }

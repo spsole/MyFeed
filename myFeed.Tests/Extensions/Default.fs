@@ -6,6 +6,8 @@ open DryIoc
 open System
 open System.Linq
 open System.Reflection
+open System.Windows.Input
+open System.Threading.Tasks
 open NSubstitute
 
 /// Converts sequence to list.
@@ -46,7 +48,19 @@ let produce<'T when 'T : not struct> (injectables: obj seq) =
     |> Seq.map substituteIfNone
     |> Seq.cast<obj>
     |> Array.ofSeq
-    |> ctor.Invoke :?> 'T         
+    |> ctor.Invoke :?> 'T   
+
+// ICommand abstraction.
+type ICommand with 
+
+    // Wraps command state into a Task.
+    member command.Invoke() =
+        let source = TaskCompletionSource<bool>()
+        command.CanExecuteChanged += fun _ -> 
+            if command.CanExecute() then 
+                source.SetResult(true) |> ignore
+        command.Execute()       
+        source.Task      
 
 /// Assertions module.
 type Should = 

@@ -15,15 +15,15 @@ namespace myFeed.Services.Implementations
     [Export(typeof(ISearchService))]
     public sealed class FeedlySearchService : ISearchService
     {
-        private static readonly Lazy<HttpClient> Client = new Lazy<HttpClient>(() => new HttpClient());
         private const string QueryUrl = @"http://cloud.feedly.com/v3/search/feeds?count=40&query=:";
+        private readonly Lazy<HttpClient> _client = new Lazy<HttpClient>(() => new HttpClient());
 
         public Task<FeedlyRoot> SearchAsync(string query) => Task.Run(async () =>
         {
             try
             {
                 var requestUrl = string.Concat(QueryUrl, query);
-                var fetch = Client.Value.GetStreamAsync(requestUrl);
+                var fetch = _client.Value.GetStreamAsync(requestUrl);
                 using (var stream = await fetch.ConfigureAwait(false))
                 using (var streamReader = new StreamReader(stream))
                 using (var jsonReader = new JsonTextReader(streamReader))

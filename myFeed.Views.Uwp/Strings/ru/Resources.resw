@@ -292,11 +292,17 @@
   <data name="SettingsNotification">
     <value>Уведомление</value>
   </data>
-  <data name="ExportFeedsSuccess">
+  <data name="ExportOpmlSuccess">
     <value>Источники были успешно экспортированы!</value>
   </data>
-  <data name="ImportFeedsSuccess">
+  <data name="ImportOpmlSuccess">
     <value>Источники были успешно импортированы!</value>
+  </data>
+  <data name="ExportOpmlFailure">
+    <value>Не удалось экспортировать OPML каналы.</value>
+  </data>
+  <data name="ImportOpmlFailure">
+    <value>Не удалось импортировать OPML каналы.</value>
   </data>
   <data name="SendMailButton">
     <value>Сообщить о проблеме</value>
@@ -341,10 +347,13 @@
     <value>Скопировать ссылку</value>
   </data>
   <data name="OrderByDate">
-    <value>Сортировать по дате публикации</value>
+    <value>Сортировать по дням</value>
+  </data>
+  <data name="OrderByMonth">
+    <value>Сортировать по месяцам</value>
   </data>
   <data name="OrderByFeed">
-    <value>Сортировать по названию ленты</value>
+    <value>Сортировать по лентам</value>
   </data>
   <data name="SelectCategory">
     <value>Перейти к категории</value>

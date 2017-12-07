@@ -6,6 +6,7 @@ using Windows.Storage.Pickers;
 using myFeed.Services.Platform;
 using DryIocAttributes;
 using System.ComponentModel.Composition;
+using Windows.Storage;
 
 namespace myFeed.Views.Uwp.Services
 {
@@ -30,6 +31,7 @@ namespace myFeed.Views.Uwp.Services
             picker.SuggestedFileName = "Feeds";
             var file = await picker.PickSaveFileAsync();
             if (file == null) return null;
+            await FileIO.WriteTextAsync(file, string.Empty);
             var stream = await file.OpenStreamForWriteAsync();
             return stream;
         }

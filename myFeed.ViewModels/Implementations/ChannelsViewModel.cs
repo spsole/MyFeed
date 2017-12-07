@@ -1,12 +1,12 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
-using System.Linq;
-using DryIoc;
-using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 using myFeed.Services.Platform;
 using myFeed.ViewModels.Bindables;
+using DryIocAttributes;
+using System.Linq;
 
 namespace myFeed.ViewModels.Implementations
 {
@@ -30,7 +30,9 @@ namespace myFeed.ViewModels.Implementations
             IFactoryService factoryService,
             IDialogService dialogService)
         {
-            (IsEmpty, IsLoading) = (false, true); 
+            (IsEmpty, IsLoading) = (false, true);
+            var viewModelToModelMap = new Dictionary<ChannelCategoryViewModel, Category>();
+
             Items = new ObservableCollection<ChannelCategoryViewModel>();
             OpenSearch = new ObservableCommand(navigationService.Navigate<SearchViewModel>);
             AddCategory = new ObservableCommand(async () =>
@@ -41,25 +43,29 @@ namespace myFeed.ViewModels.Implementations
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new Category {Title = name};
                 await categoriesRepository.InsertAsync(category);
-                Items.Add(factoryService.CreateInstance<
-                    ChannelCategoryViewModel>(category, this));
+                var viewModel = factoryService.CreateInstance<
+                    ChannelCategoryViewModel>(category, this);
+                viewModelToModelMap[viewModel] = category;
+                Items.Add(viewModel);
             });
             Load = new ObservableCommand(async () =>
             {
                 IsLoading.Value = true;
                 var categories = await categoriesRepository.GetAllAsync();
-                Items.Clear();
                 foreach (var category in categories)
-                    Items.Add(factoryService.CreateInstance<
-                        ChannelCategoryViewModel>(category, this));
-                IsEmpty.Value = Items.Count == 0;
+                {
+                    var viewModel = factoryService.CreateInstance<
+                        ChannelCategoryViewModel>(category, this);
+                    viewModelToModelMap[viewModel] = category;
+                    Items.Add(viewModel);
+                }
+
                 IsLoading.Value = false;
-                
-                // Subscribe on collection changed to perform items rearranging.
+                IsEmpty.Value = Items.Count == 0;
                 Items.CollectionChanged += async (s, a) =>
                 {
                     IsEmpty.Value = Items.Count == 0;
-                    var items = Items.Select(i => i.Category.Value);
+                    var items = Items.Select(i => viewModelToModelMap[i]);
                     await categoriesRepository.RearrangeAsync(items);
                 };
             });

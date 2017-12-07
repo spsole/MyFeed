@@ -48,6 +48,7 @@ namespace myFeed.Services.Implementations
             });
 
             opml.Body = new List<OpmlOutline>(outlines);
+            if (stream == null) return false;
             _serializationService.Serialize(opml, stream);
             return true;
         }

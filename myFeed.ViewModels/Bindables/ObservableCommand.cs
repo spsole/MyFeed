@@ -21,7 +21,7 @@ namespace myFeed.ViewModels.Bindables
 
         public event EventHandler CanExecuteChanged;
 
-        public async void Execute(object parameter)
+        public async void Execute(object parameter) 
         {
             try
             {

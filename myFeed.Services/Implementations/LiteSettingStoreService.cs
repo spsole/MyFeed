@@ -9,11 +9,11 @@ namespace myFeed.Services.Implementations
 {
     [Reuse(ReuseType.Singleton)]
     [Export(typeof(ISettingStoreService))]
-    public sealed class LiteDbSettingStoreService : ISettingStoreService
+    public sealed class LiteSettingStoreService : ISettingStoreService
     {
         private readonly LiteDatabase _liteDatabase;
 
-        public LiteDbSettingStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
+        public LiteSettingStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
 
         public Task<Setting> GetByKeyAsync(string key) => Task.Run(() =>
         {

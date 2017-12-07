@@ -14,9 +14,9 @@ namespace myFeed.ViewModels.Implementations
     {
         public ObservableCollection<ArticleViewModel> Items { get; }
 
+        public ObservableProperty<string> Title { get; }
         public ObservableProperty<bool> IsLoading { get; }
         public ObservableProperty<bool> IsEmpty { get; }
-        public ObservableProperty<string> Title { get; }
 
         public ObservableCommand OpenSources { get; }
         public ObservableCommand Fetch { get; }

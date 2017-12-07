@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Controls;
 using myFeed.Services.Platform;
 using DryIocAttributes;
 using System.ComponentModel.Composition;
+using LiteDB;
 
 namespace myFeed.Views.Uwp.Services
 {
@@ -17,12 +18,19 @@ namespace myFeed.Views.Uwp.Services
     [Export(typeof(IPlatformService))]
     public sealed class UwpPlatformService : IPlatformService
     {
-        private readonly Dictionary<string, ElementTheme> Themes = new Dictionary<string, ElementTheme>
+        private readonly Dictionary<string, ElementTheme> _themes;
+        private readonly LiteDatabase _liteDatabase;
+
+        public UwpPlatformService(LiteDatabase liteDatabase)
         {
-            {"dark", ElementTheme.Dark},
-            {"light", ElementTheme.Light},
-            {"default", ElementTheme.Default}
-        };
+            _liteDatabase = liteDatabase;
+            _themes = new Dictionary<string, ElementTheme>
+            {
+                {"dark", ElementTheme.Dark},
+                {"light", ElementTheme.Light},
+                {"default", ElementTheme.Default}
+            };
+        }
 
         public async Task LaunchUri(Uri uri) => await Launcher.LaunchUriAsync(uri);
 
@@ -49,6 +57,7 @@ namespace myFeed.Views.Uwp.Services
 
         public async Task ResetApp()
         {
+            _liteDatabase.Dispose();
             var files = await ApplicationData.Current.LocalFolder.GetFilesAsync();
             foreach (var file in files) await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
             Application.Current.Exit();
@@ -73,7 +82,7 @@ namespace myFeed.Views.Uwp.Services
         public Task RegisterTheme(string theme)
         {
             var contentElement = (Frame)Window.Current.Content;
-            contentElement.RequestedTheme = Themes[theme];
+            contentElement.RequestedTheme = _themes[theme];
             return Task.CompletedTask;
         }
     }

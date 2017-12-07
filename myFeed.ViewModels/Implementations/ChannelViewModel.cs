@@ -26,9 +26,9 @@ namespace myFeed.ViewModels.Implementations
             IStateContainer stateContainer)
         {
             var channel = stateContainer.Pop<Channel>();
-            var parentViewModel = stateContainer
-                .Pop<ChannelCategoryViewModel>();
-            
+            var category = stateContainer.Pop<Category>();
+            var parentViewModel = stateContainer.Pop<
+                ChannelCategoryViewModel>();
             Name = new Uri(channel.Uri).Host;
             Notify = channel.Notify;
             Url = channel.Uri;
@@ -44,13 +44,12 @@ namespace myFeed.ViewModels.Implementations
             DeleteSource = new ObservableCommand(async () =>
             {
                 parentViewModel.Items.Remove(this);
-                await categoriesRepository.RemoveChannelAsync(
-                    parentViewModel.Category.Value, channel);
+                await categoriesRepository.RemoveChannelAsync(category, channel);
             });
             Notify.PropertyChanged += async (sender, args) =>
             {
                 channel.Notify = Notify.Value;
-                await categoriesRepository.UpdateAsync(parentViewModel.Category.Value);
+                await categoriesRepository.UpdateAsync(category);
             };
         }
     }

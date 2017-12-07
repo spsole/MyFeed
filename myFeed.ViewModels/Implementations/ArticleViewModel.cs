@@ -53,10 +53,8 @@ namespace myFeed.ViewModels.Implementations
             });
             Share = new ObservableCommand(() =>
             {
-                var shareMessage = string.Concat(
-                    article.Title, Environment.NewLine,
-                    article.Uri, Environment.NewLine,
-                    "via myFeed for Windows Universal");
+                var shareMessage = string.Concat(article.Title, Environment.NewLine,
+                    article.Uri, Environment.NewLine, "via myFeed for Windows Universal");
                 return platformService.Share(shareMessage);
             });
             CopyLink = new ObservableCommand(async () => 

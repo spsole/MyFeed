@@ -10,11 +10,11 @@ namespace myFeed.Services.Implementations
 {
     [Reuse(ReuseType.Singleton)]
     [Export(typeof(IFavoriteStoreService))]
-    public sealed class LiteDbFavoriteStoreService : IFavoriteStoreService
+    public sealed class LiteFavoriteStoreService : IFavoriteStoreService
     {
         private readonly LiteDatabase _liteDatabase;
         
-        public LiteDbFavoriteStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
+        public LiteFavoriteStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
 
         public Task<IEnumerable<Article>> GetAllAsync() => Task.Run(() =>
         {

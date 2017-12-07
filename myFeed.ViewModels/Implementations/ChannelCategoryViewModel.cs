@@ -15,7 +15,6 @@ namespace myFeed.ViewModels.Implementations
     {
         public ObservableCollection<ChannelViewModel> Items { get; }
 
-        public ObservableProperty<Category> Category { get; }
         public ObservableProperty<string> SourceUri { get; }
         public ObservableProperty<string> Title { get; }
 
@@ -33,9 +32,7 @@ namespace myFeed.ViewModels.Implementations
         {
             var category = stateContainer.Pop<Category>();
             var channelsViewModel = stateContainer.Pop<ChannelsViewModel>();
-            Category = category;
-            Title = category.Title;
-            SourceUri = string.Empty;
+            (Title, SourceUri) = (category.Title, string.Empty);
             
             Items = new ObservableCollection<ChannelViewModel>();
             RenameCategory = new ObservableCommand(async () =>
@@ -60,9 +57,8 @@ namespace myFeed.ViewModels.Implementations
             AddSource = new ObservableCommand(async () =>
             {
                 var sourceUri = SourceUri.Value;
-                if (string.IsNullOrWhiteSpace(sourceUri) ||
-                    !Uri.IsWellFormedUriString(sourceUri, UriKind.Absolute))
-                    return;
+                if (string.IsNullOrWhiteSpace(sourceUri) || !Uri
+                    .IsWellFormedUriString(sourceUri, UriKind.Absolute)) return;
                 SourceUri.Value = string.Empty;
                 var model = new Channel {Uri = sourceUri, Notify = true};
                 await categoriesRepository.InsertChannelAsync(category, model);
@@ -74,7 +70,7 @@ namespace myFeed.ViewModels.Implementations
                 Items.Clear();
                 foreach (var channel in category.Channels) 
                     Items.Add(factoryService.CreateInstance<
-                        ChannelViewModel>(channel, this));
+                        ChannelViewModel>(channel, this, category));
             });
         }
     }

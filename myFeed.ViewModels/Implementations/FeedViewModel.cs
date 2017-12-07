@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
-using DryIoc;
 using DryIocAttributes;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Platform;

@@ -67,7 +67,8 @@ namespace myFeed.Services.Implementations
                 errors, existingLookup
                 .SelectMany(i => i)
                 .Concat(flatternedArticles)
-                .OrderByDescending(i => i.PublishedDate));
+                .OrderByDescending(i => i.PublishedDate)
+                .ToList());
         });
 
         private Task<Tuple<Channel, Exception, IEnumerable<Article>>> FetchAsync(

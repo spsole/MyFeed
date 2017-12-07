@@ -22,7 +22,7 @@ namespace myFeed.Views.Uwp.Services
     [Export(typeof(INavigationService))]
     public sealed class UwpNavigationService : INavigationService
     {
-        private static readonly IReadOnlyDictionary<Type, Type> Pages = new Dictionary<Type, Type>
+        private readonly IReadOnlyDictionary<Type, Type> Pages = new Dictionary<Type, Type>
         {
             {typeof(SettingsViewModel), typeof(SettingsView)},
             {typeof(ArticleViewModel), typeof(ArticleView)},
@@ -32,7 +32,7 @@ namespace myFeed.Views.Uwp.Services
             {typeof(FaveViewModel), typeof(FaveView)},
             {typeof(FeedViewModel), typeof(FeedView)}
         };
-        private static readonly IReadOnlyDictionary<Type, object> Symbols = new Dictionary<Type, object>
+        private readonly IReadOnlyDictionary<Type, object> Symbols = new Dictionary<Type, object>
         {
             {typeof(FaveViewModel), Symbol.OutlineStar},
             {typeof(SettingsViewModel), Symbol.Setting},

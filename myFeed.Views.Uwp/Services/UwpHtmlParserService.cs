@@ -135,7 +135,7 @@ namespace myFeed.Views.Uwp.Services
             var link = new Hyperlink();
             var reference = node.Attributes["href"]?.Value;
             if (Uri.IsWellFormedUriString(reference, UriKind.Absolute))
-                link.NavigateUri = new Uri(reference, UriKind.Absolute);
+                try { link.NavigateUri = new Uri(reference, UriKind.Absolute); } catch { }
             link.Inlines.Add(new Run { Text = node.InnerText });
             var span = new Span();
             span.Inlines.Add(link);

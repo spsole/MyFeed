@@ -4,53 +4,57 @@ open Xunit
 open NSubstitute
 open myFeed.Services.Abstractions
 open myFeed.ViewModels.Implementations
+open myFeed.Services.Implementations
 open myFeed.Tests.Extensions
 open myFeed.Services.Models
 open System.Threading.Tasks
 open System
 
-[<Fact>]
-let ``should populate view model with items received from repository``() =   
+let private mockFactory = Substitute.For<IFactoryService>()  
+mockFactory.CreateInstance<ArticleViewModel>(
+    Arg.Any()).Returns(fun x -> 
+        x.Arg<obj[]>() 
+        |> DryIocStateContainer 
+        |> Seq.singleton<obj> 
+        |> produce<ArticleViewModel>) 
+        |> ignore
+
+[<Theory>]
+[<InlineData("Foo")>]
+[<InlineData("Bar")>]
+let ``should populate view model with items received from repository`` title =   
 
     let favorites = Substitute.For<IFavoriteStoreService>()
-    favorites.GetAllAsync().Returns([ Article(Title="Foo") ] 
+    favorites.GetAllAsync().Returns([ Article(Title=title) ] 
         :> seq<_> |> Task.FromResult) |> ignore
 
-    let factory = Substitute.For<IFactoryService>()    
-    factory.CreateInstance<ArticleViewModel>(Arg.Any()).Returns(fun x -> 
-        [x.Arg<obj[]>().[0]] |> produce<ArticleViewModel>) |> ignore
+    let faveViewModel = produce<FaveViewModel> [favorites; mockFactory]
+    faveViewModel.Load.Invoke().Wait()
 
-    let faveViewModel = produce<FaveViewModel> [favorites; factory]
-    faveViewModel.Load.CanExecuteChanged += fun _ -> 
-        if faveViewModel.Load.CanExecute() then
-            Should.equal 1 faveViewModel.Items.Count
-            Should.equal "Foo" faveViewModel.Items.[0].[0].Title.Value 
-    faveViewModel.Load.Execute()
-    
-[<Fact>]
-let ``should order items in view model by name descending``() =    
+    Should.equal 1 faveViewModel.Items.Count
+    Should.equal title faveViewModel.Items.[0].[0].Title.Value 
+
+[<Theory>]
+[<InlineData("A", "B", "C")>]
+[<InlineData("Bar", "Foo", "Zoo")>]
+let ``should order items in view model by name descending`` first second third =    
     
     let favorites = Substitute.For<IFavoriteStoreService>()
     favorites.GetAllAsync().Returns(
-        [ Article(FeedTitle="C"); Article(FeedTitle="A"); Article(FeedTitle="B"); ] 
+        [ Article(FeedTitle=first); 
+          Article(FeedTitle=third); 
+          Article(FeedTitle=second); ] 
         :> seq<_> |> Task.FromResult) |> ignore
-        
-    let factory = Substitute.For<IFactoryService>()    
-    factory.CreateInstance<ArticleViewModel>(Arg.Any()).Returns(fun x -> 
-        [x.Arg<obj[]>().[0]] |> produce<ArticleViewModel>) |> ignore
 
-    let faveViewModel = produce<FaveViewModel> [favorites; factory]
-    faveViewModel.Load.CanExecuteChanged += fun _ ->
-        if faveViewModel.Load.CanExecute() then
-            faveViewModel.OrderByFeed.CanExecuteChanged += fun _ -> 
-                if faveViewModel.OrderByFeed.CanExecute() then
-                    Should.equal 3 faveViewModel.Items.Count
-                    Should.equal "A" faveViewModel.Items.[0].[0].Feed.Value
-                    Should.equal "B" faveViewModel.Items.[1].[0].Feed.Value
-                    Should.equal "C" faveViewModel.Items.[2].[0].Feed.Value
-            faveViewModel.OrderByFeed.Execute() 
-    faveViewModel.Load.Execute() 
+    let faveViewModel = produce<FaveViewModel> [favorites; mockFactory]
+    faveViewModel.Load.Invoke().Wait()
+    faveViewModel.OrderByFeed.Invoke().Wait()
 
+    Should.equal 3 faveViewModel.Items.Count
+    Should.equal third faveViewModel.Items.[0].[0].Feed.Value
+    Should.equal second faveViewModel.Items.[1].[0].Feed.Value
+    Should.equal first faveViewModel.Items.[2].[0].Feed.Value
+  
 [<Fact>]
 let ``should order items in view model by date descending``() =    
     
@@ -61,21 +65,14 @@ let ``should order items in view model by date descending``() =
           Article(Title="B", PublishedDate=DateTime.Now); ] 
         :> seq<_> |> Task.FromResult) |> ignore
         
-    let factory = Substitute.For<IFactoryService>()    
-    factory.CreateInstance<ArticleViewModel>(Arg.Any()).Returns(fun x -> 
-        [x.Arg<obj[]>().[0]] |> produce<ArticleViewModel>) |> ignore
+    let faveViewModel = produce<FaveViewModel> [favorites; mockFactory]
+    faveViewModel.Load.Invoke().Wait()
+    faveViewModel.OrderByDate.Invoke().Wait()
 
-    let faveViewModel = produce<FaveViewModel> [favorites; factory]
-    faveViewModel.Load.CanExecuteChanged += fun _ ->
-        if faveViewModel.Load.CanExecute() then
-            faveViewModel.OrderByDate.CanExecuteChanged += fun _ -> 
-                if faveViewModel.OrderByDate.CanExecute() then
-                    Should.equal 3 faveViewModel.Items.Count
-                    Should.equal "A" faveViewModel.Items.[0].[0].Title.Value
-                    Should.equal "B" faveViewModel.Items.[1].[0].Title.Value
-                    Should.equal "C" faveViewModel.Items.[2].[0].Title.Value
-            faveViewModel.OrderByDate.Execute() 
-    faveViewModel.Load.Execute()       
+    Should.equal 3 faveViewModel.Items.Count
+    Should.equal "A" faveViewModel.Items.[0].[0].Title.Value
+    Should.equal "B" faveViewModel.Items.[1].[0].Title.Value
+    Should.equal "C" faveViewModel.Items.[2].[0].Title.Value
 
 [<Fact>]
 let ``should be able to delete and restore items from groupings``() =    
@@ -86,17 +83,12 @@ let ``should be able to delete and restore items from groupings``() =
           Article(Fave=true, PublishedDate=DateTime.Now);] 
         :> seq<_> |> Task.FromResult) |> ignore
         
-    let factory = Substitute.For<IFactoryService>()    
-    factory.CreateInstance<ArticleViewModel>(Arg.Any()).Returns(fun x -> 
-        [x.Arg<obj[]>().[0]] |> produce<ArticleViewModel>) |> ignore
+    let faveViewModel = produce<FaveViewModel> [favorites; mockFactory]
+    faveViewModel.Load.Invoke().Wait()
 
-    let faveViewModel = produce<FaveViewModel> [favorites; factory]
-    faveViewModel.Load.CanExecuteChanged += fun _ ->
-        if faveViewModel.Load.CanExecute() then
-            let item = faveViewModel.Items.[0].[0]
-            item.IsFavorite.Value <- false
-            Should.equal 1 faveViewModel.Items.Count
-            Should.equal 1 faveViewModel.Items.[0].Count
-            item.IsFavorite.Value <- true
-            Should.equal 2 faveViewModel.Items.Count
-    faveViewModel.Load.Execute()
+    let item = faveViewModel.Items.[0].[0]
+    item.IsFavorite.Value <- false
+    Should.equal 1 faveViewModel.Items.Count
+    Should.equal 1 faveViewModel.Items.[0].Count
+    item.IsFavorite.Value <- true
+    Should.equal 2 faveViewModel.Items.Count
