@@ -13,14 +13,14 @@ namespace myFeed.Services.Implementations
     [Export(typeof(IFeedStoreService))]
     public sealed class ParallelFeedStoreService : IFeedStoreService
     {
-        private readonly ICategoryStoreService _categoriesRepository;
+        private readonly ICategoryManager _categoriesRepository;
         private readonly IFeedFetchService _feedFetchService;
-        private readonly ISettingService _settingsService;
+        private readonly ISettingManager _settingsService;
         
         public ParallelFeedStoreService(
-            ICategoryStoreService categoriesRepository,
+            ICategoryManager categoriesRepository,
             IFeedFetchService feedFetchService,
-            ISettingService settingsService)
+            ISettingManager settingsService)
         {
             _categoriesRepository = categoriesRepository;
             _feedFetchService = feedFetchService;
@@ -56,8 +56,11 @@ namespace myFeed.Services.Implementations
                 .ToList();
 
             // Save received distinct items into database.
-            await Task.WhenAll(distinctGroupping.Select(i => _categoriesRepository
-                .InsertArticleRangeAsync(i.Item1, i.Item2)));
+            await Task.WhenAll(distinctGroupping.Select(i =>
+            {
+                i.Item1.Articles.AddRange(i.Item2);
+                return _categoriesRepository.UpdateChannelAsync(i.Item1);
+            }));
 
             // Return global join with both old and new articles.
             var flatternedArticles = distinctGroupping.SelectMany(i => i.Item2);

@@ -1,4 +1,4 @@
-module myFeed.Tests.Fixtures.DatabaseConnectionTests
+module myFeed.Tests.Fixtures.DatabaseTests
 
 open Xunit
 open LiteDB

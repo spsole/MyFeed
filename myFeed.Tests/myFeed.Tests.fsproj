@@ -6,22 +6,20 @@
     <Compile Include="Extensions\Default.fs" />
     <Compile Include="Extensions\Domain.fs" />
     <Compile Include="Fixtures\BackgroundTests.fs" />
-    <Compile Include="Fixtures\CachingSettingsTests.fs" />
-    <Compile Include="Fixtures\CategoryStoreTests.fs" />
-    <Compile Include="Fixtures\CombinedUnitsTests.fs" />
-    <Compile Include="Fixtures\DatabaseConnectionTests.fs" />
+    <Compile Include="Fixtures\SettingsTests.fs" />
+    <Compile Include="Fixtures\CategoryTests.fs" />
+    <Compile Include="Fixtures\CompositionTests.fs" />
+    <Compile Include="Fixtures\DatabaseTests.fs" />
     <Compile Include="Fixtures\DefaultsTests.fs" />
     <Compile Include="Fixtures\DryIocFactoryTests.fs" />
     <Compile Include="Fixtures\FaveViewModelTests.fs" />
-    <Compile Include="Fixtures\FavoritesTests.fs" />
-    <Compile Include="Fixtures\FavoriteStoreTests.fs" />
+    <Compile Include="Fixtures\FavoriteTests.fs" />
     <Compile Include="Fixtures\ObervableCommandTests.fs" />
     <Compile Include="Fixtures\ObservableGroupingTests.fs" />
     <Compile Include="Fixtures\ObservablePropertyTests.fs" />
     <Compile Include="Fixtures\OpmlTests.fs" />
     <Compile Include="Fixtures\ParallelFeedStoreTests.fs" />
     <Compile Include="Fixtures\RegexImageTests.fs" />
-    <Compile Include="Fixtures\SettingStoreTests.fs" />
     <Compile Include="Fixtures\XmlSerializationTests.fs" />
   </ItemGroup>
   <ItemGroup>

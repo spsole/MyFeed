@@ -5,28 +5,29 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using DryIocAttributes;
+using LiteDB;
 using myFeed.Services.Abstractions;
 using myFeed.Services.Models;
 
 namespace myFeed.Services.Implementations
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(ISettingService))]
-    public sealed class CacheableSettingService : ISettingService
+    [Export(typeof(ISettingManager))]
+    public sealed class LiteSettingManager : ISettingManager
     {
         private readonly IReadOnlyDictionary<string, string> _defaultConfiguration;
         private readonly IDictionary<string, string> _cachedConfiguration;
-        private readonly ISettingStoreService _settingsRepository;
         private readonly SemaphoreSlim _semaphoreSlim;
+        private readonly LiteDatabase _liteDatabase;
         
-        public CacheableSettingService(
-            ISettingStoreService settingsRepository,
-            IDefaultsService defaultsService)
+        public LiteSettingManager(
+            IDefaultsService defaultsService,
+            LiteDatabase liteDatabase)
         {
-            _settingsRepository = settingsRepository;
             _defaultConfiguration = defaultsService.DefaultSettings;
             _cachedConfiguration = new Dictionary<string, string>();
             _semaphoreSlim = new SemaphoreSlim(1, 1);
+            _liteDatabase = liteDatabase;
         }
         
         public async Task<T> GetAsync<T>(string key) where T : IConvertible
@@ -34,8 +35,9 @@ namespace myFeed.Services.Implementations
             await _semaphoreSlim.WaitAsync();
             if (_cachedConfiguration.TryGetValue(key, out var cachedValue)) 
                 return ReleaseAndRetype(cachedValue);
-            
-            var storedSetting = await _settingsRepository.GetByKeyAsync(key);
+
+            var collection = _liteDatabase.GetCollection<Setting>();
+            var storedSetting = collection.FindOne(i => i.Key == key);
             if (storedSetting?.Value != null) return ReleaseAndRetype(
                 _cachedConfiguration[key] = storedSetting.Value);
             
@@ -43,7 +45,7 @@ namespace myFeed.Services.Implementations
                 throw new ArgumentOutOfRangeException($"No defaults: {key}");
             
             _cachedConfiguration[key] = value;
-            await _settingsRepository.InsertAsync(new Setting {Key = key, Value = value});
+            collection.Insert(new Setting {Key = key, Value = value});
             return ReleaseAndRetype(value);
 
             T ReleaseAndRetype(string convertible)
@@ -56,18 +58,22 @@ namespace myFeed.Services.Implementations
 
         public async Task SetAsync<T>(string key, T value) where T : IConvertible
         {
-            var existingSetting = await _settingsRepository.GetByKeyAsync(key);
+            await _semaphoreSlim.WaitAsync();
+            var collection = _liteDatabase.GetCollection<Setting>();
+            var existingSetting = collection.FindOne(i => i.Key == key);
             var converted = value.ToString(CultureInfo.InvariantCulture);
+            
             _cachedConfiguration[key] = converted;
             if (existingSetting == null)
             {
-                await _settingsRepository.InsertAsync(new Setting {
-                    Key = key, Value = converted });
+                collection.Insert(new Setting {Key = key, Value = converted});
+                _semaphoreSlim.Release();
                 return;
             }
-
+            
             existingSetting.Value = converted;
-            await _settingsRepository.UpdateAsync(existingSetting);
+            collection.Update(existingSetting);
+            _semaphoreSlim.Release();
         }
     }
 }

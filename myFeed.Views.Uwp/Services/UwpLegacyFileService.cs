@@ -18,22 +18,22 @@ namespace myFeed.Views.Uwp.Services
     public sealed class UwpLegacyFileService
     {
         private readonly ISerializationService _serializationService;
-        private readonly ICategoryStoreService _categoryStoreService;
+        private readonly ICategoryManager _categoryManager;
         private readonly ITranslationsService _translationsService;
-        private readonly IFavoriteService _favoriteService;
+        private readonly IFavoriteManager _favoriteManager;
         private readonly IDialogService _dialogService;
 
         public UwpLegacyFileService(
-            ICategoryStoreService categoryStoreService,
+            ICategoryManager categoryManager,
             ISerializationService serializationService,
             ITranslationsService translationsService,
-            IFavoriteService favoriteService,
+            IFavoriteManager favoriteManager,
             IDialogService dialogService)
         {
-            _favoriteService = favoriteService;
+            _favoriteManager = favoriteManager;
             _translationsService = translationsService;
             _serializationService = serializationService;
-            _categoryStoreService = categoryStoreService;
+            _categoryManager = categoryManager;
             _dialogService = dialogService;
         }
 
@@ -88,7 +88,7 @@ namespace myFeed.Views.Uwp.Services
                     Title = category.Title,
                     Channels = category.Websites?.Select(source => new Channel {Notify = source.Notify, Uri = source.Uri}).ToList()
                 });
-                foreach (var category in categories) await _categoryStoreService.InsertAsync(category);
+                foreach (var category in categories) await _categoryManager.InsertAsync(category);
             }
 
             var files = new[] {"config", "datecutoff", "read.txt", "saved_cache", "sites"};
@@ -121,7 +121,7 @@ namespace myFeed.Views.Uwp.Services
                 Title = model.Title, Uri = model.Uri
             });
 
-            foreach (var article in articleEntities) await _favoriteService.InsertAsync(article);
+            foreach (var article in articleEntities) await _favoriteManager.InsertAsync(article);
             await favoritesFolder.DeleteAsync();
             return true;
         });

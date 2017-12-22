@@ -11,12 +11,12 @@ using myFeed.Services.Models;
 namespace myFeed.Services.Implementations
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(ICategoryStoreService))]
-    public sealed class LiteCategoryStoreService : ICategoryStoreService
+    [Export(typeof(ICategoryManager))]
+    public sealed class LiteCategoryManager : ICategoryManager
     {
         private readonly LiteDatabase _liteDatabase;
         
-        public LiteCategoryStoreService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
+        public LiteCategoryManager(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
 
         public Task<IEnumerable<Category>> GetAllAsync() => Task.Run(() => 
         {
@@ -58,18 +58,6 @@ namespace myFeed.Services.Implementations
             _liteDatabase.GetCollection<Category>().Update(orderedCategories);
         });
 
-        public Task InsertChannelAsync(Category category, Channel channel) => Task.Run(() =>
-        {
-            category.Channels.Add(channel);
-            _liteDatabase.GetCollection<Category>().Update(category);
-        });
-
-        public Task RemoveChannelAsync(Category category, Channel channel) => Task.Run(() =>
-        {
-            category.Channels.Remove(channel);
-            _liteDatabase.GetCollection<Category>().Update(category);
-        });
-
         public Task UpdateChannelAsync(Channel channel) => Task.Run(() =>
         {
             var collection = _liteDatabase.GetCollection<Category>();
@@ -80,12 +68,6 @@ namespace myFeed.Services.Implementations
             category.Channels.RemoveAll(i => i.Id == channel.Id);
             category.Channels.Add(channel);
             collection.Update(category);
-        });
-
-        public Task InsertArticleRangeAsync(Channel channel, IEnumerable<Article> articles) => Task.Run(() =>
-        {
-            channel.Articles.AddRange(articles);
-            return UpdateChannelAsync(channel);
         });
 
         public Task UpdateArticleAsync(Article article) => Task.Run(() =>

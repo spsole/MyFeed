@@ -24,9 +24,9 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Load { get; }
 
         public ChannelsViewModel(
-            ICategoryStoreService categoriesRepository,
             ITranslationsService translationsService,
             INavigationService navigationService,
+            ICategoryManager categoryManager,
             IFactoryService factoryService,
             IDialogService dialogService)
         {
@@ -42,7 +42,7 @@ namespace myFeed.ViewModels.Implementations
                     translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new Category {Title = name};
-                await categoriesRepository.InsertAsync(category);
+                await categoryManager.InsertAsync(category);
                 var viewModel = factoryService.CreateInstance<
                     ChannelCategoryViewModel>(category, this);
                 viewModelToModelMap[viewModel] = category;
@@ -51,7 +51,7 @@ namespace myFeed.ViewModels.Implementations
             Load = new ObservableCommand(async () =>
             {
                 IsLoading.Value = true;
-                var categories = await categoriesRepository.GetAllAsync();
+                var categories = await categoryManager.GetAllAsync();
                 foreach (var category in categories)
                 {
                     var viewModel = factoryService.CreateInstance<
@@ -66,7 +66,7 @@ namespace myFeed.ViewModels.Implementations
                 {
                     IsEmpty.Value = Items.Count == 0;
                     var items = Items.Select(i => viewModelToModelMap[i]);
-                    await categoriesRepository.RearrangeAsync(items);
+                    await categoryManager.RearrangeAsync(items);
                 };
             });
         }

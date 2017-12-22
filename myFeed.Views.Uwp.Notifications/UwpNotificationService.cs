@@ -16,9 +16,9 @@ namespace myFeed.Views.Uwp.Notifications
     [Export(typeof(INotificationService))]
     internal sealed class UwpNotificationService : INotificationService
     {
-        private readonly ISettingService _settingsService;
+        private readonly ISettingManager _settingManager;
 
-        public UwpNotificationService(ISettingService settingsService) => _settingsService = settingsService;
+        public UwpNotificationService(ISettingManager settingManager) => _settingManager = settingManager;
 
         public async Task SendNotifications(IEnumerable<Article> articles)
         {
@@ -26,8 +26,8 @@ namespace myFeed.Views.Uwp.Notifications
             var articlesList = articles.ToList();
 
             // Send toast notifications for notifications and action center.
-            var needImages = await _settingsService.GetAsync<bool>("LoadImages");
-            var needBanners = await _settingsService.GetAsync<bool>("NeedBanners");
+            var needImages = await _settingManager.GetAsync<bool>("LoadImages");
+            var needBanners = await _settingManager.GetAsync<bool>("NeedBanners");
             foreach (var article in articlesList)
             {
                 var identifier = article.Id.ToString();

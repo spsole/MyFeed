@@ -1,4 +1,4 @@
-module myFeed.Tests.Fixtures.CategoryStoreTests
+module myFeed.Tests.Fixtures.CategoryTests
 
 open Xunit
 open myFeed.Tests.Extensions
@@ -6,7 +6,7 @@ open myFeed.Services.Implementations
 open myFeed.Services.Models
 open System
 
-let private repository = LiteCategoryStoreService connection
+let private repository = produce<LiteCategoryManager> [connection]
 
 [<Fact>]
 [<CleanUpCollection("Category")>]
@@ -110,7 +110,8 @@ let ``should insert channel into existing category``() =
     let category = Category()
     let channel = Channel(Uri="Foo")
     repository.InsertAsync(category).Wait()
-    repository.InsertChannelAsync(category, channel).Wait()
+    category.Channels.Add channel
+    repository.UpdateAsync(category).Wait()
 
     let response = Seq.item 0 <| repository.GetAllAsync().Result
     Should.equal 1 response.Channels.Count
@@ -123,7 +124,8 @@ let ``should remove channel from existing category``() =
     let channel = Channel(Uri="Foo")
     let category = Category(Channels=toList([channel]))
     repository.InsertAsync(category).Wait()
-    repository.RemoveChannelAsync(category, channel).Wait()
+    category.Channels.Remove channel |> ignore
+    repository.UpdateAsync(category).Wait()
 
     let response = Seq.item 0 <| repository.GetAllAsync().Result
     Should.equal 0 response.Channels.Count
@@ -149,8 +151,8 @@ let ``should insert articles into database``() =
 
     let channel = Channel()
     repository.InsertAsync(Category(Channels=toList([channel]))).Wait()
-    repository.InsertArticleRangeAsync(channel, 
-        [ Article(Title="Foo") ]).Wait()
+    channel.Articles.AddRange [ Article(Title="Foo") ]
+    repository.UpdateChannelAsync(channel).Wait()
 
     let category = Seq.item 0 <| repository.GetAllAsync().Result      
     Should.equal "Foo" category.Channels.[0].Articles.[0].Title

@@ -1,4 +1,4 @@
-﻿module myFeed.Tests.Fixtures.CombinedUnitsTests
+﻿module myFeed.Tests.Fixtures.CompositionTests
 
 open Xunit
 open DryIoc
@@ -15,18 +15,16 @@ let ``all default services should be registered``() =
     container.RegisterServices()
     container
     |> also registerMocks
-    |> also Should.resolve<ICategoryStoreService>
-    |> also Should.resolve<IFavoriteStoreService>
-    |> also Should.resolve<ISettingStoreService>
+    |> also Should.resolve<ICategoryManager>
     |> also Should.resolve<ISearchService>
     |> also Should.resolve<IOpmlService>
     |> also Should.resolve<ISerializationService>
     |> also Should.resolve<IImageService>
     |> also Should.resolve<IFeedFetchService>
-    |> also Should.resolve<IFavoriteService>
+    |> also Should.resolve<IFavoriteManager>
     |> also Should.resolve<IFactoryService>
     |> also Should.resolve<IFeedStoreService>
-    |> also Should.resolve<ISettingService>
+    |> also Should.resolve<ISettingManager>
     |> also Should.resolve<IDefaultsService>
     |> also Should.resolve<IBackgroundService>
     |> dispose

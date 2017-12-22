@@ -12,13 +12,13 @@ namespace myFeed.Services.Implementations
 {
     [Reuse(ReuseType.Singleton)]
     [Export(typeof(IOpmlService))]
-    public sealed class OpmlService : IOpmlService
+    public sealed class DefaultOpmlService : IOpmlService
     {
         private readonly ISerializationService _serializationService;
-        private readonly ICategoryStoreService _categoriesRepository;
+        private readonly ICategoryManager _categoriesRepository;
 
-        public OpmlService(
-            ICategoryStoreService categoriesRepository,
+        public DefaultOpmlService(
+            ICategoryManager categoriesRepository,
             ISerializationService serializationService)
         {
             _categoriesRepository = categoriesRepository;

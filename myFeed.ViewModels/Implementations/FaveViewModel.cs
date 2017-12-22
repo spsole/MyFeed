@@ -25,7 +25,7 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Load { get; }
 
         public FaveViewModel(
-            IFavoriteStoreService favoriteStoreService,
+            IFavoriteManager favoriteManager,
             IFactoryService factoryService)
         {
             (IsEmpty, IsLoading) = (false, true);
@@ -46,7 +46,7 @@ namespace myFeed.ViewModels.Implementations
             Load = new ObservableCommand(async () =>
             {
                 IsLoading.Value = true;
-                var articles = await favoriteStoreService.GetAllAsync();
+                var articles = await favoriteManager.GetAllAsync();
                 Items.Clear();
                 var groupings = articles
                     .Select(i => factoryService.CreateInstance<ArticleViewModel>(i))

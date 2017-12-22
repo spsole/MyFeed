@@ -28,12 +28,12 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Open { get; }
 
         public ArticleViewModel(
-            ICategoryStoreService categoriesRepository,
             ITranslationsService translationsService,
             INavigationService navigationService,
-            IFavoriteService favoritesService,
+            ICategoryManager categoryManager,
+            IFavoriteManager favoriteManager,
             IPlatformService platformService,
-            ISettingService settingsService,
+            ISettingManager settingManager,
             IStateContainer stateContainer,
             IDialogService dialogService)
         {
@@ -48,7 +48,7 @@ namespace myFeed.ViewModels.Implementations
             Open = new ObservableCommand(() => navigationService.Navigate<ArticleViewModel>(this));
             Image = new ObservableProperty<string>(async () =>
             {
-                var shouldLoadImages = await settingsService.GetAsync<bool>("LoadImages");
+                var shouldLoadImages = await settingManager.GetAsync<bool>("LoadImages");
                 return shouldLoadImages ? article.ImageUri : null;
             });
             Share = new ObservableCommand(() =>
@@ -72,13 +72,13 @@ namespace myFeed.ViewModels.Implementations
             MarkRead = new ObservableCommand(async () =>
             {
                 IsRead.Value = article.Read = !IsRead.Value;
-                await categoriesRepository.UpdateArticleAsync(article);
+                await categoryManager.UpdateArticleAsync(article);
             });
             MarkFavorite = new ObservableCommand(async () =>
             {
                 IsFavorite.Value = !IsFavorite.Value;
-                if (IsFavorite.Value) await favoritesService.InsertAsync(article);
-                else await favoritesService.RemoveAsync(article);
+                if (IsFavorite.Value) await favoriteManager.InsertAsync(article);
+                else await favoriteManager.RemoveAsync(article);
             });
         }
     }

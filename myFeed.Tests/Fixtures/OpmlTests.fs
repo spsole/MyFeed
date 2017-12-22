@@ -16,7 +16,7 @@ open System.Threading.Tasks
 let ``should be able to export opml feeds`` first second protocol domain path =
 
     let uri = sprintf "%s%s%s" protocol domain path
-    let categories = Substitute.For<ICategoryStoreService>()
+    let categories = Substitute.For<ICategoryManager>()
     categories.GetAllAsync().Returns(
         [ Category(Title=first, Channels=toList[| Channel(Uri=uri) |]);
           Category(Title=second) ] :> seq<_>
@@ -28,7 +28,7 @@ let ``should be able to export opml feeds`` first second protocol domain path =
     serializer.When(fun x -> x.Serialize<Opml>(Arg.Any(), Arg.Any()) |> ignore)     
               .Do(fun x -> opml <- x.Arg<Opml>())
 
-    let service = produce<OpmlService> [categories; serializer]
+    let service = produce<DefaultOpmlService> [categories; serializer]
     let response = service.ExportOpmlFeedsAsync(new MemoryStream()).Result
 
     Should.equal true response
@@ -52,11 +52,11 @@ let ``should be able to import opml feeds`` url =
                            OpmlOutline(XmlUrl=url) ])) |> ignore
 
     let mutable category = null
-    let categories = Substitute.For<ICategoryStoreService>()
+    let categories = Substitute.For<ICategoryManager>()
     categories.When(fun x -> x.InsertAsync(Arg.Any()) |> ignore)
               .Do(fun x -> category <- x.Arg<Category>())
 
-    let service = produce<OpmlService> [serializer; categories]
+    let service = produce<DefaultOpmlService> [serializer; categories]
     let response = service.ImportOpmlFeedsAsync(new MemoryStream()).Result
 
     Should.equal true response

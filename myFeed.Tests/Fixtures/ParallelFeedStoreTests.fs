@@ -12,7 +12,7 @@ open System
 [<Fact>]
 let ``should sort stored article entities``() = 
 
-    let settings = Substitute.For<ISettingService>()
+    let settings = Substitute.For<ISettingManager>()
     settings.GetAsync<_>(Arg.Any()).Returns(5) |> ignore
 
     let fetcher = Substitute.For<IFeedFetchService>()
@@ -39,7 +39,7 @@ let ``should sort stored article entities``() =
 [<Fact>]
 let ``should save fetched article entities``() =    
 
-    let settings = Substitute.For<ISettingService>()
+    let settings = Substitute.For<ISettingManager>()
     settings.GetAsync<_>(Arg.Any()).Returns(5) |> ignore
 
     let fetcher = Substitute.For<IFeedFetchService>()
@@ -49,9 +49,9 @@ let ``should save fetched article entities``() =
         |> ignore
 
     let mutable articlesInserted = null
-    let categories = Substitute.For<ICategoryStoreService>()
-    categories.When(fun x -> x.InsertArticleRangeAsync(Arg.Any<_>(), Arg.Any<_>()) |> ignore)
-              .Do(fun x -> articlesInserted <- x.Arg<seq<Article>>())       
+    let categories = Substitute.For<ICategoryManager>()
+    categories.When(fun x -> x.UpdateChannelAsync(Arg.Any<_>()) |> ignore)
+              .Do(fun x -> articlesInserted <- x.Arg<Channel>().Articles)       
 
     let service = produce<ParallelFeedStoreService> [fetcher; categories; settings]
     let articles = 
@@ -67,7 +67,7 @@ let ``should save fetched article entities``() =
 [<Fact>]
 let ``should mix and order fetched and stored articles by date``() = 
     
-    let settings = Substitute.For<ISettingService>()
+    let settings = Substitute.For<ISettingManager>()
     settings.GetAsync<_>(Arg.Any()).Returns(5) |> ignore
 
     let fetcher = Substitute.For<IFeedFetchService>()
@@ -91,7 +91,7 @@ let ``should mix and order fetched and stored articles by date``() =
 [<Fact>]
 let ``should remove outdated articles if count is greater than custom``() = 
 
-    let settings = Substitute.For<ISettingService>()
+    let settings = Substitute.For<ISettingManager>()
     settings.GetAsync<_>(Arg.Any()).Returns(70) |> ignore
 
     let articles = Seq.init 200 (fun _ -> Article())
@@ -108,7 +108,7 @@ let ``should remove outdated articles if count is greater than custom``() =
 [<Fact>]
 let ``should remove articles with minimum publishing date only``() =    
 
-    let settings = Substitute.For<ISettingService>()
+    let settings = Substitute.For<ISettingManager>()
     settings.GetAsync<_>(Arg.Any()).Returns(70) |> ignore
 
     let articles = Seq.init 200 (fun _ -> Article())
@@ -124,7 +124,7 @@ let ``should remove articles with minimum publishing date only``() =
 [<Fact>]
 let ``should ignore whitespaces while comparing titles``() =
     
-    let settings = Substitute.For<ISettingService>()
+    let settings = Substitute.For<ISettingManager>()
     settings.GetAsync<_>(Arg.Any()).Returns(70) |> ignore
     
     let fetcher = Substitute.For<IFeedFetchService>()

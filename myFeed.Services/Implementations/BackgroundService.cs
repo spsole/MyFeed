@@ -13,16 +13,16 @@ namespace myFeed.Services.Implementations
     [Export(typeof(IBackgroundService))]
     public sealed class BackgroundService : IBackgroundService
     {
-        private readonly ICategoryStoreService _categoriesRepository;
+        private readonly ICategoryManager _categoriesRepository;
         private readonly INotificationService _notificationService;
         private readonly IFeedStoreService _feedStoreService;
-        private readonly ISettingService _settingsService;
+        private readonly ISettingManager _settingsService;
 
         public BackgroundService(
-            ICategoryStoreService categoriesRepository,
+            ICategoryManager categoriesRepository,
             INotificationService notificationService,
             IFeedStoreService feedStoreService, 
-            ISettingService settingsService)
+            ISettingManager settingsService)
         {
             _categoriesRepository = categoriesRepository;
             _notificationService = notificationService;

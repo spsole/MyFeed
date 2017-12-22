@@ -21,7 +21,7 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand CopyLink { get; }
 
         public ChannelViewModel(
-            ICategoryStoreService categoriesRepository,
+            ICategoryManager categoryManager,
             IPlatformService platformService,
             IStateContainer stateContainer)
         {
@@ -44,12 +44,13 @@ namespace myFeed.ViewModels.Implementations
             DeleteSource = new ObservableCommand(async () =>
             {
                 parentViewModel.Items.Remove(this);
-                await categoriesRepository.RemoveChannelAsync(category, channel);
+                category.Channels.Remove(channel);
+                await categoryManager.UpdateAsync(category);
             });
             Notify.PropertyChanged += async (sender, args) =>
             {
                 channel.Notify = Notify.Value;
-                await categoriesRepository.UpdateAsync(category);
+                await categoryManager.UpdateAsync(category);
             };
         }
     }

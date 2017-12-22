@@ -23,18 +23,18 @@ namespace myFeed.ViewModels.Implementations
             ITranslationsService translationsService,
             INavigationService navigationService,
             IPlatformService platformService,
-            ISettingService settingsService)
+            ISettingManager settingManager)
         {
             SelectedIndex = 0;
             Items = new ObservableCollection<Tuple<string, object, ObservableCommand, Type>>();
             Load = new ObservableCommand(async () =>
             {
                 await navigationService.Navigate<FeedViewModel>();
-                var theme = await settingsService.GetAsync<string>("Theme");
+                var theme = await settingManager.GetAsync<string>("Theme");
                 await platformService.RegisterTheme(theme);
-                var freq = await settingsService.GetAsync<int>("NotifyPeriod");
+                var freq = await settingManager.GetAsync<int>("NotifyPeriod");
                 await platformService.RegisterBackgroundTask(freq);
-                await settingsService.SetAsync("LastFetched", DateTime.Now);
+                await settingManager.SetAsync("LastFetched", DateTime.Now);
             });
             
             CreateItem<FeedViewModel>("FeedViewMenuItem");

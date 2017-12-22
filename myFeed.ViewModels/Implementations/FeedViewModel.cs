@@ -22,8 +22,8 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Load { get; }
 
         public FeedViewModel(
-            ICategoryStoreService categoriesRepository,
             INavigationService navigationService,
+            ICategoryManager categoryManager,
             IFactoryService factoryService)
         {
             (IsEmpty, IsLoading) = (false, true);
@@ -35,7 +35,7 @@ namespace myFeed.ViewModels.Implementations
                 IsEmpty.Value = false;
                 IsLoading.Value = true;
                 Items.Clear();
-                var categories = await categoriesRepository.GetAllAsync();
+                var categories = await categoryManager.GetAllAsync();
                 foreach (var category in categories)
                     Items.Add(factoryService.CreateInstance<
                         FeedCategoryViewModel>(category));

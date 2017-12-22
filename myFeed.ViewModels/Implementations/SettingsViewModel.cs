@@ -32,7 +32,7 @@ namespace myFeed.ViewModels.Implementations
             IFilePickerService filePickerService,
             IPackagingService packagingService,
             IPlatformService platformService,
-            ISettingService settingsService,
+            ISettingManager settingManager,
             IDialogService dialogService,
             IOpmlService opmlService)
         {
@@ -81,12 +81,12 @@ namespace myFeed.ViewModels.Implementations
             async Task StartTracking<T>(ObservableProperty<T> property, string key, 
                 Func<T, Task> callback) where T : IConvertible
             {
-                property.Value = await settingsService.GetAsync<T>(key);
+                property.Value = await settingManager.GetAsync<T>(key);
                 property.PropertyChanged += async (o, args) =>
                 {
                     var value = property.Value;
                     await callback.Invoke(value);
-                    await settingsService.SetAsync(key, value);
+                    await settingManager.SetAsync(key, value);
                 };
             }
         }

@@ -16,13 +16,13 @@ namespace myFeed.Services.Implementations
             | RegexOptions.IgnoreCase
             | RegexOptions.Multiline;
 
-        private readonly Regex Matcher = new Regex(Pattern, Options);
+        private readonly Regex _matcher = new Regex(Pattern, Options);
 
         public string ExtractImageUri(string html)
         {
             if (string.IsNullOrWhiteSpace(html)) return null;
 
-            var match = Matcher.Match(html);
+            var match = _matcher.Match(html);
             if (!match.Success) return null;
 
             var imageUrl = match.Groups[1].Value;

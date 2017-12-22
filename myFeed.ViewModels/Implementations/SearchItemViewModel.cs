@@ -23,7 +23,7 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand CopyLink { get; }
         
         public SearchItemViewModel(
-            ICategoryStoreService categoriesRepository,
+            ICategoryManager categoryManager,
             IPlatformService platformService,
             IStateContainer stateContainer,
             IDialogService dialogService)
@@ -44,12 +44,13 @@ namespace myFeed.ViewModels.Implementations
             AddToSources = new ObservableCommand(async () =>
             {
                 if (!Uri.IsWellFormedUriString(FeedUrl.Value, UriKind.Absolute)) return;
-                var categories = await categoriesRepository.GetAllAsync();
+                var categories = await categoryManager.GetAllAsync();
                 var response = await dialogService.ShowDialogForSelection(categories);
                 if (response is Category category)
                 {
                     var source = new Channel {Notify = true, Uri = FeedUrl.Value};
-                    await categoriesRepository.InsertChannelAsync(category, source);
+                    category.Channels.Add(source);
+                    await categoryManager.UpdateAsync(category);
                 }
             });
         }

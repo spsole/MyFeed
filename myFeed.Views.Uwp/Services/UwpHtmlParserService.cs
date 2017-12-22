@@ -24,7 +24,7 @@ namespace myFeed.Views.Uwp.Services
     {
         private readonly ITranslationsService _translationsService;
         private readonly IPlatformService _platformService;
-        private readonly ISettingService _settingService;
+        private readonly ISettingManager _settingManager;
 
         private double _fontSize;
         private bool _loadImages;
@@ -32,11 +32,11 @@ namespace myFeed.Views.Uwp.Services
         public UwpHtmlParserService(
             ITranslationsService translationsService,
             IPlatformService platformService,
-            ISettingService settingService)
+            ISettingManager settingManager)
         {
             _translationsService = translationsService;
             _platformService = platformService;
-            _settingService = settingService;
+            _settingManager = settingManager;
         }
 
         public async Task<IEnumerable<Block>> ParseAsync(string html)
@@ -45,8 +45,8 @@ namespace myFeed.Views.Uwp.Services
             var htmlDocument = new HtmlDocument();
             await Task.Run(async () =>
             {
-                _loadImages = await _settingService.GetAsync<bool>("LoadImages");
-                _fontSize = await _settingService.GetAsync<double>("FontSize");
+                _loadImages = await _settingManager.GetAsync<bool>("LoadImages");
+                _fontSize = await _settingManager.GetAsync<double>("FontSize");
                 htmlDocument.LoadHtml(html);
             });
             var paragraph = new Paragraph { FontSize = _fontSize, LineHeight = _fontSize * 1.5 };
@@ -159,6 +159,12 @@ namespace myFeed.Views.Uwp.Services
             {
                 var bmp = (BitmapImage)image.Source;
                 if (bmp.PixelHeight >= bmp.PixelWidth) image.Margin = new Thickness(0, 12, 0, 12);
+                if (bmp.PixelWidth < 300)
+                {
+                    image.HorizontalAlignment = HorizontalAlignment.Center;
+                    image.Margin = new Thickness(0, 12, 0, 12);
+                    image.Stretch = Stretch.None;
+                }
                 image.Fade(1, 300, 100).Start();
             };
             image.RightTapped += (sender, e) =>

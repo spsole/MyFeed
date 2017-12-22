@@ -22,7 +22,7 @@ namespace myFeed.Views.Uwp.Services
     [Export(typeof(INavigationService))]
     public sealed class UwpNavigationService : INavigationService
     {
-        private readonly IReadOnlyDictionary<Type, Type> Pages = new Dictionary<Type, Type>
+        private readonly IReadOnlyDictionary<Type, Type> _pages = new Dictionary<Type, Type>
         {
             {typeof(SettingsViewModel), typeof(SettingsView)},
             {typeof(ArticleViewModel), typeof(ArticleView)},
@@ -32,7 +32,7 @@ namespace myFeed.Views.Uwp.Services
             {typeof(FaveViewModel), typeof(FaveView)},
             {typeof(FeedViewModel), typeof(FeedView)}
         };
-        private readonly IReadOnlyDictionary<Type, object> Symbols = new Dictionary<Type, object>
+        private readonly IReadOnlyDictionary<Type, object> _symbols = new Dictionary<Type, object>
         {
             {typeof(FaveViewModel), Symbol.OutlineStar},
             {typeof(SettingsViewModel), Symbol.Setting},
@@ -40,15 +40,15 @@ namespace myFeed.Views.Uwp.Services
             {typeof(ChannelsViewModel), Symbol.List},
             {typeof(SearchViewModel), Symbol.Zoom}
         };
-        private readonly ICategoryStoreService _categoryStoreService;
+        private readonly ICategoryManager _categoryManager;
         private readonly IFactoryService _factoryService;
 
         public UwpNavigationService(
-            ICategoryStoreService categoryStoreService,
+            ICategoryManager categoryManager,
             IFactoryService factoryService)
         {
             _factoryService = factoryService;
-            _categoryStoreService = categoryStoreService;
+            _categoryManager = categoryManager;
 
             var systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -62,7 +62,7 @@ namespace myFeed.Views.Uwp.Services
 
         public event EventHandler<Type> Navigated;
 
-        public IReadOnlyDictionary<Type, object> Icons => Symbols;
+        public IReadOnlyDictionary<Type, object> Icons => _symbols;
 
         public Task Navigate<T>() where T : class => Navigate<T>(Uwp.Current.Resolve<T>());
 
@@ -81,7 +81,7 @@ namespace myFeed.Views.Uwp.Services
                     NavigateFrame((Frame)Window.Current.Content);
                     break;
                 case nameof(ArticleViewModel) when arg is Guid guid:
-                    var article = await _categoryStoreService.GetArticleByIdAsync(guid);
+                    var article = await _categoryManager.GetArticleByIdAsync(guid);
                     if (article == null) return;
                     var viewModel = _factoryService.CreateInstance<ArticleViewModel>(article);
                     if (GetChild<Frame>(Window.Current.Content, 1) == null) await Navigate<FeedViewModel>();
@@ -97,7 +97,7 @@ namespace myFeed.Views.Uwp.Services
 
             void NavigateFrame(Frame frame)
             {
-                frame.Navigate(Pages[typeof(T)], arg);
+                frame.Navigate(_pages[typeof(T)], arg);
                 ((Page) frame.Content).DataContext = arg;
                 RaiseNavigated(arg);
             }

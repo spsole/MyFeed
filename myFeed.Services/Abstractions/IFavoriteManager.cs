@@ -4,14 +4,12 @@ using myFeed.Services.Models;
 
 namespace myFeed.Services.Abstractions
 {
-    public interface IFavoriteStoreService
+    public interface IFavoriteManager
     {
         Task<IEnumerable<Article>> GetAllAsync();
         
         Task InsertAsync(Article article);
-        
+
         Task RemoveAsync(Article article);
-        
-        Task UpdateAsync(Article article);
     }
 }

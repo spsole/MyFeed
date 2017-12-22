@@ -24,7 +24,7 @@ mockFactory.CreateInstance<ArticleViewModel>(
 [<InlineData("Bar")>]
 let ``should populate view model with items received from repository`` title =   
 
-    let favorites = Substitute.For<IFavoriteStoreService>()
+    let favorites = Substitute.For<IFavoriteManager>()
     favorites.GetAllAsync().Returns([ Article(Title=title) ] 
         :> seq<_> |> Task.FromResult) |> ignore
 
@@ -39,7 +39,7 @@ let ``should populate view model with items received from repository`` title =
 [<InlineData("Bar", "Foo", "Zoo")>]
 let ``should order items in view model by name descending`` first second third =    
     
-    let favorites = Substitute.For<IFavoriteStoreService>()
+    let favorites = Substitute.For<IFavoriteManager>()
     favorites.GetAllAsync().Returns(
         [ Article(FeedTitle=first); 
           Article(FeedTitle=third); 
@@ -58,7 +58,7 @@ let ``should order items in view model by name descending`` first second third =
 [<Fact>]
 let ``should order items in view model by date descending``() =    
     
-    let favorites = Substitute.For<IFavoriteStoreService>()
+    let favorites = Substitute.For<IFavoriteManager>()
     favorites.GetAllAsync().Returns(
         [ Article(Title="A", PublishedDate=DateTime.MaxValue); 
           Article(Title="C", PublishedDate=DateTime.MinValue); 
@@ -77,10 +77,10 @@ let ``should order items in view model by date descending``() =
 [<Fact>]
 let ``should be able to delete and restore items from groupings``() =    
 
-    let favorites = Substitute.For<IFavoriteStoreService>()
+    let favorites = Substitute.For<IFavoriteManager>()
     favorites.GetAllAsync().Returns(
         [ Article(Fave=true, PublishedDate=DateTime.MinValue); 
-          Article(Fave=true, PublishedDate=DateTime.Now);] 
+          Article(Fave=true, PublishedDate=DateTime.Now) ] 
         :> seq<_> |> Task.FromResult) |> ignore
         
     let faveViewModel = produce<FaveViewModel> [favorites; mockFactory]

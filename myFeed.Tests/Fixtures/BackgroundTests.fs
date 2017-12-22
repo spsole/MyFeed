@@ -19,7 +19,7 @@ let ``should send ordered notifications for articles with greater date``() =
         [ Article(Title="Foo", PublishedDate=DateTime.Now);
           Article(Title="Bar", PublishedDate=DateTime.MaxValue) ] :> seq<_>)) |> ignore
 
-    let settings = Substitute.For<ISettingService>()
+    let settings = Substitute.For<ISettingManager>()
     settings.GetAsync(Arg.Any()).Returns(Task.FromResult(DateTime.MinValue)) |> ignore      
 
     let mutable received = null

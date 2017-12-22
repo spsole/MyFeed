@@ -24,8 +24,8 @@ namespace myFeed.ViewModels.Implementations
         public ObservableCommand Load { get; }
 
         public ChannelCategoryViewModel(
-            ICategoryStoreService categoriesRepository,
             ITranslationsService translationsService,
+            ICategoryManager categoryManager,
             IStateContainer stateContainer,
             IFactoryService factoryService,
             IDialogService dialogService)
@@ -42,7 +42,7 @@ namespace myFeed.ViewModels.Implementations
                     translationsService.Resolve("EnterNameOfNewCategoryTitle"));
                 if (string.IsNullOrWhiteSpace(name)) return;
                 category.Title = name;
-                await categoriesRepository.UpdateAsync(category);
+                await categoryManager.UpdateAsync(category);
                 category.Title = Title.Value = name;
             });
             RemoveCategory = new ObservableCommand(async () =>
@@ -51,7 +51,7 @@ namespace myFeed.ViewModels.Implementations
                     translationsService.Resolve("DeleteCategory"),
                     translationsService.Resolve("DeleteElement"));
                 if (!shouldDelete) return;
-                await categoriesRepository.RemoveAsync(category);
+                await categoryManager.RemoveAsync(category);
                 channelsViewModel.Items.Remove(this);
             });
             AddSource = new ObservableCommand(async () =>
@@ -61,9 +61,9 @@ namespace myFeed.ViewModels.Implementations
                     .IsWellFormedUriString(sourceUri, UriKind.Absolute)) return;
                 SourceUri.Value = string.Empty;
                 var model = new Channel {Uri = sourceUri, Notify = true};
-                await categoriesRepository.InsertChannelAsync(category, model);
-                Items.Add(factoryService.CreateInstance<
-                    ChannelViewModel>(model, this));
+                category.Channels.Add(model);
+                await categoryManager.UpdateAsync(category);
+                Items.Add(factoryService.CreateInstance<ChannelViewModel>(model, this));
             });
             Load = new ObservableCommand(() =>
             {
