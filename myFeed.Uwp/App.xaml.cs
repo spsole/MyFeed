@@ -2,7 +2,7 @@
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using myFeed.Services.Platform;
+using myFeed.Platform;
 using myFeed.Uwp.Services;
 using myFeed.ViewModels;
 

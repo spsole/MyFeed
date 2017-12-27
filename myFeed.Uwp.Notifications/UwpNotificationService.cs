@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
-using myFeed.Services.Platform;
-using myFeed.Services.Abstractions;
 using System.ComponentModel.Composition;
 using DryIocAttributes;
+using myFeed.Interfaces;
 using myFeed.Models;
+using myFeed.Platform;
 
 namespace myFeed.Views.Uwp.Notifications
 {

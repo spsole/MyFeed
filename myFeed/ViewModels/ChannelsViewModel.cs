@@ -3,10 +3,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using DryIocAttributes;
-using myFeed.Bindables;
+using myFeed.Common;
+using myFeed.Interfaces;
 using myFeed.Models;
-using myFeed.Services.Abstractions;
-using myFeed.Services.Platform;
+using myFeed.Platform;
 
 namespace myFeed.ViewModels
 {
@@ -24,7 +24,7 @@ namespace myFeed.ViewModels
         public ObservableCommand Load { get; }
 
         public ChannelsViewModel(
-            ITranslationsService translationsService,
+            ITranslationService translationsService,
             INavigationService navigationService,
             ICategoryManager categoryManager,
             IFactoryService factoryService,

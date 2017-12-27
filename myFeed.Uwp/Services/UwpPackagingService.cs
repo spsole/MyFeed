@@ -5,7 +5,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Email;
 using Windows.System;
 using DryIocAttributes;
-using myFeed.Services.Platform;
+using myFeed.Platform;
 
 namespace myFeed.Uwp.Services
 {

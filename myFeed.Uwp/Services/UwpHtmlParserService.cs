@@ -12,8 +12,8 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 using DryIocAttributes;
 using HtmlAgilityPack;
-using myFeed.Services.Abstractions;
-using myFeed.Services.Platform;
+using myFeed.Interfaces;
+using myFeed.Platform;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 
 namespace myFeed.Uwp.Services
@@ -22,7 +22,7 @@ namespace myFeed.Uwp.Services
     [Export(typeof(UwpHtmlParserService))]
     public sealed class UwpHtmlParserService
     {
-        private readonly ITranslationsService _translationsService;
+        private readonly ITranslationService _translationService;
         private readonly IPlatformService _platformService;
         private readonly ISettingManager _settingManager;
 
@@ -30,11 +30,11 @@ namespace myFeed.Uwp.Services
         private bool _loadImages;
 
         public UwpHtmlParserService(
-            ITranslationsService translationsService,
+            ITranslationService translationService,
             IPlatformService platformService,
             ISettingManager settingManager)
         {
-            _translationsService = translationsService;
+            _translationService = translationService;
             _platformService = platformService;
             _settingManager = settingManager;
         }
@@ -169,8 +169,8 @@ namespace myFeed.Uwp.Services
             };
             image.RightTapped += (sender, e) =>
             {
-                var launcher = new MenuFlyoutItem { Text = _translationsService.Resolve("ImageOpenFullSize") };
-                var copier = new MenuFlyoutItem { Text = _translationsService.Resolve("ImageCopyLink") };
+                var launcher = new MenuFlyoutItem { Text = _translationService.Resolve("ImageOpenFullSize") };
+                var copier = new MenuFlyoutItem { Text = _translationService.Resolve("ImageCopyLink") };
                 copier.Click += (s, o) => _platformService.CopyTextToClipboard(sourceUri.AbsoluteUri);
                 launcher.Click += (s, o) => _platformService.LaunchUri(sourceUri);
                 new MenuFlyout {Items = {launcher, copier}}.ShowAt(image);

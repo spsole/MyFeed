@@ -7,7 +7,7 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using DryIocAttributes;
-using myFeed.Services.Platform;
+using myFeed.Platform;
 
 namespace myFeed.Uwp.Services
 {
@@ -15,9 +15,9 @@ namespace myFeed.Uwp.Services
     [Export(typeof(IDialogService))]
     public sealed class UwpDialogService : IDialogService
     {
-        private readonly ITranslationsService _translationsService;
+        private readonly ITranslationService _translationsService;
 
-        public UwpDialogService(ITranslationsService translationsService) => _translationsService = translationsService;
+        public UwpDialogService(ITranslationService translationsService) => _translationsService = translationsService;
 
         public async Task ShowDialog(string message, string title) => await new MessageDialog(message, title).ShowAsync();
 

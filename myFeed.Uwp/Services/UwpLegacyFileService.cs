@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Windows.Storage;
 using DryIocAttributes;
+using myFeed.Interfaces;
 using myFeed.Models;
-using myFeed.Services.Abstractions;
-using myFeed.Services.Platform;
+using myFeed.Platform;
 
 namespace myFeed.Uwp.Services
 {
@@ -19,19 +19,19 @@ namespace myFeed.Uwp.Services
     {
         private readonly ISerializationService _serializationService;
         private readonly ICategoryManager _categoryManager;
-        private readonly ITranslationsService _translationsService;
+        private readonly ITranslationService _translationService;
         private readonly IFavoriteManager _favoriteManager;
         private readonly IDialogService _dialogService;
 
         public UwpLegacyFileService(
             ICategoryManager categoryManager,
             ISerializationService serializationService,
-            ITranslationsService translationsService,
+            ITranslationService translationService,
             IFavoriteManager favoriteManager,
             IDialogService dialogService)
         {
             _favoriteManager = favoriteManager;
-            _translationsService = translationsService;
+            _translationService = translationService;
             _serializationService = serializationService;
             _categoryManager = categoryManager;
             _dialogService = dialogService;
@@ -43,15 +43,15 @@ namespace myFeed.Uwp.Services
             {
                 var imported = await ProcessFeedsFromLegacyFormat();
                 if (imported) await _dialogService.ShowDialog(
-                    _translationsService.Resolve("SourcesMigrateSuccess"),
-                    _translationsService.Resolve("SettingsNotification"));
+                    _translationService.Resolve("SourcesMigrateSuccess"),
+                    _translationService.Resolve("SettingsNotification"));
             }
             catch (Exception exception)
             {
-                var translation = _translationsService.Resolve("SourcesMigrateFailure");
+                var translation = _translationService.Resolve("SourcesMigrateFailure");
                 var errorMessage = string.Format(translation, exception.Message);
                 await _dialogService.ShowDialog(errorMessage,
-                    _translationsService.Resolve("SettingsNotification"));
+                    _translationService.Resolve("SettingsNotification"));
             }
         }
 
@@ -61,15 +61,15 @@ namespace myFeed.Uwp.Services
             {
                 var imported = await ProcessArticlesFromLegacyFormat();
                 if (imported) await _dialogService.ShowDialog(
-                    _translationsService.Resolve("ArticlesMigrateSuccess"),
-                    _translationsService.Resolve("SettingsNotification"));
+                    _translationService.Resolve("ArticlesMigrateSuccess"),
+                    _translationService.Resolve("SettingsNotification"));
             }
             catch (Exception exception)
             {
-                var translation = _translationsService.Resolve("ArticlesMigrateFailure");
+                var translation = _translationService.Resolve("ArticlesMigrateFailure");
                 var errorMessage = string.Format(translation, exception.Message);
                 await _dialogService.ShowDialog(errorMessage,
-                    _translationsService.Resolve("SettingsNotification"));
+                    _translationService.Resolve("SettingsNotification"));
             }
         }
 

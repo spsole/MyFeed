@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using DryIocAttributes;
-using myFeed.Bindables;
-using myFeed.Services.Abstractions;
-using myFeed.Services.Platform;
+using myFeed.Common;
+using myFeed.Interfaces;
+using myFeed.Platform;
 
 namespace myFeed.ViewModels
 {
@@ -20,7 +20,7 @@ namespace myFeed.ViewModels
         public ObservableCommand Load { get; }
 
         public MenuViewModel(
-            ITranslationsService translationsService,
+            ITranslationService translationsService,
             INavigationService navigationService,
             IPlatformService platformService,
             ISettingManager settingManager)

@@ -5,8 +5,8 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
-using myFeed.Bindables;
-using myFeed.Services.Abstractions;
+using myFeed.Common;
+using myFeed.Interfaces;
 
 namespace myFeed.ViewModels
 {

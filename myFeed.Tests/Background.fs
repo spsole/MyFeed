@@ -3,9 +3,9 @@ module myFeed.Tests.Fixtures.Background
 open Xunit
 open NSubstitute
 open myFeed.Models
-open myFeed.Services.Abstractions
-open myFeed.Services.Implementations
-open myFeed.Services.Platform
+open myFeed.Interfaces
+open myFeed.Services
+open myFeed.Platform
 open myFeed.Tests.Extensions
 open System.Threading.Tasks
 open System.Collections.Generic

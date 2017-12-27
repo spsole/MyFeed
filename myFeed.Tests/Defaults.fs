@@ -2,7 +2,7 @@ module myFeed.Tests.Fixtures.Defaults
 
 open Xunit
 open myFeed.Tests.Extensions
-open myFeed.Services.Implementations
+open myFeed.Services
 
 [<Theory>]
 [<InlineData("LoadImages")>]

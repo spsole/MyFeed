@@ -2,8 +2,8 @@ module myFeed.Tests.Fixtures.DryIocFactory
 
 open Xunit
 open DryIoc
-open myFeed.Services.Abstractions
-open myFeed.Services.Implementations
+open myFeed.Interfaces
+open myFeed.Services
 open myFeed.Tests.Extensions
 
 type Sample (mediation: IStateContainer) = 

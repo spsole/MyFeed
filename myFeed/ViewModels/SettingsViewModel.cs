@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using DryIocAttributes;
-using myFeed.Bindables;
-using myFeed.Services.Abstractions;
-using myFeed.Services.Platform;
+using myFeed.Common;
+using myFeed.Interfaces;
+using myFeed.Platform;
 
 namespace myFeed.ViewModels
 {
@@ -28,7 +28,7 @@ namespace myFeed.ViewModels
         public ObservableCommand Load { get; }
 
         public SettingsViewModel(
-            ITranslationsService translationsService,
+            ITranslationService translationsService,
             IFilePickerService filePickerService,
             IPackagingService packagingService,
             IPlatformService platformService,

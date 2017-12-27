@@ -4,7 +4,7 @@ open Xunit
 open DryIoc
 open myFeed
 open myFeed.Tests.Extensions
-open myFeed.Services.Abstractions
+open myFeed.Interfaces
 open myFeed.Services
 open myFeed.ViewModels
 

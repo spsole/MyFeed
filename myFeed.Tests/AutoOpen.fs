@@ -11,7 +11,7 @@ open System.Linq
 open System.Reflection
 open System.Windows.Input
 open System.Threading.Tasks
-open myFeed.Services.Platform
+open myFeed.Platform
 open NSubstitute
 
 /// Converts sequence to list.
@@ -120,7 +120,7 @@ let connection = new LiteDatabase("MyFeed.db")
 let registerMocks (builder: Container) =
     builder 
     |> also (registerInstanceAs<LiteDatabase> (new LiteDatabase("_.db")))
-    |> also registerMock<ITranslationsService>
+    |> also registerMock<ITranslationService>
     |> also registerMock<IFilePickerService>       
     |> also registerMock<IPlatformService>
     |> also registerMock<IDialogService>

@@ -4,8 +4,8 @@ open Xunit
 open NSubstitute
 open myFeed.Models
 open myFeed.ViewModels
-open myFeed.Services.Abstractions
-open myFeed.Services.Implementations
+open myFeed.Interfaces
+open myFeed.Services
 open myFeed.Tests.Extensions
 open System.Threading.Tasks
 open System

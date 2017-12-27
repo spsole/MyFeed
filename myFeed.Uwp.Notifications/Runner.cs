@@ -4,8 +4,8 @@ using DryIoc;
 using LiteDB;
 using Windows.Storage;
 using Windows.ApplicationModel.Background;
-using myFeed.Services.Abstractions;
 using DryIoc.MefAttributedModel;
+using myFeed.Interfaces;
 
 namespace myFeed.Views.Uwp.Notifications
 {

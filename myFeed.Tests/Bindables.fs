@@ -3,7 +3,7 @@ module myFeed.Tests.Fixtures.Bindables
 open Xunit
 open myFeed.Tests.Extensions
 open System.Threading.Tasks
-open myFeed.Bindables
+open myFeed.Common
 
 [<Fact>]
 let ``should execute passed actions``() =

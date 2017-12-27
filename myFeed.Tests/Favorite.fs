@@ -2,7 +2,7 @@
 
 open Xunit
 open myFeed.Models
-open myFeed.Services.Implementations
+open myFeed.Services
 open myFeed.Tests.Extensions
 
 let private repository = produce<LiteFavoriteManager> [connection]

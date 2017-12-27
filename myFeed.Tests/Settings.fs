@@ -3,8 +3,8 @@ module myFeed.Tests.Fixtures.Setting
 open Xunit
 open NSubstitute
 open myFeed.Models
-open myFeed.Services.Abstractions
-open myFeed.Services.Implementations
+open myFeed.Services
+open myFeed.Interfaces
 open myFeed.Tests.Extensions
 open System.Collections.Generic
 open System.Threading.Tasks

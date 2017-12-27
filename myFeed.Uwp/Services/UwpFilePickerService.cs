@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using DryIocAttributes;
-using myFeed.Services.Platform;
+using myFeed.Platform;
 
 namespace myFeed.Uwp.Services
 {

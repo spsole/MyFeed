@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using DryIocAttributes;
-using myFeed.Bindables;
+using myFeed.Common;
+using myFeed.Interfaces;
 using myFeed.Models;
-using myFeed.Services.Abstractions;
-using myFeed.Services.Platform;
+using myFeed.Platform;
 
 namespace myFeed.ViewModels
 {
@@ -28,7 +28,7 @@ namespace myFeed.ViewModels
         public ObservableCommand Open { get; }
 
         public ArticleViewModel(
-            ITranslationsService translationsService,
+            ITranslationService translationsService,
             INavigationService navigationService,
             ICategoryManager categoryManager,
             IFavoriteManager favoriteManager,

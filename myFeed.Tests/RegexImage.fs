@@ -2,7 +2,7 @@ module myFeed.Tests.Fixtures.RegexImage
 
 open Xunit
 open myFeed.Tests.Extensions
-open myFeed.Services.Implementations
+open myFeed.Services
 
 [<Theory>]
 [<InlineData("<img foo='bar' src='http://example.com' />", "http://example.com")>]

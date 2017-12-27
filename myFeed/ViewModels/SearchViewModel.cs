@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using DryIocAttributes;
-using myFeed.Bindables;
-using myFeed.Services.Abstractions;
+using myFeed.Common;
+using myFeed.Interfaces;
 
 namespace myFeed.ViewModels
 {

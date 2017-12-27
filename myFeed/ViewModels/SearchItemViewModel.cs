@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel.Composition;
 using DryIocAttributes;
-using myFeed.Bindables;
+using myFeed.Common;
+using myFeed.Interfaces;
 using myFeed.Models;
-using myFeed.Services.Abstractions;
-using myFeed.Services.Platform;
+using myFeed.Platform;
 
 namespace myFeed.ViewModels
 {
@@ -15,7 +15,6 @@ namespace myFeed.ViewModels
         public ObservableProperty<string> Title { get; }
         public ObservableProperty<string> ImageUri { get; }
         public ObservableProperty<string> Description { get; }
-        public ObservableProperty<string> FeedUrl { get; }
         public ObservableProperty<string> Url { get; }
 
         public ObservableCommand AddToSources { get; }
@@ -29,7 +28,6 @@ namespace myFeed.ViewModels
             IDialogService dialogService)
         {
             var feedlyItem = stateContainer.Pop<FeedlyItem>();
-            FeedUrl = feedlyItem.FeedId?.Substring(5);
             Description = feedlyItem.Description;
             ImageUri = feedlyItem.IconUrl;
             Url = feedlyItem.Website;
@@ -43,12 +41,13 @@ namespace myFeed.ViewModels
             });
             AddToSources = new ObservableCommand(async () =>
             {
-                if (!Uri.IsWellFormedUriString(FeedUrl.Value, UriKind.Absolute)) return;
+                var feedUrl = feedlyItem.FeedId?.Substring(5);
+                if (!Uri.IsWellFormedUriString(feedUrl, UriKind.Absolute)) return;
                 var categories = await categoryManager.GetAllAsync();
                 var response = await dialogService.ShowDialogForSelection(categories);
                 if (response is Category category)
                 {
-                    var source = new Channel {Notify = true, Uri = FeedUrl.Value};
+                    var source = new Channel {Notify = true, Uri = feedUrl};
                     category.Channels.Add(source);
                     await categoryManager.UpdateAsync(category);
                 }

@@ -2,7 +2,7 @@ module myFeed.Tests.Fixtures.Category
 
 open Xunit
 open myFeed.Tests.Extensions
-open myFeed.Services.Implementations
+open myFeed.Services
 open myFeed.Models
 open System
 

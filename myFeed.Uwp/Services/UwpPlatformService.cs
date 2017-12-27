@@ -10,7 +10,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using DryIocAttributes;
 using LiteDB;
-using myFeed.Services.Platform;
+using myFeed.Platform;
 
 namespace myFeed.Uwp.Services
 {
