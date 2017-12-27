@@ -3,28 +3,24 @@
     <TargetFramework>netcoreapp1.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Extensions\Default.fs" />
-    <Compile Include="Extensions\Domain.fs" />
-    <Compile Include="Fixtures\BackgroundTests.fs" />
-    <Compile Include="Fixtures\SettingsTests.fs" />
-    <Compile Include="Fixtures\CategoryTests.fs" />
-    <Compile Include="Fixtures\CompositionTests.fs" />
-    <Compile Include="Fixtures\DatabaseTests.fs" />
-    <Compile Include="Fixtures\DefaultsTests.fs" />
-    <Compile Include="Fixtures\DryIocFactoryTests.fs" />
-    <Compile Include="Fixtures\FaveViewModelTests.fs" />
-    <Compile Include="Fixtures\FavoriteTests.fs" />
-    <Compile Include="Fixtures\ObervableCommandTests.fs" />
-    <Compile Include="Fixtures\ObservableGroupingTests.fs" />
-    <Compile Include="Fixtures\ObservablePropertyTests.fs" />
-    <Compile Include="Fixtures\OpmlTests.fs" />
-    <Compile Include="Fixtures\ParallelFeedStoreTests.fs" />
-    <Compile Include="Fixtures\RegexImageTests.fs" />
-    <Compile Include="Fixtures\XmlSerializationTests.fs" />
+    <Compile Include="AutoOpen.fs" />
+    <Compile Include="Background.fs" />
+    <Compile Include="Bindables.fs" />
+    <Compile Include="Category.fs" />
+    <Compile Include="Composition.fs" />
+    <Compile Include="Database.fs" />
+    <Compile Include="Defaults.fs" />
+    <Compile Include="DryIocFactory.fs" />
+    <Compile Include="FaveViewModel.fs" />
+    <Compile Include="Favorite.fs" />
+    <Compile Include="Opml.fs" />
+    <Compile Include="ParallelFeedStore.fs" />
+    <Compile Include="RegexImage.fs" />
+    <Compile Include="Settings.fs" />
+    <Compile Include="XmlSerialization.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\myFeed.Services\myFeed.Services.csproj" />
-    <ProjectReference Include="..\myFeed.ViewModels\myFeed.ViewModels.csproj" />
+    <ProjectReference Include="..\myFeed\myFeed.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NSubstitute" Version="3.1.0" />

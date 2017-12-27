@@ -25,25 +25,18 @@ $RECYCLE.BIN/
 .vscode/
 .idea/
 packages/
-myFeed.Entities/obj
-myFeed.Entities/bin
-myFeed.Entities/Migrations
-myFeed.Repositories/obj
-myFeed.Repositories/bin
 myFeed.Tests/obj
 myFeed.Tests/bin
-myFeed.ViewModels/obj
-myFeed.ViewModels/bin
-myFeed.Services/obj
-myFeed.Services/bin
-myFeed.Views.Uwp/Assets
-myFeed.Views.Uwp/AppPackages
-myFeed.Views.Uwp/Package.StoreAssociation.xml
-myFeed.Views.Uwp/obj
-myFeed.Views.Uwp/bin
-myFeed.Views.Uwp/BundleArtifacts
-myFeed.Views.Uwp.Notifications/obj
-myFeed.Views.Uwp.Notifications/bin
+myFeed/obj
+myFeed/bin
+myFeed.Uwp/Assets
+myFeed.Uwp/AppPackages
+myFeed.Uwp/Package.StoreAssociation.xml
+myFeed.Uwp/obj
+myFeed.Uwp/bin
+myFeed.Uwp/BundleArtifacts
+myFeed.Uwp.Notifications/obj
+myFeed.Uwp.Notifications/bin
 myFeed.sln
 
 # OSX

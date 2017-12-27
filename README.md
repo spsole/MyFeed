@@ -18,11 +18,7 @@ myFeed is an RSS reader for <b>Universal Windows Platform</b> (also planned supp
 
 ## Application Architecture
 
-myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architecture. <b>ViewModels</b> provide Views abstractions with UI logic, exposing public properties and commands. <b>Views</b> are specific for each platform supported by myFeed; ViewModels and Models do not rely on Views. <b>Models</b> represent real state content and logic; this part of MVVM pattern is implemented as <b>Services</b> layer, which provides logic for feed fetching, serializing, caching. 
-
-All modules are combined together using <a href="https://en.wikipedia.org/wiki/Inversion_of_control">Inversion of Control</a> and <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">Dependency Inversion</a> principles: this architectural approach improves testability and extensibility of the application. There is a dependencies graph below to clearify application structure:
-
-<img src="/DependenciesGraph.png" width="330px">
+myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architecture. ViewModels provide Views abstractions with UI logic, exposing public properties and commands. Views are specific for each platform supported by myFeed, ViewModels and Models do not rely on Views. Models represent real state content and logic; this part of MVVM pattern is implemented as Services layer, which provides logic for feed fetching, serializing, caching. All modules are combined together using <a href="https://en.wikipedia.org/wiki/Inversion_of_control">Inversion of Control</a> and <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">Dependency Inversion</a> principles: this architectural approach improves testability and extensibility of the application.
 
 ## Technologies and Tools Used
 
