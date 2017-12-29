@@ -46,25 +46,24 @@ namespace myFeed.Uwp.Services
             return result == ContentDialogResult.Primary ? contentBox.Text : string.Empty;
         }
 
-        public async Task<object> ShowDialogForSelection(IEnumerable<object> items)
+        public async Task<int> ShowDialogForSelection(string title, IEnumerable<string> options)
         {
             var selectBox = new ComboBox
             {
-                DisplayMemberPath = "Title",
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 Margin = new Thickness(0, 18, 0, 0),
-                ItemsSource = items
+                ItemsSource = options
             };
             var selectionDialog = new ContentDialog
             {
-                Title = _translationsService.Resolve("AddIntoCategory"),
+                Title = title,
                 PrimaryButtonText = _translationsService.Resolve("Ok"),
                 SecondaryButtonText = _translationsService.Resolve("Cancel"),
                 Content = new StackPanel {Children = {selectBox}}
             };
             selectBox.SelectedIndex = selectBox.Items?.Any() == true ? 0 : -1;
             var result = await selectionDialog.ShowAsync();
-            return result != ContentDialogResult.Primary ? null : selectBox.SelectedItem;
+            return result != ContentDialogResult.Primary ? -1 : selectBox.SelectedIndex;
         }
     }
 }

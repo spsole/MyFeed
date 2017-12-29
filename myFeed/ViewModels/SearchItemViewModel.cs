@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Linq;
 using DryIocAttributes;
 using myFeed.Common;
 using myFeed.Interfaces;
@@ -22,6 +23,7 @@ namespace myFeed.ViewModels
         public ObservableCommand CopyLink { get; }
         
         public SearchItemViewModel(
+            ITranslationService translationService,
             ICategoryManager categoryManager,
             IPlatformService platformService,
             IStateContainer stateContainer,
@@ -41,16 +43,19 @@ namespace myFeed.ViewModels
             });
             AddToSources = new ObservableCommand(async () =>
             {
-                var feedUrl = feedlyItem.FeedId?.Substring(5);
-                if (!Uri.IsWellFormedUriString(feedUrl, UriKind.Absolute)) return;
-                var categories = await categoryManager.GetAllAsync();
-                var response = await dialogService.ShowDialogForSelection(categories);
-                if (response is Category category)
-                {
-                    var source = new Channel {Notify = true, Uri = feedUrl};
-                    category.Channels.Add(source);
-                    await categoryManager.UpdateAsync(category);
-                }
+                var feedUrl = feedlyItem.FeedId?.Substring(5); 
+                if (!Uri.IsWellFormedUriString(feedUrl, UriKind.Absolute)) return; 
+
+                var categories = (await categoryManager.GetAllAsync()).ToList();
+                var titles = categories.Select(i => i.Title); 
+                var title = translationService.Resolve("AddIntoCategory"); 
+                var index = await dialogService.ShowDialogForSelection(title, titles); 
+                if (index < 0) return; 
+
+                var source = new Channel {Notify = true, Uri = feedUrl}; 
+                var category = categories[index]; 
+                category.Channels.Add(source); 
+                await categoryManager.UpdateAsync(category); 
             });
         }
     }
