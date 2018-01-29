@@ -1,6 +1,6 @@
 ﻿<Page
-    d:DataContext="{d:DesignInstance Type=implementations:SettingsViewModel}"
-    x:Class="myFeed.Uwp.Views.SettingsView"
+    d:DataContext="{d:DesignInstance Type=implementations:SettingViewModel}"
+    x:Class="myFeed.Uwp.Views.SettingView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,6 +9,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:implementations="using:myFeed.ViewModels"
+    xmlns:behaviors="using:myFeed.Uwp.Behaviors"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -25,7 +26,7 @@
     <Grid>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
-                <core:InvokeCommandAction Command="{Binding Load}"/>
+                <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
             </core:EventTriggerBehavior>
         </interactivity:Interaction.Behaviors>
         <Grid.RowDefinitions>
@@ -43,7 +44,7 @@
                                 ConverterParameter=ChangeTextSizeTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding ConverterParameter=
                                 ChangeTextSize, Converter={StaticResource Locale}}"/>
-                            <Slider Value="{Binding FontSize.Value, Mode=TwoWay}" 
+                            <Slider Value="{Binding Font, Mode=TwoWay}" 
                                 Minimum="14" Maximum="22" Width="300" HorizontalAlignment="Left"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
@@ -51,14 +52,14 @@
                                 ConverterParameter=DisableImagesTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=DisableImages}"/>
-                            <ToggleSwitch IsOn="{Binding LoadImages.Value, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{Binding Images, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
                                 ConverterParameter=NotifyCheckTimeTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=NotifyCheckTime}"/>
-                            <Slider Value="{Binding NotifyPeriod.Value, Mode=TwoWay}" Minimum="0" 
+                            <Slider Value="{Binding Period, Mode=TwoWay}" Minimum="0" 
                                 Maximum="180" Width="300" HorizontalAlignment="Left" StepFrequency="30"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
@@ -66,17 +67,17 @@
                                 Converter={StaticResource Locale}, ConverterParameter=NotifyBannersTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=NotifyBanners}"/>
-                            <ToggleSwitch IsOn="{Binding NeedBanners.Value, Mode=TwoWay}"/>
+                            <ToggleSwitch IsOn="{Binding Banners, Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding
                                 Converter={StaticResource Locale}, ConverterParameter=MaxArticlesPerFeedTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource
                                 Locale}, ConverterParameter=MaxArticlesPerFeed}"/>
-                            <Slider Value="{Binding MaxArticlesPerFeed.Value, Mode=TwoWay}" Minimum="50"
+                            <Slider Value="{Binding Max, Mode=TwoWay}" Minimum="50"
                                 Maximum="300" Width="300" HorizontalAlignment="Left" StepFrequency="50"/>
                         </StackPanel>
-                        <StackPanel Margin="0 6">
+                        <!--<StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
                                 Converter={StaticResource Locale}, ConverterParameter=ChangeThemeTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
@@ -87,7 +88,7 @@
                                     <core:EventTriggerBehavior EventName="Checked">
                                         <core:ChangePropertyAction TargetObject="{Binding Theme}" PropertyName="Value" Value="default"/>
                                     </core:EventTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{Binding Theme.Value}" ComparisonCondition="Equal" Value="default">
+                                    <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="default">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=DefaultRadioButton}" PropertyName="IsChecked">
                                             <core:ChangePropertyAction.Value>
                                                 <x:Boolean>True</x:Boolean>
@@ -102,7 +103,7 @@
                                     <core:EventTriggerBehavior EventName="Checked">
                                         <core:ChangePropertyAction TargetObject="{Binding Theme}" PropertyName="Value" Value="dark"/>
                                     </core:EventTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{Binding Theme.Value}" ComparisonCondition="Equal" Value="dark">
+                                    <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="dark">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=DarkRadioButton}" PropertyName="IsChecked">
                                             <core:ChangePropertyAction.Value>
                                                 <x:Boolean>True</x:Boolean>
@@ -118,7 +119,7 @@
                                         <core:ChangePropertyAction TargetObject="{Binding 
                                             Theme}" PropertyName="Value" Value="light"/>
                                     </core:EventTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{Binding Theme.Value}" ComparisonCondition="Equal" Value="light">
+                                    <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="light">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=LightRadioButton}" PropertyName="IsChecked">
                                             <core:ChangePropertyAction.Value>
                                                 <x:Boolean>True</x:Boolean>
@@ -127,7 +128,7 @@
                                     </core:DataTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                             </RadioButton>
-                        </StackPanel>
+                        </StackPanel>-->
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
@@ -179,7 +180,7 @@
                                 <HyperlinkButton Content="worldbeater.github.io" Margin="0 6"
                                     Style="{StaticResource TextBlockButtonStyle}" Padding="0"
                                     NavigateUri="https://worldbeater.github.io"/>
-                                <TextBlock Text="{Binding Version.Value}"/>
+                                <TextBlock Text="{Binding Version}"/>
                             </StackPanel>
                         </Grid>
                         <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMail}"/>

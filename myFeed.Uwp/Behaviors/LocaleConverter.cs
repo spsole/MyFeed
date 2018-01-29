@@ -1,14 +1,15 @@
 ﻿using System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
+using DryIoc;
+using myFeed.Platform;
 
-namespace myFeed.Uwp.Converters
+namespace myFeed.Uwp.Behaviors
 {
-    public class FalsyToVisibleConverter : IValueConverter
+    public sealed class LocaleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return TruthyToVisibleConverter.IsDefault(value) ? Visibility.Visible : Visibility.Collapsed;
+            return App.Container.Resolve<ITranslationService>().Resolve((string)parameter);
         }
         public object ConvertBack(object value, Type targetType, object parameter, string language) => null;
     }

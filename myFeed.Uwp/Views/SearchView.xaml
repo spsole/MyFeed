@@ -42,7 +42,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
-                <TextBox InputScope="Search" Margin="12 0" Text="{Binding SearchQuery.Value, 
+                <TextBox InputScope="Search" Margin="12 0" Text="{Binding SearchQuery, 
                     Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     PlaceholderText="{Binding Converter={StaticResource Locale}, 
                         ConverterParameter=ProvideSearchQuery}"/>
@@ -71,6 +71,7 @@
                 <toolkit:PullToRefreshListView.ItemContainerTransitions>
                     <TransitionCollection>
                         <EntranceThemeTransition FromVerticalOffset="0" FromHorizontalOffset="30" />
+                        <ContentThemeTransition VerticalOffset="0" HorizontalOffset="30"/>
                     </TransitionCollection>
                 </toolkit:PullToRefreshListView.ItemContainerTransitions>
                 <toolkit:PullToRefreshListView.PullToRefreshContent>
@@ -86,12 +87,12 @@
                         <Grid Margin="12">
                             <FlyoutBase.AttachedFlyout>
                                 <MenuFlyout>
-                                    <controls:MenuFlyoutItemWithIcon Icon="Add" Command="{Binding AddToSources}" Text="{Binding 
+                                    <controls:MenuFlyoutItemWithIcon Icon="Add" Command="{Binding Add}" Text="{Binding 
                                         Converter={StaticResource Locale}, ConverterParameter=AddChannel}"/>
                                     <MenuFlyoutSeparator />
-                                    <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding OpenInEdge}" Text="{Binding  
+                                    <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding Open}" Text="{Binding  
                                         Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
-                                    <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding CopyLink}" Text="{Binding
+                                    <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding Copy}" Text="{Binding
                                         Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
                                 </MenuFlyout>
                             </FlyoutBase.AttachedFlyout>
@@ -109,19 +110,19 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Margin="0 0 12 0">
                                 <StackPanel Orientation="Horizontal">
-                                    <Image Source="{Binding ImageUri.Value}" Width="16" Height="16"/>
-                                    <TextBlock Text="{Binding Title.Value}" FontWeight="SemiBold" Margin="6 0 0 0"/>
+                                    <Image Source="{Binding Image}" Width="16" Height="16"/>
+                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Margin="6 0 0 0"/>
                                 </StackPanel>
-                                <TextBlock Text="{Binding Description.Value}" TextWrapping="Wrap" 
+                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" 
                                     Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                                <TextBlock Text="{Binding Url.Value}" TextTrimming="CharacterEllipsis" 
+                                <TextBlock Text="{Binding Url}" TextTrimming="CharacterEllipsis" 
                                     Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                             </StackPanel>
                             <Grid Grid.Column="1" VerticalAlignment="Top">
                                 <Ellipse Fill="{ThemeResource SystemControlBackgroundAccentBrush}" 
                                     Width="40" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                 <Button Style="{ThemeResource TextBlockButtonStyle}" Foreground="White"
-                                    HorizontalAlignment="Center" Command="{Binding AddToSources}">
+                                    HorizontalAlignment="Center" Command="{Binding Add}">
                                     <Button.Content>
                                         <SymbolIcon Symbol="Add"/>
                                     </Button.Content>
@@ -132,7 +133,7 @@
                 </toolkit:PullToRefreshListView.ItemTemplate>
             </toolkit:PullToRefreshListView>
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"
-                Visibility="{Binding IsEmpty.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
+                Visibility="{Binding IsEmpty, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE783;" FontSize="50" TextAlignment="Center" 
                         Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
@@ -146,7 +147,7 @@
                 </StackPanel>
             </Grid>
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"
-                Visibility="{Binding IsGreeting.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
+                Visibility="{Binding IsGreeting, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE71E;" FontSize="50" TextAlignment="Center" 
                         Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
@@ -156,7 +157,7 @@
                         TextWrapping="Wrap" TextAlignment="Center" FontSize="17" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                 </StackPanel>
             </Grid>
-            <controls:LoadingScreen IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
+            <controls:LoadingScreen IsActive="{Binding IsLoading, Mode=OneWay}"/>
         </Grid>
     </Grid>
 </Page>

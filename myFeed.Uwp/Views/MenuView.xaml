@@ -9,6 +9,8 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels"
+    xmlns:reactive="using:System.Reactive"
+    xmlns:behaviors="using:myFeed.Uwp.Behaviors"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -40,7 +42,7 @@
         </VisualStateManager.VisualStateGroups>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
-                <core:InvokeCommandAction Command="{Binding Load}"/>
+                <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
             </core:EventTriggerBehavior>
         </interactivity:Interaction.Behaviors>
         <controls:SwipeableSplitView 
@@ -73,25 +75,25 @@
                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
                         ScrollViewer.VerticalScrollMode="Disabled" ItemsSource="{Binding Items}" 
                         ItemContainerStyle="{StaticResource MenuListBoxItem}"
-                        SelectedIndex="{Binding SelectedIndex.Value, Mode=TwoWay}">
+                        SelectedItem="{Binding Selection, Mode=TwoWay}">
+                        <interactivity:Interaction.Behaviors>
+                            <core:EventTriggerBehavior EventName="SelectionChanged">
+                                <behaviors:ReactiveCommandAction Command="{Binding Navigate}"/>
+                                <core:ChangePropertyAction Value="False"
+                                    TargetObject="{Binding ElementName=Menu}" 
+                                    PropertyName="IsSwipeablePaneOpen"/>
+                            </core:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Padding="12 0" Background="Transparent" Width="270" Height="48">
-                                    <interactivity:Interaction.Behaviors>
-                                        <core:EventTriggerBehavior EventName="Tapped">
-                                            <core:InvokeCommandAction Command="{Binding Item3}"/>
-                                            <core:ChangePropertyAction Value="False"
-                                                TargetObject="{Binding ElementName=Menu}" 
-                                                PropertyName="IsSwipeablePaneOpen"/>
-                                        </core:EventTriggerBehavior>
-                                    </interactivity:Interaction.Behaviors>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <SymbolIcon Symbol="{Binding Item2}" Width="48" Margin="-9 2 8 0">
+                                        <SymbolIcon Symbol="{Binding Icon}" Width="48" Margin="-9 2 8 0">
                                             <SymbolIcon.RenderTransform>
                                                 <ScaleTransform ScaleX="0.8" ScaleY="0.8"/>
                                             </SymbolIcon.RenderTransform>
                                         </SymbolIcon>
-                                        <TextBlock Text="{Binding Item1}"/>
+                                        <TextBlock Text="{Binding Title}"/>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>

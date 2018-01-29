@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
@@ -11,7 +10,7 @@ using myFeed.Models;
 namespace myFeed.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(ICategoryManager))]
+    [ExportEx(typeof(ICategoryManager))]
     public sealed class LiteCategoryManager : ICategoryManager
     {
         private readonly LiteDatabase _liteDatabase;

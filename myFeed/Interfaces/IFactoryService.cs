@@ -2,6 +2,6 @@
 {
     public interface IFactoryService
     {
-        TObject CreateInstance<TObject>(params object[] arguments);
+        TFactory Create<TFactory>();
     }
 }

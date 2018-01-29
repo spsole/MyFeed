@@ -7,7 +7,7 @@ namespace myFeed.Platform
     public interface INavigationService
     {
         Task Navigate<TViewModel>() where TViewModel : class;
-        
+
         Task Navigate<TViewModel>(object parameter) where TViewModel : class;
 
         event EventHandler<Type> Navigated;

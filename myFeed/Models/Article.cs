@@ -1,9 +1,11 @@
 ﻿using System;
+using LiteDB;
 
 namespace myFeed.Models
 {
     public sealed class Article
     {
+        [BsonId]
         public Guid Id { get; set; } = Guid.NewGuid();
 
         public DateTime PublishedDate { get; set; }

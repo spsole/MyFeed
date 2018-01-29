@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AutoOpen.fs" />
     <Compile Include="Background.fs" />
-    <Compile Include="Bindables.fs" />
     <Compile Include="Category.fs" />
     <Compile Include="Composition.fs" />
     <Compile Include="Database.fs" />
-    <Compile Include="Defaults.fs" />
     <Compile Include="DryIocFactory.fs" />
     <Compile Include="FaveViewModel.fs" />
     <Compile Include="Favorite.fs" />
@@ -17,6 +15,7 @@
     <Compile Include="ParallelFeedStore.fs" />
     <Compile Include="RegexImage.fs" />
     <Compile Include="Settings.fs" />
+    <Compile Include="SettingViewModel.fs" />
     <Compile Include="XmlSerialization.fs" />
   </ItemGroup>
   <ItemGroup>
@@ -24,13 +23,19 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NSubstitute" Version="3.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170628-02" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
-    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <PackageReference Include="xunit" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="System.ValueTuple" Version="4.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="4.2.3" />
   </ItemGroup>
 </Project>

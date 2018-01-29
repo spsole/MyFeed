@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
@@ -10,7 +8,7 @@ using myFeed.Platform;
 namespace myFeed.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(IBackgroundService))]
+    [ExportEx(typeof(IBackgroundService))]
     public sealed class BackgroundService : IBackgroundService
     {
         private readonly ICategoryManager _categoryManager;
@@ -19,9 +17,9 @@ namespace myFeed.Services
         private readonly ISettingManager _settingManager;
 
         public BackgroundService(
-            ICategoryManager categoryManager,
             INotificationService notificationService,
-            IFeedStoreService feedStoreService, 
+            IFeedStoreService feedStoreService,
+            ICategoryManager categoryManager,
             ISettingManager settingManager)
         {
             _categoryManager = categoryManager;
@@ -34,15 +32,19 @@ namespace myFeed.Services
         {
             var categories = await _categoryManager.GetAllAsync();
             var feed = await _feedStoreService.LoadAsync(categories
-                .SelectMany(i => i.Channels).Where(i => i.Notify));
+                .SelectMany(i => i.Channels)
+                .Where(i => i.Notify));
 
-            var lastFetched = await _settingManager.GetAsync<DateTime>("LastFetched");
-            var recentItems = feed.Where(i => i.PublishedDate > lastFetched)
-                .OrderByDescending(i => i.PublishedDate).Take(15).Reverse().ToList();
+            var settings = await _settingManager.Read();
+            var recentItems = feed
+                .Where(i => i.PublishedDate > settings.Fetched)
+                .OrderByDescending(i => i.PublishedDate)
+                .Take(15).Reverse().ToList();
 
             await _notificationService.SendNotifications(recentItems);
-            if (recentItems.Any()) await _settingManager.SetAsync("LastFetched", 
-                dateTime.ToString(CultureInfo.InvariantCulture));
+            if (!recentItems.Any()) return;
+            settings.Fetched = dateTime;
+            await _settingManager.Write(settings);
         }
     }
 }

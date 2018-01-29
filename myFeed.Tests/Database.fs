@@ -41,30 +41,7 @@ let ``should insert categories with nested documents``() =
     let category = Seq.item 0 <| collection.FindAll()
     Should.equal 1 category.Channels.Count
     Should.equal 1 category.Channels.[0].Articles.Count
-    Should.equal "Foo" category.Channels.[0].Articles.[0].Title  
-
-[<Fact>]
-[<CleanUpCollection("Setting")>]
-let ``should find setting entities using their keys``() =
-
-    let collection = connection.GetCollection<Setting>()
-    collection.Insert(Setting(Key="Foo", Value="Bar")) |> ignore
-
-    let setting = collection.FindOne(fun x -> x.Key = "Foo")
-    Should.equal "Foo" setting.Key
-    Should.equal "Bar" setting.Value    
-
-[<Fact>]
-[<CleanUpCollection("Setting")>]
-let ``should find setting entities by keys using Query``() =
-
-    let collection = connection.GetCollection<Setting>()
-    collection.Insert(Setting(Key="Foo", Value="Bar")) |> ignore
-
-    let query = Query.EQ("$.Key", BsonValue("Foo"))
-    let setting = collection.FindOne(query)
-    Should.equal "Foo" setting.Key
-    Should.equal "Bar" setting.Value
+    Should.equal "Foo" category.Channels.[0].Articles.[0].Title   
 
 [<Fact>]
 [<CleanUpCollection("Category")>]
@@ -147,18 +124,6 @@ let ``should perform bulk insert of entities set``() =
     Should.notEqual articles.[2].Id articles.[1].Id   
 
 [<Fact>]
-[<CleanUpCollection("Setting")>]
-let ``should perform search on entities using Query``() =
-
-    let collection = connection.GetCollection<Setting>()
-    collection.Insert(Setting(Key="Foo", Value="Important")) |> ignore
-    
-    let query = Query.EQ("$.Key", BsonValue("Foo"))
-    let response = collection.FindOne(query)
-    Should.equal "Important" response.Value
-    Should.equal "Foo" response.Key
-
-[<Fact>]
 [<CleanUpCollection("Category")>]
 let ``should performs search on nested objects using Query``() =
 
@@ -218,4 +183,14 @@ let ``should set not null unique identifier for child nodes``() =
     let response = Seq.item 0 <| collection.FindAll()
     Should.notEqual Guid.Empty response.Id
     Should.notEqual Guid.Empty response.Channels.[0].Id    
-    Should.notEqual Guid.Empty response.Channels.[0].Articles.[0].Id      
+    Should.notEqual Guid.Empty response.Channels.[0].Articles.[0].Id   
+    
+[<Fact>]
+[<CleanUpCollection("Setting")>]
+let ``should be able to insert settings into database``() =
+
+    let collection = connection.GetCollection<Settings>()
+    collection.Insert(Settings(Font=42.)) |> ignore
+
+    let setting = collection.FindOne(fun x -> true)
+    Should.equal 42. setting.Font

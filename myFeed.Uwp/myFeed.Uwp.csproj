@@ -100,7 +100,10 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Behaviors\CloseFlyoutAction.cs" />
+    <Compile Include="Behaviors\ReactiveCommandAction.cs" />
     <Compile Include="Controls\Expander.cs" />
+    <Compile Include="Controls\HtmlBlock.cs" />
+    <Compile Include="Controls\UwpIf.cs" />
     <Compile Include="Controls\MenuFlyoutItemWithIcon.cs" />
     <Compile Include="Behaviors\OpenFlyoutAction.cs" />
     <Compile Include="Controls\LoadingScreen.xaml.cs">
@@ -111,13 +114,8 @@
       <DependentUpon>TitleBlock.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TransparentButton.cs" />
-    <Compile Include="Converters\FalsyToVisibleConverter.cs" />
-    <Compile Include="Converters\LocaleConverter.cs" />
-    <Compile Include="Converters\NegateBoolConverter.cs" />
-    <Compile Include="Converters\TruthyToTransparentConverter.cs" />
-    <Compile Include="Converters\TruthyToVisibleConverter.cs" />
-    <Compile Include="Converters\UpperStringConverter.cs" />
-    <Compile Include="Services\Uwp.cs" />
+    <Compile Include="Behaviors\LocaleConverter.cs" />
+    <Compile Include="Behaviors\UpperStringConverter.cs" />
     <Compile Include="Services\UwpDialogService.cs" />
     <Compile Include="Services\UwpFilePickerService.cs" />
     <Compile Include="Services\UwpLegacyFileService.cs" />
@@ -125,7 +123,6 @@
     <Compile Include="Services\UwpPackagingService.cs" />
     <Compile Include="Services\UwpPlatformService.cs" />
     <Compile Include="Services\UwpTranslationsService.cs" />
-    <Compile Include="Services\UwpHtmlParserService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\ArticleView.xaml.cs">
       <DependentUpon>ArticleView.xaml</DependentUpon>
@@ -145,11 +142,11 @@
     <Compile Include="Views\SearchView.xaml.cs">
       <DependentUpon>SearchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsView.xaml.cs">
-      <DependentUpon>SettingsView.xaml</DependentUpon>
+    <Compile Include="Views\SettingView.xaml.cs">
+      <DependentUpon>SettingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ChannelsView.xaml.cs">
-      <DependentUpon>ChannelsView.xaml</DependentUpon>
+    <Compile Include="Views\ChannelView.xaml.cs">
+      <DependentUpon>ChannelView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +191,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <EmbeddedResource Include="FodyWeavers.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -204,10 +202,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.1</Version>
+      <Version>6.0.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
-      <Version>2.0.0</Version>
+      <Version>2.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>2.0.0</Version>
@@ -217,6 +215,11 @@
     <Page Include="Controls\Expander.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\HtmlBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Controls\LoadingScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -266,19 +269,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\SettingsView.xaml">
+    <Page Include="Views\SettingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ChannelsView.xaml">
+    <Page Include="Views\ChannelView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
-      <Name>Windows Mobile Extensions for the UWP</Name>
-    </SDKReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\myFeed\myFeed.csproj">
@@ -289,6 +287,11 @@
       <Project>{74fa52ef-b4da-4ebe-a49b-ba843b5c7e3b}</Project>
       <Name>myFeed.Uwp.Notifications</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

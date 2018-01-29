@@ -1,8 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:myFeed.Uwp.Controls"
-    xmlns:controls1="using:myFeed.Uwp.Controls">
+    xmlns:controls="using:myFeed.Uwp.Controls">
 
     <Style x:Key="HeaderToggleButtonStyle" TargetType="ToggleButton">
         <Setter Property="Background" Value="{ThemeResource SystemChromeLowColor}" />
@@ -212,12 +211,12 @@
         </Setter>
     </Style>
 
-    <Style TargetType="controls1:Expander">
+    <Style TargetType="controls:Expander">
         <Setter Property="Header" Value="Header" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="controls1:Expander">
+                <ControlTemplate TargetType="controls:Expander">
                     <Grid>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ExpandedStates">

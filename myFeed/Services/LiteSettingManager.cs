@@ -1,79 +1,82 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using DryIocAttributes;
-using LiteDB;
 using myFeed.Interfaces;
 using myFeed.Models;
+using LiteDB;
 
 namespace myFeed.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(ISettingManager))]
+    [ExportEx(typeof(ISettingManager))]
     public sealed class LiteSettingManager : ISettingManager
     {
-        private readonly IReadOnlyDictionary<string, string> _defaultConfiguration;
-        private readonly IDictionary<string, string> _cachedConfiguration;
+        private readonly Settings _defaultConfiguration;
         private readonly SemaphoreSlim _semaphoreSlim;
         private readonly LiteDatabase _liteDatabase;
+        private Settings _cachedConfiguration;
         
-        public LiteSettingManager(
-            IDefaultsService defaultsService,
-            LiteDatabase liteDatabase)
+        public LiteSettingManager(LiteDatabase liteDatabase)
         {
-            _defaultConfiguration = defaultsService.DefaultSettings;
-            _cachedConfiguration = new Dictionary<string, string>();
-            _semaphoreSlim = new SemaphoreSlim(1, 1);
+            _cachedConfiguration = null;
             _liteDatabase = liteDatabase;
-        }
-        
-        public async Task<T> GetAsync<T>(string key) where T : IConvertible
-        {
-            await _semaphoreSlim.WaitAsync();
-            if (_cachedConfiguration.TryGetValue(key, out var cachedValue)) 
-                return ReleaseAndRetype(cachedValue);
-
-            var collection = _liteDatabase.GetCollection<Setting>();
-            var storedSetting = collection.FindOne(i => i.Key == key);
-            if (storedSetting?.Value != null) return ReleaseAndRetype(
-                _cachedConfiguration[key] = storedSetting.Value);
-            
-            if (!_defaultConfiguration.TryGetValue(key, out var value))
-                throw new ArgumentOutOfRangeException($"No defaults: {key}");
-            
-            _cachedConfiguration[key] = value;
-            collection.Insert(new Setting {Key = key, Value = value});
-            return ReleaseAndRetype(value);
-
-            T ReleaseAndRetype(string convertible)
+            _semaphoreSlim = new SemaphoreSlim(1, 1);
+            _defaultConfiguration = new Settings
             {
-                _semaphoreSlim.Release();
-                return (T) Convert.ChangeType(convertible, 
-                    typeof(T), CultureInfo.InvariantCulture);
-            }
+                Banners = false,
+                Fetched = DateTime.Now,
+                Theme = "default",
+                Images = true,
+                Period = 60,
+                Max = 100,
+                Font = 17
+            };
         }
 
-        public async Task SetAsync<T>(string key, T value) where T : IConvertible
+        public async Task Write(Settings settings)
         {
             await _semaphoreSlim.WaitAsync();
-            var collection = _liteDatabase.GetCollection<Setting>();
-            var existingSetting = collection.FindOne(i => i.Key == key);
-            var converted = value.ToString(CultureInfo.InvariantCulture);
+            var collection = _liteDatabase.GetCollection<Settings>();
+            var existing = collection.FindOne(x => true);
+
+            if (existing == null) collection.Insert(settings);
+            else collection.Update(Copy(settings, existing));
             
-            _cachedConfiguration[key] = converted;
-            if (existingSetting == null)
-            {
-                collection.Insert(new Setting {Key = key, Value = converted});
-                _semaphoreSlim.Release();
-                return;
-            }
-            
-            existingSetting.Value = converted;
-            collection.Update(existingSetting);
+            _cachedConfiguration = new Settings();
+            Copy(settings, _cachedConfiguration);
             _semaphoreSlim.Release();
+        }
+
+        public async Task<Settings> Read()
+        {
+            await _semaphoreSlim.WaitAsync();
+            if (_cachedConfiguration != null) return ReleaseReturn(_cachedConfiguration);
+            
+            var collection = _liteDatabase.GetCollection<Settings>();
+            var settings = collection.FindOne(x => true);
+            if (settings != null) return ReleaseReturn(_cachedConfiguration = settings);
+
+            collection.Insert(_defaultConfiguration);
+            return ReleaseReturn(_defaultConfiguration);
+
+            Settings ReleaseReturn(Settings from)
+            {
+                _semaphoreSlim.Release();
+                return Copy(from, new Settings());
+            }
+        }
+
+        private static Settings Copy(Settings from, Settings to)
+        {
+            to.Theme = from.Theme;
+            to.Banners = from.Banners;
+            to.Fetched = from.Fetched;
+            to.Period = from.Period;
+            to.Images = from.Images;
+            to.Font = from.Font;
+            to.Max = from.Max;
+            return to;
         }
     }
 }

@@ -1,47 +1,50 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
+﻿using System;
 using System.Linq;
 using DryIocAttributes;
-using myFeed.Common;
 using myFeed.Interfaces;
+using myFeed.Models;
 using myFeed.Platform;
+using PropertyChanged;
+using ReactiveUI;
 
 namespace myFeed.ViewModels
 {
     [Reuse(ReuseType.Transient)]
-    [Export(typeof(FeedViewModel))]
+    [ExportEx(typeof(FeedViewModel))]
+    [AddINotifyPropertyChangedInterface]
     public sealed class FeedViewModel
     {
-        public ObservableCollection<FeedCategoryViewModel> Items { get; }
+        public ReactiveList<FeedGroupViewModel> Items { get; }
+        public FeedGroupViewModel Selection { get; set; }
+        public ReactiveCommand Modify { get; }
+        public ReactiveCommand Load { get; }
 
-        public ObservableProperty<FeedCategoryViewModel> Selected { get; }
-        public ObservableProperty<bool> IsLoading { get; }
-        public ObservableProperty<bool> IsEmpty { get; }
-
-        public ObservableCommand OpenSources { get; }
-        public ObservableCommand Load { get; }
+        public bool IsLoading { get; private set; }
+        public bool IsEmpty { get; private set; }
+        public bool Images { get; private set; }
 
         public FeedViewModel(
             INavigationService navigationService,
             ICategoryManager categoryManager,
+            ISettingManager settingManager,
             IFactoryService factoryService)
         {
-            (IsEmpty, IsLoading) = (false, true);
-            Selected = new ObservableProperty<FeedCategoryViewModel>();
-            OpenSources = new ObservableCommand(navigationService.Navigate<ChannelsViewModel>);
-            Items = new ObservableCollection<FeedCategoryViewModel>();
-            Load = new ObservableCommand(async () =>
+            IsLoading = true;
+            Items = new ReactiveList<FeedGroupViewModel>();
+            Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
+            Load = ReactiveCommand.CreateFromTask(async () =>
             {
-                IsEmpty.Value = false;
-                IsLoading.Value = true;
-                Items.Clear();
+                (IsEmpty, IsLoading) = (false, true);
+                var settings = await settingManager.Read();
                 var categories = await categoryManager.GetAllAsync();
-                foreach (var category in categories)
-                    Items.Add(factoryService.CreateInstance<
-                        FeedCategoryViewModel>(category));
-                Selected.Value = Items.FirstOrDefault();
-                IsEmpty.Value = Items.Count == 0;
-                IsLoading.Value = false;
+                var factory = factoryService.Create<Func<Category, FeedGroupViewModel>>();
+                var viewModels = categories.Select(x => factory(x));
+                Items.Clear();
+                Items.AddRange(viewModels);
+                Selection = Items.FirstOrDefault();
+                Images = settings.Images;
+                IsEmpty = Items.Count == 0;
+                IsLoading = false;
             });
         }
     }

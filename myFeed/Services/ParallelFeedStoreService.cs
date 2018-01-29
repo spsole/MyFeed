@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
@@ -10,7 +9,7 @@ using myFeed.Models;
 namespace myFeed.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(IFeedStoreService))]
+    [ExportEx(typeof(IFeedStoreService))]
     public sealed class ParallelFeedStoreService : IFeedStoreService
     {
         private readonly ICategoryManager _categoryManager;
@@ -18,8 +17,8 @@ namespace myFeed.Services
         private readonly ISettingManager _settingManager;
         
         public ParallelFeedStoreService(
-            ICategoryManager categoryManager,
             IFeedFetchService feedFetchService,
+            ICategoryManager categoryManager,
             ISettingManager settingManager)
         {
             _categoryManager = categoryManager;
@@ -30,23 +29,23 @@ namespace myFeed.Services
         public Task<IEnumerable<Article>> LoadAsync(IEnumerable<Channel> channels) => Task.Run(async () =>
         {
             // Remove extra saved articles and save changes based on max articles allowed.
-            var maxArticleCount = await _settingManager.GetAsync<int>("MaxArticlesPerFeed");
+            var settings = await _settingManager.Read();
             var fetchableChannels = channels.ToList();
-            await Task.WhenAll(fetchableChannels
-                .Where(i => i.Articles.Count > maxArticleCount)
-                .Select(i => {
-                    i.Articles = i.Articles
-                        .OrderByDescending(x => x.PublishedDate)
-                        .Take(maxArticleCount).ToList();
-                    return _categoryManager.UpdateChannelAsync(i);
-                }));
+            foreach (var channel in fetchableChannels)
+            {
+                if (channel.Articles.Count <= settings.Max) continue;
+                channel.Articles = channel.Articles
+                    .OrderByDescending(x => x.PublishedDate)
+                    .Take(settings.Max).ToList();
+                await _categoryManager.UpdateChannelAsync(channel);
+            }
 
             // Form lookup with trimmed title and feed as keys.
             var existingLookup = fetchableChannels.SelectMany(i => i.Articles)
                 .ToLookup(i => (i.Title?.Trim(), i.FeedTitle?.Trim()));
 
             // Retrieve feed based on single fetcher implementation.
-            var fetchTasks = fetchableChannels.Select(i => FetchAsync(i, maxArticleCount));
+            var fetchTasks = fetchableChannels.Select(i => FetchAsync(i, settings.Max));
             var grouppedArticles = await Task.WhenAll(fetchTasks);
             var distinctGroupping = grouppedArticles
                 .Select(i => (i.Item1, i.Item2
@@ -56,11 +55,9 @@ namespace myFeed.Services
                 .ToList();
 
             // Save received distinct items into database.
-            await Task.WhenAll(distinctGroupping.Select(i =>
-            {
-                i.Item1.Articles.AddRange(i.Item2);
-                return _categoryManager.UpdateChannelAsync(i.Item1);
-            }));
+            distinctGroupping.ForEach(x => x.Item1.Articles.AddRange(x.Item2));
+            foreach (var tuple in distinctGroupping)
+                await _categoryManager.UpdateChannelAsync(tuple.Item1);
 
             // Return global join with both old and new articles.
             var flatternedArticles = distinctGroupping.SelectMany(i => i.Item2);

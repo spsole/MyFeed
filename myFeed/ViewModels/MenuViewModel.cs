@@ -1,63 +1,66 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using DryIocAttributes;
-using myFeed.Common;
 using myFeed.Interfaces;
 using myFeed.Platform;
+using PropertyChanged;
+using ReactiveUI;
 
 namespace myFeed.ViewModels
 {
     [Reuse(ReuseType.Transient)]
-    [Export(typeof(MenuViewModel))]
+    [ExportEx(typeof(MenuViewModel))]
+    [AddINotifyPropertyChangedInterface]
     public sealed class MenuViewModel
     {
-        public ObservableCollection<Tuple<string, object, ObservableCommand, Type>> Items { get; }
-
-        public ObservableProperty<int> SelectedIndex { get; }
-
-        public ObservableCommand Load { get; }
+        public ReactiveList<MenuItemViewModel> Items { get; }
+        public MenuItemViewModel Selection { get; set; }
+        public ReactiveCommand Navigate { get; }
+        public ReactiveCommand Load { get; }
 
         public MenuViewModel(
-            ITranslationService translationsService,
             INavigationService navigationService,
             IPlatformService platformService,
+            IFactoryService factoryService,
             ISettingManager settingManager)
         {
-            SelectedIndex = 0;
-            Items = new ObservableCollection<Tuple<string, object, ObservableCommand, Type>>();
-            Load = new ObservableCommand(async () =>
+            Items = new ReactiveList<MenuItemViewModel>();
+            Navigate = ReactiveCommand.Create(() =>
             {
-                await navigationService.Navigate<FeedViewModel>();
-                var theme = await settingManager.GetAsync<string>("Theme");
-                await platformService.RegisterTheme(theme);
-                var freq = await settingManager.GetAsync<int>("NotifyPeriod");
-                await platformService.RegisterBackgroundTask(freq);
-                await settingManager.SetAsync("LastFetched", DateTime.Now);
+                if (Selection == null) return;
+                typeof(INavigationService).GetMethod("Navigate", new Type[] {})
+                    .MakeGenericMethod(Selection.Type)
+                    .Invoke(navigationService, null);
             });
-            
-            CreateItem<FeedViewModel>("FeedViewMenuItem");
-            CreateItem<FaveViewModel>("FaveViewMenuItem");
-            CreateItem<ChannelsViewModel>("SourcesViewMenuItem");
-            CreateItem<SearchViewModel>("SearchViewMenuItem");
-            CreateItem<SettingsViewModel>("SettingsViewMenuItem");
-            navigationService.Navigated += (sender, args) =>
+            Load = ReactiveCommand.CreateFromTask(async () =>
             {
-                var first = Items.FirstOrDefault(x => x.Item4 == args);
-                if (first == null) return;
-                SelectedIndex.Value = Items.IndexOf(first);
-            };
+                var settings = await settingManager.Read();
+                settings.Fetched = DateTime.Now;
+                await settingManager.Write(settings);
+                await platformService.RegisterTheme(settings.Theme);
+                await platformService.RegisterBackgroundTask(settings.Period);
+                await navigationService.Navigate<FeedViewModel>();
 
-            void CreateItem<T>(string key) where T : class
-            {
-                var type = typeof(T);
-                var command = new ObservableCommand(navigationService.Navigate<T>);
-                var translation = translationsService.Resolve(key);
-                var icon = navigationService.Icons[type];
-                var tuple = (translation, icon, command, type).ToTuple();
-                Items.Add(tuple);
-            }
+                var factory = factoryService.Create<Func<Type, string, object, MenuItemViewModel>>();
+                foreach (var item in new Dictionary<Type, string>
+                {
+                    {typeof(FeedViewModel), Constants.FeedViewMenuItem},
+                    {typeof(FaveViewModel), Constants.FaveViewMenuItem},
+                    {typeof(ChannelViewModel), Constants.ChannelsViewMenuItem},
+                    {typeof(SearchViewModel), Constants.SearchViewMenuItem},
+                    {typeof(SettingViewModel), Constants.SettingsViewMenuItem}
+                }) 
+                    Items.Add(factory(item.Key, item.Value, navigationService.Icons[item.Key]));
+
+                Selection = Items.FirstOrDefault();
+                navigationService.Navigated += (sender, args) =>
+                {
+                    if (args == Selection?.Type) return;
+                    Selection = Items.FirstOrDefault(x => x.Type == args);
+                };
+            });
         }
     }
 }

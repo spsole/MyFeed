@@ -25,11 +25,10 @@ let ``all default services and view models should be registered``() =
     |> also Should.resolve<IFactoryService>
     |> also Should.resolve<IFeedStoreService>
     |> also Should.resolve<ISettingManager>
-    |> also Should.resolve<IDefaultsService>
     |> also Should.resolve<IBackgroundService>
     |> also Should.resolve<FaveViewModel>
     |> also Should.resolve<FeedViewModel>
     |> also Should.resolve<SearchViewModel>
-    |> also Should.resolve<SettingsViewModel>
-    |> also Should.resolve<ChannelsViewModel>
+    |> also Should.resolve<SettingViewModel>
+    |> also Should.resolve<ChannelViewModel>
     |> dispose

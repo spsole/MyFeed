@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using DryIocAttributes;
 using LiteDB;
@@ -9,7 +8,7 @@ using myFeed.Models;
 namespace myFeed.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(IFavoriteManager))]
+    [ExportEx(typeof(IFavoriteManager))]
     public sealed class LiteFavoriteManager : IFavoriteManager
     {
         private readonly ICategoryManager _categoryManager;

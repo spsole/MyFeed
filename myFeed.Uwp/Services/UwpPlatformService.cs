@@ -66,6 +66,8 @@ namespace myFeed.Uwp.Services
         public async Task RegisterBackgroundTask(int freq)
         {
             var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
+            if (backgroundAccessStatus != BackgroundAccessStatus.AllowedSubjectToSystemPolicy ||
+                backgroundAccessStatus != BackgroundAccessStatus.AlwaysAllowed) return;
             foreach (var task in BackgroundTaskRegistration.AllTasks)
                 if (task.Value.Name == "myFeedNotify")
                     task.Value.Unregister(true);

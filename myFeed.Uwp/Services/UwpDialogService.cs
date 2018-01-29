@@ -35,7 +35,7 @@ namespace myFeed.Uwp.Services
         public async Task<string> ShowDialogForResults(string message, string title)
         {
             var contentBox = new TextBox { PlaceholderText = message, Margin = new Thickness(0, 18, 0, 0) };
-            var inputDialog = new ContentDialog
+            var inputDialog = new ContentDialog 
             {
                 Title = title,
                 PrimaryButtonText = _translationsService.Resolve("Ok"),

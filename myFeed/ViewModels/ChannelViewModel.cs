@@ -1,57 +1,68 @@
 ﻿using System;
-using System.ComponentModel.Composition;
+using System.Collections.Generic;
+using System.Linq;
 using DryIocAttributes;
-using myFeed.Common;
 using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
+using PropertyChanged;
+using ReactiveUI;
 
 namespace myFeed.ViewModels
 {
     [Reuse(ReuseType.Transient)]
-    [Export(typeof(ChannelViewModel))]
+    [ExportEx(typeof(ChannelViewModel))]
+    [AddINotifyPropertyChangedInterface]
     public sealed class ChannelViewModel
-    { 
-        public ObservableProperty<string> Url { get; }
-        public ObservableProperty<string> Name { get; }
-        public ObservableProperty<bool> Notify { get; }
+    {
+        public ReactiveList<ChannelGroupViewModel> Items { get; }
+        public ReactiveCommand Search { get; }
+        public ReactiveCommand Load { get; }
+        public ReactiveCommand Add { get; }
 
-        public ObservableCommand DeleteSource { get; }
-        public ObservableCommand OpenInBrowser { get; }
-        public ObservableCommand CopyLink { get; }
+        public bool IsLoading { get; private set; }
+        public bool IsEmpty { get; private set; }
 
         public ChannelViewModel(
+            ITranslationService translationsService,
+            INavigationService navigationService,
             ICategoryManager categoryManager,
-            IPlatformService platformService,
-            IStateContainer stateContainer)
+            IFactoryService factoryService,
+            IDialogService dialogService)
         {
-            var channel = stateContainer.Pop<Channel>();
-            var category = stateContainer.Pop<Category>();
-            var parentViewModel = stateContainer.Pop<
-                ChannelCategoryViewModel>();
-            Name = new Uri(channel.Uri).Host;
-            Notify = channel.Notify;
-            Url = channel.Uri;
-            
-            CopyLink = new ObservableCommand(() => platformService.CopyTextToClipboard(channel.Uri));
-            OpenInBrowser = new ObservableCommand(async () =>
+            IsLoading = true;
+            Items = new ReactiveList<ChannelGroupViewModel>();
+            Search = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<SearchViewModel>());
+            var factory = factoryService.Create<Func<Category, ChannelViewModel, ChannelGroupViewModel>>();
+            var map = new Dictionary<ChannelGroupViewModel, Category>();
+            Add = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (!Uri.IsWellFormedUriString(channel.Uri, UriKind.Absolute)) return;
-                var uri = new Uri(channel.Uri);
-                var plainUri = new Uri(string.Format("{0}://{1}", uri.Scheme, uri.Host));
-                await platformService.LaunchUri(plainUri);
+                var name = await dialogService.ShowDialogForResults(
+                    translationsService.Resolve(Constants.EnterNameOfNewCategory),
+                    translationsService.Resolve(Constants.EnterNameOfNewCategoryTitle));
+                if (string.IsNullOrWhiteSpace(name)) return;
+                var category = new Category {Title = name};
+                await categoryManager.InsertAsync(category);
+                var viewModel = factory(category, this);
+                map[viewModel] = category;
+                Items.Add(viewModel);
             });
-            DeleteSource = new ObservableCommand(async () =>
+            Load = ReactiveCommand.CreateFromTask(async () =>
             {
-                parentViewModel.Items.Remove(this);
-                category.Channels.Remove(channel);
-                await categoryManager.UpdateAsync(category);
+                map.Clear();
+                IsLoading = true;
+                var categories = await categoryManager.GetAllAsync();
+                foreach (var category in categories) map[factory(category, this)] = category;
+                Items.AddRange(map.Keys);
+                IsEmpty = Items.Count == 0;
+                IsLoading = false;
+                Items.Changed.Subscribe(async x =>
+                {
+                    IsEmpty = Items.Count == 0;
+                    var items = Items.Select(i => map[i]);
+                    await categoryManager.RearrangeAsync(items);
+                });
             });
-            Notify.PropertyChanged += async (sender, args) =>
-            {
-                channel.Notify = Notify.Value;
-                await categoryManager.UpdateAsync(category);
-            };
         }
     }
 }

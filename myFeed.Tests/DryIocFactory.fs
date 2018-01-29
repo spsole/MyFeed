@@ -5,9 +5,10 @@ open DryIoc
 open myFeed.Interfaces
 open myFeed.Services
 open myFeed.Tests.Extensions
+open System
 
-type Sample (mediation: IStateContainer) = 
-    member __.Name = mediation.Pop<string>()
+type Sample (mediation: string) = 
+    member __.Name = mediation
 
 [<Theory>]
 [<InlineData("Hello, world!")>]
@@ -16,9 +17,9 @@ let ``should inject parameters with given type`` (phrase: string) =
 
     use container = new Container()
     container.Register<Sample>()
-    container.Register<IStateContainer, DryIocStateContainer>()
 
     let factory = produce<DryIocFactoryService> [container]
-    let instance = factory.CreateInstance<Sample> phrase
+    let creator = factory.Create<Func<string, Sample>>()
+    let instance = creator.Invoke phrase
     Should.equal phrase instance.Name
     

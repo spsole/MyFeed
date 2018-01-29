@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ using myFeed.Models;
 namespace myFeed.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(IFeedFetchService))]
+    [ExportEx(typeof(IFeedFetchService))]
     public sealed class FeedReaderFetchService : IFeedFetchService
     {
         private readonly IImageService _imageService;

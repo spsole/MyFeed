@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ using myFeed.Models;
 namespace myFeed.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(IOpmlService))]
+    [ExportEx(typeof(IOpmlService))]
     public sealed class DefaultOpmlService : IOpmlService
     {
         private readonly ISerializationService _serializationService;

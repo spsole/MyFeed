@@ -1,43 +1,52 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
+﻿using System;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using DryIocAttributes;
-using myFeed.Common;
 using myFeed.Interfaces;
+using myFeed.Models;
+using PropertyChanged;
+using ReactiveUI;
 
 namespace myFeed.ViewModels
 {
     [Reuse(ReuseType.Transient)]
-    [Export(typeof(SearchViewModel))]
+    [ExportEx(typeof(SearchViewModel))]
+    [AddINotifyPropertyChangedInterface]
     public sealed class SearchViewModel
     {
-        public ObservableCollection<SearchItemViewModel> Items { get; }
+        public ReactiveList<SearchItemViewModel> Items { get; }
+        public ReactiveCommand<Unit, Unit> Fetch { get; }
 
-        public ObservableProperty<string> SearchQuery { get; } 
-        public ObservableProperty<bool> IsGreeting { get; }
-        public ObservableProperty<bool> IsLoading { get; }
-        public ObservableProperty<bool> IsEmpty { get; }
-
-        public ObservableCommand Fetch { get; }
+        public string SearchQuery { get; set; }
+        public bool IsGreeting { get; private set; }
+        public bool IsLoading { get; private set; }
+        public bool IsEmpty { get; private set; }
 
         public SearchViewModel(
-            IFactoryService factoryService,
+            IFactoryService factoryService,             
             ISearchService searchService)
         {
-            SearchQuery = string.Empty;
-            (IsGreeting, IsEmpty, IsLoading) = (true, false, false);
-            Items = new ObservableCollection<SearchItemViewModel>();
-            Fetch = new ObservableCommand(async () =>
+            (IsGreeting, SearchQuery) = (true, string.Empty);
+            Items = new ReactiveList<SearchItemViewModel>();
+            this.WhenAnyValue(x => x.SearchQuery)
+                .Throttle(TimeSpan.FromSeconds(0.5))
+                .Select(x => x?.Trim())
+                .DistinctUntilChanged()
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => Fetch.Execute());
+            
+            Fetch = ReactiveCommand.CreateFromTask(async () =>
             {
-                IsLoading.Value = true;
-                var query = SearchQuery.Value;
-                var searchResults = await searchService.SearchAsync(query);
-                IsGreeting.Value = false;
+                (IsLoading, IsGreeting) = (true, false);
+                var search = await searchService.SearchAsync(SearchQuery);
+                var factory = factoryService.Create<Func<FeedlyItem, SearchItemViewModel>>();
+                var viewModels = search.Results.Select(x => factory(x));
                 Items.Clear();
-                foreach (var feedlyItem in searchResults.Results)
-                    Items.Add(factoryService.CreateInstance<
-                        SearchItemViewModel>(feedlyItem));
-                IsEmpty.Value = Items.Count == 0;
-                IsLoading.Value = false;
+                Items.AddRange(viewModels);
+                IsEmpty = Items.Count == 0;
+                IsLoading = false;
             });
         }
     }

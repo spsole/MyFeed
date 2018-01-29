@@ -22,26 +22,21 @@ namespace myFeed.Views.Uwp.Notifications
 
         public async Task SendNotifications(IEnumerable<Article> articles)
         {
-            // Prevent possible multiple enumeration of enumerable.
+            var settings = await _settingManager.Read();
             var articlesList = articles.ToList();
-
-            // Send toast notifications for notifications and action center.
-            var needImages = await _settingManager.GetAsync<bool>("LoadImages");
-            var needBanners = await _settingManager.GetAsync<bool>("NeedBanners");
             foreach (var article in articlesList)
             {
                 var identifier = article.Id.ToString();
-                var uri = needImages ? article.ImageUri : string.Empty;
+                var uri = settings.Images ? article.ImageUri : string.Empty;
                 var template = GetNotificationTemplate(article.Title,
                     article.FeedTitle, uri, identifier);
 
                 var xmlDocument = new XmlDocument();
                 xmlDocument.LoadXml(template);
-                var notification = new ToastNotification(xmlDocument) { SuppressPopup = !needBanners };
+                var notification = new ToastNotification(xmlDocument) { SuppressPopup = !settings.Banners };
                 ToastNotificationManager.CreateToastNotifier().Show(notification);
             }
 
-            // Send windows tile notifications to display on home screen.
             var updateManager = TileUpdateManager.CreateTileUpdaterForApplication();
             updateManager.EnableNotificationQueue(true);
             updateManager.Clear();

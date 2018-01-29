@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using myFeed.Models;
 
 namespace myFeed.Interfaces
 {
     public interface ISettingManager
     {
-        Task SetAsync<TValue>(string key, TValue value) where TValue : IConvertible;
+        Task Write(Settings settings);
         
-        Task<TValue> GetAsync<TValue>(string key) where TValue : IConvertible;
+        Task<Settings> Read();
     }
 }

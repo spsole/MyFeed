@@ -15,6 +15,8 @@ using myFeed.Uwp.Controls;
 using myFeed.Uwp.Views;
 using myFeed.ViewModels;
 using Microsoft.Toolkit.Uwp.UI.Extensions;
+using DryIoc;
+using myFeed.Models;
 
 namespace myFeed.Uwp.Services
 {
@@ -22,26 +24,18 @@ namespace myFeed.Uwp.Services
     [Export(typeof(INavigationService))]
     public sealed class UwpNavigationService : INavigationService
     {
+        private readonly IFactoryService _factoryService;
+        private readonly ICategoryManager _categoryManager;
         private readonly IReadOnlyDictionary<Type, Type> _pages = new Dictionary<Type, Type>
         {
-            {typeof(SettingsViewModel), typeof(SettingsView)},
+            {typeof(SettingViewModel), typeof(SettingView)},
+            {typeof(ChannelViewModel), typeof(ChannelView)},
             {typeof(ArticleViewModel), typeof(ArticleView)},
-            {typeof(ChannelsViewModel), typeof(ChannelsView)},
             {typeof(SearchViewModel), typeof(SearchView)},
             {typeof(MenuViewModel), typeof(MenuView)},
             {typeof(FaveViewModel), typeof(FaveView)},
             {typeof(FeedViewModel), typeof(FeedView)}
         };
-        private readonly IReadOnlyDictionary<Type, object> _symbols = new Dictionary<Type, object>
-        {
-            {typeof(FaveViewModel), Symbol.OutlineStar},
-            {typeof(SettingsViewModel), Symbol.Setting},
-            {typeof(FeedViewModel), Symbol.PostUpdate},
-            {typeof(ChannelsViewModel), Symbol.List},
-            {typeof(SearchViewModel), Symbol.Zoom}
-        };
-        private readonly ICategoryManager _categoryManager;
-        private readonly IFactoryService _factoryService;
 
         public UwpNavigationService(
             ICategoryManager categoryManager,
@@ -49,7 +43,7 @@ namespace myFeed.Uwp.Services
         {
             _factoryService = factoryService;
             _categoryManager = categoryManager;
-
+            
             var systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             systemNavigationManager.BackRequested += NavigateBack;
@@ -62,31 +56,39 @@ namespace myFeed.Uwp.Services
 
         public event EventHandler<Type> Navigated;
 
-        public IReadOnlyDictionary<Type, object> Icons => _symbols;
+        public Task Navigate<T>() where T : class => Navigate<T>(App.Container.Resolve<T>());
 
-        public Task Navigate<T>() where T : class => Navigate<T>(Uwp.Current.Resolve<T>());
-
-        public async Task Navigate<T>(object arg) where T : class
+        public IReadOnlyDictionary<Type, object> Icons => new Dictionary<Type, object>
         {
-            switch (typeof(T).Name)
+            {typeof(FaveViewModel), Symbol.OutlineStar},
+            {typeof(SettingViewModel), Symbol.Setting},
+            {typeof(FeedViewModel), Symbol.PostUpdate},
+            {typeof(ChannelViewModel), Symbol.List},
+            {typeof(SearchViewModel), Symbol.Zoom}
+        };
+
+        public async Task Navigate<T>(object parameter) where T : class
+        {
+            var viewModelType = typeof(T);
+            switch (viewModelType.Name)
             {
                 case nameof(FeedViewModel):
                 case nameof(FaveViewModel):
                 case nameof(SearchViewModel):
-                case nameof(ChannelsViewModel):
-                case nameof(SettingsViewModel):
+                case nameof(ChannelViewModel):
+                case nameof(SettingViewModel):
                     NavigateFrame(GetChild<Frame>(Window.Current.Content, 0));
                     break;
                 case nameof(MenuViewModel):
                     NavigateFrame((Frame)Window.Current.Content);
                     break;
-                case nameof(ArticleViewModel) when arg is Guid guid:
+                case nameof(ArticleViewModel) when parameter is Guid guid:
                     var article = await _categoryManager.GetArticleByIdAsync(guid);
                     if (article == null) return;
-                    var viewModel = _factoryService.CreateInstance<ArticleViewModel>(article);
+                    var articleViewModel = _factoryService.Create<Func<Article, FeedItemViewModel>>()(article);
                     if (GetChild<Frame>(Window.Current.Content, 1) == null) await Navigate<FeedViewModel>();
                     await Task.Delay(150);
-                    await Navigate<ArticleViewModel>(viewModel);
+                    await Navigate<ArticleViewModel>(articleViewModel);
                     break;
                 case nameof(ArticleViewModel):
                     NavigateFrame(GetChild<Frame>(Window.Current.Content, 1));
@@ -94,16 +96,15 @@ namespace myFeed.Uwp.Services
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-
             void NavigateFrame(Frame frame)
             {
-                frame.Navigate(_pages[typeof(T)], arg);
-                ((Page) frame.Content).DataContext = arg;
-                RaiseNavigated(arg);
+                if ((Page)frame.Content != null &&
+                    ((Page)frame.Content).DataContext.GetType() == viewModelType &&
+                    ((Page)frame.Content).DataContext.GetType() != typeof(ArticleViewModel)) return;
+                frame.Navigate(_pages[viewModelType], parameter);
+                ((Page)frame.Content).DataContext = parameter;
             }
         }
-
-        private void RaiseNavigated(object instance) => Navigated?.Invoke(this, instance?.GetType());
 
         private void NavigateBack(object sender, BackRequestedEventArgs e)
         {
@@ -127,9 +128,9 @@ namespace myFeed.Uwp.Services
             frame.ForwardStack.Clear();
             if (instance == null) return;
 
-            ((Page)frame.Content).DataContext = instance is ArticleViewModel 
-                ? instance : Uwp.Current.Resolve(instance.GetType());
-            RaiseNavigated(instance);
+            ((Page) frame.Content).DataContext = instance is ArticleViewModel
+                ? instance : App.Container.Resolve(instance.GetType()); ;
+            Navigated?.Invoke(this, instance.GetType());
         }
 
         private static T GetChild<T>(DependencyObject root, int depth) where T : DependencyObject

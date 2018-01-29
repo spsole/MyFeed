@@ -4,7 +4,7 @@ using Microsoft.Xaml.Interactivity;
 
 namespace myFeed.Uwp.Behaviors
 {
-    public class CloseFlyoutAction : DependencyObject, IAction
+    public sealed class CloseFlyoutAction : DependencyObject, IAction
     {
         public object Execute(object sender, object parameter)
         {

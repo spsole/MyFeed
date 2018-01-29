@@ -13,7 +13,7 @@ open System
 let ``should sort stored article entities``() = 
 
     let settings = Substitute.For<ISettingManager>()
-    settings.GetAsync<_>(Arg.Any()).Returns(5) |> ignore
+    settings.Read().Returns(Settings(Max = 5)) |> ignore
 
     let fetcher = Substitute.For<IFeedFetchService>()
     fetcher.FetchAsync(Arg.Any<_>()).Returns(
@@ -40,7 +40,7 @@ let ``should sort stored article entities``() =
 let ``should save fetched article entities``() =    
 
     let settings = Substitute.For<ISettingManager>()
-    settings.GetAsync<_>(Arg.Any()).Returns(5) |> ignore
+    settings.Read().Returns(Settings(Max = 5)) |> ignore
 
     let fetcher = Substitute.For<IFeedFetchService>()
     fetcher.FetchAsync(Arg.Any<_>()).Returns(
@@ -68,7 +68,7 @@ let ``should save fetched article entities``() =
 let ``should mix and order fetched and stored articles by date``() = 
     
     let settings = Substitute.For<ISettingManager>()
-    settings.GetAsync<_>(Arg.Any()).Returns(5) |> ignore
+    settings.Read().Returns(Settings(Max = 5)) |> ignore
 
     let fetcher = Substitute.For<IFeedFetchService>()
     fetcher.FetchAsync(Arg.Any<_>()).Returns(
@@ -92,7 +92,7 @@ let ``should mix and order fetched and stored articles by date``() =
 let ``should remove outdated articles if count is greater than custom``() = 
 
     let settings = Substitute.For<ISettingManager>()
-    settings.GetAsync<_>(Arg.Any()).Returns(70) |> ignore
+    settings.Read().Returns(Settings(Max = 70)) |> ignore
 
     let articles = Seq.init 200 (fun _ -> Article())
     let channel = Channel(Articles=toList articles)
@@ -109,7 +109,7 @@ let ``should remove outdated articles if count is greater than custom``() =
 let ``should remove articles with minimum publishing date only``() =    
 
     let settings = Substitute.For<ISettingManager>()
-    settings.GetAsync<_>(Arg.Any()).Returns(70) |> ignore
+    settings.Read().Returns(Settings(Max = 70)) |> ignore
 
     let articles = Seq.init 200 (fun _ -> Article())
     let fetcher = Substitute.For<IFeedFetchService>()
@@ -125,7 +125,7 @@ let ``should remove articles with minimum publishing date only``() =
 let ``should ignore whitespaces while comparing titles``() =
     
     let settings = Substitute.For<ISettingManager>()
-    settings.GetAsync<_>(Arg.Any()).Returns(70) |> ignore
+    settings.Read().Returns(Settings(Max = 5)) |> ignore
     
     let fetcher = Substitute.For<IFeedFetchService>()
     fetcher.FetchAsync(Arg.Any<_>()).Returns(

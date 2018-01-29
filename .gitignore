@@ -29,6 +29,7 @@ myFeed.Tests/obj
 myFeed.Tests/bin
 myFeed/obj
 myFeed/bin
+myFeed.Droid
 myFeed.Uwp/Assets
 myFeed.Uwp/AppPackages
 myFeed.Uwp/Package.StoreAssociation.xml

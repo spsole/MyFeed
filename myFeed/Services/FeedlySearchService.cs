@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ using Newtonsoft.Json;
 namespace myFeed.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(ISearchService))]
+    [ExportEx(typeof(ISearchService))]
     public sealed class FeedlySearchService : ISearchService
     {
         private const string QueryUrl = @"http://cloud.feedly.com/v3/search/feeds?count=40&query=:";

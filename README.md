@@ -14,17 +14,16 @@ Read news from websites via <b>myFeed</b>, find interesting feeds in the interne
 
 ## About App
 
-myFeed is an RSS reader for <b>Universal Windows Platform</b> (also planned support for more platforms using Xamarin and Avalonia UI frameworks). This app can collect news from websites, save them to your device and send toast notifications once new posts appear in your news feeds. Application is completely free and open-source! Built to demonstrate how modern cross-platform app architecture can look like. <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get myFeed from Windows Store</a>
-
-## Application Architecture
-
-myFeed utilises <b>MVVM</b> (Model-View-ViewModel) architecture. ViewModels provide Views abstractions with UI logic, exposing public properties and commands. Views are specific for each platform supported by myFeed, ViewModels and Models do not rely on Views. Models represent real state content and logic; this part of MVVM pattern is implemented as Services layer, which provides logic for feed fetching, serializing, caching. All modules are combined together using <a href="https://en.wikipedia.org/wiki/Inversion_of_control">Inversion of Control</a> and <a href="https://en.wikipedia.org/wiki/Dependency_inversion_principle">Dependency Inversion</a> principles: this architectural approach improves testability and extensibility of the application.
+myFeed is an RSS reader for <b>Universal Windows Platform</b> (also planned support for more platforms using Xamarin and Avalonia UI frameworks). This app can collect news from websites, save them to your device and send toast notifications once new posts appear in your news feeds. Application is completely free and open-source! <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get myFeed from Windows Store</a>
 
 ## Technologies and Tools Used
 
 - <a href="https://docs.microsoft.com/en-us/dotnet/csharp/csharp">C Sharp</a> and <a href="https://docs.microsoft.com/en-us/dotnet/fsharp/">F Sharp</a> programming languages 
 - <a href="https://docs.microsoft.com/en-us/dotnet/standard/net-standard">.NET Standard Library</a> to reuse code on various platforms 
 - <a href="http://xunit.github.io/">xUnit</a> tests on <a href="https://www.microsoft.com/net/core">.NET Core</a> with <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a>
+- <a href="http://reactivex.io/">Reactive Extensions</a> for the <a href="https://github.com/Reactive-Extensions/Rx.NET">.NET platform</a> 
+- <a href="https://reactiveui.net/">Reactive UI</a> modern MVVM framework
+- <a href="https://github.com/Fody/PropertyChanged">PropertyChanged.Fody</a> for INotifyPropertyChanged injections
 - <a href="https://github.com/mbdavid/LiteDB">LiteDB</a> as a NoSQL database engine
 - <a href="https://bitbucket.org/dadhi/dryioc/">DryIoc</a> and <a href="https://bitbucket.org/dadhi/dryioc/wiki/Extensions/MefAttributedModel">DryIoc.Attributes</a> for <a href="https://en.wikipedia.org/wiki/Dependency_injection">Dependency Injection</a>
 - <a href="https://github.com/codehollow/FeedReader">CodeHollow.FeedReader</a> to parse RSS feeds

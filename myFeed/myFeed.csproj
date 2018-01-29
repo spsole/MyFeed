@@ -1,12 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFrameworks>netcoreapp2.0;netstandard1.3</TargetFrameworks>
   </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+    <PackageReference Include="PropertyChanged.Fody" Version="2.2.5" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="PropertyChanged.Fody" Version="2.2.4" />
+  </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DryIoc.dll" Version="2.12.5" />
-    <PackageReference Include="DryIoc.MefAttributedModel.dll" Version="3.1.3" />
+    <PackageReference Include="DryIoc.dll" Version="2.12.6" />
+    <PackageReference Include="DryIoc.MefAttributedModel.dll" Version="3.2.0" />
     <PackageReference Include="DryIocAttributes.dll" Version="3.1.0" />
-    <PackageReference Include="LiteDB" Version="4.0.0" />
+    <PackageReference Include="LiteDB" Version="4.1.1" />
+    <PackageReference Include="ReactiveUI" Version="8.0.0-alpha0117" />
     <PackageReference Include="System.ValueTuple" Version="4.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="CodeHollow.FeedReader" Version="1.1.0.2" />

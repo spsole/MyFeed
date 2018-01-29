@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Xml.Serialization;
 using DryIocAttributes;
@@ -8,7 +7,7 @@ using myFeed.Interfaces;
 namespace myFeed.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(ISerializationService))]
+    [ExportEx(typeof(ISerializationService))]
     public sealed class XmlSerializationService : ISerializationService
     {
         public void Serialize<TObject>(TObject instance, Stream stream)
@@ -23,7 +22,6 @@ namespace myFeed.Services
                 // ignore
             }
         }
-
         public TObject Deserialize<TObject>(Stream stream)
         {
             try

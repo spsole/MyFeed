@@ -54,8 +54,8 @@
             </Grid.RowDefinitions>
             <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedViewTitle}"/>
             <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
-                <controls:TransparentButton Symbol="Bookmarks" Visibility="{
-                    Binding IsEmpty.Value, Converter={StaticResource FalsyToVisible}}">
+                <controls:TransparentButton Symbol="Bookmarks" Visibility="{Binding 
+                    IsEmpty, Converter={StaticResource FalsyToVisible}}">
                     <controls:TransparentButton.Flyout>
                         <Flyout Placement="Bottom">
                             <Flyout.FlyoutPresenterStyle>
@@ -66,7 +66,7 @@
                                 </Style>
                             </Flyout.FlyoutPresenterStyle>
                             <ListBox ItemsSource="{Binding Items}" MinWidth="200" 
-                                SelectedItem="{Binding Selected.Value, Mode=TwoWay}">
+                                SelectedItem="{Binding Selection, Mode=TwoWay}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Tapped">
                                         <behaviors:CloseFlyoutAction/>
@@ -74,7 +74,7 @@
                                 </interactivity:Interaction.Behaviors>
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Title.Value}"/>
+                                        <TextBlock Text="{Binding Title}"/>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -92,15 +92,15 @@
                 </controls:TransparentButton>
             </StackPanel>
             <Grid Grid.Row="1" Height="48" VerticalAlignment="Top" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
-            <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}" SelectedItem="{Binding Selected.Value, Mode=TwoWay}">
+            <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}" SelectedItem="{Binding Selection, Mode=TwoWay}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Loaded">
-                        <core:InvokeCommandAction Command="{Binding Load}"/>
+                        <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
                 <Pivot.HeaderTemplate>
-                    <DataTemplate x:DataType="implementations:FeedCategoryViewModel">
-                        <TextBlock Text="{Binding Title.Value}"/>
+                    <DataTemplate x:DataType="implementations:FeedGroupViewModel">
+                        <TextBlock Text="{Binding Title}"/>
                     </DataTemplate>
                 </Pivot.HeaderTemplate>
                 <Pivot.ItemContainerStyle>
@@ -109,14 +109,14 @@
                     </Style>
                 </Pivot.ItemContainerStyle>
                 <Pivot.ItemTemplate>
-                    <DataTemplate x:DataType="implementations:FeedCategoryViewModel">
+                    <DataTemplate x:DataType="implementations:FeedGroupViewModel">
                         <Grid>
                             <toolkit:PullToRefreshListView ShowsScrollingPlaceholders="False" 
                                 RefreshCommand="{Binding Fetch}" ItemsSource="{Binding Items}" 
                                 IsItemClickEnabled="True" SelectionMode="None">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Loaded">
-                                        <core:InvokeCommandAction Command="{Binding Fetch}"/>
+                                        <behaviors:ReactiveCommandAction Command="{Binding Fetch}"/>
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                                 <toolkit:PullToRefreshListView.ItemContainerStyle>
@@ -140,8 +140,8 @@
                                         Background="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                                 </toolkit:PullToRefreshListView.ReleaseToRefreshContent>
                                 <toolkit:PullToRefreshListView.ItemTemplate>
-                                    <DataTemplate x:DataType="implementations:ArticleViewModel">
-                                        <Grid Padding="0 12" Background="Transparent" Opacity="{Binding IsRead.Value,
+                                    <DataTemplate x:DataType="implementations:FeedItemViewModel">
+                                        <Grid Padding="0 12" Background="Transparent" Opacity="{Binding Read,
                                             Mode=OneWay, Converter={StaticResource TruthyToTransparent}}">
                                             <interactivity:Interaction.Behaviors>
                                                 <core:EventTriggerBehavior EventName="Holding">
@@ -151,67 +151,68 @@
                                                     <behaviors:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
                                                 <core:EventTriggerBehavior EventName="Tapped">
-                                                    <core:InvokeCommandAction Command="{Binding Open}"/>
+                                                    <behaviors:ReactiveCommandAction Command="{Binding Open}"/>
                                                 </core:EventTriggerBehavior>
                                             </interactivity:Interaction.Behaviors>
                                             <FlyoutBase.AttachedFlyout>
                                                 <MenuFlyout>
                                                     <controls:MenuFlyoutItemWithIcon Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding LaunchUri}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
+                                                    <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding Launch}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
+                                                    <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding Copy}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
                                                     <controls:MenuFlyoutItemWithIcon Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
                                                     <MenuFlyoutSeparator />
                                                     <controls:MenuFlyoutItemWithIcon Icon="Read" Command="{Binding MarkRead}" 
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=MarkAsRead}"
-                                                        Visibility="{Binding IsRead.Value, Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
+                                                        Visibility="{Binding Read, Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
                                                     <controls:MenuFlyoutItemWithIcon Icon="Mail" Command="{Binding MarkRead}" 
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=MarkAsUnread}"
-                                                        Visibility="{Binding IsRead.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="OutlineStar" Command="{Binding MarkFavorite}"
+                                                        Visibility="{Binding Read, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
+                                                    <controls:MenuFlyoutItemWithIcon Icon="OutlineStar" Command="{Binding MarkFave}"
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=RemoveFromFavorites}"
-                                                        Visibility="{Binding IsFavorite.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="SolidStar" Command="{Binding MarkFavorite}" 
+                                                        Visibility="{Binding Fave, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
+                                                    <controls:MenuFlyoutItemWithIcon Icon="SolidStar" Command="{Binding MarkFave}" 
                                                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=AddToFavorites}"
-                                                        Visibility="{Binding IsFavorite.Value, Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
+                                                        Visibility="{Binding Fave, Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
                                                 </MenuFlyout>
                                             </FlyoutBase.AttachedFlyout>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="94" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Grid Margin="12 0" VerticalAlignment="Top">
-                                                <Ellipse Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center"
-                                                    Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
+                                            <Grid VerticalAlignment="Top" Width="70" Height="70">
+                                                <Ellipse Width="70" Height="70" Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
                                                 <SymbolIcon Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                                    Visibility="{Binding Image.Value, Converter={StaticResource FalsyToVisible}}"
-                                                    VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="1" Symbol="PostUpdate"/>
-                                                <Ellipse x:Name="PictureEllipse" Opacity="0" Width="70" Height="70" 
-                                                    VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                    <Ellipse.Fill>
-                                                        <ImageBrush Stretch="UniformToFill">
-                                                            <ImageBrush.ImageSource>
-                                                                <BitmapImage DecodePixelType="Logical"
-                                                                    DecodePixelHeight="70" CreateOptions="None"
-                                                                    UriSource="{Binding Image.Value}">
-                                                                    <interactivity:Interaction.Behaviors>
-                                                                        <core:EventTriggerBehavior EventName="ImageOpened">
-                                                                            <media:ControlStoryboardAction>
-                                                                                <media:ControlStoryboardAction.Storyboard>
-                                                                                    <Storyboard TargetName="PictureEllipse" TargetProperty="(UIElement.Opacity)">
-                                                                                        <DoubleAnimationUsingKeyFrames>
-                                                                                            <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
-                                                                                            <EasingDoubleKeyFrame Value="1" KeyTime="0:0:1"/>
-                                                                                        </DoubleAnimationUsingKeyFrames>
-                                                                                    </Storyboard>
-                                                                                </media:ControlStoryboardAction.Storyboard>
-                                                                            </media:ControlStoryboardAction>
-                                                                        </core:EventTriggerBehavior>
-                                                                    </interactivity:Interaction.Behaviors>
-                                                                </BitmapImage>
-                                                            </ImageBrush.ImageSource>
-                                                        </ImageBrush>
-                                                    </Ellipse.Fill>
-                                                </Ellipse>
+                                                    Visibility="{Binding Image, Converter={StaticResource FalsyToVisible}}"
+                                                    VerticalAlignment="Center" HorizontalAlignment="Center" Symbol="PostUpdate"/>
+                                                <controls:UwpIf Value="{Binding ElementName=FeedGrid, Path=DataContext.Images}">
+                                                    <Ellipse x:Name="PictureEllipse" Opacity="0" Width="70" Height="70" 
+                                                        VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                        <Ellipse.Fill>
+                                                            <ImageBrush Stretch="UniformToFill">
+                                                                <ImageBrush.ImageSource>
+                                                                    <BitmapImage DecodePixelType="Logical"
+                                                                        DecodePixelHeight="70" CreateOptions="None"
+                                                                        UriSource="{Binding Image}">
+                                                                        <interactivity:Interaction.Behaviors>
+                                                                            <core:EventTriggerBehavior EventName="ImageOpened">
+                                                                                <media:ControlStoryboardAction>
+                                                                                    <media:ControlStoryboardAction.Storyboard>
+                                                                                        <Storyboard TargetName="PictureEllipse" TargetProperty="(UIElement.Opacity)">
+                                                                                            <DoubleAnimationUsingKeyFrames>
+                                                                                                <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
+                                                                                                <EasingDoubleKeyFrame Value="1" KeyTime="0:0:1"/>
+                                                                                            </DoubleAnimationUsingKeyFrames>
+                                                                                        </Storyboard>
+                                                                                    </media:ControlStoryboardAction.Storyboard>
+                                                                                </media:ControlStoryboardAction>
+                                                                            </core:EventTriggerBehavior>
+                                                                        </interactivity:Interaction.Behaviors>
+                                                                    </BitmapImage>
+                                                                </ImageBrush.ImageSource>
+                                                            </ImageBrush>
+                                                        </Ellipse.Fill>
+                                                    </Ellipse>
+                                                </controls:UwpIf>
                                             </Grid>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0 0 12 0">
                                                 <Grid>
@@ -221,23 +222,23 @@
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
                                                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE735;" FontSize="11" Margin="0 0 3 -3"
-                                                        Visibility="{Binding IsFavorite.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"
+                                                        Visibility="{Binding Fave, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"
                                                         Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-                                                    <TextBlock Grid.Column="1" Text="{Binding Feed.Value, Converter={StaticResource StrToUpper}}" 
+                                                    <TextBlock Grid.Column="1" Text="{Binding Feed, Converter={StaticResource StrToUpper}}" 
                                                         FontSize="11" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
                                                         TextTrimming="CharacterEllipsis" FontWeight="SemiBold"/>
                                                     <TextBlock Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top"
                                                         Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                                        Text="{Binding PublishedDate.Value}" FontSize="11" FontWeight="SemiBold"/>
+                                                        Text="{Binding Published}" FontSize="11" FontWeight="SemiBold"/>
                                                 </Grid>
-                                                <TextBlock Text="{Binding Title.Value}" TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding Title}" TextWrapping="Wrap"/>
                                             </StackPanel>
                                         </Grid>
                                     </DataTemplate>
                                 </toolkit:PullToRefreshListView.ItemTemplate>
                             </toolkit:PullToRefreshListView>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                                Visibility="{Binding IsEmpty.Value, Converter={StaticResource TruthyToVisible}}">
+                                Visibility="{Binding IsEmpty, Converter={StaticResource TruthyToVisible}}">
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEB5E;" TextAlignment="Center"
                                     FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                                 <TextBlock TextAlignment="Center" FontWeight="SemiLight" Margin="12 6" TextWrapping="Wrap" FontSize="24" 
@@ -247,15 +248,15 @@
                                     Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedNothing}"/>
                                 <Button Content="{Binding Converter={StaticResource Locale}, ConverterParameter=AddChannel}"
                                     Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White" 
-                                    Margin="12" HorizontalAlignment="Center" Command="{Binding OpenSources}"/>
+                                    Margin="12" HorizontalAlignment="Center" Command="{Binding Modify}"/>
                             </StackPanel>
-                            <controls:LoadingScreen IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
+                            <controls:LoadingScreen IsActive="{Binding IsLoading, Mode=OneWay}"/>
                         </Grid>
                     </DataTemplate>
                 </Pivot.ItemTemplate>
             </Pivot>
             <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                Visibility="{Binding IsEmpty.Value, Converter={StaticResource TruthyToVisible}}">
+                Visibility="{Binding IsEmpty, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -48 0 0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE897;" TextAlignment="Center"
                         FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
@@ -266,10 +267,10 @@
                         Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedWelcome}"/>
                     <Button Content="{Binding Converter={StaticResource Locale}, ConverterParameter=AddChannel}"
                         Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White" 
-                        Margin="12" HorizontalAlignment="Center" Command="{Binding OpenSources}"/>
+                        Margin="12" HorizontalAlignment="Center" Command="{Binding Modify}"/>
                 </StackPanel>
             </Grid>
-            <controls:LoadingScreen Grid.Row="1" IsActive="{Binding IsLoading.Value}" Margin="0 48 0 0"/>
+            <controls:LoadingScreen Grid.Row="1" IsActive="{Binding IsLoading}" Margin="0 48 0 0"/>
         </Grid>
     </Grid>
 </Page>

@@ -71,7 +71,9 @@
             </StackPanel>
             <Grid Grid.Row="1">
                 <Grid.Resources>
-                    <CollectionViewSource x:Name="GrouppedCollection" Source="{Binding Items}" IsSourceGrouped="true"/>
+                    <CollectionViewSource x:Name="GrouppedCollection" 
+                        Source="{Binding Items}" ItemsPath="Items" 
+                        IsSourceGrouped="true"/>
                 </Grid.Resources>
                 <SemanticZoom>
                     <SemanticZoom.ZoomedOutView>
@@ -84,7 +86,7 @@
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="ICollectionViewGroup">
-                                    <TextBlock FontSize="15" Margin="0 12" Text="{Binding Group.Key}">
+                                    <TextBlock FontSize="15" Margin="0 12" Text="{Binding Group.Title}">
                                         <TextBlock.Foreground>
                                             <SolidColorBrush Color="{ThemeResource SystemAccentColorLight1}"/>
                                         </TextBlock.Foreground>
@@ -98,7 +100,7 @@
                             IsItemClickEnabled="True" ShowsScrollingPlaceholders="False" SelectionMode="None">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="Loaded">
-                                    <core:InvokeCommandAction Command="{Binding Load}"/>
+                                    <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                             <ListView.ItemContainerTransitions>
@@ -137,15 +139,15 @@
                                         </Style>
                                     </GroupStyle.HeaderContainerStyle>
                                     <GroupStyle.HeaderTemplate>
-                                        <DataTemplate>
-                                            <TextBlock FontSize="11" Text="{Binding Key, Converter={StaticResource StrToUpper}}" 
+                                        <DataTemplate x:DataType="implementations:FaveGroupViewModel">
+                                            <TextBlock FontSize="11" Text="{Binding Title, Converter={StaticResource StrToUpper}}" 
                                                 Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" FontWeight="SemiBold"/>
                                         </DataTemplate>
                                     </GroupStyle.HeaderTemplate>
                                 </GroupStyle>
                             </ListView.GroupStyle>
                             <ListView.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate x:DataType="implementations:FeedItemViewModel">
                                     <Grid Padding="0 12" Background="Transparent">
                                         <interactivity:Interaction.Behaviors>
                                             <core:EventTriggerBehavior EventName="Holding">
@@ -155,17 +157,17 @@
                                                 <behaviors:OpenFlyoutAction/>
                                             </core:EventTriggerBehavior>
                                             <core:EventTriggerBehavior EventName="Tapped">
-                                                <core:InvokeCommandAction Command="{Binding Open}"/>
+                                                <behaviors:ReactiveCommandAction Command="{Binding Open}"/>
                                             </core:EventTriggerBehavior>
                                         </interactivity:Interaction.Behaviors>
                                         <FlyoutBase.AttachedFlyout>
                                             <MenuFlyout>
                                                 <controls:MenuFlyoutItemWithIcon Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
-                                                <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding LaunchUri}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
-                                                <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding CopyLink}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
+                                                <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding Launch}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
+                                                <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding Copy}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
                                                 <controls:MenuFlyoutItemWithIcon Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
                                                 <MenuFlyoutSeparator />
-                                                <controls:MenuFlyoutItemWithIcon Icon="Delete" Command="{Binding MarkFavorite}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
+                                                <controls:MenuFlyoutItemWithIcon Icon="Delete" Command="{Binding MarkFave}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
                                             </MenuFlyout>
                                         </FlyoutBase.AttachedFlyout>
                                         <Grid.ColumnDefinitions>
@@ -176,7 +178,7 @@
                                             <Ellipse Width="70" Height="70" VerticalAlignment="Center" HorizontalAlignment="Center"
                                                 Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
                                             <SymbolIcon Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                                Visibility="{Binding Image.Value, Converter={StaticResource FalsyToVisible}}"
+                                                Visibility="{Binding Image, Converter={StaticResource FalsyToVisible}}"
                                                 VerticalAlignment="Center" HorizontalAlignment="Center" Symbol="PostUpdate"/>
                                             <Ellipse x:Name="PictureEllipse" Opacity="0" Width="70" Height="70" 
                                                 HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -185,7 +187,7 @@
                                                         <ImageBrush.ImageSource>
                                                             <BitmapImage DecodePixelType="Logical" 
                                                                 DecodePixelHeight="70" CreateOptions="None"
-                                                                UriSource="{Binding Image.Value}">
+                                                                UriSource="{Binding Image}">
                                                                 <interactivity:Interaction.Behaviors>
                                                                     <core:EventTriggerBehavior EventName="ImageOpened">
                                                                         <media:ControlStoryboardAction>
@@ -212,14 +214,14 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0" Text="{Binding Feed.Value, Converter={StaticResource StrToUpper}}" 
+                                                <TextBlock Grid.Column="0" Text="{Binding Feed, Converter={StaticResource StrToUpper}}" 
                                                     FontSize="11" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
                                                     TextTrimming="CharacterEllipsis" FontWeight="SemiBold"/>
                                                 <TextBlock Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top"
                                                     Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                                    Text="{Binding PublishedDate.Value}" FontSize="11" FontWeight="SemiBold"/>
+                                                    Text="{Binding Published}" FontSize="11" FontWeight="SemiBold"/>
                                             </Grid>
-                                            <TextBlock Text="{Binding Title.Value}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding Title}" TextWrapping="Wrap"/>
                                         </StackPanel>
                                     </Grid>
                                 </DataTemplate>
@@ -227,9 +229,9 @@
                         </ListView>
                     </SemanticZoom.ZoomedInView>
                 </SemanticZoom>
-                <controls:LoadingScreen IsActive="{Binding IsLoading.Value, Mode=OneWay}"/>
+                <controls:LoadingScreen IsActive="{Binding IsLoading, Mode=OneWay}"/>
                 <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding 
-                    IsEmpty.Value, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
+                    IsEmpty, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12 -38 12 12">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE734;" TextAlignment="Center" 
                             FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
