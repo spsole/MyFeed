@@ -36,7 +36,7 @@ namespace myFeed.ViewModels
         {
             FeedlyItem = feedlyItem;
             Open = ReactiveCommand.CreateFromTask(
-                () => platformService.CopyTextToClipboard(Url),
+                () => platformService.LaunchUri(new Uri(Url)),
                 this.WhenAnyValue(x => x.Url).Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
             );
             Copy = ReactiveCommand.CreateFromTask(

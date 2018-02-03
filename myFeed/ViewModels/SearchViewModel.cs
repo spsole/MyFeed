@@ -36,7 +36,7 @@ namespace myFeed.ViewModels
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => Fetch.Execute());
-            
+
             Fetch = ReactiveCommand.CreateFromTask(async () =>
             {
                 (IsLoading, IsGreeting) = (true, false);

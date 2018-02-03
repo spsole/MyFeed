@@ -1,5 +1,4 @@
-﻿using System.Reactive;
-using DryIocAttributes;
+﻿using DryIocAttributes;
 using myFeed.Interfaces;
 using PropertyChanged;
 using ReactiveUI;
@@ -11,8 +10,8 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class ArticleViewModel
     {
-        public ReactiveCommand<Unit, Unit> Load { get; }
         public FeedItemViewModel Article { get; }
+        public ReactiveCommand Load { get; }
 
         public bool IsLoading { get; private set; }
         public bool Images { get; private set; }

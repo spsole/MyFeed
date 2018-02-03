@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Core;
@@ -26,6 +27,7 @@ namespace myFeed.Uwp.Services
     {
         private readonly IFactoryService _factoryService;
         private readonly ICategoryManager _categoryManager;
+        private readonly Subject<Type> _navigatedSubject = new Subject<Type>();
         private readonly IReadOnlyDictionary<Type, Type> _pages = new Dictionary<Type, Type>
         {
             {typeof(SettingViewModel), typeof(SettingView)},
@@ -54,15 +56,15 @@ namespace myFeed.Uwp.Services
             StatusBar.SetBackgroundOpacity(page, 1);
         }
 
-        public event EventHandler<Type> Navigated;
+        public IObservable<Type> Navigated => _navigatedSubject;
 
         public Task Navigate<T>() where T : class => Navigate<T>(App.Container.Resolve<T>());
 
         public IReadOnlyDictionary<Type, object> Icons => new Dictionary<Type, object>
         {
             {typeof(FaveViewModel), Symbol.OutlineStar},
-            {typeof(SettingViewModel), Symbol.Setting},
             {typeof(FeedViewModel), Symbol.PostUpdate},
+            {typeof(SettingViewModel), Symbol.Setting},
             {typeof(ChannelViewModel), Symbol.List},
             {typeof(SearchViewModel), Symbol.Zoom}
         };
@@ -99,10 +101,11 @@ namespace myFeed.Uwp.Services
             void NavigateFrame(Frame frame)
             {
                 if ((Page)frame.Content != null &&
-                    ((Page)frame.Content).DataContext.GetType() == viewModelType &&
-                    ((Page)frame.Content).DataContext.GetType() != typeof(ArticleViewModel)) return;
+                   ((Page)frame.Content).DataContext.GetType() == viewModelType &&
+                   ((Page)frame.Content).DataContext.GetType() != typeof(ArticleViewModel)) return;
                 frame.Navigate(_pages[viewModelType], parameter);
                 ((Page)frame.Content).DataContext = parameter;
+                _navigatedSubject.OnNext(viewModelType);
             }
         }
 
@@ -129,8 +132,8 @@ namespace myFeed.Uwp.Services
             if (instance == null) return;
 
             ((Page) frame.Content).DataContext = instance is ArticleViewModel
-                ? instance : App.Container.Resolve(instance.GetType()); ;
-            Navigated?.Invoke(this, instance.GetType());
+                ? instance : App.Container.Resolve(instance.GetType());
+            _navigatedSubject.OnNext(instance.GetType());
         }
 
         private static T GetChild<T>(DependencyObject root, int depth) where T : DependencyObject

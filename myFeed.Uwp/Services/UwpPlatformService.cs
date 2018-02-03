@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
@@ -65,19 +66,17 @@ namespace myFeed.Uwp.Services
         
         public async Task RegisterBackgroundTask(int freq)
         {
-            var backgroundAccessStatus = await BackgroundExecutionManager.RequestAccessAsync();
-            if (backgroundAccessStatus != BackgroundAccessStatus.AllowedSubjectToSystemPolicy ||
-                backgroundAccessStatus != BackgroundAccessStatus.AlwaysAllowed) return;
+            var _ = await BackgroundExecutionManager.RequestAccessAsync();
             foreach (var task in BackgroundTaskRegistration.AllTasks)
                 if (task.Value.Name == "myFeedNotify")
                     task.Value.Unregister(true);
 
             if (freq == 0) return;
             if (freq < 30) freq = 30;
-            var builder = new BackgroundTaskBuilder {Name="myFeedNotify"};
-            builder.SetTrigger(new TimeTrigger((uint)freq, false));
+            var builder = new BackgroundTaskBuilder {Name = "myFeedNotify"};
+            builder.SetTrigger(new TimeTrigger((uint) freq, false));
             builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
-            builder.TaskEntryPoint = "myFeed.Views.Uwp.Notifications.Runner";
+            builder.TaskEntryPoint = "myFeed.Uwp.Notifications.Runner";
             builder.Register();
         }
 

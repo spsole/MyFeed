@@ -37,7 +37,7 @@
         <Grid Grid.Row="1" VerticalAlignment="Top" Height="48" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
         <Pivot Grid.Row="1">
             <PivotItem Margin="0" Header="{Binding Converter={StaticResource Locale}, ConverterParameter=Personalization}">
-                <ScrollViewer Padding="12 0 12 12">
+                <ScrollViewer Padding="12 0">
                     <StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
@@ -77,7 +77,7 @@
                             <Slider Value="{Binding Max, Mode=TwoWay}" Minimum="50"
                                 Maximum="300" Width="300" HorizontalAlignment="Left" StepFrequency="50"/>
                         </StackPanel>
-                        <!--<StackPanel Margin="0 6">
+                        <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
                                 Converter={StaticResource Locale}, ConverterParameter=ChangeThemeTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
@@ -86,7 +86,7 @@
                                 {StaticResource Locale}, ConverterParameter=DefaultThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction TargetObject="{Binding Theme}" PropertyName="Value" Value="default"/>
+                                        <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="Theme" Value="default"/>
                                     </core:EventTriggerBehavior>
                                     <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="default">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=DefaultRadioButton}" PropertyName="IsChecked">
@@ -101,7 +101,7 @@
                                 {StaticResource Locale}, ConverterParameter=DarkThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction TargetObject="{Binding Theme}" PropertyName="Value" Value="dark"/>
+                                        <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="Theme" Value="dark"/>
                                     </core:EventTriggerBehavior>
                                     <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="dark">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=DarkRadioButton}" PropertyName="IsChecked">
@@ -116,8 +116,7 @@
                                 {StaticResource Locale}, ConverterParameter=LightThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction TargetObject="{Binding 
-                                            Theme}" PropertyName="Value" Value="light"/>
+                                        <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="Theme" Value="light"/>
                                     </core:EventTriggerBehavior>
                                     <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="light">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=LightRadioButton}" PropertyName="IsChecked">
@@ -128,12 +127,12 @@
                                     </core:DataTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                             </RadioButton>
-                        </StackPanel>-->
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
             <PivotItem Header="{Binding Converter={StaticResource Locale}, ConverterParameter=Special}" Margin="0">
-                <ScrollViewer Padding="12 0 12 12">
+                <ScrollViewer Padding="12 0">
                     <StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
@@ -163,7 +162,7 @@
                 </ScrollViewer>
             </PivotItem>
             <PivotItem Margin="0" Header="{Binding Converter={StaticResource Locale}, ConverterParameter=AboutApp}">
-                <ScrollViewer Padding="12 0 12 12">
+                <ScrollViewer Padding="12 0">
                     <StackPanel>
                         <Grid Margin="0 12">
                             <Grid.ColumnDefinitions>
@@ -176,7 +175,7 @@
                             <StackPanel Grid.Column="1" Margin="12 0">
                                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" 
                                     Margin="0 6" Text="myFeed" TextWrapping="Wrap"/>
-                                <TextBlock Text="© Artjom Graf 2017" TextWrapping="NoWrap"/>
+                                <TextBlock Text="© Artyom Graf 2017" TextWrapping="NoWrap"/>
                                 <HyperlinkButton Content="worldbeater.github.io" Margin="0 6"
                                     Style="{StaticResource TextBlockButtonStyle}" Padding="0"
                                     NavigateUri="https://worldbeater.github.io"/>

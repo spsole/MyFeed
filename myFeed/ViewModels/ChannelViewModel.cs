@@ -32,9 +32,9 @@ namespace myFeed.ViewModels
         {
             IsLoading = true;
             Items = new ReactiveList<ChannelGroupViewModel>();
-            Search = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<SearchViewModel>());
-            var factory = factoryService.Create<Func<Category, ChannelViewModel, ChannelGroupViewModel>>();
             var map = new Dictionary<ChannelGroupViewModel, Category>();
+            var factory = factoryService.Create<Func<Category, ChannelViewModel, ChannelGroupViewModel>>();
+            Search = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<SearchViewModel>());
             Add = ReactiveCommand.CreateFromTask(async () =>
             {
                 var name = await dialogService.ShowDialogForResults(

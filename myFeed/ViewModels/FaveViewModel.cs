@@ -22,9 +22,11 @@ namespace myFeed.ViewModels
 
         public bool IsLoading { get; private set; }
         public bool IsEmpty { get; private set; }
+        public bool Images { get; private set; }
 
         public FaveViewModel(
             IFavoriteManager favoriteManager,
+            ISettingManager settingManager,
             IFactoryService factoryService)
         {
             IsLoading = true;
@@ -42,6 +44,7 @@ namespace myFeed.ViewModels
                 return ReactiveCommand.CreateFromTask(async () =>
                 {
                     IsLoading = true;
+                    var settings = await settingManager.Read();
                     var articles = await favoriteManager.GetAllAsync();
                     var factory = factoryService.Create<Func<
                         IGrouping<string, Article>, 
@@ -53,6 +56,7 @@ namespace myFeed.ViewModels
                         .ToList();
                     Items.Clear();
                     Items.AddRange(groupings);
+                    Images = settings.Images;
                     IsEmpty = Items.Count == 0;
                     IsLoading = false;
                 });

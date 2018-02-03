@@ -10,7 +10,7 @@
     <PackageReference Include="PropertyChanged.Fody" Version="2.2.4" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DryIoc.dll" Version="2.12.6" />
+    <PackageReference Include="DryIoc.dll" Version="2.12.7" />
     <PackageReference Include="DryIoc.MefAttributedModel.dll" Version="3.2.0" />
     <PackageReference Include="DryIocAttributes.dll" Version="3.1.0" />
     <PackageReference Include="LiteDB" Version="4.1.1" />

@@ -2,6 +2,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reactive.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -69,23 +70,26 @@ namespace myFeed.ViewModels
             Load = ReactiveCommand.CreateFromTask(async () =>
             {
                 var settings = await settingManager.Read();
+                Track(x => x.Period, (s, x) => s.Period = x, settings.Period, platformService.RegisterBackgroundTask);
+                Track(x => x.Theme, (s, x) => s.Theme = x, settings.Theme, platformService.RegisterTheme);
                 Track(x => x.Banners, (s, x) => s.Banners = x, settings.Banners);
                 Track(x => x.Images, (s, x) => s.Images = x, settings.Images);
-                Track(x => x.Period, (s, x) => s.Period = x, settings.Period);
-                Track(x => x.Theme, (s, x) => s.Theme = x, settings.Theme);
                 Track(x => x.Font, (s, x) => s.Font = x, settings.Font);
                 Track(x => x.Max, (s, x) => s.Max = x, settings.Max);
 
                 void Track<T>(
                     Expression<Func<SettingViewModel, T>> bind, 
-                    Action<Settings, T> assign, T initial)
+                    Action<Settings, T> assign, T initial,
+                    Func<T, Task> callback = null)
                 {
                     var memberExpression = (MemberExpression)bind.Body;
                     var property = (PropertyInfo)memberExpression.Member;
                     property.SetValue(this, initial);
                     this.WhenAnyValue(bind)
                         .Do(x => assign.Invoke(settings, x))
-                        .Subscribe(async x => await settingManager.Write(settings));
+                        .Do(async x => await settingManager.Write(settings))
+                        .Where(x => callback != null)
+                        .Subscribe(async x => await callback(x));
                 }
             });
         }
