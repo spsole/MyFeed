@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reactive.Disposables;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -15,13 +14,13 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(FeedGroupViewModel))]
     public sealed class FeedGroupViewModel
     {
-        public ReactiveList<FeedItemViewModel> Items { get; }
+        public IReactiveDerivedList<FeedItemViewModel> Items { get; }
         public ReactiveCommand Modify { get; }
         public ReactiveCommand Fetch { get; }
 
-        public string Title { get; }
         public bool IsLoading { get; private set; }
         public bool IsEmpty { get; private set; }
+        public string Title { get; }
 
         public FeedGroupViewModel(
             INavigationService navigationService,
@@ -30,32 +29,22 @@ namespace myFeed.ViewModels
             IFactoryService factoryService,
             Category category)
         {
-            IsLoading = true;
-            Title = category.Title;
-            var disposable = new CompositeDisposable();
-            Items = new ReactiveList<FeedItemViewModel>();
+            var showRead = true;
+            (IsLoading, Title) = (true, category.Title);
+            var cache = new ReactiveList<FeedItemViewModel>() {ChangeTrackingEnabled = true};
+            Items = cache.CreateDerivedCollection(x => x, x => !(!showRead && x.Read));
+            Items.CountChanged.Subscribe(x => IsEmpty = x == 0);
             Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
             Fetch = ReactiveCommand.CreateFromTask(async () =>
             {
                 IsLoading = true;
-                disposable.Dispose();
-                disposable = new CompositeDisposable();
                 var settings = await settingManager.Read();
                 var response = await feedStoreService.LoadAsync(category.Channels);
                 var factory = factoryService.Create<Func<Article, FeedItemViewModel>>();
                 var viewModels = response.Select(x => factory(x)).ToList();
-                Items.Clear();
-                Items.AddRange(viewModels.Where(x => !(!settings.Read && x.Read)));
-                viewModels.ForEach((item, index) => item.WhenAnyValue(x => x.Read).Subscribe(read =>
-                {
-                    if (settings.Read) return;
-                    var contains = Items.Contains(item);
-                    if (!read && !contains) Items.Insert(index, item);
-                    else if (read && contains) Items.Remove(item);
-                    IsEmpty = Items.Count == 0;
-                })
-                .DisposeWith(disposable));
-                IsEmpty = Items.Count == 0;
+                showRead = settings.Read;
+                cache.Clear();
+                cache.AddRange(viewModels);
                 IsLoading = false;
             });
         }

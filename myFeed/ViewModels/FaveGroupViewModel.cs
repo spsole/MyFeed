@@ -13,7 +13,7 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(FaveGroupViewModel))]
     public sealed class FaveGroupViewModel
     {
-        public ReactiveList<FeedItemViewModel> Items { get; }
+        public IReactiveDerivedList<FeedItemViewModel> Items { get; }
         public string Title { get; }
 
         public FaveGroupViewModel(
@@ -21,15 +21,10 @@ namespace myFeed.ViewModels
             IFactoryService factoryService)
         {
             Title = grouping.Key;
-            Items = new ReactiveList<FeedItemViewModel>();
             var factory = factoryService.Create<Func<Article, FeedItemViewModel>>();
-            Items.AddRange(grouping.Select(x => factory(x)));
-            Items.ForEach((item, index) => item.WhenAnyValue(x => x.Fave).Subscribe(fave =>
-            {
-                var contains = Items.Contains(item);
-                if (fave && !contains) Items.Insert(index, item);
-                else if (!fave && contains) Items.Remove(item);
-            }));
+            var cache = new ReactiveList<FeedItemViewModel>() {ChangeTrackingEnabled = true};
+            Items = cache.CreateDerivedCollection(x => x, x => x.Fave);
+            cache.AddRange(grouping.Select(x => factory(x)));
         }
     }
 }
