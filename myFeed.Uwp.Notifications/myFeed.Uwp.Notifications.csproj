@@ -7,8 +7,8 @@
     <ProjectGuid>{74FA52EF-B4DA-4EBE-A49B-BA843B5C7E3B}</ProjectGuid>
     <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>myFeed.Views.Uwp.Notifications</RootNamespace>
-    <AssemblyName>myFeed.Views.Uwp.Notifications</AssemblyName>
+    <RootNamespace>myFeed.Uwp.Notifications</RootNamespace>
+    <AssemblyName>myFeed.Uwp.Notifications</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.14393.0</TargetPlatformVersion>

@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Controls;
 using DryIocAttributes;
 using LiteDB;
 using myFeed.Platform;
+using myFeed.Uwp.Notifications;
 
 namespace myFeed.Uwp.Services
 {
@@ -76,8 +77,15 @@ namespace myFeed.Uwp.Services
             var builder = new BackgroundTaskBuilder {Name = "myFeedNotify"};
             builder.SetTrigger(new TimeTrigger((uint) freq, false));
             builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
-            builder.TaskEntryPoint = "myFeed.Uwp.Notifications.Runner";
-            builder.Register();
+            builder.TaskEntryPoint = typeof(Runner).FullName;
+            try
+            {
+                builder.Register();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
         }
 
         public Task RegisterTheme(string theme)

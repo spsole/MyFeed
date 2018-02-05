@@ -10,7 +10,7 @@ using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
 
-namespace myFeed.Views.Uwp.Notifications
+namespace myFeed.Uwp.Notifications
 {
     [Reuse(ReuseType.Singleton)]
     [Export(typeof(INotificationService))]

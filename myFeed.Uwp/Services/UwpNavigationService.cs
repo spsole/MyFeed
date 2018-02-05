@@ -38,6 +38,14 @@ namespace myFeed.Uwp.Services
             {typeof(FaveViewModel), typeof(FaveView)},
             {typeof(FeedViewModel), typeof(FeedView)}
         };
+        public IReadOnlyDictionary<Type, object> Icons => new Dictionary<Type, object>
+        {
+            {typeof(FaveViewModel), Symbol.OutlineStar},
+            {typeof(FeedViewModel), Symbol.PostUpdate},
+            {typeof(SettingViewModel), Symbol.Setting},
+            {typeof(ChannelViewModel), Symbol.List},
+            {typeof(SearchViewModel), Symbol.Zoom}
+        };
 
         public UwpNavigationService(
             ICategoryManager categoryManager,
@@ -60,19 +68,9 @@ namespace myFeed.Uwp.Services
 
         public Task Navigate<T>() where T : class => Navigate<T>(App.Container.Resolve<T>());
 
-        public IReadOnlyDictionary<Type, object> Icons => new Dictionary<Type, object>
-        {
-            {typeof(FaveViewModel), Symbol.OutlineStar},
-            {typeof(FeedViewModel), Symbol.PostUpdate},
-            {typeof(SettingViewModel), Symbol.Setting},
-            {typeof(ChannelViewModel), Symbol.List},
-            {typeof(SearchViewModel), Symbol.Zoom}
-        };
-
         public async Task Navigate<T>(object parameter) where T : class
         {
-            var viewModelType = typeof(T);
-            switch (viewModelType.Name)
+            switch (typeof(T).Name)
             {
                 case nameof(FeedViewModel):
                 case nameof(FaveViewModel):
@@ -84,15 +82,8 @@ namespace myFeed.Uwp.Services
                 case nameof(MenuViewModel):
                     NavigateFrame((Frame)Window.Current.Content);
                     break;
-                case nameof(ArticleViewModel) when parameter is Guid guid:
-                    var article = await _categoryManager.GetArticleByIdAsync(guid);
-                    if (article == null) return;
-                    var articleViewModel = _factoryService.Create<Func<Article, FeedItemViewModel>>()(article);
-                    if (GetChild<Frame>(Window.Current.Content, 1) == null) await Navigate<FeedViewModel>();
-                    await Task.Delay(150);
-                    await Navigate<ArticleViewModel>(articleViewModel);
-                    break;
                 case nameof(ArticleViewModel):
+                    if (GetChild<Frame>(Window.Current.Content, 1) == null) await Navigate<FeedViewModel>();
                     NavigateFrame(GetChild<Frame>(Window.Current.Content, 1));
                     break;
                 default:
@@ -100,12 +91,13 @@ namespace myFeed.Uwp.Services
             }
             void NavigateFrame(Frame frame)
             {
+                var viewModelType = typeof(T);
                 if ((Page)frame.Content != null &&
                    ((Page)frame.Content).DataContext.GetType() == viewModelType &&
                    ((Page)frame.Content).DataContext.GetType() != typeof(ArticleViewModel)) return;
                 frame.Navigate(_pages[viewModelType], parameter);
                 ((Page)frame.Content).DataContext = parameter;
-                _navigatedSubject.OnNext(viewModelType);
+                RaiseNavigated(viewModelType);
             }
         }
 
@@ -133,7 +125,15 @@ namespace myFeed.Uwp.Services
 
             ((Page) frame.Content).DataContext = instance is ArticleViewModel
                 ? instance : App.Container.Resolve(instance.GetType());
-            _navigatedSubject.OnNext(instance.GetType());
+            RaiseNavigated(instance.GetType());
+        }
+
+        private void RaiseNavigated(Type type)
+        {
+            if (type == typeof(ArticleViewModel))
+                type = ((Page)GetChild<Frame>(Window.Current.Content, 0)
+                    .Content).DataContext.GetType();
+            _navigatedSubject.OnNext(type);
         }
 
         private static T GetChild<T>(DependencyObject root, int depth) where T : DependencyObject

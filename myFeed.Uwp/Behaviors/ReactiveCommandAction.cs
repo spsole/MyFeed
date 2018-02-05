@@ -18,7 +18,7 @@ namespace myFeed.Uwp.Behaviors
 
         public object Execute(object sender, object parameter)
         {
-            Command.Execute(Unit.Default);
+            Command?.Execute(Unit.Default);
             return null;
         }
     }

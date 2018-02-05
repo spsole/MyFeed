@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive.Linq;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -17,13 +18,23 @@ namespace myFeed.ViewModels
         public string Title { get; }
 
         public FaveGroupViewModel(
-            IGrouping<string, Article> parameter,
+            IGrouping<string, Article> grouping,
             IFactoryService factoryService)
         {
-            var factory = factoryService.Create<Func<Article, FeedItemViewModel>>();
             Items = new ReactiveList<FeedItemViewModel>();
-            Items.AddRange(parameter.Select(x => factory(x)));
-            Title = parameter.Key;
+            var factory = factoryService.Create<Func<Article, FeedItemViewModel>>();
+            Items.AddRange(grouping.Select(x => factory(x)));
+            Title = grouping.Key;
+            foreach (var item in Items)
+            {
+                var index = Items.IndexOf(item);
+                item.WhenAnyValue(x => x.Fave).Subscribe(fave =>
+                {
+                    var contains = Items.Contains(item);
+                    if (fave && !contains) Items.Insert(index, item);
+                    else if (!fave && contains) Items.Remove(item);
+                });
+            }
         }
     }
 }

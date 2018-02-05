@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -8,6 +8,8 @@ using Windows.UI.Xaml.Controls;
 using DryIoc;
 using DryIoc.MefAttributedModel;
 using LiteDB;
+using myFeed.Interfaces;
+using myFeed.Models;
 using myFeed.Platform;
 using myFeed.Uwp.Services;
 using myFeed.ViewModels;
@@ -26,11 +28,26 @@ namespace myFeed.Uwp
             Container.RegisterExports(new[] {typeof(App).GetAssembly()});
             Container.RegisterShared();
             InitializeComponent();
-
-            this.UnhandledException += (o, shit) => Debug.WriteLine(shit.Exception);
+            //UnhandledException += (o, shit) => Debug.WriteLine(shit.Exception);
         }
 
-        private static async void EnsureDefaultViewIsPresent()
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            await EnsureDefaultViewIsPresent();
+            if (Guid.TryParse(e.TileId, out var guid))
+                await NavigateToToast(guid);
+        }
+
+        protected override async void OnActivated(IActivatedEventArgs args)
+        {
+            await EnsureDefaultViewIsPresent();
+            if (args.Kind == ActivationKind.ToastNotification &&
+                args is IToastNotificationActivatedEventArgs e &&
+                Guid.TryParse(e.Argument, out var guid))
+                await NavigateToToast(guid);
+        }
+
+        private static async Task EnsureDefaultViewIsPresent()
         {
             if (Window.Current.Content == null) Window.Current.Content = new Frame();
             var frame = (Frame)Window.Current.Content;
@@ -42,20 +59,18 @@ namespace myFeed.Uwp
             await legacyService.ImportArticlesFromLegacyFormat();
         }
 
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        private static async Task NavigateToToast(Guid guid)
         {
-            EnsureDefaultViewIsPresent();
-            if (Guid.TryParse(e.TileId, out var guid))
-                Container.Resolve<INavigationService>().Navigate<ArticleViewModel>(guid);
-        }
+            var factoryService = Container.Resolve<IFactoryService>();
+            var categoryManager = Container.Resolve<ICategoryManager>();
+            var navigationService = Container.Resolve<INavigationService>();
+            var article = await categoryManager.GetArticleByIdAsync(guid);
+            if (article == null) return;
 
-        protected override void OnActivated(IActivatedEventArgs args)
-        {
-            EnsureDefaultViewIsPresent();
-            if (args.Kind == ActivationKind.ToastNotification &&
-                args is IToastNotificationActivatedEventArgs e &&
-                Guid.TryParse(e.Argument, out var guid))
-                Container.Resolve<INavigationService>().Navigate<ArticleViewModel>(guid);
+            var factory = factoryService.Create<Func<Article, FeedItemViewModel>>();
+            var articleFactory = factoryService.Create<Func<FeedItemViewModel, ArticleViewModel>>();
+            var articleViewModel = articleFactory.Invoke(factory.Invoke(article));
+            await navigationService.Navigate<ArticleViewModel>(articleViewModel);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using DryIoc;
 using LiteDB;
@@ -7,7 +8,7 @@ using Windows.ApplicationModel.Background;
 using DryIoc.MefAttributedModel;
 using myFeed.Interfaces;
 
-namespace myFeed.Views.Uwp.Notifications
+namespace myFeed.Uwp.Notifications
 {
     public sealed class Runner : IBackgroundTask
     {
@@ -25,7 +26,6 @@ namespace myFeed.Views.Uwp.Notifications
         {
             var localFolder = ApplicationData.Current.LocalFolder;
             var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
-
             container.RegisterShared();
             container.RegisterDelegate(x => new LiteDatabase(filePath), Reuse.Singleton);
             container.RegisterExports(new[] {typeof(Runner).GetAssembly()});

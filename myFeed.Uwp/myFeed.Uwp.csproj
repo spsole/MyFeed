@@ -279,13 +279,13 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\myFeed\myFeed.csproj">
-      <Project>{1ccb0e94-64ab-4634-8425-648e8752f66e}</Project>
-      <Name>myFeed</Name>
-    </ProjectReference>
     <ProjectReference Include="..\myFeed.Uwp.Notifications\myFeed.Uwp.Notifications.csproj">
       <Project>{74fa52ef-b4da-4ebe-a49b-ba843b5c7e3b}</Project>
       <Name>myFeed.Uwp.Notifications</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\myFeed\myFeed.csproj">
+      <Project>{1ccb0e94-64ab-4634-8425-648e8752f66e}</Project>
+      <Name>myFeed</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

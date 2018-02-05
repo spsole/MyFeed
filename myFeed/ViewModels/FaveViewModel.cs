@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -54,6 +55,7 @@ namespace myFeed.ViewModels
                         .GroupBy(x => display(order(x)))
                         .Select(x => factory(x))
                         .ToList();
+                    await Task.Delay(500);
                     Items.Clear();
                     Items.AddRange(groupings);
                     Images = settings.Images;

@@ -10,8 +10,8 @@
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:views="using:myFeed.Uwp.Views"
     xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:media="using:Microsoft.Xaml.Interactions.Media"
     xmlns:behaviors="using:myFeed.Uwp.Behaviors"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -105,9 +105,7 @@
                             </interactivity:Interaction.Behaviors>
                             <ListView.ItemContainerTransitions>
                                 <TransitionCollection>
-                                    <ContentThemeTransition VerticalOffset="0" HorizontalOffset="30"/>
-                                    <EntranceThemeTransition FromHorizontalOffset="30" FromVerticalOffset="0"/>
-                                    <AddDeleteThemeTransition/>
+                                    <AddDeleteThemeTransition />
                                 </TransitionCollection>
                             </ListView.ItemContainerTransitions>
                             <ListView.ItemContainerStyle>
@@ -176,37 +174,19 @@
                                         </Grid.ColumnDefinitions>
                                         <Grid VerticalAlignment="Top" Width="70" Height="70">
                                             <Ellipse Width="70" Height="70" Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
-                                            <SymbolIcon Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                                Visibility="{Binding Image, Converter={StaticResource FalsyToVisible}}"
-                                                VerticalAlignment="Center" HorizontalAlignment="Center" Symbol="PostUpdate"/>
                                             <controls:UwpIf Value="{Binding ElementName=FeedGrid, Path=DataContext.Images}">
-                                                <Ellipse x:Name="PictureEllipse" Opacity="0" Width="70" Height="70" 
-                                                    VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                    <Ellipse.Fill>
-                                                        <ImageBrush Stretch="UniformToFill">
-                                                            <ImageBrush.ImageSource>
-                                                                <BitmapImage DecodePixelType="Logical"
-                                                                    DecodePixelHeight="70" CreateOptions="None"
-                                                                    UriSource="{Binding Image}">
-                                                                    <interactivity:Interaction.Behaviors>
-                                                                        <core:EventTriggerBehavior EventName="ImageOpened">
-                                                                            <media:ControlStoryboardAction>
-                                                                                <media:ControlStoryboardAction.Storyboard>
-                                                                                    <Storyboard TargetName="PictureEllipse" TargetProperty="(UIElement.Opacity)">
-                                                                                        <DoubleAnimationUsingKeyFrames>
-                                                                                            <EasingDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
-                                                                                            <EasingDoubleKeyFrame Value="1" KeyTime="0:0:1"/>
-                                                                                        </DoubleAnimationUsingKeyFrames>
-                                                                                    </Storyboard>
-                                                                                </media:ControlStoryboardAction.Storyboard>
-                                                                            </media:ControlStoryboardAction>
-                                                                        </core:EventTriggerBehavior>
-                                                                    </interactivity:Interaction.Behaviors>
-                                                                </BitmapImage>
-                                                            </ImageBrush.ImageSource>
-                                                        </ImageBrush>
-                                                    </Ellipse.Fill>
-                                                </Ellipse>
+                                                <toolkit:RoundImageEx PlaceholderSource="ms-appx:///Assets/StoreLogo.png"
+                                                    IsCacheEnabled="True" Source="{Binding Image}"
+                                                    DecodePixelType="Logical" DecodePixelHeight="70"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    Width="70" Height="70" CornerRadius="35" 
+                                                    Stretch="UniformToFill"/>
+                                            </controls:UwpIf>
+                                            <controls:UwpIf Value="{Binding ElementName=FeedGrid, Path=DataContext.Images, Converter={StaticResource NegateBool}}">
+                                                <toolkit:RoundImageEx PlaceholderSource="ms-appx:///Assets/StoreLogo.png"
+                                                    DecodePixelType="Logical" DecodePixelHeight="70"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    Width="70" Height="70" CornerRadius="35"/>
                                             </controls:UwpIf>
                                         </Grid>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0 0 12 0">
