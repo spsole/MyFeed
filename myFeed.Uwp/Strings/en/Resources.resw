@@ -266,7 +266,7 @@
     <value>Nothing here!</value>
   </data>
   <data name="FeedNothing">
-    <value>Check the connection or add a new channel.</value>
+    <value>Add a new channel?</value>
   </data>
   <data name="SourcesWelcomeTitle">
     <value>Here your channels are stored.</value>
@@ -369,5 +369,11 @@
   </data>
   <data name="Published">
     <value>Published:</value>
+  </data>
+  <data name="ShowReadArticlesTitle">
+    <value>Show read articles</value>
+  </data>
+  <data name="ShowReadArticles">
+    <value>Should the application show read articles in your news feeds?</value>
   </data>
 </root>

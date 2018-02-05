@@ -25,11 +25,12 @@ namespace myFeed.ViewModels
         public ReactiveCommand Load { get; }
         
         public string Version { get; }
-        public string Theme { get; set; }
         public double Font { get; set; }
+        public string Theme { get; set; }
         public bool Banners { get; set; }
         public bool Images { get; set; }
         public int Period { get; set; }
+        public bool Read { get; set; }
         public int Max { get; set; }
 
         public SettingViewModel(
@@ -74,6 +75,7 @@ namespace myFeed.ViewModels
                 Track(x => x.Theme, (s, x) => s.Theme = x, settings.Theme, platformService.RegisterTheme);
                 Track(x => x.Banners, (s, x) => s.Banners = x, settings.Banners);
                 Track(x => x.Images, (s, x) => s.Images = x, settings.Images);
+                Track(x => x.Read, (s, x) => s.Read = x, settings.Read);
                 Track(x => x.Font, (s, x) => s.Font = x, settings.Font);
                 Track(x => x.Max, (s, x) => s.Max = x, settings.Max);
 

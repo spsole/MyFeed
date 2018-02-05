@@ -266,7 +266,7 @@
     <value>Здесь ничего нет!</value>
   </data>
   <data name="FeedNothing">
-    <value>Проверьте соединение с интернетом или добавьте новый источник.</value>
+    <value>Добавить новый источник?</value>
   </data>
   <data name="SourcesWelcomeTitle">
     <value>Здесь будут храниться ваши поставщики новостей.</value>
@@ -369,5 +369,11 @@
   </data>
   <data name="Published">
     <value>Опубликовано:</value>
+  </data>
+  <data name="ShowReadArticlesTitle">
+    <value>Отображать прочитанное</value>
+  </data>
+  <data name="ShowReadArticles">
+    <value>Должно ли приложение отображать прочитанные статьи в вашей ленте новостей?</value>
   </data>
 </root>

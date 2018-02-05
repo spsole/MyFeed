@@ -28,6 +28,7 @@ namespace myFeed.Services
                 Fetched = DateTime.Now,
                 Theme = "default",
                 Images = true,
+                Read = true,
                 Period = 60,
                 Max = 100,
                 Font = 17
@@ -74,6 +75,7 @@ namespace myFeed.Services
             to.Fetched = from.Fetched;
             to.Period = from.Period;
             to.Images = from.Images;
+            to.Read = from.Read;
             to.Font = from.Font;
             to.Max = from.Max;
             return to;

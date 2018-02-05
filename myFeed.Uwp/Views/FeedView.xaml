@@ -125,7 +125,9 @@
                                     </Style>
                                 </toolkit:PullToRefreshListView.ItemContainerStyle>
                                 <toolkit:PullToRefreshListView.ItemContainerTransitions>
-                                    <TransitionCollection />
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition/>
+                                    </TransitionCollection>
                                 </toolkit:PullToRefreshListView.ItemContainerTransitions>
                                 <toolkit:PullToRefreshListView.PullToRefreshContent>
                                     <Border HorizontalAlignment="Center" CornerRadius="10" Width="20" Height="20" 

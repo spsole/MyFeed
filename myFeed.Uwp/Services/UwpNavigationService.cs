@@ -10,14 +10,12 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using DryIocAttributes;
-using myFeed.Interfaces;
 using myFeed.Platform;
 using myFeed.Uwp.Controls;
 using myFeed.Uwp.Views;
 using myFeed.ViewModels;
 using Microsoft.Toolkit.Uwp.UI.Extensions;
 using DryIoc;
-using myFeed.Models;
 
 namespace myFeed.Uwp.Services
 {
@@ -25,8 +23,6 @@ namespace myFeed.Uwp.Services
     [Export(typeof(INavigationService))]
     public sealed class UwpNavigationService : INavigationService
     {
-        private readonly IFactoryService _factoryService;
-        private readonly ICategoryManager _categoryManager;
         private readonly Subject<Type> _navigatedSubject = new Subject<Type>();
         private readonly IReadOnlyDictionary<Type, Type> _pages = new Dictionary<Type, Type>
         {
@@ -46,14 +42,8 @@ namespace myFeed.Uwp.Services
             {typeof(ChannelViewModel), Symbol.List},
             {typeof(SearchViewModel), Symbol.Zoom}
         };
-
-        public UwpNavigationService(
-            ICategoryManager categoryManager,
-            IFactoryService factoryService)
+        public UwpNavigationService()
         {
-            _factoryService = factoryService;
-            _categoryManager = categoryManager;
-            
             var systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             systemNavigationManager.BackRequested += NavigateBack;
@@ -83,7 +73,9 @@ namespace myFeed.Uwp.Services
                     NavigateFrame((Frame)Window.Current.Content);
                     break;
                 case nameof(ArticleViewModel):
-                    if (GetChild<Frame>(Window.Current.Content, 1) == null) await Navigate<FeedViewModel>();
+                    if (GetChild<Frame>(Window.Current.Content, 1) == null)
+                        await Navigate<FeedViewModel>();
+                    await Task.Delay(150);
                     NavigateFrame(GetChild<Frame>(Window.Current.Content, 1));
                     break;
                 default:

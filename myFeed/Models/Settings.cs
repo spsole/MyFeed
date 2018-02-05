@@ -10,6 +10,8 @@ namespace myFeed.Models
         
         public DateTime Fetched { get; set; }
         
+        public bool Read { get; set; }
+        
         public bool Images { get; set; }
         
         public bool Banners { get; set; }

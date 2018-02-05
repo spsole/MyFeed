@@ -13,6 +13,7 @@ open System.Windows.Input
 open System.Threading.Tasks
 open myFeed.Platform
 open NSubstitute
+open System.Reactive
 
 /// Converts sequence to list.
 let toList (sequence: seq<'a>) = sequence.ToList()
@@ -63,7 +64,7 @@ type ICommand with
         command.CanExecuteChanged += fun _ -> 
             if command.CanExecute() then 
                 source.SetResult(true) |> ignore
-        command.Execute()       
+        command.Execute(Unit.Default)       
         source.Task      
 
 /// Assertions module.

@@ -49,6 +49,13 @@
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
+                                ConverterParameter=ShowReadArticlesTitle, Converter={StaticResource Locale}}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
+                                Locale}, ConverterParameter=ShowReadArticles}"/>
+                            <ToggleSwitch IsOn="{Binding Read, Mode=TwoWay}" />
+                        </StackPanel>
+                        <StackPanel Margin="0 6">
+                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
                                 ConverterParameter=DisableImagesTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=DisableImages}"/>
