@@ -28,7 +28,6 @@ namespace myFeed.Uwp
             Container.RegisterExports(new[] {typeof(App).GetAssembly()});
             Container.RegisterShared();
             InitializeComponent();
-            //UnhandledException += (o, shit) => Debug.WriteLine(shit.Exception);
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs e)

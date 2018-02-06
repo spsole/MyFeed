@@ -1,5 +1,6 @@
 ﻿using Windows.UI.Xaml;
 using Microsoft.Toolkit.Uwp.UI.Animations;
+using System;
 
 namespace myFeed.Uwp.Controls
 {
@@ -8,7 +9,9 @@ namespace myFeed.Uwp.Controls
         public LoadingScreen()
         {
             InitializeComponent();
-            IsActivePropertyChanged(this, true);
+            BackGrid.Visibility = Visibility.Visible;
+            LoadRing.IsActive = true;
+            BackGrid.Opacity = 1;
         }
 
         public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register(
@@ -24,17 +27,20 @@ namespace myFeed.Uwp.Controls
         private static async void IsActivePropertyChanged(DependencyObject sender, bool isActive)
         {
             var thisControl = (LoadingScreen) sender;
-            if (isActive)
+            if (isActive && !thisControl.LoadRing.IsActive)
             {
-                thisControl.BackGrid.Visibility = Visibility.Visible;
                 thisControl.LoadRing.IsActive = true;
-                await thisControl.BackGrid.Fade(1, 1000).StartAsync();
+                thisControl.BackGrid.Visibility = Visibility.Visible;
+                await thisControl.BackGrid.Fade(1, 800).StartAsync();
             }
             else
             {
-                thisControl.LoadRing.IsActive = false;
-                await thisControl.BackGrid.Fade(0, 1000).StartAsync();
-                thisControl.BackGrid.Visibility = Visibility.Collapsed;
+                await thisControl.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, async () =>
+                {
+                    thisControl.LoadRing.IsActive = false;
+                    await thisControl.BackGrid.Fade(0, 800).StartAsync();
+                    thisControl.BackGrid.Visibility = Visibility.Collapsed;
+                });
             }
         }
     }

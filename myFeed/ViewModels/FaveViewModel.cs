@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -48,7 +49,7 @@ namespace myFeed.ViewModels
                     var settings = await settingManager.Read();
                     var articles = await favoriteManager.GetAllAsync();
                     var factory = factoryService.Create<Func<
-                        IGrouping<string, Article>, 
+                        IGrouping<string, Article>,
                         FaveGroupViewModel>>();
                     var groupings = articles
                         .OrderByDescending(order)
@@ -61,7 +62,8 @@ namespace myFeed.ViewModels
                     Images = settings.Images;
                     IsEmpty = Items.Count == 0;
                     IsLoading = false;
-                });
+                },
+                this.WhenAnyValue(x => x.IsLoading).Select(x => !x));
             }
         }
     }

@@ -78,14 +78,7 @@ namespace myFeed.Uwp.Services
             builder.SetTrigger(new TimeTrigger((uint) freq, false));
             builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
             builder.TaskEntryPoint = typeof(Runner).FullName;
-            try
-            {
-                builder.Register();
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e);
-            }
+            builder.Register();
         }
 
         public Task RegisterTheme(string theme)

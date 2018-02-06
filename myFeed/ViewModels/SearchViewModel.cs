@@ -30,7 +30,7 @@ namespace myFeed.ViewModels
             (IsGreeting, SearchQuery) = (true, string.Empty);
             Items = new ReactiveList<SearchItemViewModel>();
             this.WhenAnyValue(x => x.SearchQuery)
-                .Throttle(TimeSpan.FromSeconds(0.5))
+                .Throttle(TimeSpan.FromSeconds(0.8))
                 .Select(x => x?.Trim())
                 .DistinctUntilChanged()
                 .Where(x => !string.IsNullOrWhiteSpace(x))
@@ -39,13 +39,14 @@ namespace myFeed.ViewModels
 
             Fetch = ReactiveCommand.CreateFromTask(async () =>
             {
-                (IsLoading, IsGreeting) = (true, false);
+                IsLoading = true;
                 var search = await searchService.SearchAsync(SearchQuery);
                 var factory = factoryService.Create<Func<FeedlyItem, SearchItemViewModel>>();
                 var viewModels = search.Results.Select(x => factory(x));
                 Items.Clear();
                 Items.AddRange(viewModels);
                 IsEmpty = Items.Count == 0;
+                IsGreeting = false;
                 IsLoading = false;
             });
         }
