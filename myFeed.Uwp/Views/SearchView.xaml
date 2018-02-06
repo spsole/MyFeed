@@ -30,31 +30,28 @@
             <RowDefinition Height="48"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
         <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchViewTitle}"/>
         <controls:TransparentButton Grid.Row="0" HorizontalAlignment="Right" Symbol="Sync" Command="{Binding Fetch}">
             <ToolTipService.ToolTip>
                 <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}" />
             </ToolTipService.ToolTip>
         </controls:TransparentButton>
-        <Grid Grid.Row="1" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <Grid Grid.Row="1" Background="{ThemeResource LowBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
-                <TextBox InputScope="Search" Margin="12 0" Text="{Binding SearchQuery, 
-                    Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    PlaceholderText="{Binding Converter={StaticResource Locale}, 
-                        ConverterParameter=ProvideSearchQuery}"/>
+                <TextBox InputScope="Search" Margin="12 0" Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    PlaceholderText="{Binding Converter={StaticResource Locale}, ConverterParameter=ProvideSearchQuery}"/>
             </StackPanel>
             <Button Grid.Column="1" Command="{Binding Fetch}" Margin="0 0 12 0" 
                 Background="{ThemeResource SystemControlBackgroundAccentBrush}">
                 <Button.Content>
                     <TextBlock Foreground="White">
                         <Run FontSize="12" FontFamily="Segoe MDL2 Assets" Text="&#xE71E;"/>
-                        <Run FontSize="15" Text="{Binding 
-                            Converter={StaticResource Locale}, 
-                            ConverterParameter=Find}"/>
+                        <Run FontSize="15" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Find}"/>
                     </TextBlock>
                 </Button.Content>
             </Button>
@@ -141,7 +138,7 @@
                         TextAlignment="Center" FontSize="24" FontWeight="SemiLight" TextWrapping="Wrap" Margin="36 6"/>
                     <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingSubTitle}" 
                         TextWrapping="Wrap" TextAlignment="Center" FontSize="17" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                    <Button Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                    <Button Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                         Content="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
                         HorizontalAlignment="Center" Margin="0 12 0 0" Command="{Binding Fetch}"/>
                 </StackPanel>

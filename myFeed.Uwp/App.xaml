@@ -6,6 +6,20 @@
     xmlns:behaviors="using:myFeed.Uwp.Behaviors">
     <Application.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <SolidColorBrush x:Key="LowBackgroundThemeBrush" Color="{ThemeResource SystemChromeLowColor}"/>
+                    <SolidColorBrush x:Key="MediumBackgroundThemeBrush" Color="{ThemeResource SystemChromeMediumColor}"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="LowBackgroundThemeBrush" Color="{ThemeResource SystemChromeLowColor}"/>
+                    <SolidColorBrush x:Key="MediumBackgroundThemeBrush" Color="{ThemeResource SystemChromeMediumColor}"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="LowBackgroundThemeBrush" Color="{ThemeResource SystemChromeLowColor}"/>
+                    <SolidColorBrush x:Key="MediumBackgroundThemeBrush" Color="{ThemeResource SystemChromeMediumColor}"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles.xaml" />
                 <ResourceDictionary Source="Controls/SwipableSplitView.xaml" />

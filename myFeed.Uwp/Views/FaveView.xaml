@@ -35,8 +35,7 @@
                     <VisualState.Setters>
                         <Setter Target="FeedGrid.(Grid.ColumnSpan)" Value="1" />
                         <Setter Target="ArticleFrame.(Grid.Column)" Value="1" />
-                        <Setter Target="FeedGrid.Background" Value="{ThemeResource 
-                            SystemControlPageBackgroundChromeLowBrush}"/>
+                        <Setter Target="FeedGrid.Background" Value="{ThemeResource LowBackgroundThemeBrush}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -51,6 +50,7 @@
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+            <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
             <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveViewTitle}"/>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
                 <controls:TransparentButton Symbol="Sort">
@@ -81,7 +81,7 @@
                             ShowsScrollingPlaceholders="False" HorizontalAlignment="Stretch" VerticalAlignment="Top">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="Background" Value="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
+                                    <Setter Property="Background" Value="{ThemeResource LowBackgroundThemeBrush}"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
@@ -123,7 +123,7 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ListViewHeaderItem">
-                                                        <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+                                                        <Grid Background="{ThemeResource LowBackgroundThemeBrush}">
                                                             <ContentPresenter x:Name="ContentPresenter"
                                                                 Content="{TemplateBinding Content}" Padding="12 6"
                                                                 ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -211,7 +211,7 @@
                     </SemanticZoom.ZoomedInView>
                 </SemanticZoom>
                 <controls:LoadingScreen IsActive="{Binding IsLoading, Mode=OneWay}"/>
-                <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Visibility="{Binding 
+                <Grid Background="{ThemeResource LowBackgroundThemeBrush}" Visibility="{Binding 
                     IsEmpty, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12 -38 12 12">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE734;" TextAlignment="Center" 

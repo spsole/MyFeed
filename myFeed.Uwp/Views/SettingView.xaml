@@ -33,8 +33,8 @@
             <RowDefinition Height="48"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Top" Height="96" Background="{ThemeResource LowBackgroundThemeBrush}"/>
         <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsViewTitle}"/>
-        <Grid Grid.Row="1" VerticalAlignment="Top" Height="48" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
         <Pivot Grid.Row="1">
             <PivotItem Margin="0" Header="{Binding Converter={StaticResource Locale}, ConverterParameter=Personalization}">
                 <ScrollViewer Padding="12 0">

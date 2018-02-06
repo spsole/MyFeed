@@ -41,6 +41,8 @@
                         <Setter Target="HtmlContent.MaxWidth" Value="600"/>
                         <Setter Target="Date.FontSize" Value="15" />
                         <Setter Target="Date.HorizontalAlignment" Value="Center"/>
+                        <Setter Target="BackGrid.Background" Value="Transparent"/>
+                        <Setter Target="LowBackGrid.Background" Value="Transparent"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -55,7 +57,7 @@
                     <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
-            <Grid Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
+            <Grid x:Name="BackGrid" Background="{ThemeResource LowBackgroundThemeBrush}"/>
             <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Article}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <controls:TransparentButton Symbol="Link" Command="{Binding Article.Launch}">
@@ -88,7 +90,7 @@
                 </controls:TransparentButton>
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid x:Name="LowBackGrid" Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <ScrollViewer>
                 <StackPanel Margin="0 12">
                     <TextBlock x:Name="Feed" Text="{Binding Article.Feed}" FontStyle="Italic" 

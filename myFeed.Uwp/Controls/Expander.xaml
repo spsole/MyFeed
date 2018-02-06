@@ -4,7 +4,7 @@
     xmlns:controls="using:myFeed.Uwp.Controls">
 
     <Style x:Key="HeaderToggleButtonStyle" TargetType="ToggleButton">
-        <Setter Property="Background" Value="{ThemeResource SystemChromeLowColor}" />
+        <Setter Property="Background" Value="{ThemeResource LowBackgroundThemeBrush}" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundTransparentBrush}" />
         <Setter Property="BorderThickness" Value="{ThemeResource ToggleButtonBorderThemeThickness}" />

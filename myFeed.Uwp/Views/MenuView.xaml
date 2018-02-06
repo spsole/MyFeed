@@ -9,7 +9,6 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:reactive="using:System.Reactive"
     xmlns:behaviors="using:myFeed.Uwp.Behaviors"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -34,8 +33,7 @@
                     <VisualState.Setters>
                         <Setter Target="Menu.DisplayMode" Value="CompactOverlay" />
                         <Setter Target="MenuBtn.Visibility" Value="Collapsed"/>
-                        <Setter Target="ColoredGrid.Background" Value="{ThemeResource 
-                            SystemControlBackgroundChromeMediumBrush}"/>
+                        <Setter Target="ColoredGrid.Background" Value="{ThemeResource MediumBackgroundThemeBrush}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -49,7 +47,7 @@
             x:Name="Menu" DisplayMode="Overlay" 
             CompactPaneLength="48" OpenPaneLength="270">
             <controls:SwipeableSplitView.Pane>
-                <Grid x:Name="ColoredGrid" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+                <Grid x:Name="ColoredGrid" Background="{ThemeResource LowBackgroundThemeBrush}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="48"/>
                         <RowDefinition Height="*"/>
@@ -103,8 +101,6 @@
             </controls:SwipeableSplitView.Pane>
             <controls:SwipeableSplitView.Content>
                 <Grid>
-                    <StackPanel Height="48" VerticalAlignment="Top" Background="{
-                        ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
                     <Frame x:Name="NavigationFrame"/>
                     <Button x:Name="MenuBtn" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
                         FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" 

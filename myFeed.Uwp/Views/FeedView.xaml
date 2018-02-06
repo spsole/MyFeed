@@ -33,8 +33,7 @@
                         <AdaptiveTrigger MinWindowWidth="600" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="FeedGrid.Background" Value="{ThemeResource 
-                            SystemControlPageBackgroundChromeLowBrush}"/>
+                        <Setter Target="FeedGrid.Background" Value="{ThemeResource LowBackgroundThemeBrush}"/>
                         <Setter Target="FeedGrid.(Grid.ColumnSpan)" Value="1" />
                         <Setter Target="ArticleFrame.(Grid.Column)" Value="1" />
                     </VisualState.Setters>
@@ -51,10 +50,10 @@
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+            <Grid Grid.RowSpan="2" Height="96" VerticalAlignment="Top" Background="{ThemeResource LowBackgroundThemeBrush}"/>
             <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedViewTitle}"/>
-            <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
-                <controls:TransparentButton Symbol="Bookmarks" Visibility="{Binding 
-                    IsEmpty, Converter={StaticResource FalsyToVisible}}">
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <controls:TransparentButton Symbol="Bookmarks" Visibility="{Binding IsEmpty, Converter={StaticResource FalsyToVisible}}">
                     <controls:TransparentButton.Flyout>
                         <Flyout Placement="Bottom">
                             <Flyout.FlyoutPresenterStyle>
@@ -90,7 +89,6 @@
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
             </StackPanel>
-            <Grid Grid.Row="1" Height="48" VerticalAlignment="Top" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}"/>
             <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}" SelectedItem="{Binding Selection, Mode=TwoWay}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Loaded">
@@ -235,7 +233,7 @@
                     </DataTemplate>
                 </Pivot.ItemTemplate>
             </Pivot>
-            <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            <Grid Grid.Row="1" Background="{ThemeResource LowBackgroundThemeBrush}"
                 Visibility="{Binding IsEmpty, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -48 0 0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE897;" TextAlignment="Center"

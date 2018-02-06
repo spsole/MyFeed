@@ -9,7 +9,7 @@ Read news from websites via <b>myFeed</b>, find interesting feeds in the interne
 <br />
 
 <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">
-  <img src="https://worldbeater.github.io/mockups/myFeed.png" width="680"/>
+  <img src="/myFeed.jpg" width="680"/>
 </a>
 
 ## About App

@@ -16,8 +16,7 @@
                         <AdaptiveTrigger MinWindowWidth="600" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="BackGrid.Background" Value="{ThemeResource 
-                            SystemControlPageBackgroundChromeLowBrush}"/>
+                        <Setter Target="BackGrid.Background" Value="{ThemeResource LowBackgroundThemeBrush}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

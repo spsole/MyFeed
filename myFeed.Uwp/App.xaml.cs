@@ -13,6 +13,9 @@ using myFeed.Models;
 using myFeed.Platform;
 using myFeed.Uwp.Services;
 using myFeed.ViewModels;
+using Windows.Foundation.Metadata;
+using Windows.UI.Xaml.Media;
+using Windows.UI;
 
 namespace myFeed.Uwp
 {
@@ -46,8 +49,9 @@ namespace myFeed.Uwp
                 await NavigateToToast(guid);
         }
 
-        private static async Task EnsureDefaultViewIsPresent()
+        private async Task EnsureDefaultViewIsPresent()
         {
+            InitializeResources();
             if (Window.Current.Content == null) Window.Current.Content = new Frame();
             var frame = (Frame)Window.Current.Content;
             if (frame.Content == null) await Container.Resolve<INavigationService>().Navigate<MenuViewModel>();
@@ -70,6 +74,28 @@ namespace myFeed.Uwp
             var articleFactory = factoryService.Create<Func<FeedItemViewModel, ArticleViewModel>>();
             var articleViewModel = articleFactory.Invoke(factory.Invoke(article));
             await navigationService.Navigate<ArticleViewModel>(articleViewModel);
+        }
+
+        private void InitializeResources()
+        {
+            if (!ApiInformation.IsTypePresent("Windows.UI.Xaml.Media.AcrylicBrush")) return;
+            var mediumColor = (Color)Resources["SystemChromeMediumColor"];
+            var lowColor = (Color)Resources["SystemChromeLowColor"];
+            Resources.ThemeDictionaries.Values.ForEach((dictionary, _) =>
+            {
+                var resources = (ResourceDictionary)dictionary;
+                resources["LowBackgroundThemeBrush"] = CreateBrush(lowColor);
+                resources["MediumBackgroundThemeBrush"] = CreateBrush(mediumColor);
+
+                AcrylicBrush CreateBrush(Color color) => new AcrylicBrush
+                {
+                    BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
+                    TintTransitionDuration = TimeSpan.FromSeconds(0.3),
+                    FallbackColor = color,
+                    TintColor = color,
+                    TintOpacity = 0.8
+                };
+            });
         }
     }
 }

@@ -74,7 +74,7 @@
     <value>ARTICLE</value>
   </data>
   <data name="SourcesViewTitle" xml:space="preserve">
-    <value>Channels</value>
+    <value>CHANNELS</value>
   </data>
   <data name="FeedViewMenuItem">
     <value>Feed</value>

@@ -28,6 +28,7 @@
             <RowDefinition Height="48"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
         <controls:TitleBlock Count="{Binding Items.Count, Mode=OneWay}" Text="{Binding 
             Converter={StaticResource Locale}, ConverterParameter=SourcesViewTitle}"/>
         <controls:TransparentButton Command="{Binding Search}"
@@ -216,7 +217,7 @@
                     Command="{Binding Search}"/>
             </StackPanel>
         </Grid>
-        <CommandBar VerticalAlignment="Bottom" Grid.Row="1" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
+        <CommandBar VerticalAlignment="Bottom" Grid.Row="1" Background="{ThemeResource LowBackgroundThemeBrush}">
             <AppBarButton Icon="Add" Command="{Binding Add}" Label="{Binding Converter={StaticResource Locale}, 
                 ConverterParameter=Add}" Visibility="{Binding ElementName=SourcesListView, Path=CanReorderItems, 
                 Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
