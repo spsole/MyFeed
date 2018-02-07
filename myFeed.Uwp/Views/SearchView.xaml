@@ -66,7 +66,10 @@
                     </Style>
                 </toolkit:PullToRefreshListView.ItemContainerStyle>
                 <toolkit:PullToRefreshListView.ItemContainerTransitions>
-                    <TransitionCollection />
+                    <TransitionCollection>
+                        <ContentThemeTransition VerticalOffset="0" HorizontalOffset="30"/>
+                        <EntranceThemeTransition FromHorizontalOffset="30" FromVerticalOffset="0"/>
+                    </TransitionCollection>
                 </toolkit:PullToRefreshListView.ItemContainerTransitions>
                 <toolkit:PullToRefreshListView.PullToRefreshContent>
                     <Border HorizontalAlignment="Center" CornerRadius="10" Width="20" Height="20" 

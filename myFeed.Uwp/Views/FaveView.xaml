@@ -105,6 +105,8 @@
                             </interactivity:Interaction.Behaviors>
                             <ListView.ItemContainerTransitions>
                                 <TransitionCollection>
+                                    <ContentThemeTransition VerticalOffset="0" HorizontalOffset="30"/>
+                                    <EntranceThemeTransition FromHorizontalOffset="30" FromVerticalOffset="0"/>
                                     <AddDeleteThemeTransition />
                                 </TransitionCollection>
                             </ListView.ItemContainerTransitions>

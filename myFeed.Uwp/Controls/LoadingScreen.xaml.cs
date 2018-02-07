@@ -31,14 +31,14 @@ namespace myFeed.Uwp.Controls
             {
                 thisControl.LoadRing.IsActive = true;
                 thisControl.BackGrid.Visibility = Visibility.Visible;
-                await thisControl.BackGrid.Fade(1, 800).StartAsync();
+                await thisControl.BackGrid.Fade(1, 300).StartAsync();
             }
             else
             {
                 await thisControl.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, async () =>
                 {
                     thisControl.LoadRing.IsActive = false;
-                    await thisControl.BackGrid.Fade(0, 800).StartAsync();
+                    await thisControl.BackGrid.Fade(0, 300).StartAsync();
                     thisControl.BackGrid.Visibility = Visibility.Collapsed;
                 });
             }
