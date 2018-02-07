@@ -34,7 +34,8 @@ namespace myFeed.ViewModels
             Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
             Load = ReactiveCommand.CreateFromTask(async () =>
             {
-                (IsEmpty, IsLoading) = (false, true);
+                IsEmpty = false;
+                IsLoading = true;
                 var settings = await settingManager.Read();
                 var categories = await categoryManager.GetAllAsync();
                 var factory = factoryService.Create<Func<Category, FeedGroupViewModel>>();

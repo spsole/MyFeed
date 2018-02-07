@@ -19,7 +19,8 @@ namespace myFeed.ViewModels
             Type type, string key, object icon)
         {
             Title = translationService.Resolve(key);
-            (Icon, Type) = (icon, type);
+            Icon = icon;
+            Type = type;
         }
     }
 }

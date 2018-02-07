@@ -27,7 +27,8 @@ namespace myFeed.ViewModels
             IFactoryService factoryService,             
             ISearchService searchService)
         {
-            (IsGreeting, SearchQuery) = (true, string.Empty);
+            IsGreeting = true;
+            SearchQuery = string.Empty;
             Items = new ReactiveList<SearchItemViewModel>();
             this.WhenAnyValue(x => x.SearchQuery)
                 .Throttle(TimeSpan.FromSeconds(0.8))
