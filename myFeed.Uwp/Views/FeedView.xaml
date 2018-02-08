@@ -79,8 +79,7 @@
                         </Flyout>
                     </controls:TransparentButton.Flyout>
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding ConverterParameter=SelectCategory, 
-                            Converter={StaticResource Locale}}"/>
+                        <TextBlock Text="{Binding ConverterParameter=SelectCategory, Converter={StaticResource Locale}}"/>
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
                 <controls:TransparentButton Symbol="Sync" Command="{Binding Load}">
@@ -178,20 +177,11 @@
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
                                             <Grid VerticalAlignment="Top" Width="70" Height="70">
-                                                <Ellipse Width="70" Height="70" Fill="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
                                                 <controls:UwpIf Value="{Binding ElementName=FeedGrid, Path=DataContext.Images}">
-                                                    <toolkit:RoundImageEx 
-                                                        PlaceholderSource="ms-appx:///Assets/StoreLogo.png"
-                                                        IsCacheEnabled="True" Source="{Binding Image}"
-                                                        DecodePixelType="Logical" DecodePixelHeight="70"
-                                                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                        Width="70" Height="70" CornerRadius="35" Stretch="UniformToFill"/>
+                                                    <controls:RoundImage Source="{Binding Image}"/>
                                                 </controls:UwpIf>
-                                                <controls:UwpIf Value="{Binding ElementName=FeedGrid, Path=DataContext.Images, Converter={StaticResource NegateBool}}">
-                                                    <toolkit:RoundImageEx PlaceholderSource="ms-appx:///Assets/StoreLogo.png"
-                                                        DecodePixelType="Logical" DecodePixelHeight="70"
-                                                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                                                        Width="70" Height="70" CornerRadius="35"/>
+                                                <controls:UwpIf Grid.Row="0" Value="{Binding ElementName=FeedGrid, Path=DataContext.Images, Converter={StaticResource NegateBool}}">
+                                                    <controls:RoundImage/>
                                                 </controls:UwpIf>
                                             </Grid>
                                             <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="0 0 12 0">

@@ -103,6 +103,9 @@
     <Compile Include="Behaviors\ReactiveCommandAction.cs" />
     <Compile Include="Controls\Expander.cs" />
     <Compile Include="Controls\HtmlBlock.cs" />
+    <Compile Include="Controls\RoundImage.xaml.cs">
+      <DependentUpon>RoundImage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UwpIf.cs" />
     <Compile Include="Controls\MenuFlyoutItemWithIcon.cs" />
     <Compile Include="Behaviors\OpenFlyoutAction.cs" />
@@ -226,6 +229,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\MenuFlyoutItemWithIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\RoundImage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

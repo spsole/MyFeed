@@ -56,7 +56,7 @@ namespace myFeed.ViewModels
                         .GroupBy(x => display(order(x)))
                         .Select(x => factory(x))
                         .ToList();
-                    await Task.Delay(500);
+                    await Task.Delay(300);
                     Items.Clear();
                     Items.AddRange(groupings);
                     Images = settings.Images;
