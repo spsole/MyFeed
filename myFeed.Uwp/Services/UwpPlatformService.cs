@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
@@ -10,9 +9,9 @@ using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using DryIocAttributes;
-using LiteDB;
 using myFeed.Platform;
 using myFeed.Uwp.Notifications;
+using LiteDB;
 
 namespace myFeed.Uwp.Services
 {
