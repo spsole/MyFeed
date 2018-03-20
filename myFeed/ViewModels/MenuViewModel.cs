@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
@@ -47,16 +46,9 @@ namespace myFeed.ViewModels
                 await settingManager.Write(settings);
 
                 var factory = factoryService.Create<Func<Type, string, object, MenuItemViewModel>>();
-                foreach (var item in new Dictionary<Type, string>
-                {
-                    {typeof(FeedViewModel), Constants.FeedViewMenuItem},
-                    {typeof(FaveViewModel), Constants.FaveViewMenuItem},
-                    {typeof(ChannelViewModel), Constants.ChannelsViewMenuItem},
-                    {typeof(SearchViewModel), Constants.SearchViewMenuItem},
-                    {typeof(SettingViewModel), Constants.SettingsViewMenuItem}
-                }) 
-                    Items.Add(factory(item.Key, item.Value, navigationService.Icons[item.Key]));
-
+                navigationService.Icons.ToList().ForEach(item => Items.Add(
+                    factory(item.Key, item.Value.Item1, item.Value.Item2)));
+                
                 Selection = Items.FirstOrDefault();
                 navigationService.Navigated
                     .Where(x => x != Selection?.Type)

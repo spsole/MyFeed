@@ -31,10 +31,10 @@ namespace myFeed.ViewModels
             SearchQuery = string.Empty;
             Items = new ReactiveList<SearchItemViewModel>();
             this.WhenAnyValue(x => x.SearchQuery)
-                .Throttle(TimeSpan.FromSeconds(0.8))
                 .Select(x => x?.Trim())
                 .DistinctUntilChanged()
                 .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Throttle(TimeSpan.FromSeconds(0.8))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => Fetch.Execute());
 

@@ -10,7 +10,7 @@ namespace myFeed.Platform
 
         Task Navigate<TViewModel>(object parameter) where TViewModel : class;
 
-        IReadOnlyDictionary<Type, object> Icons { get; }
+        IReadOnlyDictionary<Type, (string, object)> Icons { get; }
 
         IObservable<Type> Navigated { get; }
     }

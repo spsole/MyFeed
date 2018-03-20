@@ -1,6 +1,5 @@
 ﻿using System;
 using DryIocAttributes;
-using myFeed.Platform;
 using PropertyChanged;
 
 namespace myFeed.ViewModels
@@ -14,11 +13,9 @@ namespace myFeed.ViewModels
         public object Icon { get; }
         public Type Type { get; }
 
-        public MenuItemViewModel(
-            ITranslationService translationService,
-            Type type, string key, object icon)
+        public MenuItemViewModel(Type type, string title, object icon)
         {
-            Title = translationService.Resolve(key);
+            Title = title;
             Icon = icon;
             Type = type;
         }

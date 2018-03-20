@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
-using myFeed.Platform;
 using PropertyChanged;
 using ReactiveUI;
 
@@ -16,6 +16,9 @@ namespace myFeed.ViewModels
     public sealed class ChannelGroupViewModel
     {
         public ReactiveList<ChannelItemViewModel> Items { get; }
+        public Interaction<Unit, string> RenameRequest { get; }  
+        public Interaction<Unit, bool> RemoveRequest { get; }
+        
         public ReactiveCommand AddChannel { get; }
         public ReactiveCommand Remove { get; }
         public ReactiveCommand Rename { get; }
@@ -25,53 +28,52 @@ namespace myFeed.ViewModels
         public string Title { get; private set; }
 
         public ChannelGroupViewModel(
-            ITranslationService translationsService,
-            ChannelViewModel channelsViewModel,
+            ChannelViewModel channelViewModel,
             ICategoryManager categoryManager,
             IFactoryService factoryService,
-            IDialogService dialogService,
             Category category)
         {
-            (Title, ChannelUri) = (category.Title, string.Empty);
+            Title = category.Title;
+            ChannelUri = string.Empty;
             Items = new ReactiveList<ChannelItemViewModel>();
-            var factory = factoryService.Create<Func<Channel, Category, 
-                ChannelGroupViewModel, ChannelItemViewModel>>();
+            var factory = factoryService.Create<
+                Func<Channel, Category, 
+                    ChannelGroupViewModel, 
+                    ChannelItemViewModel>>();
             
+            RenameRequest = new Interaction<Unit, string>();
             Rename = ReactiveCommand.CreateFromTask(async () =>
             {
-                var name = await dialogService.ShowDialogForResults(
-                    translationsService.Resolve(Constants.EnterNameOfNewCategory),
-                    translationsService.Resolve(Constants.EnterNameOfNewCategoryTitle));
+                var name = await RenameRequest.Handle(Unit.Default);
                 if (string.IsNullOrWhiteSpace(name)) return;
                 Title = category.Title = name;
                 await categoryManager.UpdateAsync(category);
             });
+            
+            RemoveRequest = new Interaction<Unit, bool>();
             Remove = ReactiveCommand.CreateFromTask(async () =>
             {
-                var shouldDelete = await dialogService.ShowDialogForConfirmation(
-                    translationsService.Resolve(Constants.DeleteCategory),
-                    translationsService.Resolve(Constants.DeleteElement));
-                if (!shouldDelete) return;
+                if (!await RemoveRequest.Handle(Unit.Default)) return;
                 await categoryManager.RemoveAsync(category);
-                channelsViewModel.Items.Remove(this);
+                channelViewModel.Items.Remove(this);
             });
-            AddChannel = ReactiveCommand.CreateFromTask(
-                async () =>
-                {
-                    var model = new Channel {Uri = ChannelUri, Notify = true};
-                    ChannelUri = string.Empty;
-                    category.Channels.Add(model);
-                    await categoryManager.UpdateAsync(category);
-                    Items.Add(factory(model, category, this));
-                }, 
-                this.WhenAnyValue(x => x.ChannelUri)
-                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
-            );
+            
+            AddChannel = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var model = new Channel {Uri = ChannelUri, Notify = true};
+                ChannelUri = string.Empty;
+                category.Channels.Add(model);
+                await categoryManager.UpdateAsync(category);
+                Items.Add(factory(model, category, this));
+            }, 
+            this.WhenAnyValue(x => x.ChannelUri).Select(x => Uri
+                .IsWellFormedUriString(x, UriKind.Absolute)));
+            
             Load = ReactiveCommand.Create(() =>
             {
                 Items.Clear();
-                var viewModels = category.Channels.Select(x => factory(x, category, this));
-                Items.AddRange(viewModels);
+                Items.AddRange(category.Channels
+                     .Select(x => factory(x, category, this)));
             });
         }
     }

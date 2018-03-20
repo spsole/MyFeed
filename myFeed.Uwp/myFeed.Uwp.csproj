@@ -100,7 +100,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Behaviors\CloseFlyoutAction.cs" />
+    <Compile Include="Behaviors\ModalActionBase.cs" />
+    <Compile Include="Behaviors\ModalActionPrompt.cs" />
+    <Compile Include="Behaviors\ModalActionSelect.cs" />
     <Compile Include="Behaviors\ReactiveCommandAction.cs" />
+    <Compile Include="Behaviors\ModalActionConfirm.cs" />
     <Compile Include="Controls\Expander.cs" />
     <Compile Include="Controls\HtmlBlock.cs" />
     <Compile Include="Controls\RoundImage.xaml.cs">
@@ -119,13 +123,10 @@
     <Compile Include="Controls\TransparentButton.cs" />
     <Compile Include="Behaviors\LocaleConverter.cs" />
     <Compile Include="Behaviors\UpperStringConverter.cs" />
-    <Compile Include="Services\UwpDialogService.cs" />
     <Compile Include="Services\UwpFilePickerService.cs" />
-    <Compile Include="Services\UwpLegacyFileService.cs" />
     <Compile Include="Services\UwpNavigationService.cs" />
     <Compile Include="Services\UwpPackagingService.cs" />
     <Compile Include="Services\UwpPlatformService.cs" />
-    <Compile Include="Services\UwpTranslationsService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\ArticleView.xaml.cs">
       <DependentUpon>ArticleView.xaml</DependentUpon>

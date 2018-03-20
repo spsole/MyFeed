@@ -27,6 +27,15 @@
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
                 <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
+                <behaviors:ModalActionConfirm Interaction="{Binding ResetConfirm}" 
+                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ResetAppNoRestore}" 
+                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
+                <behaviors:ModalActionConfirm Interaction="{Binding ImportSuccess}"
+                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ImportOpmlSuccess}" 
+                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
+                <behaviors:ModalActionConfirm Interaction="{Binding ExportSuccess}"
+                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ExportOpmlSuccess}" 
+                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
             </core:EventTriggerBehavior>
         </interactivity:Interaction.Behaviors>
         <Grid.RowDefinitions>
@@ -146,7 +155,7 @@
                                 Converter={StaticResource Locale}, ConverterParameter=ExportOpmlTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=ExportOpml}"/>
-                            <Button Command="{Binding ExportOpml}" Margin="0 6" Content="{Binding 
+                            <Button Command="{Binding Export}" Margin="0 6" Content="{Binding 
                                 Converter={StaticResource Locale}, ConverterParameter=Export}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
@@ -154,7 +163,7 @@
                                 Converter={StaticResource Locale}, ConverterParameter=ImportOpmlTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=ImportOpml}"/>
-                            <Button Command="{Binding ImportOpml}" Margin="0 6" Content="{Binding 
+                            <Button Command="{Binding Import}" Margin="0 6" Content="{Binding 
                                 Converter={StaticResource Locale}, ConverterParameter=Import}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">

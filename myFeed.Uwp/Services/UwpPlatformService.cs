@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
@@ -16,7 +15,7 @@ using LiteDB;
 namespace myFeed.Uwp.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(IPlatformService))]
+    [ExportEx(typeof(IPlatformService))]
     public sealed class UwpPlatformService : IPlatformService
     {
         private readonly Dictionary<string, ElementTheme> _themes;

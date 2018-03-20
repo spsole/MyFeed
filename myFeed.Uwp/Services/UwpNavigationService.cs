@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Resources;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -20,7 +21,7 @@ using DryIoc;
 namespace myFeed.Uwp.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(INavigationService))]
+    [ExportEx(typeof(INavigationService))]
     public sealed class UwpNavigationService : INavigationService
     {
         private readonly Subject<Type> _navigatedSubject = new Subject<Type>();
@@ -34,27 +35,34 @@ namespace myFeed.Uwp.Services
             {typeof(FaveViewModel), typeof(FaveView)},
             {typeof(FeedViewModel), typeof(FeedView)}
         };
-        public IReadOnlyDictionary<Type, object> Icons => new Dictionary<Type, object>
-        {
-            {typeof(FaveViewModel), Symbol.OutlineStar},
-            {typeof(FeedViewModel), Symbol.PostUpdate},
-            {typeof(SettingViewModel), Symbol.Setting},
-            {typeof(ChannelViewModel), Symbol.List},
-            {typeof(SearchViewModel), Symbol.Zoom}
-        };
         public UwpNavigationService()
         {
             var systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             systemNavigationManager.BackRequested += NavigateBack;
 
+            var resources = ResourceLoader.GetForViewIndependentUse();
             var page = (Page)((Frame)Window.Current.Content).Content;
             var color = (Color)Application.Current.Resources["SystemChromeLowColor"];
             StatusBar.SetBackgroundColor(page, color);
             StatusBar.SetBackgroundOpacity(page, 1);
+
+            var menu = new[]
+            {
+                (typeof(FeedViewModel), "FeedViewMenuItem", Symbol.PostUpdate),
+                (typeof(FaveViewModel), "FaveViewMenuItem", Symbol.OutlineStar),
+                (typeof(ChannelViewModel), "SourcesViewMenuItem", Symbol.List),
+                (typeof(SearchViewModel), "SearchViewMenuItem", Symbol.Zoom),
+                (typeof(SettingViewModel), "SettingsViewMenuItem", Symbol.Setting)  
+            }
+            .Select(x => (x.Item1, resources.GetString(x.Item2), x.Item3))
+            .ToDictionary(x => x.Item1, x => (x.Item2, (object)x.Item3));
+            Icons = new ReadOnlyDictionary<Type, (string, object)>(menu);
         }
 
         public IObservable<Type> Navigated => _navigatedSubject;
+
+        public IReadOnlyDictionary<Type, (string, object)> Icons { get; }
 
         public Task Navigate<T>() where T : class => Navigate<T>(App.Container.Resolve<T>());
 

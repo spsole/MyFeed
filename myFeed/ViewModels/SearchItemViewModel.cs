@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using DryIocAttributes;
@@ -18,6 +19,7 @@ namespace myFeed.ViewModels
         [DoNotCheckEquality]
         private FeedlyItem FeedlyItem { get; }
 
+        public Interaction<IList<string>, int> AddSelect { get; }
         public ReactiveCommand Open { get; }
         public ReactiveCommand Copy { get; }
         public ReactiveCommand Add { get; }
@@ -28,40 +30,38 @@ namespace myFeed.ViewModels
         public string Url => FeedlyItem.Website;
         
         public SearchItemViewModel(
-            ITranslationService translationService,
             ICategoryManager categoryManager,
             IPlatformService platformService,
-            IDialogService dialogService,
             FeedlyItem feedlyItem)
         {
             FeedlyItem = feedlyItem;
             Open = ReactiveCommand.CreateFromTask(
                 () => platformService.LaunchUri(new Uri(Url)),
-                this.WhenAnyValue(x => x.Url).Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
+                this.WhenAnyValue(x => x.Url).Select(x => Uri
+                    .IsWellFormedUriString(x, UriKind.Absolute))
             );
             Copy = ReactiveCommand.CreateFromTask(
                 () => platformService.CopyTextToClipboard(Url),
-                this.WhenAnyValue(x => x.Url).Select(x => !string.IsNullOrWhiteSpace(x))
+                this.WhenAnyValue(x => x.Url).Select(x => 
+                    !string.IsNullOrWhiteSpace(x))
             );
-            Add = ReactiveCommand.CreateFromTask(
-                async () =>
-                {
-                    var categories = (await categoryManager.GetAllAsync()).ToList();
-                    var titles = categories.Select(i => i.Title); 
-                    var title = translationService.Resolve(Constants.AddIntoCategory); 
-                    var index = await dialogService.ShowDialogForSelection(title, titles); 
-                    if (index < 0) return;
+            AddSelect = new Interaction<IList<string>, int>();
+            Add = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var categories = (await categoryManager.GetAllAsync()).ToList();
+                var titles = categories.Select(i => i.Title).ToList(); 
+                var index = await AddSelect.Handle(titles);
+                if (index < 0) return;
 
-                    var feed = FeedlyItem.FeedId?.Substring(5);
-                    var source = new Channel {Notify = true, Uri = feed}; 
-                    var category = categories[index]; 
-                    category.Channels.Add(source); 
-                    await categoryManager.UpdateAsync(category); 
-                },
-                this.WhenAnyValue(x => x.FeedlyItem)
-                    .Select(x => x.FeedId?.Substring(5))
-                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
-            );
+                var feed = FeedlyItem.FeedId?.Substring(5);
+                var source = new Channel {Notify = true, Uri = feed}; 
+                var category = categories[index]; 
+                category.Channels.Add(source); 
+                await categoryManager.UpdateAsync(category); 
+            },
+            this.WhenAnyValue(x => x.FeedlyItem)
+                .Select(x => x.FeedId?.Substring(5))
+                .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
         }
     }
 }

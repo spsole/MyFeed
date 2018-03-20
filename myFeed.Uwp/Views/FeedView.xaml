@@ -150,6 +150,11 @@
                                                 <core:EventTriggerBehavior EventName="Tapped">
                                                     <behaviors:ReactiveCommandAction Command="{Binding Open}"/>
                                                 </core:EventTriggerBehavior>
+                                                <core:EventTriggerBehavior EventName="Loaded">
+                                                    <behaviors:ModalActionConfirm Interaction="{Binding CopyConfirm}"
+                                                        Message="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLinkSuccess}"
+                                                        Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
+                                                </core:EventTriggerBehavior>
                                             </interactivity:Interaction.Behaviors>
                                             <FlyoutBase.AttachedFlyout>
                                                 <MenuFlyout>

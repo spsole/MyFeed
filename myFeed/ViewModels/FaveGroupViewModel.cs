@@ -22,7 +22,7 @@ namespace myFeed.ViewModels
         {
             Title = grouping.Key;
             var factory = factoryService.Create<Func<Article, FeedItemViewModel>>();
-            var cache = new ReactiveList<FeedItemViewModel>() {ChangeTrackingEnabled = true};
+            var cache = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
             Items = cache.CreateDerivedCollection(x => x, x => x.Fave);
             cache.AddRange(grouping.Select(x => factory(x)));
         }

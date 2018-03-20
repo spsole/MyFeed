@@ -11,7 +11,6 @@ using LiteDB;
 using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
-using myFeed.Uwp.Services;
 using myFeed.ViewModels;
 
 namespace myFeed.Uwp
@@ -52,10 +51,6 @@ namespace myFeed.Uwp
             var frame = (Frame)Window.Current.Content;
             if (frame.Content == null) await Container.Resolve<INavigationService>().Navigate<MenuViewModel>();
             Window.Current.Activate();
-
-            var legacyService = Container.Resolve<UwpLegacyFileService>();
-            await legacyService.ImportFeedsFromLegacyFormat();
-            await legacyService.ImportArticlesFromLegacyFormat();
         }
 
         private static async Task NavigateToToast(Guid guid)

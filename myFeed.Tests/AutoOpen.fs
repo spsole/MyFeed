@@ -121,10 +121,8 @@ let connection = new LiteDatabase("MyFeed.db")
 let registerMocks (builder: Container) =
     builder 
     |> also (registerInstanceAs<LiteDatabase> (new LiteDatabase("_.db")))
-    |> also registerMock<ITranslationService>
     |> also registerMock<IFilePickerService>       
     |> also registerMock<IPlatformService>
-    |> also registerMock<IDialogService>
     |> also registerMock<INavigationService>
     |> also registerMock<INotificationService>
     |> also registerMock<IPackagingService>

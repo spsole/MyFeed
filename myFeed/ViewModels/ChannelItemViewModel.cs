@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -14,6 +15,7 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(ChannelItemViewModel))]
     public sealed class ChannelItemViewModel
     {
+        public Interaction<Unit, bool> DeleteRequest { get; }
         public ReactiveCommand Delete { get; }
         public ReactiveCommand Open { get; }
         public ReactiveCommand Copy { get; }
@@ -23,29 +25,35 @@ namespace myFeed.ViewModels
         public string Url { get; }
 
         public ChannelItemViewModel(
+            Category category, Channel channel,
             ICategoryManager categoryManager,
             IPlatformService platformService,
-            ChannelGroupViewModel parent,
-            Category category,
-            Channel channel)
+            ChannelGroupViewModel parent)
         {
             Url = channel.Uri;
             Notify = channel.Notify;
             Name = new Uri(channel.Uri).Host;
+            
+            DeleteRequest = new Interaction<Unit, bool>();
             Delete = ReactiveCommand.CreateFromTask(async () =>
             {
+                if (!await DeleteRequest.Handle(Unit.Default)) return;
                 parent.Items.Remove(this);
                 category.Channels.Remove(channel);
                 await categoryManager.UpdateAsync(category);
             });
+            
             Copy = ReactiveCommand.CreateFromTask(() => platformService.CopyTextToClipboard(Url));
             Open = ReactiveCommand.CreateFromTask(
-                () => platformService.LaunchUri(new UriBuilder(new Uri(Url)) {Fragment = string.Empty}.Uri),
-                this.WhenAnyValue(x => x.Url).Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
+                () => platformService.LaunchUri(new UriBuilder(
+                    new Uri(Url)) {Fragment = string.Empty}.Uri),
+                this.WhenAnyValue(x => x.Url).Select(x => Uri
+                    .IsWellFormedUriString(x, UriKind.Absolute))
             );
             this.WhenAnyValue(x => x.Notify)
                 .Select(x => channel.Notify = x)
-                .Subscribe(async x => await categoryManager.UpdateChannelAsync(channel));
+                .Subscribe(async x => await categoryManager
+                    .UpdateChannelAsync(channel));
         }
     }
 }

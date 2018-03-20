@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -17,10 +18,14 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class SettingViewModel 
     {
+        public Interaction<Unit, bool> ImportSuccess { get; }
+        public Interaction<Unit, bool> ExportSuccess { get; }
+        public Interaction<Unit, bool> ResetConfirm { get; }
+        
         public ReactiveCommand LeaveFeedback { get; }
-        public ReactiveCommand LeaveReview { get; }
-        public ReactiveCommand ImportOpml { get; }
-        public ReactiveCommand ExportOpml { get; }
+        public ReactiveCommand Review { get; }
+        public ReactiveCommand Import { get; }
+        public ReactiveCommand Export { get; }
         public ReactiveCommand Reset { get; }
         public ReactiveCommand Load { get; }
         
@@ -32,40 +37,35 @@ namespace myFeed.ViewModels
         public int Period { get; set; }
         public bool Read { get; set; }
         public int Max { get; set; }
-
+        
         public SettingViewModel(
-            ITranslationService translationsService,
             IFilePickerService filePickerService,
             IPackagingService packagingService,
             IPlatformService platformService,
             ISettingManager settingManager,
-            IDialogService dialogService,
             IOpmlService opmlService)
         {
             Version = packagingService.Version;
             LeaveFeedback = ReactiveCommand.CreateFromTask(packagingService.LeaveFeedback);
-            LeaveReview = ReactiveCommand.CreateFromTask(packagingService.LeaveReview);
-            ImportOpml = ReactiveCommand.CreateFromTask(async () =>
+            Review = ReactiveCommand.CreateFromTask(packagingService.LeaveReview);
+            ImportSuccess = new Interaction<Unit, bool>();
+            Import = ReactiveCommand.CreateFromTask(async () =>
             {
                 var stream = await filePickerService.PickFileForReadAsync();
                 var success = await opmlService.ImportOpmlFeedsAsync(stream);
-                if (success) await dialogService.ShowDialog(
-                    translationsService.Resolve(Constants.ImportOpmlSuccess),
-                    translationsService.Resolve(Constants.Notification));
+                if (success) await ImportSuccess.Handle(Unit.Default);
             });
-            ExportOpml = ReactiveCommand.CreateFromTask(async () =>
+            ExportSuccess = new Interaction<Unit, bool>();
+            Export = ReactiveCommand.CreateFromTask(async () =>
             {
                 var stream = await filePickerService.PickFileForWriteAsync();
                 var success = await opmlService.ExportOpmlFeedsAsync(stream);
-                if (success) await dialogService.ShowDialog(
-                    translationsService.Resolve(Constants.ExportOpmlSuccess),
-                    translationsService.Resolve(Constants.Notification));
+                if (success) await ExportSuccess.Handle(Unit.Default);
             });
+            ResetConfirm = new Interaction<Unit, bool>();
             Reset = ReactiveCommand.CreateFromTask(async () =>
             {
-                var response = await dialogService.ShowDialogForConfirmation(
-                    translationsService.Resolve(Constants.ResetAppNoRestore),
-                    translationsService.Resolve(Constants.Notification));
+                var response = await ResetConfirm.Handle(Unit.Default);
                 if (response) await platformService.ResetApp();
             });
             Load = ReactiveCommand.CreateFromTask(async () =>

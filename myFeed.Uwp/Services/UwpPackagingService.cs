@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Email;
@@ -10,7 +9,7 @@ using myFeed.Platform;
 namespace myFeed.Uwp.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(IPackagingService))]
+    [ExportEx(typeof(IPackagingService))]
     public sealed class UwpPackagingService : IPackagingService
     {
         private const string WindowsMarketUri = "ms-windows-store://review/?ProductId=9nblggh4nw02";

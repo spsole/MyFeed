@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -16,6 +18,8 @@ namespace myFeed.ViewModels
     public sealed class ChannelViewModel
     {
         public ReactiveList<ChannelGroupViewModel> Items { get; }
+        public Interaction<Unit, string> AddRequest { get; }
+        
         public ReactiveCommand Search { get; }
         public ReactiveCommand Load { get; }
         public ReactiveCommand Add { get; }
@@ -24,22 +28,20 @@ namespace myFeed.ViewModels
         public bool IsEmpty { get; private set; }
 
         public ChannelViewModel(
-            ITranslationService translationsService,
             INavigationService navigationService,
             ICategoryManager categoryManager,
-            IFactoryService factoryService,
-            IDialogService dialogService)
+            IFactoryService factoryService)
         {
             IsLoading = true;
             Items = new ReactiveList<ChannelGroupViewModel>();
             var map = new Dictionary<ChannelGroupViewModel, Category>();
             var factory = factoryService.Create<Func<Category, ChannelViewModel, ChannelGroupViewModel>>();
             Search = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<SearchViewModel>());
+            
+            AddRequest = new Interaction<Unit, string>();
             Add = ReactiveCommand.CreateFromTask(async () =>
             {
-                var name = await dialogService.ShowDialogForResults(
-                    translationsService.Resolve(Constants.EnterNameOfNewCategory),
-                    translationsService.Resolve(Constants.EnterNameOfNewCategoryTitle));
+                var name = await AddRequest.Handle(Unit.Default);
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new Category {Title = name};
                 await categoryManager.InsertAsync(category);

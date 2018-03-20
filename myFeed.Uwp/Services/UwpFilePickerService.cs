@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -11,7 +10,7 @@ using myFeed.Platform;
 namespace myFeed.Uwp.Services
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(IFilePickerService))]
+    [ExportEx(typeof(IFilePickerService))]
     public sealed class UwpFilePickerService : IFilePickerService
     {
         public async Task<Stream> PickFileForReadAsync()

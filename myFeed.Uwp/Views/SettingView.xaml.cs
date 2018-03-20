@@ -4,6 +4,9 @@ namespace myFeed.Uwp.Views
 {
     public sealed partial class SettingView : Page
     {
-        public SettingView() => InitializeComponent();
+        public SettingView()
+        {
+            InitializeComponent();
+        }
     }
 }

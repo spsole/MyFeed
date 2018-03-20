@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -17,6 +18,7 @@ namespace myFeed.ViewModels
         [DoNotCheckEquality]
         private Article Article { get; set; }
         
+        public Interaction<Unit, bool> CopyConfirm { get; }
         public ReactiveCommand MarkFave { get; }
         public ReactiveCommand MarkRead { get; }
         public ReactiveCommand Launch { get; }
@@ -33,20 +35,27 @@ namespace myFeed.ViewModels
         public bool Read => Article.Read;
 
         public FeedItemViewModel(
-            ITranslationService translationsService,
             INavigationService navigationService,
             ICategoryManager categoryManager,
             IFavoriteManager favoriteManager,
             IPlatformService platformService,
             IFactoryService factoryService,
-            IDialogService dialogService,
             Article article)
         {
             Article = article;
-            Share = ReactiveCommand.CreateFromTask(() => platformService.Share($"{Article.Title} {Article.Uri}")              );
+            CopyConfirm = new Interaction<Unit, bool>();
+            Copy = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await platformService.CopyTextToClipboard(Article.Uri);
+                await CopyConfirm.Handle(Unit.Default);
+            });
             Launch = ReactiveCommand.CreateFromTask(
                 () => platformService.LaunchUri(new Uri(Article.Uri)),
-                this.WhenAnyValue(x => x.Article).Select(x => Uri.IsWellFormedUriString(x.Uri, UriKind.Absolute))
+                this.WhenAnyValue(x => x.Article).Select(x => Uri
+                    .IsWellFormedUriString(x.Uri, UriKind.Absolute))
+            );
+            Share = ReactiveCommand.CreateFromTask(
+                () => platformService.Share($"{Article.Title} {Article.Uri}")
             );
             Open = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -56,24 +65,15 @@ namespace myFeed.ViewModels
                 await navigationService.Navigate<ArticleViewModel>(factory(this));
                 Article = Article;
             });
-            Copy = ReactiveCommand.CreateFromTask(async () => 
-            {
-                await platformService.CopyTextToClipboard(Article.Uri);
-                await dialogService.ShowDialog(
-                    translationsService.Resolve(Constants.CopyLinkSuccess),
-                    translationsService.Resolve(Constants.SettingsNotification));
-            });
             MarkRead = ReactiveCommand.CreateFromTask(async () =>
             {
                 Article.Read = !Article.Read;
-                await categoryManager.UpdateArticleAsync(Article);
-                Article = Article;
+                await categoryManager.UpdateArticleAsync(Article = Article);
             });
             MarkFave = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (!Fave) await favoriteManager.InsertAsync(Article);
-                else await favoriteManager.RemoveAsync(Article);
-                Article = Article;
+                if (!Fave) await favoriteManager.InsertAsync(Article = Article);
+                else await favoriteManager.RemoveAsync(Article = Article);
             });
         }
     }

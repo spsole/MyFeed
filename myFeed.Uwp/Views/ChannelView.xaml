@@ -29,8 +29,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
-        <controls:TitleBlock Count="{Binding Items.Count, Mode=OneWay}" Text="{Binding 
-            Converter={StaticResource Locale}, ConverterParameter=SourcesViewTitle}"/>
+        <controls:TitleBlock Grid.Row="0" Count="{Binding Items.Count, Mode=OneWay}" Text="{
+            Binding Converter={StaticResource Locale}, ConverterParameter=SourcesViewTitle}"/>
         <controls:TransparentButton Command="{Binding Search}"
             Grid.Row="0" Symbol="Zoom" HorizontalAlignment="Right">
             <ToolTipService.ToolTip>
@@ -42,7 +42,10 @@
             ItemsSource="{Binding Items, Mode=OneTime}" ShowsScrollingPlaceholders="False">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="Loaded">
-                    <behaviors:ReactiveCommandAction Command="{Binding Load}"/> 
+                    <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
+                    <behaviors:ModalActionPrompt Interaction="{Binding AddRequest}"
+                        Message="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategory}"
+                        Title="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategoryTitle}"/>
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
             <ListView.ItemContainerTransitions>
@@ -65,6 +68,12 @@
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Loaded">
                                 <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
+                                <behaviors:ModalActionPrompt Interaction="{Binding RenameRequest}"
+                                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategory}"
+                                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategoryTitle}"/>
+                                <behaviors:ModalActionConfirm Interaction="{Binding RemoveRequest}"
+                                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=DeleteCategory}"
+                                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=DeleteElement}"/>
                             </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                         <controls:Expander.HeaderContent>
