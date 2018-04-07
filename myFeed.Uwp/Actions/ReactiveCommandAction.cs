@@ -3,7 +3,7 @@ using System.Windows.Input;
 using Windows.UI.Xaml;
 using Microsoft.Xaml.Interactivity;
 
-namespace myFeed.Uwp.Behaviors
+namespace myFeed.Uwp.Actions
 {
     public sealed class ReactiveCommandAction : DependencyObject, IAction
     {

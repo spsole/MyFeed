@@ -2,7 +2,7 @@
 using Windows.UI.Xaml.Controls.Primitives;
 using Microsoft.Xaml.Interactivity;
 
-namespace myFeed.Uwp.Behaviors
+namespace myFeed.Uwp.Actions
 {
     public sealed class OpenFlyoutAction : DependencyObject, IAction
     {

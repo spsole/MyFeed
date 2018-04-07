@@ -9,7 +9,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:behaviors="using:myFeed.Uwp.Behaviors"
+    xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -26,14 +26,14 @@
     <Grid>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
-                <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
-                <behaviors:ModalActionConfirm Interaction="{Binding ResetConfirm}" 
+                <actions:ReactiveCommandAction Command="{Binding Load}"/>
+                <actions:ModalConfirmAction Interaction="{Binding ResetConfirm}" 
                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ResetAppNoRestore}" 
                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
-                <behaviors:ModalActionConfirm Interaction="{Binding ImportSuccess}"
+                <actions:ModalConfirmAction Interaction="{Binding ImportSuccess}"
                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ImportOpmlSuccess}" 
                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
-                <behaviors:ModalActionConfirm Interaction="{Binding ExportSuccess}"
+                <actions:ModalConfirmAction Interaction="{Binding ExportSuccess}"
                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ExportOpmlSuccess}" 
                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
             </core:EventTriggerBehavior>

@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Converters"
-    xmlns:behaviors="using:myFeed.Uwp.Behaviors">
+    xmlns:converters="using:myFeed.Uwp.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -18,8 +18,8 @@
                 <ResourceDictionary Source="Controls/MenuFlyoutItemWithIcon.xaml"/>
                 <ResourceDictionary Source="Controls/HtmlBlock.xaml"/>
                 <ResourceDictionary>
-                    <behaviors:LocaleConverter x:Key="Locale"/>
-                    <behaviors:UpperStringConverter x:Key="StrToUpper"/>
+                    <converters:LocaleConverter x:Key="Locale"/>
+                    <converters:UpperStringConverter x:Key="StrToUpper"/>
                     <toolkit:BoolToObjectConverter x:Key="NegateBool">
                         <toolkit:BoolToObjectConverter.FalseValue>
                             <x:Boolean>True</x:Boolean>

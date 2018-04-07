@@ -11,7 +11,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:views="using:myFeed.Uwp.Views"
-    xmlns:behaviors="using:myFeed.Uwp.Behaviors"
+    xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -67,7 +67,7 @@
                                 SelectedItem="{Binding Selection, Mode=TwoWay}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Tapped">
-                                        <behaviors:CloseFlyoutAction/>
+                                        <actions:CloseFlyoutAction/>
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                                 <ListBox.ItemTemplate>
@@ -91,7 +91,7 @@
             <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}" SelectedItem="{Binding Selection, Mode=TwoWay}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Loaded">
-                        <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
+                        <actions:ReactiveCommandAction Command="{Binding Load}"/>
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
                 <Pivot.HeaderTemplate>
@@ -112,7 +112,7 @@
                                 IsItemClickEnabled="True" SelectionMode="None">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Loaded">
-                                        <behaviors:ReactiveCommandAction Command="{Binding Fetch}"/>
+                                        <actions:ReactiveCommandAction Command="{Binding Fetch}"/>
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                                 <toolkit:PullToRefreshListView.ItemContainerStyle>
@@ -142,16 +142,16 @@
                                             Mode=OneWay, Converter={StaticResource TruthyToTransparent}}">
                                             <interactivity:Interaction.Behaviors>
                                                 <core:EventTriggerBehavior EventName="Holding">
-                                                    <behaviors:OpenFlyoutAction/>
+                                                    <actions:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
                                                 <core:EventTriggerBehavior EventName="RightTapped">
-                                                    <behaviors:OpenFlyoutAction/>
+                                                    <actions:OpenFlyoutAction/>
                                                 </core:EventTriggerBehavior>
                                                 <core:EventTriggerBehavior EventName="Tapped">
-                                                    <behaviors:ReactiveCommandAction Command="{Binding Open}"/>
+                                                    <actions:ReactiveCommandAction Command="{Binding Open}"/>
                                                 </core:EventTriggerBehavior>
                                                 <core:EventTriggerBehavior EventName="Loaded">
-                                                    <behaviors:ModalActionConfirm Interaction="{Binding CopyConfirm}"
+                                                    <actions:ModalConfirmAction Interaction="{Binding CopyConfirm}"
                                                         Message="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLinkSuccess}"
                                                         Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
                                                 </core:EventTriggerBehavior>

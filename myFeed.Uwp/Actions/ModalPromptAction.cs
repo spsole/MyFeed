@@ -5,12 +5,12 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ReactiveUI;
 
-namespace myFeed.Uwp.Behaviors
+namespace myFeed.Uwp.Actions
 {
-    public sealed class ModalActionPrompt : ModalActionBase
+    public sealed class ModalPromptAction : ModalActionBase
     {
         public static readonly DependencyProperty InteractionProperty = DependencyProperty.Register(
-            nameof(Interaction), typeof(Interaction<Unit, string>), typeof(ModalActionPrompt), null);
+            nameof(Interaction), typeof(Interaction<Unit, string>), typeof(ModalPromptAction), null);
 
         public Interaction<Unit, string> Interaction
         {

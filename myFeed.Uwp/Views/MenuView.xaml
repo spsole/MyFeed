@@ -9,7 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:behaviors="using:myFeed.Uwp.Behaviors"
+    xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -40,7 +40,7 @@
         </VisualStateManager.VisualStateGroups>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
-                <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
+                <actions:ReactiveCommandAction Command="{Binding Load}"/>
             </core:EventTriggerBehavior>
         </interactivity:Interaction.Behaviors>
         <controls:SwipeableSplitView 
@@ -76,7 +76,7 @@
                         SelectedItem="{Binding Selection, Mode=TwoWay}">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="SelectionChanged">
-                                <behaviors:ReactiveCommandAction Command="{Binding Navigate}"/>
+                                <actions:ReactiveCommandAction Command="{Binding Navigate}"/>
                                 <core:ChangePropertyAction Value="False"
                                     TargetObject="{Binding ElementName=Menu}" 
                                     PropertyName="IsSwipeablePaneOpen"/>

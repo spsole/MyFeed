@@ -9,7 +9,7 @@
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:behaviors="using:myFeed.Uwp.Behaviors"
+    xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -54,7 +54,7 @@
         <Grid Grid.Row="0">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="Loaded">
-                    <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
+                    <actions:ReactiveCommandAction Command="{Binding Load}"/>
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
             <Grid x:Name="BackGrid" Background="{ThemeResource LowBackgroundThemeBrush}"/>

@@ -56,25 +56,21 @@ namespace myFeed.Services
         {
             var opml = _serializationService.Deserialize<Opml>(stream);
             if (opml == null) return false;
-
-            var categories = new List<Category>();
-            opml.Body
+            var categories = opml.Body
                 .Where(i => i.XmlUrl == null && i.HtmlUrl == null)
                 .Select(i => new {Title = i.Title ?? i.Text, Outline = i})
                 .Where(i => i.Title != null)
                 .Select(i => new Category
                 {
-                    Channels = i.Outline.ChildOutlines
-                        .Select(o => new Channel
-                        {
-                            Uri = o.XmlUrl,
-                            Notify = true
-                        })
-                        .ToList(),
-                    Title = i.Title
+                    Title = i.Title,
+                    Channels = i.Outline.ChildOutlines.Select(o => new Channel
+                    {
+                        Uri = o.XmlUrl,
+                        Notify = true
+                    })
+                    .ToList()
                 })
-                .ToList()
-                .ForEach(i => categories.Add(i));
+                .ToList();
 
             var uncategorized = new Category
             {

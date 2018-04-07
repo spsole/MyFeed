@@ -6,12 +6,12 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ReactiveUI;
 
-namespace myFeed.Uwp.Behaviors
+namespace myFeed.Uwp.Actions
 {
-    public sealed class ModalActionSelect : ModalActionBase
+    public sealed class ModalSelectAction : ModalActionBase
     {
         public static readonly DependencyProperty InteractionProperty = DependencyProperty.Register(
-            nameof(Interaction), typeof(Interaction<IList<string>, int>), typeof(ModalActionSelect), null);
+            nameof(Interaction), typeof(Interaction<IList<string>, int>), typeof(ModalSelectAction), null);
 
         public Interaction<IList<string>, int> Interaction
         {

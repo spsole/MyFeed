@@ -10,7 +10,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:behaviors="using:myFeed.Uwp.Behaviors"
+    xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -95,13 +95,13 @@
                             </FlyoutBase.AttachedFlyout>
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="RightTapped">
-                                    <behaviors:OpenFlyoutAction/>
+                                    <actions:OpenFlyoutAction/>
                                 </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="Holding">
-                                    <behaviors:OpenFlyoutAction/>
+                                    <actions:OpenFlyoutAction/>
                                 </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="Loaded">
-                                    <behaviors:ModalActionSelect Interaction="{Binding AddSelect}"
+                                    <actions:ModalSelectAction Interaction="{Binding AddSelect}"
                                         Title="{Binding Converter={StaticResource Locale}, 
                                             ConverterParameter=AddIntoCategory}"/> 
                                 </core:EventTriggerBehavior>

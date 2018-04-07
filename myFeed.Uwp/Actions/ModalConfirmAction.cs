@@ -5,12 +5,12 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using ReactiveUI;
 
-namespace myFeed.Uwp.Behaviors
+namespace myFeed.Uwp.Actions
 {
-    public sealed class ModalActionConfirm : ModalActionBase
+    public sealed class ModalConfirmAction : ModalActionBase
     {
         public static readonly DependencyProperty InteractionProperty = DependencyProperty.Register(
-            nameof(Interaction), typeof(Interaction<Unit, bool>), typeof(ModalActionConfirm), null);
+            nameof(Interaction), typeof(Interaction<Unit, bool>), typeof(ModalConfirmAction), null);
 
         public Interaction<Unit, bool> Interaction
         {

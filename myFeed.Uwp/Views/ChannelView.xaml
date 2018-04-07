@@ -9,7 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:behaviors="using:myFeed.Uwp.Behaviors"
+    xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -42,8 +42,8 @@
             ItemsSource="{Binding Items, Mode=OneTime}" ShowsScrollingPlaceholders="False">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="Loaded">
-                    <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
-                    <behaviors:ModalActionPrompt Interaction="{Binding AddRequest}"
+                    <actions:ReactiveCommandAction Command="{Binding Load}"/>
+                    <actions:ModalPromptAction Interaction="{Binding AddRequest}"
                         Message="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategory}"
                         Title="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategoryTitle}"/>
                 </core:EventTriggerBehavior>
@@ -67,11 +67,11 @@
                         IsEnabled="{Binding ElementName=SourcesListView, Path=CanReorderItems, Converter={StaticResource NegateBool}}">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Loaded">
-                                <behaviors:ReactiveCommandAction Command="{Binding Load}"/>
-                                <behaviors:ModalActionPrompt Interaction="{Binding RenameRequest}"
+                                <actions:ReactiveCommandAction Command="{Binding Load}"/>
+                                <actions:ModalPromptAction Interaction="{Binding RenameRequest}"
                                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategory}"
                                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategoryTitle}"/>
-                                <behaviors:ModalActionConfirm Interaction="{Binding RemoveRequest}"
+                                <actions:ModalConfirmAction Interaction="{Binding RemoveRequest}"
                                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=DeleteCategory}"
                                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=DeleteElement}"/>
                             </core:EventTriggerBehavior>
@@ -134,10 +134,10 @@
                                                 </Grid.ColumnDefinitions>
                                                 <interactivity:Interaction.Behaviors>
                                                     <core:EventTriggerBehavior EventName="RightTapped">
-                                                        <behaviors:OpenFlyoutAction/>
+                                                        <actions:OpenFlyoutAction/>
                                                     </core:EventTriggerBehavior>
                                                     <core:EventTriggerBehavior EventName="Holding">
-                                                        <behaviors:OpenFlyoutAction/>
+                                                        <actions:OpenFlyoutAction/>
                                                     </core:EventTriggerBehavior>
                                                 </interactivity:Interaction.Behaviors>
                                                 <FlyoutBase.AttachedFlyout>

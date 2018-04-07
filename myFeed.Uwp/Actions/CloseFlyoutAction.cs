@@ -2,7 +2,7 @@
 using Windows.UI.Xaml.Media;
 using Microsoft.Xaml.Interactivity;
 
-namespace myFeed.Uwp.Behaviors
+namespace myFeed.Uwp.Actions
 {
     public sealed class CloseFlyoutAction : DependencyObject, IAction
     {
