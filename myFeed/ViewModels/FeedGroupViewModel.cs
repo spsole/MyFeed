@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -23,11 +24,10 @@ namespace myFeed.ViewModels
         public string Title { get; }
 
         public FeedGroupViewModel(
+            IResolver resolver, Category category,
             INavigationService navigationService,
             IFeedStoreService feedStoreService,
-            ISettingManager settingManager,
-            IFactoryService factoryService,
-            Category category)
+            ISettingManager settingManager)
         {
             var showRead = true;
             (IsLoading, Title) = (true, category.Title);
@@ -40,7 +40,7 @@ namespace myFeed.ViewModels
                 IsLoading = true;
                 var settings = await settingManager.Read();
                 var response = await feedStoreService.LoadAsync(category.Channels);
-                var factory = factoryService.Create<Func<Article, FeedItemViewModel>>();
+                var factory = resolver.Resolve<Func<Article, FeedItemViewModel>>();
                 var viewModels = response.Select(x => factory(x)).ToList();
                 showRead = settings.Read;
                 cache.Clear();

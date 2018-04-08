@@ -2,7 +2,9 @@
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using DryIoc;
 using DryIocAttributes;
+using Genesis.Ensure;
 using myFeed.Interfaces;
 using myFeed.Models;
 using PropertyChanged;
@@ -26,17 +28,17 @@ namespace myFeed.ViewModels
 
         public string ChannelUri { get; set; }
         public string Title { get; private set; }
-
+        
         public ChannelGroupViewModel(
             ChannelViewModel channelViewModel,
             ICategoryManager categoryManager,
-            IFactoryService factoryService,
+            IResolver resolver,
             Category category)
         {
             Title = category.Title;
             ChannelUri = string.Empty;
             Items = new ReactiveList<ChannelItemViewModel>();
-            var factory = factoryService.Create<
+            var factory = resolver.Resolve<
                 Func<Channel, Category, 
                     ChannelGroupViewModel, 
                     ChannelItemViewModel>>();

@@ -22,7 +22,6 @@ let ``all default services and view models should be registered``() =
     |> also Should.resolve<IImageService>
     |> also Should.resolve<IFeedFetchService>
     |> also Should.resolve<IFavoriteManager>
-    |> also Should.resolve<IFactoryService>
     |> also Should.resolve<IFeedStoreService>
     |> also Should.resolve<ISettingManager>
     |> also Should.resolve<IBackgroundService>

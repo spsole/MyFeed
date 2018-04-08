@@ -8,7 +8,6 @@
     <Compile Include="Category.fs" />
     <Compile Include="Composition.fs" />
     <Compile Include="Database.fs" />
-    <Compile Include="DryIocFactory.fs" />
     <Compile Include="FaveViewModel.fs" />
     <Compile Include="Favorite.fs" />
     <Compile Include="Opml.fs" />

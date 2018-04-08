@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -18,10 +19,10 @@ namespace myFeed.ViewModels
 
         public FaveGroupViewModel(
             IGrouping<string, Article> grouping,
-            IFactoryService factoryService)
+            IResolver resolver)
         {
             Title = grouping.Key;
-            var factory = factoryService.Create<Func<Article, FeedItemViewModel>>();
+            var factory = resolver.Resolve<Func<Article, FeedItemViewModel>>();
             var cache = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
             Items = cache.CreateDerivedCollection(x => x, x => x.Fave);
             cache.AddRange(grouping.Select(x => factory(x)));

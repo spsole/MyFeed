@@ -17,15 +17,16 @@ namespace myFeed.Uwp
 {
     public sealed partial class App : Application
     {
-        public static IContainer Container { get; } = new Container();
+        private readonly IContainer _container;
 
         public App()
         {
             var localFolder = ApplicationData.Current.LocalFolder;
             var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
-            Container.RegisterDelegate(x => new LiteDatabase(filePath), Reuse.Singleton);
-            Container.RegisterExports(new[] {typeof(App).GetAssembly()});
-            Container.RegisterShared();
+            _container = new Container();
+            _container.RegisterDelegate(x => new LiteDatabase(filePath), Reuse.Singleton);
+            _container.RegisterExports(new[] {typeof(App).GetAssembly()});
+            _container.RegisterShared();
             InitializeComponent();
         }
 
@@ -49,20 +50,19 @@ namespace myFeed.Uwp
         {
             if (Window.Current.Content == null) Window.Current.Content = new Frame();
             var frame = (Frame)Window.Current.Content;
-            if (frame.Content == null) await Container.Resolve<INavigationService>().Navigate<MenuViewModel>();
+            if (frame.Content == null) await _container.Resolve<INavigationService>().Navigate<MenuViewModel>();
             Window.Current.Activate();
         }
 
-        private static async Task NavigateToToast(Guid guid)
+        private async Task NavigateToToast(Guid guid)
         {
-            var factoryService = Container.Resolve<IFactoryService>();
-            var categoryManager = Container.Resolve<ICategoryManager>();
-            var navigationService = Container.Resolve<INavigationService>();
+            var categoryManager = _container.Resolve<ICategoryManager>();
+            var navigationService = _container.Resolve<INavigationService>();
             var article = await categoryManager.GetArticleByIdAsync(guid);
             if (article == null) return;
 
-            var factory = factoryService.Create<Func<Article, FeedItemViewModel>>();
-            var articleFactory = factoryService.Create<Func<FeedItemViewModel, ArticleViewModel>>();
+            var factory = _container.Resolve<Func<Article, FeedItemViewModel>>();
+            var articleFactory = _container.Resolve<Func<FeedItemViewModel, ArticleViewModel>>();
             var articleViewModel = articleFactory.Invoke(factory.Invoke(article));
             await navigationService.Navigate<ArticleViewModel>(articleViewModel);
         }

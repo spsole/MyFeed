@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -39,7 +40,7 @@ namespace myFeed.ViewModels
             ICategoryManager categoryManager,
             IFavoriteManager favoriteManager,
             IPlatformService platformService,
-            IFactoryService factoryService,
+            IResolver resolver, 
             Article article)
         {
             Article = article;
@@ -61,7 +62,7 @@ namespace myFeed.ViewModels
             {
                 Article.Read = true;
                 await categoryManager.UpdateArticleAsync(Article);
-                var factory = factoryService.Create<Func<FeedItemViewModel, ArticleViewModel>>();
+                var factory = resolver.Resolve<Func<FeedItemViewModel, ArticleViewModel>>();
                 await navigationService.Navigate<ArticleViewModel>(factory(this));
                 Article = Article;
             });

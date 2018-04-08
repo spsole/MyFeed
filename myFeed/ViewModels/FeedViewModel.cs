@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -27,7 +28,7 @@ namespace myFeed.ViewModels
             INavigationService navigationService,
             ICategoryManager categoryManager,
             ISettingManager settingManager,
-            IFactoryService factoryService)
+            IResolver resolver)
         {
             IsLoading = true;
             Items = new ReactiveList<FeedGroupViewModel>();
@@ -38,7 +39,7 @@ namespace myFeed.ViewModels
                 IsLoading = true;
                 var settings = await settingManager.Read();
                 var categories = await categoryManager.GetAllAsync();
-                var factory = factoryService.Create<Func<Category, FeedGroupViewModel>>();
+                var factory = resolver.Resolve<Func<Category, FeedGroupViewModel>>();
                 var viewModels = categories.Select(x => factory(x));
                 Items.Clear();
                 Items.AddRange(viewModels);

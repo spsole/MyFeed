@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -29,7 +30,7 @@ namespace myFeed.ViewModels
         public FaveViewModel(
             IFavoriteManager favoriteManager,
             ISettingManager settingManager,
-            IFactoryService factoryService)
+            IResolver resolver)
         {
             IsLoading = true;
             Items = new ReactiveList<FaveGroupViewModel>();
@@ -48,7 +49,7 @@ namespace myFeed.ViewModels
                     IsLoading = true;
                     var settings = await settingManager.Read();
                     var articles = await favoriteManager.GetAllAsync();
-                    var factory = factoryService.Create<Func<
+                    var factory = resolver.Resolve<Func<
                         IGrouping<string, Article>,
                         FaveGroupViewModel>>();
                     var groupings = articles

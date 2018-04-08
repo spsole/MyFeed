@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -23,9 +24,9 @@ namespace myFeed.ViewModels
         public bool IsLoading { get; private set; }
         public bool IsEmpty { get; private set; }
 
-        public SearchViewModel(
-            IFactoryService factoryService,             
-            ISearchService searchService)
+        public SearchViewModel(             
+            ISearchService searchService,
+            IResolver resolver)
         {
             IsGreeting = true;
             SearchQuery = string.Empty;
@@ -42,7 +43,7 @@ namespace myFeed.ViewModels
             {
                 IsLoading = true;
                 var search = await searchService.SearchAsync(SearchQuery);
-                var factory = factoryService.Create<Func<FeedlyItem, SearchItemViewModel>>();
+                var factory = resolver.Resolve<Func<FeedlyItem, SearchItemViewModel>>();
                 var viewModels = search.Results.Select(x => factory(x));
                 Items.Clear();
                 Items.AddRange(viewModels);

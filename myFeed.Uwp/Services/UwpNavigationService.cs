@@ -10,13 +10,13 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using DryIoc;
 using DryIocAttributes;
 using myFeed.Platform;
 using myFeed.Uwp.Controls;
 using myFeed.Uwp.Views;
 using myFeed.ViewModels;
 using Microsoft.Toolkit.Uwp.UI.Extensions;
-using DryIoc;
 
 namespace myFeed.Uwp.Services
 {
@@ -24,6 +24,7 @@ namespace myFeed.Uwp.Services
     [ExportEx(typeof(INavigationService))]
     public sealed class UwpNavigationService : INavigationService
     {
+        private readonly IResolver _resolver;
         private readonly Subject<Type> _navigatedSubject = new Subject<Type>();
         private readonly IReadOnlyDictionary<Type, Type> _pages = new Dictionary<Type, Type>
         {
@@ -35,8 +36,10 @@ namespace myFeed.Uwp.Services
             {typeof(FaveViewModel), typeof(FaveView)},
             {typeof(FeedViewModel), typeof(FeedView)}
         };
-        public UwpNavigationService()
+
+        public UwpNavigationService(IResolver resolver)
         {
+            _resolver = resolver;
             var systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             systemNavigationManager.BackRequested += NavigateBack;
@@ -64,7 +67,7 @@ namespace myFeed.Uwp.Services
 
         public IReadOnlyDictionary<Type, (string, object)> Icons { get; }
 
-        public Task Navigate<T>() where T : class => Navigate<T>(App.Container.Resolve<T>());
+        public Task Navigate<T>() where T : class => Navigate<T>(_resolver.Resolve<Func<T>>()());
 
         public async Task Navigate<T>(object parameter) where T : class
         {
@@ -124,7 +127,7 @@ namespace myFeed.Uwp.Services
             if (instance == null) return;
 
             ((Page) frame.Content).DataContext = instance is ArticleViewModel
-                ? instance : App.Container.Resolve(instance.GetType());
+                ? instance : _resolver.Resolve(instance.GetType());
             RaiseNavigated(instance.GetType());
         }
 

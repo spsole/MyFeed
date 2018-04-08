@@ -1,5 +1,6 @@
 module myFeed.Tests.Fixtures.FaveViewModel
 
+open DryIoc
 open Xunit
 open NSubstitute
 open ReactiveUI
@@ -15,12 +16,12 @@ open System
 let private settings = Substitute.For<ISettingManager>()
 settings.Read().Returns(Settings()) |> ignore
 
-let private factory = Substitute.For<IFactoryService>() 
-factory.Create<Func<Article, FeedItemViewModel>>().Returns(
+let private factory = Substitute.For<IResolver>() 
+factory.Resolve<Func<Article, FeedItemViewModel>>().Returns(
     Func<Article, FeedItemViewModel>(fun x -> 
         produce<FeedItemViewModel> [x])) |> ignore
 
-factory.Create<Func<IGrouping<string, Article>, FaveGroupViewModel>>().Returns(
+factory.Resolve<Func<IGrouping<string, Article>, FaveGroupViewModel>>().Returns(
     Func<IGrouping<string, Article>, FaveGroupViewModel>(fun x ->
         produce<FaveGroupViewModel> [x; factory])) |> ignore
 
@@ -39,7 +40,7 @@ let ``should load and group items``() =
 let ``should notify of loading property changed``() =
 
     let favorites = Substitute.For<IFavoriteManager>()
-    favorites.GetAllAsync().Returns(Task.FromResult<seq<_>> []) |> ignore
+    favorites.GetAllAsync().Returns(Task.FromResult(Seq.empty)) |> ignore
     
     let mutable changed = false
     let faveViewModel = produce<FaveViewModel> [factory; favorites; settings]
