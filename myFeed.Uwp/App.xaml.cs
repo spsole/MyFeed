@@ -5,13 +5,13 @@ using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using DryIoc;
 using DryIoc.MefAttributedModel;
-using LiteDB;
 using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
 using myFeed.ViewModels;
+using LiteDB;
+using DryIoc;
 
 namespace myFeed.Uwp
 {

@@ -18,8 +18,8 @@ namespace myFeed.ViewModels
         public ReactiveList<SearchItemViewModel> Items { get; }
         public ReactiveCommand<Unit, Unit> Fetch { get; }
 
-        public string SearchQuery { get; set; }
-        public bool IsGreeting { get; private set; }
+        public string SearchQuery { get; set; } = string.Empty;
+        public bool IsGreeting { get; private set; } = true;
         public bool IsLoading { get; private set; }
         public bool IsEmpty { get; private set; }
 
@@ -27,8 +27,6 @@ namespace myFeed.ViewModels
             Func<FeedlyItem, SearchItemViewModel> factory,
             ISearchService searchService)
         {
-            IsGreeting = true;
-            SearchQuery = string.Empty;
             Items = new ReactiveList<SearchItemViewModel>();
             this.WhenAnyValue(x => x.SearchQuery)
                 .Select(x => x?.Trim())

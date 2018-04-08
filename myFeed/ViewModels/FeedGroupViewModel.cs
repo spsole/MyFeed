@@ -18,7 +18,7 @@ namespace myFeed.ViewModels
         public ReactiveCommand Modify { get; }
         public ReactiveCommand Fetch { get; }
 
-        public bool IsLoading { get; private set; }
+        public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
         public string Title { get; }
 
@@ -30,7 +30,6 @@ namespace myFeed.ViewModels
             Category category)
         {
             var showRead = true;
-            IsLoading = true;
             Title = category.Title;
             var cache = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
             Items = cache.CreateDerivedCollection(x => x, x => !(!showRead && x.Read));

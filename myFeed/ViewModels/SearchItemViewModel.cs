@@ -48,7 +48,8 @@ namespace myFeed.ViewModels
             AddSelect = new Interaction<IList<string>, int>();
             Add = ReactiveCommand.CreateFromTask(async () =>
             {
-                var categories = (await categoryManager.GetAllAsync()).ToList();
+                var response = await categoryManager.GetAllAsync();
+                var categories = new List<Category>(response);
                 var titles = categories.Select(i => i.Title).ToList(); 
                 var index = await AddSelect.Handle(titles);
                 if (index < 0) return;

@@ -22,7 +22,7 @@ namespace myFeed.ViewModels
         public ReactiveCommand OrderByFeed { get; }
         public ReactiveCommand Load { get; }
 
-        public bool IsLoading { get; private set; }
+        public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
         public bool Images { get; private set; }
 
@@ -31,7 +31,6 @@ namespace myFeed.ViewModels
             IFavoriteManager favoriteManager, 
             ISettingManager settingManager)
         {
-            IsLoading = true;
             Items = new ReactiveList<FaveGroupViewModel>();
             var month = CultureInfo.CurrentCulture.DateTimeFormat.YearMonthPattern;
             var date = CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern;

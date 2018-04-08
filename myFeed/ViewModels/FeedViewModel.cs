@@ -19,7 +19,7 @@ namespace myFeed.ViewModels
         public ReactiveCommand Modify { get; }
         public ReactiveCommand Load { get; }
 
-        public bool IsLoading { get; private set; }
+        public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
         public bool Images { get; private set; }
 
@@ -29,7 +29,6 @@ namespace myFeed.ViewModels
             ICategoryManager categoryManager,
             ISettingManager settingManager)
         {
-            IsLoading = true;
             Items = new ReactiveList<FeedGroupViewModel>();
             Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
             Load = ReactiveCommand.CreateFromTask(async () =>

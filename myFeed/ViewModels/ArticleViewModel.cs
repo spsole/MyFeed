@@ -13,7 +13,7 @@ namespace myFeed.ViewModels
         public FeedItemViewModel Article { get; }
         public ReactiveCommand Load { get; }
 
-        public bool IsLoading { get; private set; }
+        public bool IsLoading { get; private set; } = true;
         public bool Images { get; private set; }
         public double Font { get; private set; }
 
@@ -21,7 +21,6 @@ namespace myFeed.ViewModels
             FeedItemViewModel feedItemViewModel,
             ISettingManager settingManager)
         {
-            IsLoading = true;
             Article = feedItemViewModel;
             Load = ReactiveCommand.CreateFromTask(async () =>
             {
