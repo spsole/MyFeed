@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -29,16 +28,14 @@ namespace myFeed.ViewModels
         public bool IsEmpty { get; private set; }
 
         public ChannelViewModel(
+            Func<Category, ChannelViewModel, ChannelGroupViewModel> factory,
             INavigationService navigationService,
-            ICategoryManager categoryManager,
-            IResolver resolver)
+            ICategoryManager categoryManager)
         {
             IsLoading = true;
             Items = new ReactiveList<ChannelGroupViewModel>();
             var map = new Dictionary<ChannelGroupViewModel, Category>();
-            var factory = resolver.Resolve<Func<Category, ChannelViewModel, ChannelGroupViewModel>>();
             Search = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<SearchViewModel>());
-            
             AddRequest = new Interaction<Unit, string>();
             Add = ReactiveCommand.CreateFromTask(async () =>
             {

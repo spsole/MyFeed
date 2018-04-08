@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -36,11 +35,11 @@ namespace myFeed.ViewModels
         public bool Read => Article.Read;
 
         public FeedItemViewModel(
+            Func<FeedItemViewModel, ArticleViewModel> factory,
             INavigationService navigationService,
             ICategoryManager categoryManager,
             IFavoriteManager favoriteManager,
             IPlatformService platformService,
-            IResolver resolver, 
             Article article)
         {
             Article = article;
@@ -52,8 +51,8 @@ namespace myFeed.ViewModels
             });
             Launch = ReactiveCommand.CreateFromTask(
                 () => platformService.LaunchUri(new Uri(Article.Uri)),
-                this.WhenAnyValue(x => x.Article).Select(x => Uri
-                    .IsWellFormedUriString(x.Uri, UriKind.Absolute))
+                this.WhenAnyValue(x => x.Article)
+                    .Select(x => Uri.IsWellFormedUriString(x.Uri, UriKind.Absolute))
             );
             Share = ReactiveCommand.CreateFromTask(
                 () => platformService.Share($"{Article.Title} {Article.Uri}")
@@ -62,7 +61,6 @@ namespace myFeed.ViewModels
             {
                 Article.Read = true;
                 await categoryManager.UpdateArticleAsync(Article);
-                var factory = resolver.Resolve<Func<FeedItemViewModel, ArticleViewModel>>();
                 await navigationService.Navigate<ArticleViewModel>(factory(this));
                 Article = Article;
             });

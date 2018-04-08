@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -24,14 +23,16 @@ namespace myFeed.ViewModels
         public string Title { get; }
 
         public FeedGroupViewModel(
-            IResolver resolver, Category category,
+            Func<Article, FeedItemViewModel> factory,
             INavigationService navigationService,
             IFeedStoreService feedStoreService,
-            ISettingManager settingManager)
+            ISettingManager settingManager,
+            Category category)
         {
             var showRead = true;
-            (IsLoading, Title) = (true, category.Title);
-            var cache = new ReactiveList<FeedItemViewModel>() {ChangeTrackingEnabled = true};
+            IsLoading = true;
+            Title = category.Title;
+            var cache = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
             Items = cache.CreateDerivedCollection(x => x, x => !(!showRead && x.Read));
             Items.CountChanged.Subscribe(x => IsEmpty = x == 0);
             Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
@@ -40,8 +41,7 @@ namespace myFeed.ViewModels
                 IsLoading = true;
                 var settings = await settingManager.Read();
                 var response = await feedStoreService.LoadAsync(category.Channels);
-                var factory = resolver.Resolve<Func<Article, FeedItemViewModel>>();
-                var viewModels = response.Select(x => factory(x)).ToList();
+                var viewModels = response.Select(factory).ToList();
                 showRead = settings.Read;
                 cache.Clear();
                 cache.AddRange(viewModels);

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
-using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Platform;
@@ -22,10 +21,10 @@ namespace myFeed.ViewModels
         public ReactiveCommand Load { get; }
 
         public MenuViewModel(
+            Func<Type, string, object, MenuItemViewModel> factory,
             INavigationService navigationService,
             IPlatformService platformService,
-            ISettingManager settingManager,
-            IResolver resolver)
+            ISettingManager settingManager)
         {
             Items = new ReactiveList<MenuItemViewModel>();
             Navigate = ReactiveCommand.Create(() =>
@@ -46,7 +45,6 @@ namespace myFeed.ViewModels
                 await platformService.RegisterTheme(settings.Theme);
                 await settingManager.Write(settings);
 
-                var factory = resolver.Resolve<Func<Type, string, object, MenuItemViewModel>>();
                 navigationService.Icons.ToList().ForEach(item => Items.Add(
                     factory(item.Key, item.Value.Item1, item.Value.Item2)));
                 

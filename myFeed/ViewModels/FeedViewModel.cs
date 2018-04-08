@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -25,10 +24,10 @@ namespace myFeed.ViewModels
         public bool Images { get; private set; }
 
         public FeedViewModel(
+            Func<Category, FeedGroupViewModel> factory,
             INavigationService navigationService,
             ICategoryManager categoryManager,
-            ISettingManager settingManager,
-            IResolver resolver)
+            ISettingManager settingManager)
         {
             IsLoading = true;
             Items = new ReactiveList<FeedGroupViewModel>();
@@ -39,8 +38,7 @@ namespace myFeed.ViewModels
                 IsLoading = true;
                 var settings = await settingManager.Read();
                 var categories = await categoryManager.GetAllAsync();
-                var factory = resolver.Resolve<Func<Category, FeedGroupViewModel>>();
-                var viewModels = categories.Select(x => factory(x));
+                var viewModels = categories.Select(factory);
                 Items.Clear();
                 Items.AddRange(viewModels);
                 Selection = Items.FirstOrDefault();
