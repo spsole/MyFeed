@@ -6,6 +6,7 @@ using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
 using PropertyChanged;
+using Reactive.EventAggregator;
 using ReactiveUI;
 
 namespace myFeed.ViewModels
@@ -28,14 +29,16 @@ namespace myFeed.ViewModels
         public string Title { get; private set; }
         
         public ChannelGroupViewModel(
-            Func<Channel, Category, ChannelGroupViewModel, ChannelItemViewModel> factory,
-            ChannelViewModel channelViewModel,
+            Func<Channel, Category, ChannelItemViewModel> factory,
+            IEventAggregator eventAggregator,
             ICategoryManager categoryManager,
             Category category)
         {
             Title = category.Title;
             ChannelUri = string.Empty;
             Items = new ReactiveList<ChannelItemViewModel>();
+            eventAggregator.GetEvent<ChannelItemViewModel>()
+                           .Subscribe(x => Items.Remove(x));
 
             RenameRequest = new Interaction<Unit, string>();
             Rename = ReactiveCommand.CreateFromTask(async () =>
@@ -51,7 +54,7 @@ namespace myFeed.ViewModels
             {
                 if (!await RemoveRequest.Handle(Unit.Default)) return;
                 await categoryManager.RemoveAsync(category);
-                channelViewModel.Items.Remove(this);
+                eventAggregator.Publish(this);
             });
             
             AddChannel = ReactiveCommand.CreateFromTask(async () =>
@@ -60,7 +63,7 @@ namespace myFeed.ViewModels
                 ChannelUri = string.Empty;
                 category.Channels.Add(model);
                 await categoryManager.UpdateAsync(category);
-                Items.Add(factory(model, category, this));
+                Items.Add(factory(model, category));
             }, 
             this.WhenAnyValue(x => x.ChannelUri).Select(x => Uri
                 .IsWellFormedUriString(x, UriKind.Absolute)));
@@ -69,7 +72,7 @@ namespace myFeed.ViewModels
             {
                 Items.Clear();
                 Items.AddRange(category.Channels
-                     .Select(x => factory(x, category, this)));
+                     .Select(x => factory(x, category)));
             });
         }
     }

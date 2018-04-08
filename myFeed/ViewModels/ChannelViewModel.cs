@@ -8,6 +8,7 @@ using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
 using PropertyChanged;
+using Reactive.EventAggregator;
 using ReactiveUI;
 
 namespace myFeed.ViewModels
@@ -24,26 +25,29 @@ namespace myFeed.ViewModels
         public ReactiveCommand Load { get; }
         public ReactiveCommand Add { get; }
 
-        public bool IsLoading { get; private set; }
+        public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
 
         public ChannelViewModel(
-            Func<Category, ChannelViewModel, ChannelGroupViewModel> factory,
+            Func<Category, ChannelGroupViewModel> factory,
             INavigationService navigationService,
+            IEventAggregator eventAggregator,
             ICategoryManager categoryManager)
         {
-            IsLoading = true;
+            AddRequest = new Interaction<Unit, string>();
             Items = new ReactiveList<ChannelGroupViewModel>();
             var map = new Dictionary<ChannelGroupViewModel, Category>();
+            eventAggregator.GetEvent<ChannelGroupViewModel>()
+                           .Subscribe(x => Items.Remove(x));
+                
             Search = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<SearchViewModel>());
-            AddRequest = new Interaction<Unit, string>();
             Add = ReactiveCommand.CreateFromTask(async () =>
             {
                 var name = await AddRequest.Handle(Unit.Default);
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new Category {Title = name};
                 await categoryManager.InsertAsync(category);
-                var viewModel = factory(category, this);
+                var viewModel = factory(category);
                 map[viewModel] = category;
                 Items.Add(viewModel);
             });
@@ -52,7 +56,7 @@ namespace myFeed.ViewModels
                 map.Clear();
                 IsLoading = true;
                 var categories = await categoryManager.GetAllAsync();
-                foreach (var category in categories) map[factory(category, this)] = category;
+                foreach (var category in categories) map[factory(category)] = category;
                 Items.AddRange(map.Keys);
                 IsEmpty = Items.Count == 0;
                 IsLoading = false;
