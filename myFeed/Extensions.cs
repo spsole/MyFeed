@@ -1,6 +1,6 @@
 using DryIoc.MefAttributedModel;
+using ReactiveUI;
 using DryIoc;
-using Reactive.EventAggregator;
 
 namespace myFeed
 {
@@ -10,7 +10,7 @@ namespace myFeed
         {
             registrator.WithMefAttributedModel();
             registrator.RegisterExports(new [] { typeof(Extensions).GetAssembly() });
-            registrator.Register<IEventAggregator, EventAggregator>(Reuse.Singleton);
+            registrator.Register<IMessageBus, MessageBus>(Reuse.Singleton);
         }
     }
 }

@@ -6,7 +6,6 @@ using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
 using PropertyChanged;
-using Reactive.EventAggregator;
 using ReactiveUI;
 
 namespace myFeed.ViewModels
@@ -28,8 +27,8 @@ namespace myFeed.ViewModels
         public ChannelItemViewModel(
             Category category, Channel channel,
             ICategoryManager categoryManager,
-            IEventAggregator eventAggregator,
-            IPlatformService platformService)
+            IPlatformService platformService,
+            IMessageBus messageBus)
         {
             Url = channel.Uri;
             Notify = channel.Notify;
@@ -39,7 +38,7 @@ namespace myFeed.ViewModels
             Delete = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (!await DeleteRequest.Handle(Unit.Default)) return;
-                eventAggregator.Publish(this);
+                messageBus.SendMessage(this);
                 category.Channels.Remove(channel);
                 await categoryManager.UpdateAsync(category);
             });

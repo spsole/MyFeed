@@ -8,7 +8,6 @@ using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
 using PropertyChanged;
-using Reactive.EventAggregator;
 using ReactiveUI;
 
 namespace myFeed.ViewModels
@@ -31,14 +30,14 @@ namespace myFeed.ViewModels
         public ChannelViewModel(
             Func<Category, ChannelGroupViewModel> factory,
             INavigationService navigationService,
-            IEventAggregator eventAggregator,
-            ICategoryManager categoryManager)
+            ICategoryManager categoryManager,
+            IMessageBus messageBus)
         {
             AddRequest = new Interaction<Unit, string>();
             Items = new ReactiveList<ChannelGroupViewModel>();
             var map = new Dictionary<ChannelGroupViewModel, Category>();
-            eventAggregator.GetEvent<ChannelGroupViewModel>()
-                           .Subscribe(x => Items.Remove(x));
+            messageBus.Listen<ChannelGroupViewModel>()
+                      .Subscribe(x => Items.Remove(x));
                 
             Search = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<SearchViewModel>());
             Add = ReactiveCommand.CreateFromTask(async () =>

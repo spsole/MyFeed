@@ -6,7 +6,6 @@ using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
 using PropertyChanged;
-using Reactive.EventAggregator;
 using ReactiveUI;
 
 namespace myFeed.ViewModels
@@ -30,15 +29,15 @@ namespace myFeed.ViewModels
         
         public ChannelGroupViewModel(
             Func<Channel, Category, ChannelItemViewModel> factory,
-            IEventAggregator eventAggregator,
             ICategoryManager categoryManager,
+            IMessageBus messageBus,
             Category category)
         {
             Title = category.Title;
             ChannelUri = string.Empty;
             Items = new ReactiveList<ChannelItemViewModel>();
-            eventAggregator.GetEvent<ChannelItemViewModel>()
-                           .Subscribe(x => Items.Remove(x));
+            messageBus.Listen<ChannelItemViewModel>()
+                      .Subscribe(x => Items.Remove(x));
 
             RenameRequest = new Interaction<Unit, string>();
             Rename = ReactiveCommand.CreateFromTask(async () =>
@@ -54,7 +53,7 @@ namespace myFeed.ViewModels
             {
                 if (!await RemoveRequest.Handle(Unit.Default)) return;
                 await categoryManager.RemoveAsync(category);
-                eventAggregator.Publish(this);
+                messageBus.SendMessage(this);
             });
             
             AddChannel = ReactiveCommand.CreateFromTask(async () =>
