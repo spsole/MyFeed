@@ -6,6 +6,11 @@
 
 Read news from websites via <b>myFeed</b>, find interesting feeds in the internet and group them by categories, save favorite articles to your device with an ability to read them offline, share interesting posts with friends. myFeed makes the process of reading RSS feeds ever more convenient.
 
+[![forthebadge](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/built-by-hipsters.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/contains-cat-gifs.svg)](https://forthebadge.com)
+
+
 <br />
 
 <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">
