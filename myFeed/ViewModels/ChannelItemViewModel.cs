@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -16,7 +17,7 @@ namespace myFeed.ViewModels
     public sealed class ChannelItemViewModel
     {
         [DoNotCheckEquality]
-        private Channel Channel { get; set; }
+        private Channel Channel { get; }
         
         public Interaction<Unit, bool> DeleteRequest { get; }
         public ReactiveCommand<Unit, Unit> Delete { get; }
@@ -25,7 +26,11 @@ namespace myFeed.ViewModels
 
         public string Name => new Uri(Channel.Uri).Host;
         public string Url => Channel.Uri;
-        public bool Notify { get; set; } 
+        public bool Notify
+        {
+            get => Channel.Notify;
+            set => Channel.Notify = value;
+        }
 
         public ChannelItemViewModel(
             Category category, Channel channel,
@@ -34,29 +39,29 @@ namespace myFeed.ViewModels
             IMessageBus messageBus)
         {
             Channel = channel;
-            Notify = channel.Notify;
             DeleteRequest = new Interaction<Unit, bool>();
             Delete = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (!await DeleteRequest.Handle(Unit.Default)) return;
-                messageBus.SendMessage(this);
                 category.Channels.Remove(channel);
                 await categoryManager.UpdateAsync(category);
+                messageBus.SendMessage(this);
             });
-            
+            this.WhenAnyValue(x => x.Notify)
+                .Select(x => categoryManager
+                    .UpdateChannelAsync(channel)
+                    .ToObservable())
+                .Concat().Subscribe();
+
             Copy = ReactiveCommand.CreateFromTask(() => platformService.CopyTextToClipboard(Url));
             Open = ReactiveCommand.CreateFromTask(async () =>
             {
-                var builder = new UriBuilder(new Uri(Url)) {Fragment = string.Empty};
+                var url = new Uri(Url);
+                var builder = new UriBuilder(url) {Fragment = string.Empty};
                 await platformService.LaunchUri(builder.Uri);
             },
             this.WhenAnyValue(x => x.Url).Select(x => Uri
                 .IsWellFormedUriString(x, UriKind.Absolute)));
-            
-            this.WhenAnyValue(x => x.Notify)
-                .Select(x => channel.Notify = x)
-                .Subscribe(async x => await categoryManager
-                    .UpdateChannelAsync(channel));
         }
     }
 }

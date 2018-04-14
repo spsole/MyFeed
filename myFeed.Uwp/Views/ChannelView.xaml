@@ -133,6 +133,11 @@
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <interactivity:Interaction.Behaviors>
+                                                    <core:EventTriggerBehavior EventName="Loaded">
+                                                        <actions:ModalConfirmAction Interaction="{Binding DeleteRequest}"
+                                                            Message="{Binding Converter={StaticResource Locale}, ConverterParameter=DeleteChannel}"
+                                                            Title="{Binding Converter={StaticResource Locale}, ConverterParameter=DeleteElement}"/>
+                                                    </core:EventTriggerBehavior>
                                                     <core:EventTriggerBehavior EventName="RightTapped">
                                                         <actions:OpenFlyoutAction/>
                                                     </core:EventTriggerBehavior>

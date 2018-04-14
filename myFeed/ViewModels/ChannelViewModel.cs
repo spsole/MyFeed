@@ -33,10 +33,9 @@ namespace myFeed.ViewModels
             ICategoryManager categoryManager,
             IMessageBus messageBus)
         {
+            AddRequest = new Interaction<Unit, string>();
             Items = new ReactiveList<ChannelGroupViewModel>();
             var map = new Dictionary<ChannelGroupViewModel, Category>();
-            AddRequest = new Interaction<Unit, string>();
-            
             messageBus.Listen<ChannelGroupViewModel>()
                       .Subscribe(x => Items.Remove(x));
                 

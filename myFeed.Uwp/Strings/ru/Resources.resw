@@ -253,6 +253,9 @@
   <data name="DeleteCategory">
     <value>Категория будет удалена вместе со всеми источниками. Это действите будет невозможно отменить.</value>
   </data>
+  <data name="DeleteChannel">
+    <value>Канал будет удалён.</value>
+  </data>
   <data name="DeleteElement">
     <value>Удаление элемента</value>
   </data>

@@ -31,11 +31,10 @@ namespace myFeed.ViewModels
             Category category)
         {
             var showRead = true;
-            Title = category.Title;
-            
             var cache = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
             Items = cache.CreateDerivedCollection(x => x, x => !(!showRead && x.Read));
             Items.CountChanged.Subscribe(x => IsEmpty = x == 0);
+            Title = category.Title;
             
             Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
             Fetch = ReactiveCommand.CreateFromTask(async () =>

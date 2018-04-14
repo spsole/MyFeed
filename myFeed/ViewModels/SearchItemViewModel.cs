@@ -38,13 +38,13 @@ namespace myFeed.ViewModels
             FeedlyItem = feedlyItem;
             Open = ReactiveCommand.CreateFromTask(
                 () => platformService.LaunchUri(new Uri(Url)),
-                this.WhenAnyValue(x => x.Url).Select(x => Uri
-                    .IsWellFormedUriString(x, UriKind.Absolute))
+                this.WhenAnyValue(x => x.Url)
+                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
             );
             Copy = ReactiveCommand.CreateFromTask(
                 () => platformService.CopyTextToClipboard(Url),
-                this.WhenAnyValue(x => x.Url).Select(x => 
-                    !string.IsNullOrWhiteSpace(x))
+                this.WhenAnyValue(x => x.Url)
+                    .Select(x => !string.IsNullOrWhiteSpace(x))
             );
             
             AddSelect = new Interaction<IList<string>, int>();

@@ -33,11 +33,10 @@ namespace myFeed.ViewModels
             IMessageBus messageBus,
             Category category)
         {
+            Title = category.Title;
             Items = new ReactiveList<ChannelItemViewModel>();
             RenameRequest = new Interaction<Unit, string>();
             RemoveRequest = new Interaction<Unit, bool>();
-            
-            Title = category.Title;
             messageBus.Listen<ChannelItemViewModel>()
                       .Subscribe(x => Items.Remove(x));
 
@@ -48,14 +47,12 @@ namespace myFeed.ViewModels
                 Title = category.Title = name;
                 await categoryManager.UpdateAsync(category);
             });
-            
             Remove = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (!await RemoveRequest.Handle(Unit.Default)) return;
                 await categoryManager.RemoveAsync(category);
                 messageBus.SendMessage(this);
             });
-            
             AddChannel = ReactiveCommand.CreateFromTask(async () =>
             {
                 var model = new Channel {Uri = ChannelUri, Notify = true};

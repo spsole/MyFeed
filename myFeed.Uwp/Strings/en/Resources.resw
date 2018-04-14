@@ -253,6 +253,9 @@
   <data name="DeleteCategory">
     <value>Category will be deleted with all nested channels. This action can't be undone.</value>
   </data>
+  <data name="DeleteChannel">
+    <value>Channel will be deleted.</value>
+  </data>
   <data name="DeleteElement">
     <value>Delete element</value>
   </data>
