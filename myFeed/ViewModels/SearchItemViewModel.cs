@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -20,9 +21,9 @@ namespace myFeed.ViewModels
         private FeedlyItem FeedlyItem { get; }
 
         public Interaction<IList<string>, int> AddSelect { get; }
-        public ReactiveCommand Open { get; }
-        public ReactiveCommand Copy { get; }
-        public ReactiveCommand Add { get; }
+        public ReactiveCommand<Unit, Unit> Open { get; }
+        public ReactiveCommand<Unit, Unit> Copy { get; }
+        public ReactiveCommand<Unit, Unit> Add { get; }
         
         public string Description => FeedlyItem.Description;
         public string Image => FeedlyItem.IconUrl;
@@ -45,6 +46,7 @@ namespace myFeed.ViewModels
                 this.WhenAnyValue(x => x.Url).Select(x => 
                     !string.IsNullOrWhiteSpace(x))
             );
+            
             AddSelect = new Interaction<IList<string>, int>();
             Add = ReactiveCommand.CreateFromTask(async () =>
             {
@@ -60,8 +62,7 @@ namespace myFeed.ViewModels
                 category.Channels.Add(source); 
                 await categoryManager.UpdateAsync(category); 
             },
-            this.WhenAnyValue(x => x.FeedlyItem)
-                .Select(x => x.FeedId?.Substring(5))
+            this.WhenAnyValue(x => x.FeedlyItem, x => x.FeedId?.Substring(5))
                 .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
         }
     }

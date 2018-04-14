@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Reflection;
 using DryIocAttributes;
@@ -16,9 +17,9 @@ namespace myFeed.ViewModels
     public sealed class MenuViewModel
     {
         public ReactiveList<MenuItemViewModel> Items { get; }
+        public ReactiveCommand<Unit, Unit> Navigate { get; }
+        public ReactiveCommand<Unit, Unit> Load { get; }
         public MenuItemViewModel Selection { get; set; }
-        public ReactiveCommand Navigate { get; }
-        public ReactiveCommand Load { get; }
 
         public MenuViewModel(
             Func<Type, string, object, MenuItemViewModel> factory,

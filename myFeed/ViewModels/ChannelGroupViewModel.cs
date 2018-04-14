@@ -19,12 +19,12 @@ namespace myFeed.ViewModels
         public Interaction<Unit, string> RenameRequest { get; }  
         public Interaction<Unit, bool> RemoveRequest { get; }
         
-        public ReactiveCommand AddChannel { get; }
-        public ReactiveCommand Remove { get; }
-        public ReactiveCommand Rename { get; }
-        public ReactiveCommand Load { get; }
+        public ReactiveCommand<Unit, Unit> AddChannel { get; }
+        public ReactiveCommand<Unit, Unit> Remove { get; }
+        public ReactiveCommand<Unit, Unit> Rename { get; }
+        public ReactiveCommand<Unit, Unit> Load { get; }
 
-        public string ChannelUri { get; set; }
+        public string ChannelUri { get; set; } = string.Empty;
         public string Title { get; private set; }
         
         public ChannelGroupViewModel(
@@ -33,13 +33,14 @@ namespace myFeed.ViewModels
             IMessageBus messageBus,
             Category category)
         {
-            Title = category.Title;
-            ChannelUri = string.Empty;
             Items = new ReactiveList<ChannelItemViewModel>();
+            RenameRequest = new Interaction<Unit, string>();
+            RemoveRequest = new Interaction<Unit, bool>();
+            
+            Title = category.Title;
             messageBus.Listen<ChannelItemViewModel>()
                       .Subscribe(x => Items.Remove(x));
 
-            RenameRequest = new Interaction<Unit, string>();
             Rename = ReactiveCommand.CreateFromTask(async () =>
             {
                 var name = await RenameRequest.Handle(Unit.Default);
@@ -48,7 +49,6 @@ namespace myFeed.ViewModels
                 await categoryManager.UpdateAsync(category);
             });
             
-            RemoveRequest = new Interaction<Unit, bool>();
             Remove = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (!await RemoveRequest.Handle(Unit.Default)) return;

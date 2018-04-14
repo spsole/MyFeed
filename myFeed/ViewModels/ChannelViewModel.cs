@@ -20,9 +20,9 @@ namespace myFeed.ViewModels
         public ReactiveList<ChannelGroupViewModel> Items { get; }
         public Interaction<Unit, string> AddRequest { get; }
         
-        public ReactiveCommand Search { get; }
-        public ReactiveCommand Load { get; }
-        public ReactiveCommand Add { get; }
+        public ReactiveCommand<Unit, Unit> Search { get; }
+        public ReactiveCommand<Unit, Unit> Load { get; }
+        public ReactiveCommand<Unit, Unit> Add { get; }
 
         public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
@@ -33,9 +33,10 @@ namespace myFeed.ViewModels
             ICategoryManager categoryManager,
             IMessageBus messageBus)
         {
-            AddRequest = new Interaction<Unit, string>();
             Items = new ReactiveList<ChannelGroupViewModel>();
             var map = new Dictionary<ChannelGroupViewModel, Category>();
+            AddRequest = new Interaction<Unit, string>();
+            
             messageBus.Listen<ChannelGroupViewModel>()
                       .Subscribe(x => Items.Remove(x));
                 

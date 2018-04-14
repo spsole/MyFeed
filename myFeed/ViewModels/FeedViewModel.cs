@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reactive;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -15,9 +16,9 @@ namespace myFeed.ViewModels
     public sealed class FeedViewModel
     {
         public ReactiveList<FeedGroupViewModel> Items { get; }
+        public ReactiveCommand<Unit, Unit> Modify { get; }
+        public ReactiveCommand<Unit, Unit> Load { get; }
         public FeedGroupViewModel Selection { get; set; }
-        public ReactiveCommand Modify { get; }
-        public ReactiveCommand Load { get; }
 
         public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }

@@ -19,12 +19,12 @@ namespace myFeed.ViewModels
         private Article Article { get; set; }
         
         public Interaction<Unit, bool> CopyConfirm { get; }
-        public ReactiveCommand MarkFave { get; }
-        public ReactiveCommand MarkRead { get; }
-        public ReactiveCommand Launch { get; }
-        public ReactiveCommand Share { get; }
-        public ReactiveCommand Copy { get; }
-        public ReactiveCommand Open { get; }
+        public ReactiveCommand<Unit, Unit> MarkFave { get; }
+        public ReactiveCommand<Unit, Unit> MarkRead { get; }
+        public ReactiveCommand<Unit, Unit> Launch { get; }
+        public ReactiveCommand<Unit, Unit> Share { get; }
+        public ReactiveCommand<Unit, Unit> Copy { get; }
+        public ReactiveCommand<Unit, Unit> Open { get; }
 
         public DateTime Published => Article.PublishedDate;
         public string Content => Article.Content;

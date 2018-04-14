@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
@@ -17,10 +18,10 @@ namespace myFeed.ViewModels
     public sealed class FaveViewModel
     {
         public ReactiveList<FaveGroupViewModel> Items { get; }
-        public ReactiveCommand OrderByMonth { get; }
-        public ReactiveCommand OrderByDate { get; }
-        public ReactiveCommand OrderByFeed { get; }
-        public ReactiveCommand Load { get; }
+        public ReactiveCommand<Unit, Unit> OrderByMonth { get; }
+        public ReactiveCommand<Unit, Unit> OrderByDate { get; }
+        public ReactiveCommand<Unit, Unit> OrderByFeed { get; }
+        public ReactiveCommand<Unit, Unit> Load { get; }
 
         public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
@@ -40,7 +41,7 @@ namespace myFeed.ViewModels
             OrderByDate = LoadAs(x => x.PublishedDate, x => x.ToString(date));
             OrderByFeed = LoadAs(x => x.FeedTitle, x => x);
             
-            ReactiveCommand LoadAs<T>(Func<Article, T> order, Func<T, string> display)
+            ReactiveCommand<Unit, Unit> LoadAs<T>(Func<Article, T> order, Func<T, string> display)
             {
                 return ReactiveCommand.CreateFromTask(async () =>
                 {

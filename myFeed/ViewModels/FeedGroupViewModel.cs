@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reactive;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -15,8 +16,8 @@ namespace myFeed.ViewModels
     public sealed class FeedGroupViewModel
     {
         public IReactiveDerivedList<FeedItemViewModel> Items { get; }
-        public ReactiveCommand Modify { get; }
-        public ReactiveCommand Fetch { get; }
+        public ReactiveCommand<Unit, Unit> Modify { get; }
+        public ReactiveCommand<Unit, Unit> Fetch { get; }
 
         public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
@@ -31,9 +32,11 @@ namespace myFeed.ViewModels
         {
             var showRead = true;
             Title = category.Title;
+            
             var cache = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
             Items = cache.CreateDerivedCollection(x => x, x => !(!showRead && x.Read));
             Items.CountChanged.Subscribe(x => IsEmpty = x == 0);
+            
             Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
             Fetch = ReactiveCommand.CreateFromTask(async () =>
             {

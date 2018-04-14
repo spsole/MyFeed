@@ -22,12 +22,12 @@ namespace myFeed.ViewModels
         public Interaction<Unit, bool> ExportSuccess { get; }
         public Interaction<Unit, bool> ResetConfirm { get; }
         
-        public ReactiveCommand LeaveFeedback { get; }
-        public ReactiveCommand Review { get; }
-        public ReactiveCommand Import { get; }
-        public ReactiveCommand Export { get; }
-        public ReactiveCommand Reset { get; }
-        public ReactiveCommand Load { get; }
+        public ReactiveCommand<Unit, Unit> LeaveFeedback { get; }
+        public ReactiveCommand<Unit, Unit> Review { get; }
+        public ReactiveCommand<Unit, Unit> Import { get; }
+        public ReactiveCommand<Unit, Unit> Export { get; }
+        public ReactiveCommand<Unit, Unit> Reset { get; }
+        public ReactiveCommand<Unit, Unit> Load { get; }
         
         public string Version { get; }
         public double Font { get; set; }
