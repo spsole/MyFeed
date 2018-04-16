@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using DryIocAttributes;
+using myFeed.Events;
 using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
@@ -16,42 +17,37 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(ChannelItemViewModel))]
     public sealed class ChannelItemViewModel
     {
-        [DoNotCheckEquality]
-        private Channel Channel { get; }
-        
         public Interaction<Unit, bool> DeleteRequest { get; }
         public ReactiveCommand<Unit, Unit> Delete { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
         public ReactiveCommand<Unit, Unit> Copy { get; }
 
-        public string Name => new Uri(Channel.Uri).Host;
-        public string Url => Channel.Uri;
-        public bool Notify
-        {
-            get => Channel.Notify;
-            set => Channel.Notify = value;
-        }
+        public bool Notify { get; set; }
+        public string Name { get; }
+        public string Url { get; }
 
         public ChannelItemViewModel(
-            Category category, Channel channel,
             ICategoryManager categoryManager,
             IPlatformService platformService,
-            IMessageBus messageBus)
+            IMessageBus messageBus,
+            Channel channel)
         {
-            Channel = channel;
+            Url = channel.Uri;
+            Notify = channel.Notify;
+            Name = new Uri(channel.Uri).Host;
+            this.WhenAnyValue(x => x.Notify)
+                .Skip(1).Do(x => channel.Notify = x)
+                .SelectMany(x => categoryManager
+                    .UpdateChannelAsync(channel)
+                    .ToObservable())
+                .Subscribe();
+            
             DeleteRequest = new Interaction<Unit, bool>();
             Delete = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (!await DeleteRequest.Handle(Unit.Default)) return;
-                category.Channels.Remove(channel);
-                await categoryManager.UpdateAsync(category);
-                messageBus.SendMessage(this);
+                messageBus.SendMessage(new ChannelDeleteEvent(channel, this));
             });
-            this.WhenAnyValue(x => x.Notify)
-                .Select(x => categoryManager
-                    .UpdateChannelAsync(channel)
-                    .ToObservable())
-                .Concat().Subscribe();
 
             Copy = ReactiveCommand.CreateFromTask(() => platformService.CopyTextToClipboard(Url));
             Open = ReactiveCommand.CreateFromTask(async () =>

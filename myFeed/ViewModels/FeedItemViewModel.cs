@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -15,9 +16,6 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class FeedItemViewModel
     {
-        [DoNotCheckEquality]
-        private Article Article { get; set; }
-        
         public Interaction<Unit, bool> CopyConfirm { get; }
         public ReactiveCommand<Unit, Unit> MarkFave { get; }
         public ReactiveCommand<Unit, Unit> MarkRead { get; }
@@ -26,13 +24,13 @@ namespace myFeed.ViewModels
         public ReactiveCommand<Unit, Unit> Copy { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
 
-        public DateTime Published => Article.PublishedDate;
-        public string Content => Article.Content;
-        public string Image => Article.ImageUri;
-        public string Title => Article.Title;
-        public string Feed => Article.FeedTitle;
-        public bool Fave => Article.Fave;
-        public bool Read => Article.Read;
+        public bool Fave { get; private set; }
+        public bool Read { get; private set; }
+        public DateTime Published { get; }
+        public string Content { get; }
+        public string Image { get; }
+        public string Title { get; }
+        public string Feed { get; }
 
         public FeedItemViewModel(
             Func<FeedItemViewModel, ArticleViewModel> factory,
@@ -42,37 +40,45 @@ namespace myFeed.ViewModels
             IPlatformService platformService,
             Article article)
         {
-            Article = article;
+            Published = article.PublishedDate;
+            Content = article.Content;
+            Image = article.ImageUri;
+            Feed = article.FeedTitle;
+            Title = article.Title;
+            Fave = article.Fave;
+            Read = article.Read;
+
+            Launch = ReactiveCommand.CreateFromTask(
+                () => platformService.LaunchUri(new Uri(article.Uri)),
+                Observable.Return(Uri.IsWellFormedUriString(article.Uri, UriKind.Absolute))
+            );
+            Share = ReactiveCommand.CreateFromTask(
+                () => platformService.Share($"{article.Title} {article.Uri}")
+            );
+            Open = ReactiveCommand.CreateFromTask(
+                () => navigationService.Navigate<ArticleViewModel>(factory(this))
+            );
+
+            MarkRead = ReactiveCommand.Create(() => { Read = !Read; });
+            Open.Subscribe(x => Read = true);
+            this.WhenAnyValue(x => x.Read)
+                .Skip(1).Do(x => article.Read = x)
+                .SelectMany(x => categoryManager
+                    .UpdateArticleAsync(article)
+                    .ToObservable())
+                .Subscribe();
+            
             CopyConfirm = new Interaction<Unit, bool>();
             Copy = ReactiveCommand.CreateFromTask(async () =>
             {
-                await platformService.CopyTextToClipboard(Article.Uri);
+                await platformService.CopyTextToClipboard(article.Uri);
                 await CopyConfirm.Handle(Unit.Default);
-            });
-            Launch = ReactiveCommand.CreateFromTask(
-                () => platformService.LaunchUri(new Uri(Article.Uri)),
-                this.WhenAnyValue(x => x.Article)
-                    .Select(x => Uri.IsWellFormedUriString(x.Uri, UriKind.Absolute))
-            );
-            Share = ReactiveCommand.CreateFromTask(
-                () => platformService.Share($"{Article.Title} {Article.Uri}")
-            );
-            Open = ReactiveCommand.CreateFromTask(async () =>
-            {
-                Article.Read = true;
-                await categoryManager.UpdateArticleAsync(Article);
-                await navigationService.Navigate<ArticleViewModel>(factory(this));
-                Article = Article;
-            });
-            MarkRead = ReactiveCommand.CreateFromTask(async () =>
-            {
-                Article.Read = !Article.Read;
-                await categoryManager.UpdateArticleAsync(Article = Article);
             });
             MarkFave = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (!Fave) await favoriteManager.InsertAsync(Article = Article);
-                else await favoriteManager.RemoveAsync(Article = Article);
+                if (Fave) await favoriteManager.RemoveAsync(article);
+                else await favoriteManager.InsertAsync(article);
+                Fave = article.Fave;
             });
         }
     }

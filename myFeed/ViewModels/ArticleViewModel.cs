@@ -11,9 +11,8 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class ArticleViewModel
     {
-        public ReactiveCommand<Unit, Unit> Load { get; }
         public FeedItemViewModel Article { get; }
-
+        public ReactiveCommand<Unit, Unit> Load { get; }
         public bool IsLoading { get; private set; } = true;
         public bool Images { get; private set; }
         public double Font { get; private set; }

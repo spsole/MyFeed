@@ -17,34 +17,33 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class SearchItemViewModel
     {
-        [DoNotCheckEquality]
-        private FeedlyItem FeedlyItem { get; }
-
         public Interaction<IList<string>, int> AddSelect { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
         public ReactiveCommand<Unit, Unit> Copy { get; }
         public ReactiveCommand<Unit, Unit> Add { get; }
         
-        public string Description => FeedlyItem.Description;
-        public string Image => FeedlyItem.IconUrl;
-        public string Title => FeedlyItem.Title;
-        public string Url => FeedlyItem.Website;
+        public string Description { get; } 
+        public string Image { get; } 
+        public string Title { get; } 
+        public string Url { get; } 
         
         public SearchItemViewModel(
             ICategoryManager categoryManager,
             IPlatformService platformService,
             FeedlyItem feedlyItem)
         {
-            FeedlyItem = feedlyItem;
+            Description = feedlyItem.Description;
+            Image = feedlyItem.IconUrl;
+            Title = feedlyItem.Title;
+            Url = feedlyItem.Website;
+            
             Open = ReactiveCommand.CreateFromTask(
                 () => platformService.LaunchUri(new Uri(Url)),
-                this.WhenAnyValue(x => x.Url)
-                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
+                Observable.Return(Uri.IsWellFormedUriString(Url, UriKind.Absolute))
             );
             Copy = ReactiveCommand.CreateFromTask(
                 () => platformService.CopyTextToClipboard(Url),
-                this.WhenAnyValue(x => x.Url)
-                    .Select(x => !string.IsNullOrWhiteSpace(x))
+                Observable.Return(!string.IsNullOrWhiteSpace(Url))
             );
             
             AddSelect = new Interaction<IList<string>, int>();
@@ -56,14 +55,14 @@ namespace myFeed.ViewModels
                 var index = await AddSelect.Handle(titles);
                 if (index < 0) return;
 
-                var feed = FeedlyItem.FeedId?.Substring(5);
+                var feed = feedlyItem.FeedId?.Substring(5);
                 var source = new Channel {Notify = true, Uri = feed}; 
                 var category = categories[index]; 
                 category.Channels.Add(source); 
                 await categoryManager.UpdateAsync(category); 
             },
-            this.WhenAnyValue(x => x.FeedlyItem, x => x.FeedId?.Substring(5))
-                .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
+            Observable.Return(feedlyItem.FeedId?.Substring(5)).Select(x => 
+                Uri.IsWellFormedUriString(x, UriKind.Absolute)));
         }
     }
 }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using DryIocAttributes;
+using myFeed.Events;
 using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
@@ -19,7 +21,6 @@ namespace myFeed.ViewModels
     {
         public ReactiveList<ChannelGroupViewModel> Items { get; }
         public Interaction<Unit, string> AddRequest { get; }
-        
         public ReactiveCommand<Unit, Unit> Search { get; }
         public ReactiveCommand<Unit, Unit> Load { get; }
         public ReactiveCommand<Unit, Unit> Add { get; }
@@ -36,8 +37,13 @@ namespace myFeed.ViewModels
             AddRequest = new Interaction<Unit, string>();
             Items = new ReactiveList<ChannelGroupViewModel>();
             var map = new Dictionary<ChannelGroupViewModel, Category>();
-            messageBus.Listen<ChannelGroupViewModel>()
-                      .Subscribe(x => Items.Remove(x));
+            messageBus.Listen<CategoryDeleteEvent>()
+                .Where(x => Items.Contains(x.ViewModel))
+                .Do(x => Items.Remove(x.ViewModel))
+                .SelectMany(x => categoryManager
+                    .RemoveAsync(x.Model)
+                    .ToObservable())
+                .Subscribe();
                 
             Search = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<SearchViewModel>());
             Add = ReactiveCommand.CreateFromTask(async () =>
