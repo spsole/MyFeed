@@ -7,9 +7,9 @@ using ReactiveUI;
 namespace myFeed.ViewModels
 {
     [Reuse(ReuseType.Transient)]
-    [ExportEx(typeof(ArticleViewModel))]
+    [ExportEx(typeof(FeedItemFullViewModel))]
     [AddINotifyPropertyChangedInterface]
-    public sealed class ArticleViewModel
+    public sealed class FeedItemFullViewModel
     {
         public FeedItemViewModel Article { get; }
         public ReactiveCommand<Unit, Unit> Load { get; }
@@ -17,7 +17,7 @@ namespace myFeed.ViewModels
         public bool Images { get; private set; }
         public double Font { get; private set; }
 
-        public ArticleViewModel(
+        public FeedItemFullViewModel(
             FeedItemViewModel feedItemViewModel,
             ISettingManager settingManager)
         {

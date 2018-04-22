@@ -1,5 +1,5 @@
 ﻿<Page
-    d:DataContext="{d:DesignInstance Type=implementations:ArticleViewModel}"
+    d:DataContext="{d:DesignInstance Type=implementations:FeedItemFullViewModel}"
     x:Class="myFeed.Uwp.Views.ArticleView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

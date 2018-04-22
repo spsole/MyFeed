@@ -30,25 +30,24 @@ namespace myFeed.ViewModels
         public string Title { get; private set; }
         
         public ChannelGroupViewModel(
-            Func<Channel, Category, ChannelItemViewModel> factory,
+            Func<Channel, ChannelItemViewModel> factory,
             ICategoryManager categoryManager, 
             IMessageBus messageBus,
             Category category)
         {
             Title = category.Title;
             Items = new ReactiveList<ChannelItemViewModel>();
-            RenameRequest = new Interaction<Unit, string>();
-            RemoveRequest = new Interaction<Unit, bool>();
             messageBus.Listen<ChannelDeleteEvent>()
                 .Where(x => category.Channels.Contains(x.Model))
-                .Where(x => Items.Contains(x.ViewModel))
                 .Do(x => category.Channels.Remove(x.Model))
+                .Where(x => Items.Contains(x.ViewModel))
                 .Do(x => Items.Remove(x.ViewModel))
                 .SelectMany(x => categoryManager
                     .UpdateAsync(category)
                     .ToObservable())
                 .Subscribe();
-            
+
+            RenameRequest = new Interaction<Unit, string>();
             Rename = ReactiveCommand.CreateFromTask(async () =>
             {
                 var name = await RenameRequest.Handle(Unit.Default);
@@ -56,18 +55,21 @@ namespace myFeed.ViewModels
                 Title = category.Title = name;
                 await categoryManager.UpdateAsync(category);
             });
+
+            RemoveRequest = new Interaction<Unit, bool>();
             Remove = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (!await RemoveRequest.Handle(Unit.Default)) return;
                 messageBus.SendMessage(new CategoryDeleteEvent(category, this));
             });
+
             AddChannel = ReactiveCommand.CreateFromTask(async () =>
             {
                 var model = new Channel {Uri = ChannelUri, Notify = true};
                 ChannelUri = string.Empty;
                 category.Channels.Add(model);
                 await categoryManager.UpdateAsync(category);
-                Items.Add(factory(model, category));
+                Items.Add(factory(model));
             }, 
             this.WhenAnyValue(x => x.ChannelUri)
             	.Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
@@ -75,8 +77,8 @@ namespace myFeed.ViewModels
             Load = ReactiveCommand.Create(() =>
             {
                 Items.Clear();
-                Items.AddRange(category.Channels
-                     .Select(x => factory(x, category)));
+                var items = category.Channels.Select(factory);
+                Items.AddRange(items);
             });
         }
     }

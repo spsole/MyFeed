@@ -33,7 +33,7 @@ namespace myFeed.ViewModels
         public string Feed { get; }
 
         public FeedItemViewModel(
-            Func<FeedItemViewModel, ArticleViewModel> factory,
+            Func<FeedItemViewModel, FeedItemFullViewModel> factory,
             INavigationService navigationService,
             ICategoryManager categoryManager,
             IFavoriteManager favoriteManager,
@@ -56,7 +56,7 @@ namespace myFeed.ViewModels
                 () => platformService.Share($"{article.Title} {article.Uri}")
             );
             Open = ReactiveCommand.CreateFromTask(
-                () => navigationService.Navigate<ArticleViewModel>(factory(this))
+                () => navigationService.Navigate<FeedItemFullViewModel>(factory(this))
             );
 
             MarkRead = ReactiveCommand.Create(() => { Read = !Read; });
@@ -74,6 +74,7 @@ namespace myFeed.ViewModels
                 await platformService.CopyTextToClipboard(article.Uri);
                 await CopyConfirm.Handle(Unit.Default);
             });
+
             MarkFave = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (Fave) await favoriteManager.RemoveAsync(article);

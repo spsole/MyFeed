@@ -12,8 +12,8 @@ namespace myFeed.Services
     [ExportEx(typeof(IFeedStoreService))]
     public sealed class ParallelFeedStoreService : IFeedStoreService
     {
-        private readonly ICategoryManager _categoryManager;
         private readonly IFeedFetchService _feedFetchService;
+        private readonly ICategoryManager _categoryManager;
         private readonly ISettingManager _settingManager;
         
         public ParallelFeedStoreService(
@@ -21,17 +21,17 @@ namespace myFeed.Services
             ICategoryManager categoryManager,
             ISettingManager settingManager)
         {
-            _categoryManager = categoryManager;
             _feedFetchService = feedFetchService;
+            _categoryManager = categoryManager;
             _settingManager = settingManager;
         }
         
         public Task<IEnumerable<Article>> LoadAsync(IEnumerable<Channel> channels) => Task.Run(async () =>
         {
-            // Remove extra saved articles and save changes based on max articles allowed.
+            // Remove extra saved articles and save.
             var settings = await _settingManager.Read();
-            var fetchableChannels = channels.ToList();
-            foreach (var channel in fetchableChannels)
+            var fetchables = channels.ToList();
+            foreach (var channel in fetchables)
             {
                 if (channel.Articles.Count <= settings.Max) continue;
                 channel.Articles = channel.Articles
@@ -41,43 +41,40 @@ namespace myFeed.Services
             }
 
             // Form lookup with trimmed title and feed as keys.
-            var existingLookup = fetchableChannels.SelectMany(i => i.Articles)
+            var existing = fetchables.SelectMany(i => i.Articles)
                 .ToLookup(i => (i.Title?.Trim(), i.FeedTitle?.Trim()));
 
             // Retrieve feed based on single fetcher implementation.
-            var fetchTasks = fetchableChannels.Select(i => FetchAsync(i, settings.Max));
-            var grouppedArticles = await Task.WhenAll(fetchTasks);
-            var distinctGroupping = grouppedArticles
+            var tasks = fetchables.Select(i => FetchAsync(i, settings.Max));
+            var groupped = await Task.WhenAll(tasks).ConfigureAwait(false);
+            var distinct = groupped
                 .Select(i => (i.Item1, i.Item2
-                    .Where(x => !existingLookup.Contains(
+                    .Where(x => !existing.Contains(
                         (x.Title?.Trim(), x.FeedTitle?.Trim())))
                     .ToArray()))
                 .ToList();
 
-            // Save received distinct items into database.
-            distinctGroupping.ForEach(x => x.Item1.Articles.AddRange(x.Item2));
-            foreach (var tuple in distinctGroupping)
-                await _categoryManager.UpdateChannelAsync(tuple.Item1);
+            // Save distinct articles into database.
+            foreach (var (channel, articles) in distinct)
+            {
+                channel.Articles.AddRange(articles);
+                await _categoryManager.UpdateChannelAsync(channel);
+            }
 
-            // Return global join with both old and new articles.
-            var flatternedArticles = distinctGroupping.SelectMany(i => i.Item2);
-            return existingLookup
-                .SelectMany(i => i)
-                .Concat(flatternedArticles)
+            // Return existing and fetched articles.
+            return existing.SelectMany(i => i)
+                .Concat(distinct.SelectMany(i => i.Item2))
                 .OrderByDescending(i => i.PublishedDate)
                 .ToList()
                 .AsEnumerable();
         });
 
-        private Task<Tuple<Channel, IEnumerable<Article>>> FetchAsync(
-            Channel fetchableChannel, int maxArticleCount) => Task.Run(async () =>
+        private Task<Tuple<Channel, IEnumerable<Article>>> FetchAsync(Channel channel, int max) => Task.Run(async () =>
         {
-            // Fetches single feed in a separate thread.
-            var uriToFetch = fetchableChannel.Uri;
-            var articles = await _feedFetchService.FetchAsync(uriToFetch);
-            return new Tuple<Channel, IEnumerable<Article>>(fetchableChannel, articles
+            var articles = await _feedFetchService.FetchAsync(channel.Uri);
+            return new Tuple<Channel, IEnumerable<Article>>(channel, articles
                 .OrderByDescending(i => i.PublishedDate)
-                .Take(maxArticleCount));
+                .Take(max));
         });
     }
 }

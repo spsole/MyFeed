@@ -30,7 +30,7 @@ namespace myFeed.Uwp.Services
         {
             {typeof(SettingViewModel), typeof(SettingView)},
             {typeof(ChannelViewModel), typeof(ChannelView)},
-            {typeof(ArticleViewModel), typeof(ArticleView)},
+            {typeof(FeedItemFullViewModel), typeof(ArticleView)},
             {typeof(SearchViewModel), typeof(SearchView)},
             {typeof(MenuViewModel), typeof(MenuView)},
             {typeof(FaveViewModel), typeof(FaveView)},
@@ -83,7 +83,7 @@ namespace myFeed.Uwp.Services
                 case nameof(MenuViewModel):
                     NavigateFrame((Frame)Window.Current.Content);
                     break;
-                case nameof(ArticleViewModel):
+                case nameof(FeedItemFullViewModel):
                     if (GetChild<Frame>(Window.Current.Content, 1) == null)
                         await Navigate<FeedViewModel>();
                     await Task.Delay(150);
@@ -97,7 +97,7 @@ namespace myFeed.Uwp.Services
                 var viewModelType = typeof(T);
                 if ((Page)frame.Content != null &&
                    ((Page)frame.Content).DataContext.GetType() == viewModelType &&
-                   ((Page)frame.Content).DataContext.GetType() != typeof(ArticleViewModel)) return;
+                   ((Page)frame.Content).DataContext.GetType() != typeof(FeedItemFullViewModel)) return;
                 frame.Navigate(_pages[viewModelType], parameter);
                 ((Page)frame.Content).DataContext = parameter;
                 RaiseNavigated(viewModelType);
@@ -126,14 +126,14 @@ namespace myFeed.Uwp.Services
             frame.ForwardStack.Clear();
             if (instance == null) return;
 
-            ((Page) frame.Content).DataContext = instance is ArticleViewModel
+            ((Page) frame.Content).DataContext = instance is FeedItemFullViewModel
                 ? instance : _resolver.Resolve(instance.GetType());
             RaiseNavigated(instance.GetType());
         }
 
         private void RaiseNavigated(Type type)
         {
-            if (type == typeof(ArticleViewModel))
+            if (type == typeof(FeedItemFullViewModel))
                 type = ((Page)GetChild<Frame>(Window.Current.Content, 0)
                     .Content).DataContext.GetType();
             _navigatedSubject.OnNext(type);
