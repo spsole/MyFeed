@@ -146,3 +146,4 @@ let ``should ignore whitespaces while comparing titles``() =
     Should.equal "Bar" articles.[1].Title
     Should.equal "Bar" articles.[0].FeedTitle
     Should.equal "Foo" articles.[1].FeedTitle
+    

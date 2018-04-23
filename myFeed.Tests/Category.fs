@@ -39,7 +39,7 @@ let ``should remove categories from database``() =
     let category = Category()
     repository.InsertAsync(category).Wait()
     repository.RemoveAsync(category).Wait()
-    
+
     repository.GetAllAsync().Result
     |> Seq.length
     |> Should.equal 0   

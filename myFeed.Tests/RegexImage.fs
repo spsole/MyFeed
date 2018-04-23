@@ -40,3 +40,4 @@ let ``should extract first match from plaint text`` snippet result =
     let service = produce<RegexImageService> []
     let response = service.ExtractImageUri snippet
     Should.equal result response
+    

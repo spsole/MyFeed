@@ -194,3 +194,4 @@ let ``should be able to insert settings into database``() =
 
     let setting = collection.FindOne(fun x -> true)
     Should.equal 42. setting.Font
+    

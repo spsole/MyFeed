@@ -50,3 +50,4 @@ let ``should not send notifications for outdated old articles``() =
     let service = produce<BackgroundService> [store; notify; settings]
     service.CheckForUpdates(DateTime.Now).Wait()
     Should.equal 0 received.Count 
+    

@@ -37,3 +37,4 @@ let ``should remove articles from article collection``() =
     repository.RemoveAsync(article).Wait()
     let response = List.ofSeq <| repository.GetAllAsync().Result
     Should.equal 0 response.Length
+    

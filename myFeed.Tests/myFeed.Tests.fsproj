@@ -6,7 +6,6 @@
     <Compile Include="AutoOpen.fs" />
     <Compile Include="Background.fs" />
     <Compile Include="Category.fs" />
-    <Compile Include="Composition.fs" />
     <Compile Include="Database.fs" />
     <Compile Include="FaveViewModel.fs" />
     <Compile Include="Favorite.fs" />
@@ -14,7 +13,6 @@
     <Compile Include="ParallelFeedStore.fs" />
     <Compile Include="RegexImage.fs" />
     <Compile Include="Settings.fs" />
-    <Compile Include="SettingViewModel.fs" />
     <Compile Include="XmlSerialization.fs" />
   </ItemGroup>
   <ItemGroup>
