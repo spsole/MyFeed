@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
-using System.ComponentModel.Composition;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -13,7 +12,7 @@ using myFeed.Platform;
 namespace myFeed.Uwp.Notifications
 {
     [Reuse(ReuseType.Singleton)]
-    [Export(typeof(INotificationService))]
+    [ExportEx(typeof(INotificationService))]
     internal sealed class UwpNotificationService : INotificationService
     {
         private readonly ISettingManager _settingManager;

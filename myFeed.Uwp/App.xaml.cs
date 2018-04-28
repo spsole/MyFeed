@@ -58,7 +58,7 @@ namespace myFeed.Uwp
         {
             var categoryManager = _container.Resolve<ICategoryManager>();
             var navigationService = _container.Resolve<INavigationService>();
-            var article = await categoryManager.GetArticleByIdAsync(guid);
+            var article = await categoryManager.GetArticleById(guid);
             if (article == null) return;
 
             var factory = _container.Resolve<Func<Article, FeedItemViewModel>>();

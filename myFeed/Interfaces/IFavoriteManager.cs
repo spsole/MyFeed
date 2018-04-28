@@ -6,10 +6,10 @@ namespace myFeed.Interfaces
 {
     public interface IFavoriteManager
     {
-        Task<IEnumerable<Article>> GetAllAsync();
+        Task<IEnumerable<Article>> GetAll();
         
-        Task InsertAsync(Article article);
+        Task<bool> Insert(Article article);
 
-        Task RemoveAsync(Article article);
+        Task<bool> Remove(Article article);
     }
 }

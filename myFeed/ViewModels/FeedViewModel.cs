@@ -37,7 +37,7 @@ namespace myFeed.ViewModels
                 IsEmpty = false;
                 IsLoading = true;
                 var settings = await settingManager.Read();
-                var categories = await categoryManager.GetAllAsync();
+                var categories = await categoryManager.GetAll();
                 var viewModels = categories.Select(factory);
                 Items.Clear();
                 Items.AddRange(viewModels);

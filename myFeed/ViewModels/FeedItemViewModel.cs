@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -63,9 +62,7 @@ namespace myFeed.ViewModels
             Open.Subscribe(x => Read = true);
             this.WhenAnyValue(x => x.Read)
                 .Skip(1).Do(x => article.Read = x)
-                .SelectMany(x => categoryManager
-                    .UpdateArticleAsync(article)
-                    .ToObservable())
+                .SelectMany(x => categoryManager.Update(article))
                 .Subscribe();
             
             CopyConfirm = new Interaction<Unit, bool>();
@@ -77,8 +74,8 @@ namespace myFeed.ViewModels
 
             MarkFave = ReactiveCommand.CreateFromTask(async () =>
             {
-                if (Fave) await favoriteManager.RemoveAsync(article);
-                else await favoriteManager.InsertAsync(article);
+                if (Fave) await favoriteManager.Remove(article);
+                else await favoriteManager.Insert(article);
                 Fave = article.Fave;
             });
         }

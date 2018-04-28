@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>netstandard1.4</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DryIoc.MefAttributedModel.dll" Version="3.2.0" />

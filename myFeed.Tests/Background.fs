@@ -15,7 +15,7 @@ open System
 let ``should send ordered notifications for articles with greater date``() =
 
     let store = Substitute.For<IFeedStoreService>()
-    store.LoadAsync(Arg.Any()).Returns(Task.FromResult
+    store.Load(Arg.Any()).Returns(Task.FromResult
         ([ Article(Title="Foo", PublishedDate=DateTime.Now);
           Article(Title="Bar", PublishedDate=DateTime.MaxValue) ] :> seq<_>)) |> ignore
 
@@ -36,7 +36,7 @@ let ``should send ordered notifications for articles with greater date``() =
 let ``should not send notifications for outdated old articles``() =
 
     let store = Substitute.For<IFeedStoreService>()
-    store.LoadAsync(Arg.Any()).Returns(Task.FromResult
+    store.Load(Arg.Any()).Returns(Task.FromResult
         ([ Article(PublishedDate=DateTime.MinValue) ] :> seq<_>)) |> ignore
         
     let settings = Substitute.For<ISettingManager>()

@@ -2,7 +2,6 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -47,7 +46,7 @@ namespace myFeed.ViewModels
                 {
                     IsLoading = true;
                     var settings = await settingManager.Read();
-                    var articles = await favoriteManager.GetAllAsync();
+                    var articles = await favoriteManager.GetAll();
                     var groupings = articles
                         .OrderByDescending(order)
                         .GroupBy(x => display(order(x)))
@@ -60,7 +59,7 @@ namespace myFeed.ViewModels
                     IsEmpty = Items.Count == 0;
                     IsLoading = false;
                 },
-                this.WhenAnyValue(x => x.IsLoading).Select(x => !x));
+                this.WhenAnyValue(x => x.IsLoading, loading => !loading));
             }
         }
     }

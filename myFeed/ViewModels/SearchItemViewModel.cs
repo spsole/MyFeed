@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -17,7 +18,7 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class SearchItemViewModel
     {
-        public Interaction<IList<string>, int> AddSelect { get; }
+        public Interaction<IList<string>, int> Select { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
         public ReactiveCommand<Unit, Unit> Copy { get; }
         public ReactiveCommand<Unit, Unit> Add { get; }
@@ -37,6 +38,13 @@ namespace myFeed.ViewModels
             Title = feedlyItem.Title;
             Url = feedlyItem.Website;
             
+            Select = new Interaction<IList<string>, int>();
+            Add = ReactiveCommand.CreateFromTask(
+                () => DoAdd(categoryManager, feedlyItem), Observable
+                    .Return(feedlyItem.FeedId?.Substring(5))
+                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
+            );
+            
             Open = ReactiveCommand.CreateFromTask(
                 () => platformService.LaunchUri(new Uri(Url)),
                 Observable.Return(Uri.IsWellFormedUriString(Url, UriKind.Absolute))
@@ -45,24 +53,23 @@ namespace myFeed.ViewModels
                 () => platformService.CopyTextToClipboard(Url),
                 Observable.Return(!string.IsNullOrWhiteSpace(Url))
             );
-            
-            AddSelect = new Interaction<IList<string>, int>();
-            Add = ReactiveCommand.CreateFromTask(async () =>
-            {
-                var response = await categoryManager.GetAllAsync();
-                var categories = new List<Category>(response);
-                var titles = categories.Select(i => i.Title).ToList(); 
-                var index = await AddSelect.Handle(titles);
-                if (index < 0) return;
+        }
 
-                var feed = feedlyItem.FeedId?.Substring(5);
-                var source = new Channel {Notify = true, Uri = feed}; 
-                var category = categories[index]; 
-                category.Channels.Add(source); 
-                await categoryManager.UpdateAsync(category); 
-            },
-            Observable.Return(feedlyItem.FeedId?.Substring(5)).Select(x => 
-                Uri.IsWellFormedUriString(x, UriKind.Absolute)));
+        private async Task DoAdd(
+            ICategoryManager categoryManager,
+            FeedlyItem feedlyItem)
+        {
+            var response = await categoryManager.GetAll();
+            var categories = new List<Category>(response);
+            var titles = categories.Select(i => i.Title).ToList(); 
+            var index = await Select.Handle(titles);
+            if (index < 0) return;
+
+            var feed = feedlyItem.FeedId?.Substring(5);
+            var source = new Channel { Notify = true, Uri = feed }; 
+            var category = categories[index]; 
+            category.Channels.Add(source); 
+            await categoryManager.Update(category); 
         }
     }
 }

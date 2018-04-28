@@ -41,7 +41,7 @@ namespace myFeed.ViewModels
             {
                 IsLoading = true;
                 var settings = await settingManager.Read();
-                var response = await feedStoreService.LoadAsync(category.Channels);
+                var response = await feedStoreService.Load(category.Channels);
                 var viewModels = response.Select(factory).ToList();
                 showRead = settings.Read;
                 cache.Clear();

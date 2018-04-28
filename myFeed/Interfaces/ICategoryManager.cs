@@ -7,21 +7,21 @@ namespace myFeed.Interfaces
 {
     public interface ICategoryManager
     {
-        Task<IEnumerable<Category>> GetAllAsync();
+        Task<IEnumerable<Category>> GetAll();
 
-        Task<Article> GetArticleByIdAsync(Guid guid);
+        Task<Article> GetArticleById(Guid guid);
         
-        Task RearrangeAsync(IEnumerable<Category> categories);
+        Task<bool> Rearrange(IEnumerable<Category> categories);
 
-        Task InsertAsync(Category category);
+        Task<bool> Insert(Category category);
 
-        Task RemoveAsync(Category category);
+        Task<bool> Remove(Category category);
 
-        Task UpdateAsync(Category category);
+        Task<bool> Update(Category category);
 
-        Task UpdateChannelAsync(Channel channel);
+        Task<bool> Update(Channel channel);
 
-        Task UpdateArticleAsync(Article article);
+        Task<bool> Update(Article article);
     }
 }
 

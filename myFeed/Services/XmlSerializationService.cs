@@ -1,5 +1,6 @@
-using System;
 using System.IO;
+using System.Reactive;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -10,29 +11,17 @@ namespace myFeed.Services
     [ExportEx(typeof(ISerializationService))]
     public sealed class XmlSerializationService : ISerializationService
     {
-        public void Serialize<TObject>(TObject instance, Stream stream)
+        public Task Serialize<TObject>(TObject instance, Stream stream) => Task.Run(() =>
         {
-            try
-            {
-                var serializer = new XmlSerializer(typeof(TObject));
-                using (stream) serializer.Serialize(stream, instance);
-            }
-            catch (Exception)
-            {
-                // ignore
-            }
-        }
-        public TObject Deserialize<TObject>(Stream stream)
+            var serializer = new XmlSerializer(typeof(TObject));
+            using (stream) serializer.Serialize(stream, instance);
+            return Unit.Default;
+        });
+
+        public Task<TObject> Deserialize<TObject>(Stream stream) => Task.Run(() =>
         {
-            try
-            {
-                var serializer = new XmlSerializer(typeof(TObject));
-                using (stream) return (TObject) serializer.Deserialize(stream);
-            }
-            catch (Exception)
-            {
-                return default(TObject);
-            }
-        }
+            var serializer = new XmlSerializer(typeof(TObject));
+            using (stream) return (TObject) serializer.Deserialize(stream);
+        });
     }
 }

@@ -6,6 +6,6 @@ namespace myFeed.Interfaces
 {
     public interface IFeedStoreService
     {
-        Task<IEnumerable<Article>> LoadAsync(IEnumerable<Channel> channels);
+        Task<IEnumerable<Article>> Load(IEnumerable<Channel> channels);
     }
 }

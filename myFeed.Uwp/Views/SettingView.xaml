@@ -26,14 +26,14 @@
     <Grid>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
-                <actions:ReactiveCommandAction Command="{Binding Load}"/>
-                <actions:ModalConfirmAction Interaction="{Binding ResetConfirm}" 
+                <actions:ReactiveCommandAction Command="{Binding Personal.Load}"/>
+                <actions:ModalConfirmAction Interaction="{Binding Special.ResetConfirm}" 
                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ResetAppNoRestore}" 
                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
-                <actions:ModalConfirmAction Interaction="{Binding ImportSuccess}"
+                <actions:ModalConfirmAction Interaction="{Binding Special.ImportSuccess}"
                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ImportOpmlSuccess}" 
                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
-                <actions:ModalConfirmAction Interaction="{Binding ExportSuccess}"
+                <actions:ModalConfirmAction Interaction="{Binding Special.ExportSuccess}"
                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ExportOpmlSuccess}" 
                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
             </core:EventTriggerBehavior>
@@ -53,7 +53,7 @@
                                 ConverterParameter=ChangeTextSizeTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding ConverterParameter=
                                 ChangeTextSize, Converter={StaticResource Locale}}"/>
-                            <Slider Value="{Binding Font, Mode=TwoWay}" 
+                            <Slider Value="{Binding Personal.Font, Mode=TwoWay}" 
                                 Minimum="14" Maximum="22" Width="300" HorizontalAlignment="Left"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
@@ -61,21 +61,21 @@
                                 ConverterParameter=ShowReadArticlesTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=ShowReadArticles}"/>
-                            <ToggleSwitch IsOn="{Binding Read, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{Binding Personal.Read, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
                                 ConverterParameter=DisableImagesTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=DisableImages}"/>
-                            <ToggleSwitch IsOn="{Binding Images, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{Binding Personal.Images, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
                                 ConverterParameter=NotifyCheckTimeTitle, Converter={StaticResource Locale}}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=NotifyCheckTime}"/>
-                            <Slider Value="{Binding Period, Mode=TwoWay}" Minimum="0" 
+                            <Slider Value="{Binding Personal.Period, Mode=TwoWay}" Minimum="0" 
                                 Maximum="180" Width="300" HorizontalAlignment="Left" StepFrequency="30"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
@@ -83,14 +83,14 @@
                                 Converter={StaticResource Locale}, ConverterParameter=NotifyBannersTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=NotifyBanners}"/>
-                            <ToggleSwitch IsOn="{Binding Banners, Mode=TwoWay}"/>
+                            <ToggleSwitch IsOn="{Binding Personal.Banners, Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding
                                 Converter={StaticResource Locale}, ConverterParameter=MaxArticlesPerFeedTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource
                                 Locale}, ConverterParameter=MaxArticlesPerFeed}"/>
-                            <Slider Value="{Binding Max, Mode=TwoWay}" Minimum="50"
+                            <Slider Value="{Binding Personal.Max, Mode=TwoWay}" Minimum="50"
                                 Maximum="300" Width="300" HorizontalAlignment="Left" StepFrequency="50"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
@@ -102,9 +102,9 @@
                                 {StaticResource Locale}, ConverterParameter=DefaultThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="Theme" Value="default"/>
+                                        <core:ChangePropertyAction TargetObject="{Binding Personal}" PropertyName="Theme" Value="default"/>
                                     </core:EventTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="default">
+                                    <core:DataTriggerBehavior Binding="{Binding Personal.Theme}" ComparisonCondition="Equal" Value="default">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=DefaultRadioButton}" PropertyName="IsChecked">
                                             <core:ChangePropertyAction.Value>
                                                 <x:Boolean>True</x:Boolean>
@@ -117,9 +117,9 @@
                                 {StaticResource Locale}, ConverterParameter=DarkThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="Theme" Value="dark"/>
+                                        <core:ChangePropertyAction TargetObject="{Binding Personal}" PropertyName="Theme" Value="dark"/>
                                     </core:EventTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="dark">
+                                    <core:DataTriggerBehavior Binding="{Binding Personal.Theme}" ComparisonCondition="Equal" Value="dark">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=DarkRadioButton}" PropertyName="IsChecked">
                                             <core:ChangePropertyAction.Value>
                                                 <x:Boolean>True</x:Boolean>
@@ -132,9 +132,9 @@
                                 {StaticResource Locale}, ConverterParameter=LightThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="Theme" Value="light"/>
+                                        <core:ChangePropertyAction TargetObject="{Binding Personal}" PropertyName="Theme" Value="light"/>
                                     </core:EventTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="light">
+                                    <core:DataTriggerBehavior Binding="{Binding Personal.Theme}" ComparisonCondition="Equal" Value="light">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=LightRadioButton}" PropertyName="IsChecked">
                                             <core:ChangePropertyAction.Value>
                                                 <x:Boolean>True</x:Boolean>
@@ -155,7 +155,7 @@
                                 Converter={StaticResource Locale}, ConverterParameter=ExportOpmlTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=ExportOpml}"/>
-                            <Button Command="{Binding Export}" Margin="0 6" Content="{Binding 
+                            <Button Command="{Binding Special.Export}" Margin="0 6" Content="{Binding 
                                 Converter={StaticResource Locale}, ConverterParameter=Export}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
@@ -163,7 +163,7 @@
                                 Converter={StaticResource Locale}, ConverterParameter=ImportOpmlTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=ImportOpml}"/>
-                            <Button Command="{Binding Import}" Margin="0 6" Content="{Binding 
+                            <Button Command="{Binding Special.Import}" Margin="0 6" Content="{Binding 
                                 Converter={StaticResource Locale}, ConverterParameter=Import}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
@@ -172,7 +172,7 @@
                             <TextBlock Margin="0 6" TextWrapping="Wrap" Text="{Binding Converter={StaticResource 
                                 Locale}, ConverterParameter=ResetText}"/>
                             <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, 
-                                ConverterParameter=Reset}" Command="{Binding Reset}"/>
+                                ConverterParameter=Reset}" Command="{Binding Special.Reset}"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -195,13 +195,13 @@
                                 <HyperlinkButton Content="worldbeater.github.io" Margin="0 6"
                                     Style="{StaticResource TextBlockButtonStyle}" Padding="0"
                                     NavigateUri="https://worldbeater.github.io"/>
-                                <TextBlock Text="{Binding Version}"/>
+                                <TextBlock Text="{Binding About.Version}"/>
                             </StackPanel>
                         </Grid>
                         <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMail}"/>
-                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMailButton}" Command="{Binding LeaveFeedback}"/>
+                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMailButton}" Command="{Binding About.Feedback}"/>
                         <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedback}"/>
-                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedbackButton}" Command="{Binding LeaveReview}"/>
+                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedbackButton}" Command="{Binding About.Review}"/>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

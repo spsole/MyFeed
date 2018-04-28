@@ -14,8 +14,8 @@ let private repository = produce<LiteFavoriteManager> [connection]
 let ``should insert favorite articles into database`` title =
 
     let article = Article(Title=title, Fave=false)
-    repository.InsertAsync(article).Wait()
-    let response = List.ofSeq <| repository.GetAllAsync().Result
+    repository.Insert(article).Wait()
+    let response = List.ofSeq <| repository.GetAll().Result
     Should.equal title response.[0].Title
     Should.equal article.Fave true
 
@@ -23,9 +23,9 @@ let ``should insert favorite articles into database`` title =
 [<CleanUpCollection("Article")>]
 let ``should initialize unique ids when inserting articles``() =
 
-    repository.InsertAsync(Article()).Wait()
-    repository.InsertAsync(Article()).Wait()
-    let response = List.ofSeq <| repository.GetAllAsync().Result
+    repository.Insert(Article()).Wait()
+    repository.Insert(Article()).Wait()
+    let response = List.ofSeq <| repository.GetAll().Result
     Should.notEqual response.[0].Id response.[1].Id
 
 [<Fact>]
@@ -33,8 +33,8 @@ let ``should initialize unique ids when inserting articles``() =
 let ``should remove articles from article collection``() =  
 
     let article = Article()
-    repository.InsertAsync(article).Wait()
-    repository.RemoveAsync(article).Wait()
-    let response = List.ofSeq <| repository.GetAllAsync().Result
+    repository.Insert(article).Wait()
+    repository.Remove(article).Wait()
+    let response = List.ofSeq <| repository.GetAll().Result
     Should.equal 0 response.Length
     

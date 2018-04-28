@@ -18,11 +18,11 @@ namespace myFeed.Services
 
         public FeedReaderFetchService(IImageService imageService) => _imageService = imageService;
 
-        public async Task<IEnumerable<Article>> FetchAsync(string uri) 
+        public async Task<IEnumerable<Article>> Fetch(string uri) 
         {
             try
             {
-                var feed = await FeedReader.ReadAsync(uri);
+                var feed = await FeedReader.ReadAsync(uri).ConfigureAwait(false);
                 return from feedItem in feed.Items
                     let content = feedItem.Content
                     let contents = string.IsNullOrWhiteSpace(content) ? feedItem.Description : content

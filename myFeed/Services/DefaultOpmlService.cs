@@ -17,44 +17,44 @@ namespace myFeed.Services
         private readonly ICategoryManager _categoryManager;
 
         public DefaultOpmlService(
-            ICategoryManager categoryManager,
-            ISerializationService serializationService)
+            ISerializationService serializationService,
+            ICategoryManager categoryManager)
         {
-            _categoryManager = categoryManager;
             _serializationService = serializationService;
+            _categoryManager = categoryManager;
         }
 
-        public async Task<bool> ExportOpmlFeedsAsync(Stream stream)
+        public async Task<bool> ExportOpml(Stream stream)
         {
             var opml = new Opml {Head = new OpmlHead {Title = "Feeds from myFeed App"}};
-            var categories = await _categoryManager.GetAllAsync();
+            var categories = await _categoryManager.GetAll().ConfigureAwait(false);
             var outlines = categories.Select(x => new OpmlOutline
             {
-                ChildOutlines = x.Channels
-                    .Select(i => new {Entity = i, Uri = new Uri(i.Uri)})
-                    .Select(y => new OpmlOutline
-                    {
-                        HtmlUrl = $"{y.Uri.Scheme}://{y.Uri.Host}",
-                        XmlUrl = y.Uri.ToString(),
-                        Title = y.Uri.Host,
-                        Text = y.Uri.Host,
-                        Version = "rss",
-                        Type = "rss"
-                    })
-                    .ToList(),
+                Text = x.Title,
                 Title = x.Title,
-                Text = x.Title
+                ChildOutlines = x.Channels
+                .Select(i => new {Entity = i, Uri = new Uri(i.Uri)})
+                .Select(y => new OpmlOutline
+                {
+                    HtmlUrl = $"{y.Uri.Scheme}://{y.Uri.Host}",
+                    XmlUrl = y.Uri.ToString(),
+                    Title = y.Uri.Host,
+                    Text = y.Uri.Host,
+                    Version = "rss",
+                    Type = "rss"
+                })
+                .ToList()
             });
 
             opml.Body = new List<OpmlOutline>(outlines);
             if (stream == null) return false;
-            _serializationService.Serialize(opml, stream);
+            await _serializationService.Serialize(opml, stream).ConfigureAwait(false);
             return true;
         }
 
-        public async Task<bool> ImportOpmlFeedsAsync(Stream stream)
+        public async Task<bool> ImportOpml(Stream stream)
         {
-            var opml = _serializationService.Deserialize<Opml>(stream);
+            var opml = await _serializationService.Deserialize<Opml>(stream).ConfigureAwait(false);
             if (opml == null) return false;
             var categories = opml.Body
                 .Where(i => i.XmlUrl == null && i.HtmlUrl == null)
@@ -63,11 +63,8 @@ namespace myFeed.Services
                 .Select(i => new Category
                 {
                     Title = i.Title,
-                    Channels = i.Outline.ChildOutlines.Select(o => new Channel
-                    {
-                        Uri = o.XmlUrl,
-                        Notify = true
-                    })
+                    Channels = i.Outline.ChildOutlines
+                    .Select(o => new Channel { Uri = o.XmlUrl, Notify = true })
                     .ToList()
                 })
                 .ToList();
@@ -76,14 +73,13 @@ namespace myFeed.Services
             {
                 Title = "Unknown category",
                 Channels = opml.Body
-                    .Where(i => Uri.IsWellFormedUriString(i.XmlUrl, UriKind.Absolute))
-                    .Select(i => new Channel {Uri = i.XmlUrl, Notify = true})
-                    .ToList()
+                .Where(i => Uri.IsWellFormedUriString(i.XmlUrl, UriKind.Absolute))
+                .Select(i => new Channel {Uri = i.XmlUrl, Notify = true})
+                .ToList()
             };
             if (uncategorized.Channels.Any()) categories.Add(uncategorized);
-
             foreach (var category in categories) 
-                await _categoryManager.InsertAsync(category);
+                await _categoryManager.Insert(category).ConfigureAwait(false);
             return true;
         }
     }

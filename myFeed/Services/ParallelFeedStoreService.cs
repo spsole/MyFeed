@@ -26,10 +26,10 @@ namespace myFeed.Services
             _settingManager = settingManager;
         }
         
-        public Task<IEnumerable<Article>> LoadAsync(IEnumerable<Channel> channels) => Task.Run(async () =>
+        public async Task<IEnumerable<Article>> Load(IEnumerable<Channel> channels) 
         {
-            // Remove extra saved articles and save.
-            var settings = await _settingManager.Read();
+            // Read settings max value and remove extra articles.
+            var settings = await _settingManager.Read().ConfigureAwait(false);
             var fetchables = channels.ToList();
             foreach (var channel in fetchables)
             {
@@ -37,14 +37,14 @@ namespace myFeed.Services
                 channel.Articles = channel.Articles
                     .OrderByDescending(x => x.PublishedDate)
                     .Take(settings.Max).ToList();
-                await _categoryManager.UpdateChannelAsync(channel);
+                await _categoryManager.Update(channel).ConfigureAwait(false);
             }
 
-            // Form lookup with trimmed title and feed as keys.
+            // Extract stored articles.
             var existing = fetchables.SelectMany(i => i.Articles)
                 .ToLookup(i => (i.Title?.Trim(), i.FeedTitle?.Trim()));
 
-            // Retrieve feed based on single fetcher implementation.
+            // Fetch new articles and remove existing ones.
             var tasks = fetchables.Select(i => FetchAsync(i, settings.Max));
             var groupped = await Task.WhenAll(tasks).ConfigureAwait(false);
             var distinct = groupped
@@ -54,27 +54,27 @@ namespace myFeed.Services
                     .ToArray()))
                 .ToList();
 
-            // Save distinct articles into database.
+            // Save fetched distinct articles to disk.
             foreach (var (channel, articles) in distinct)
             {
                 channel.Articles.AddRange(articles);
-                await _categoryManager.UpdateChannelAsync(channel);
+                await _categoryManager.Update(channel).ConfigureAwait(false);
             }
 
-            // Return existing and fetched articles.
+            // Return all existing articles.
             return existing.SelectMany(i => i)
                 .Concat(distinct.SelectMany(i => i.Item2))
                 .OrderByDescending(i => i.PublishedDate)
                 .ToList()
                 .AsEnumerable();
-        });
+        }
 
-        private Task<Tuple<Channel, IEnumerable<Article>>> FetchAsync(Channel channel, int max) => Task.Run(async () =>
+        private async Task<Tuple<Channel, IEnumerable<Article>>> FetchAsync(Channel channel, int max)
         {
-            var articles = await _feedFetchService.FetchAsync(channel.Uri);
+            var articles = await _feedFetchService.Fetch(channel.Uri).ConfigureAwait(false);
             return new Tuple<Channel, IEnumerable<Article>>(channel, articles
                 .OrderByDescending(i => i.PublishedDate)
                 .Take(max));
-        });
+        }
     }
 }

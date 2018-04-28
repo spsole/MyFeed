@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
 using DryIocAttributes;
@@ -37,7 +38,7 @@ namespace myFeed.Services
 
         public async Task Write(Settings settings)
         {
-            await _semaphoreSlim.WaitAsync();
+            await _semaphoreSlim.WaitAsync().ConfigureAwait(false);
             var collection = _liteDatabase.GetCollection<Settings>();
             var existing = collection.FindOne(x => true);
 
@@ -51,7 +52,7 @@ namespace myFeed.Services
 
         public async Task<Settings> Read()
         {
-            await _semaphoreSlim.WaitAsync();
+            await _semaphoreSlim.WaitAsync().ConfigureAwait(false);
             if (_cachedConfiguration != null) return ReleaseReturn(_cachedConfiguration);
             
             var collection = _liteDatabase.GetCollection<Settings>();

@@ -23,7 +23,7 @@ let private factory =
 let ``should load and group items``() =
 
     let favorites = Substitute.For<IFavoriteManager>()
-    favorites.GetAllAsync().Returns(Task.FromResult<seq<_>> [Article(Fave=true)]) |> ignore
+    favorites.GetAll().Returns(Task.FromResult<seq<_>> [Article(Fave=true)]) |> ignore
     let faveViewModel = produce<FaveViewModel> [favorites; settings; factory]
     faveViewModel.Load.Invoke().Wait()
     
@@ -34,7 +34,7 @@ let ``should load and group items``() =
 let ``should notify of loading property changed``() =
 
     let favorites = Substitute.For<IFavoriteManager>()
-    favorites.GetAllAsync().Returns(Task.FromResult(Seq.empty)) |> ignore
+    favorites.GetAll().Returns(Task.FromResult(Seq.empty)) |> ignore
     
     let mutable changed = false
     let faveViewModel = produce<FaveViewModel> [favorites; settings; factory]

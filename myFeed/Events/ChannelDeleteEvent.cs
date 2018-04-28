@@ -5,14 +5,14 @@ namespace myFeed.Events
 {
     public sealed class ChannelDeleteEvent
     {
-        public Channel Model { get; }
+        public Channel Channel { get; }
         
-        public ChannelItemViewModel ViewModel { get; }
+        public ChannelItemViewModel ChannelItemViewModel { get; }
         
-        public ChannelDeleteEvent(Channel model, ChannelItemViewModel viewModel)
+        public ChannelDeleteEvent(Channel channel, ChannelItemViewModel channelItemViewModel)
         {
-            ViewModel = viewModel;
-            Model = model;
+            ChannelItemViewModel = channelItemViewModel;
+            Channel = channel;
         }
     }
 }

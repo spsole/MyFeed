@@ -15,7 +15,7 @@ let ``should serialize typed objects into xml`` value =
     let file = "sample"
     let service = produce<XmlSerializationService> []
     let instance = Opml(Head=OpmlHead(Title=value))
-    service.Serialize<Opml>(instance, File.OpenWrite file)
+    service.Serialize<Opml>(instance, File.OpenWrite file).Wait()
     Should.contain value (File.ReadAllText file)
 
 [<Theory>]
@@ -27,7 +27,7 @@ let ``should deserialize typed objects from xml`` value =
     let file = "sample"
     let service = produce<XmlSerializationService> []
     let instance = Opml(Head=OpmlHead(Title=value))
-    service.Serialize<Opml>(instance, File.OpenWrite file)
-    let opml = service.Deserialize<Opml>(File.OpenRead file)
+    service.Serialize<Opml>(instance, File.OpenWrite file).Wait()
+    let opml = service.Deserialize<Opml>(File.OpenRead file).Result
     Should.equal value opml.Head.Title
     

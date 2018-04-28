@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Events;
 using myFeed.Interfaces;
@@ -36,13 +35,11 @@ namespace myFeed.ViewModels
         {
             AddRequest = new Interaction<Unit, string>();
             Items = new ReactiveList<ChannelGroupViewModel>();
-            var map = new Dictionary<ChannelGroupViewModel, Category>();
+            var cache = new Dictionary<ChannelGroupViewModel, Category>();
             messageBus.Listen<CategoryDeleteEvent>()
-                .Where(x => Items.Contains(x.ViewModel))
-                .Do(x => Items.Remove(x.ViewModel))
-                .SelectMany(x => categoryManager
-                    .RemoveAsync(x.Model)
-                    .ToObservable())
+                .Where(x => Items.Contains(x.ChannelGroupViewModel))
+                .Do(x => Items.Remove(x.ChannelGroupViewModel))
+                .SelectMany(x => categoryManager.Remove(x.Category))
                 .Subscribe();
                 
             Search = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<SearchViewModel>());
@@ -51,25 +48,27 @@ namespace myFeed.ViewModels
                 var name = await AddRequest.Handle(Unit.Default);
                 if (string.IsNullOrWhiteSpace(name)) return;
                 var category = new Category {Title = name};
-                await categoryManager.InsertAsync(category);
+                await categoryManager.Insert(category);
+                
                 var viewModel = factory(category);
-                map[viewModel] = category;
+                cache[viewModel] = category;
                 Items.Add(viewModel);
             });
             Load = ReactiveCommand.CreateFromTask(async () =>
             {
-                map.Clear();
+                cache.Clear();
                 IsLoading = true;
-                var categories = await categoryManager.GetAllAsync();
-                foreach (var category in categories) map[factory(category)] = category;
-                Items.AddRange(map.Keys);
+                var categories = await categoryManager.GetAll();
+                categories.ToList().ForEach(x => cache[factory(x)] = x);
+                Items.AddRange(cache.Keys);
                 IsEmpty = Items.Count == 0;
                 IsLoading = false;
+                
                 Items.Changed.Subscribe(async x =>
                 {
                     IsEmpty = Items.Count == 0;
-                    var items = Items.Select(i => map[i]);
-                    await categoryManager.RearrangeAsync(items);
+                    var items = Items.Select(i => cache[i]);
+                    await categoryManager.Rearrange(items);
                 });
             });
         }

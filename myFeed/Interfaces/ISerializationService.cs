@@ -1,11 +1,12 @@
 using System.IO;
+using System.Threading.Tasks;
 
 namespace myFeed.Interfaces
 {
     public interface ISerializationService
     {
-        void Serialize<TObject>(TObject instance, Stream fileStream);
+        Task Serialize<TObject>(TObject instance, Stream stream);
 
-        TObject Deserialize<TObject>(Stream fileStream);
+        Task<TObject> Deserialize<TObject>(Stream stream);
     }
 }

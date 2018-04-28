@@ -6,6 +6,6 @@ namespace myFeed.Interfaces
 {
     public interface IFeedFetchService
     {
-        Task<IEnumerable<Article>> FetchAsync(string uri);
+        Task<IEnumerable<Article>> Fetch(string uri);
     }
 }

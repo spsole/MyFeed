@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Events;
 using myFeed.Interfaces;
@@ -37,9 +36,7 @@ namespace myFeed.ViewModels
             Name = new Uri(channel.Uri).Host;
             this.WhenAnyValue(x => x.Notify)
                 .Skip(1).Do(x => channel.Notify = x)
-                .SelectMany(x => categoryManager
-                    .UpdateChannelAsync(channel)
-                    .ToObservable())
+                .SelectMany(x => categoryManager.Update(channel))
                 .Subscribe();
             
             DeleteRequest = new Interaction<Unit, bool>();

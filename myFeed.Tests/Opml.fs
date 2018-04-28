@@ -17,7 +17,7 @@ let ``should be able to export opml feeds`` first second protocol domain path =
 
     let uri = sprintf "%s%s%s" protocol domain path
     let categories = Substitute.For<ICategoryManager>()
-    categories.GetAllAsync().Returns(
+    categories.GetAll().Returns(
         [ Category(Title=first, Channels=toList[| Channel(Uri=uri) |]);
           Category(Title=second) ] :> seq<_>
         |> Task.FromResult) 
@@ -29,7 +29,7 @@ let ``should be able to export opml feeds`` first second protocol domain path =
               .Do(fun x -> opml <- x.Arg<Opml>())
 
     let service = produce<DefaultOpmlService> [categories; serializer]
-    let response = service.ExportOpmlFeedsAsync(new MemoryStream()).Result
+    let response = service.ExportOpml(new MemoryStream()).Result
 
     Should.equal true response
     Should.equal 2 opml.Body.Count
@@ -53,11 +53,11 @@ let ``should be able to import opml feeds`` url =
 
     let mutable category = null
     let categories = Substitute.For<ICategoryManager>()
-    categories.When(fun x -> x.InsertAsync(Arg.Any()) |> ignore)
+    categories.When(fun x -> x.Insert(Arg.Any()) |> ignore)
               .Do(fun x -> category <- x.Arg<Category>())
 
     let service = produce<DefaultOpmlService> [serializer; categories]
-    let response = service.ImportOpmlFeedsAsync(new MemoryStream()).Result
+    let response = service.ImportOpml(new MemoryStream()).Result
 
     Should.equal true response
     Should.equal 2 category.Channels.Count 

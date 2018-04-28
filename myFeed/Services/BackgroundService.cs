@@ -28,23 +28,30 @@ namespace myFeed.Services
             _settingManager = settingManager;
         }
         
-        public async Task CheckForUpdates(DateTime dateTime)
+        public async Task<bool> CheckForUpdates(DateTime dateTime)
         {
-            var categories = await _categoryManager.GetAllAsync();
-            var feed = await _feedStoreService.LoadAsync(categories
+            var categories = await _categoryManager.GetAll().ConfigureAwait(false);
+            var articles = await _feedStoreService.Load(categories
                 .SelectMany(i => i.Channels)
-                .Where(i => i.Notify));
+                .Where(i => i.Notify))
+                .ConfigureAwait(false);
 
-            var settings = await _settingManager.Read();
-            var recentItems = feed
+            var settings = await _settingManager.Read().ConfigureAwait(false);
+            var recent = articles
                 .Where(i => i.PublishedDate > settings.Fetched)
                 .OrderByDescending(i => i.PublishedDate)
                 .Take(15).Reverse().ToList();
 
-            await _notificationService.SendNotifications(recentItems);
-            if (!recentItems.Any()) return;
+            await _notificationService
+                .SendNotifications(recent)
+                .ConfigureAwait(false);
+            
+            if (!recent.Any()) return false;
             settings.Fetched = dateTime;
-            await _settingManager.Write(settings);
+            await _settingManager
+                .Write(settings)
+                .ConfigureAwait(false);
+            return true;
         }
     }
 }

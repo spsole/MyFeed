@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using DryIocAttributes;
-using LiteDB;
 using myFeed.Interfaces;
 using myFeed.Models;
+using LiteDB;
 
 namespace myFeed.Services
 {
@@ -22,26 +22,26 @@ namespace myFeed.Services
             _liteDatabase = liteDatabase;
         }
 
-        public Task<IEnumerable<Article>> GetAllAsync() => Task.Run(() =>
-        {
-            var collection = _liteDatabase.GetCollection<Article>();
-            return collection.FindAll();
-        });
+        public Task<IEnumerable<Article>> GetAll() => Task.Run(
+            () => _liteDatabase.GetCollection<Article>().FindAll()
+        );
 
-        public Task InsertAsync(Article article) => Task.Run(() =>
+        public async Task<bool> Insert(Article article) 
         {
-            if (article.Fave) return Task.CompletedTask;
+            if (article.Fave) return false;
             article.Fave = true;
+            await _categoryManager.Update(article).ConfigureAwait(false);
             _liteDatabase.GetCollection<Article>().Insert(article);
-            return _categoryManager.UpdateArticleAsync(article);
-        });
+            return true;
+        }
 
-        public Task RemoveAsync(Article article) => Task.Run(() =>
+        public async Task<bool> Remove(Article article)
         {
-            if (!article.Fave) return Task.CompletedTask;
+            if (!article.Fave) return false;
             article.Fave = false;
+            await _categoryManager.Update(article).ConfigureAwait(false);
             _liteDatabase.GetCollection<Article>().Delete(i => i.Id == article.Id);
-            return _categoryManager.UpdateArticleAsync(article);
-        });
+            return true;
+        }
     }
 }

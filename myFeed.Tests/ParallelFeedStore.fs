@@ -16,14 +16,14 @@ let ``should sort stored article entities``() =
     settings.Read().Returns(Settings(Max = 5)) |> ignore
 
     let fetcher = Substitute.For<IFeedFetchService>()
-    fetcher.FetchAsync(Arg.Any<_>()).Returns(
+    fetcher.Fetch(Arg.Any<_>()).Returns(
         Seq.empty<Article> 
         |> Task.FromResult)
         |> ignore
 
     let service = produce<ParallelFeedStoreService> [fetcher; settings]
     let articles =
-        service.LoadAsync(
+        service.Load(
             [ Channel(Articles=toList
                 [ Article(Title="Foo", PublishedDate=DateTime.Now);
                   Article(Title="Bar", PublishedDate=DateTime.MinValue);
@@ -43,19 +43,19 @@ let ``should save fetched article entities``() =
     settings.Read().Returns(Settings(Max = 5)) |> ignore
 
     let fetcher = Substitute.For<IFeedFetchService>()
-    fetcher.FetchAsync(Arg.Any<_>()).Returns(
+    fetcher.Fetch(Arg.Any<_>()).Returns(
         [Article(Title="Foo")] :> seq<_>
         |> Task.FromResult)
         |> ignore
 
     let mutable articlesInserted = null
     let categories = Substitute.For<ICategoryManager>()
-    categories.When(fun x -> x.UpdateChannelAsync(Arg.Any<_>()) |> ignore)
+    categories.When(fun x -> x.Update(Arg.Any<Channel>()) |> ignore)
               .Do(fun x -> articlesInserted <- x.Arg<Channel>().Articles)       
 
     let service = produce<ParallelFeedStoreService> [fetcher; categories; settings]
     let articles = 
-        service.LoadAsync(
+        service.Load(
             [ Channel(Uri="http://foo.bar") ]).Result
             |> List.ofSeq            
 
@@ -71,14 +71,14 @@ let ``should mix and order fetched and stored articles by date``() =
     settings.Read().Returns(Settings(Max = 5)) |> ignore
 
     let fetcher = Substitute.For<IFeedFetchService>()
-    fetcher.FetchAsync(Arg.Any<_>()).Returns(
+    fetcher.Fetch(Arg.Any<_>()).Returns(
         [Article(Title="Foo", PublishedDate=DateTime.Now)] :> seq<_>
         |> Task.FromResult)
         |> ignore
 
     let service = produce<ParallelFeedStoreService> [fetcher; settings]
     let articles =
-        service.LoadAsync(
+        service.Load(
             [ Channel(Articles=toList
                 [ Article(Title="Bar", PublishedDate=
                     DateTime.MinValue)])]).Result
@@ -97,11 +97,11 @@ let ``should remove outdated articles if count is greater than custom``() =
     let articles = Seq.init 200 (fun _ -> Article())
     let channel = Channel(Articles=toList articles)
     let fetcher = Substitute.For<IFeedFetchService>()
-    fetcher.FetchAsync(Arg.Any()).Returns(Seq.empty 
+    fetcher.Fetch(Arg.Any()).Returns(Seq.empty 
         |> Task.FromResult) |> ignore
     
     let service = produce<ParallelFeedStoreService> [fetcher; settings]
-    let articles = service.LoadAsync([channel]).Result |> List.ofSeq
+    let articles = service.Load([channel]).Result |> List.ofSeq
 
     Should.equal 70 articles.Length
 
@@ -113,11 +113,11 @@ let ``should remove articles with minimum publishing date only``() =
 
     let articles = Seq.init 200 (fun _ -> Article())
     let fetcher = Substitute.For<IFeedFetchService>()
-    fetcher.FetchAsync(Arg.Any()).Returns(articles 
+    fetcher.Fetch(Arg.Any()).Returns(articles 
         |> Task.FromResult) |> ignore
     
     let service = produce<ParallelFeedStoreService> [fetcher; settings]
-    let articles = service.LoadAsync([Channel()]).Result |> List.ofSeq
+    let articles = service.Load([Channel()]).Result |> List.ofSeq
 
     Should.equal 70 articles.Length
     
@@ -128,14 +128,14 @@ let ``should ignore whitespaces while comparing titles``() =
     settings.Read().Returns(Settings(Max = 5)) |> ignore
     
     let fetcher = Substitute.For<IFeedFetchService>()
-    fetcher.FetchAsync(Arg.Any<_>()).Returns(
+    fetcher.Fetch(Arg.Any<_>()).Returns(
         [ Article(Title="Foo  ", FeedTitle="Bar");
           Article(Title="Bar\r\n", FeedTitle="Foo")] :> seq<_>
         |> Task.FromResult) |> ignore
     
     let service = produce<ParallelFeedStoreService> [fetcher; settings]
     let articles = 
-        service.LoadAsync(
+        service.Load(
             [ Channel(Articles=toList 
                 [ Article(Title="Foo", FeedTitle="Bar");
                   Article(Title="Bar", FeedTitle="Foo") ]) ]).Result 

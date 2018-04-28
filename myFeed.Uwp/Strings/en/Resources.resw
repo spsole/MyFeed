@@ -379,4 +379,10 @@
   <data name="ShowReadArticles">
     <value>Should the application show read articles in your news feeds?</value>
   </data>
+  <data name="ErrorTitle">
+    <value>Error occured!</value>
+  </data>
+  <data name="ErrorMessage">
+    <value>Something went wrong while performing a request!</value>
+  </data>
 </root>

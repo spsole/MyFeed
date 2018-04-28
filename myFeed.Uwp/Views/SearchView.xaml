@@ -25,6 +25,13 @@
     </Page.Transitions>
 
     <Grid>
+        <interactivity:Interaction.Behaviors>
+            <core:EventTriggerBehavior EventName="Loaded">
+                <actions:ModalErrorAction Interaction="{Binding Error}" 
+                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorMessage}" 
+                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorTitle}"/>
+            </core:EventTriggerBehavior>
+        </interactivity:Interaction.Behaviors>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
             <RowDefinition Height="48"/>
@@ -101,7 +108,7 @@
                                     <actions:OpenFlyoutAction/>
                                 </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="Loaded">
-                                    <actions:ModalSelectAction Interaction="{Binding AddSelect}"
+                                    <actions:ModalSelectAction Interaction="{Binding Select}"
                                         Title="{Binding Converter={StaticResource Locale}, 
                                             ConverterParameter=AddIntoCategory}"/> 
                                 </core:EventTriggerBehavior>

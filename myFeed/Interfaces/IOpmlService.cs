@@ -5,8 +5,8 @@ namespace myFeed.Interfaces
 {
     public interface IOpmlService
     {
-        Task<bool> ImportOpmlFeedsAsync(Stream stream);
+        Task<bool> ImportOpml(Stream stream);
         
-        Task<bool> ExportOpmlFeedsAsync(Stream stream);
+        Task<bool> ExportOpml(Stream stream);
     }
 }

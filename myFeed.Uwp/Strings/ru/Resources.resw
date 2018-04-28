@@ -379,4 +379,10 @@
   <data name="ShowReadArticles">
     <value>Должно ли приложение отображать прочитанные статьи в вашей ленте новостей?</value>
   </data>
+  <data name="ErrorTitle">
+    <value>Ой, ошибка!</value>
+  </data>
+  <data name="ErrorMessage">
+    <value>Что-то пошло не так!</value>
+  </data>
 </root>
