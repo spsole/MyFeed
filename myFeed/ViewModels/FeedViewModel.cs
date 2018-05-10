@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -16,6 +18,7 @@ namespace myFeed.ViewModels
     public sealed class FeedViewModel
     {
         public ReactiveList<FeedGroupViewModel> Items { get; }
+        public Interaction<Exception, bool> Error { get; }
         public ReactiveCommand<Unit, Unit> Modify { get; }
         public ReactiveCommand<Unit, Unit> Load { get; }
         public FeedGroupViewModel Selection { get; set; }
@@ -32,20 +35,35 @@ namespace myFeed.ViewModels
         {
             Items = new ReactiveList<FeedGroupViewModel>();
             Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
-            Load = ReactiveCommand.CreateFromTask(async () =>
-            {
-                IsEmpty = false;
-                IsLoading = true;
-                var settings = await settingManager.Read();
-                var categories = await categoryManager.GetAll();
-                var viewModels = categories.Select(factory);
-                Items.Clear();
-                Items.AddRange(viewModels);
-                Selection = Items.FirstOrDefault();
-                Images = settings.Images;
-                IsEmpty = Items.Count == 0;
-                IsLoading = false;
-            });
+            Load = ReactiveCommand.CreateFromTask(() => DoLoad(factory, categoryManager, settingManager));
+
+            Load.IsExecuting.Skip(1)
+                .Subscribe(x => IsLoading = x);
+            Items.CountChanged
+                .Select(count => count == 0)
+                .Subscribe(x => IsEmpty = x);
+
+            Error = new Interaction<Exception, bool>();
+            Load.ThrownExceptions
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .SelectMany(error => Error.Handle(error))
+                .Where(retryRequested => retryRequested)
+                .Select(x => Unit.Default)
+                .InvokeCommand(Load);
+        }
+
+        private async Task DoLoad(
+            Func<Category, FeedGroupViewModel> factory,
+            ICategoryManager categoryManager,
+            ISettingManager settingManager)
+        {
+            var settings = await settingManager.Read();
+            var categories = await categoryManager.GetAll();
+            var viewModels = categories.Select(factory);
+            Items.Clear();
+            Items.AddRange(viewModels);
+            Selection = Items.FirstOrDefault();
+            Images = settings.Images;
         }
     }
 }

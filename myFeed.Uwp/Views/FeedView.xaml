@@ -40,6 +40,13 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        <interactivity:Interaction.Behaviors>
+            <core:EventTriggerBehavior EventName="Loaded">
+                <actions:ModalErrorAction Interaction="{Binding Error}" 
+                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorMessage}" 
+                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorTitle}"/>
+            </core:EventTriggerBehavior>
+        </interactivity:Interaction.Behaviors>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="9*"/>
@@ -51,8 +58,8 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Grid.RowSpan="2" Height="96" VerticalAlignment="Top" Background="{ThemeResource LowBackgroundThemeBrush}"/>
-            <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedViewTitle}"/>
-            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <controls:TitleBlock Grid.Row="0" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedViewTitle}"/>
+            <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
                 <controls:TransparentButton Symbol="Bookmarks" Visibility="{Binding IsEmpty, Converter={StaticResource FalsyToVisible}}">
                     <controls:TransparentButton.Flyout>
                         <Flyout Placement="Bottom">
@@ -113,6 +120,9 @@
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Loaded">
                                         <actions:ReactiveCommandAction Command="{Binding Fetch}"/>
+                                        <actions:ModalErrorAction Interaction="{Binding Error}" 
+                                            Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorMessage}" 
+                                            Title="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorTitle}"/>
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                                 <toolkit:PullToRefreshListView.ItemContainerStyle>

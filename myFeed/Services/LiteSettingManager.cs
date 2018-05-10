@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive;
 using System.Threading;
 using System.Threading.Tasks;
 using DryIocAttributes;
@@ -61,12 +60,12 @@ namespace myFeed.Services
 
             collection.Insert(_defaultConfiguration);
             return ReleaseReturn(_defaultConfiguration);
+        }
 
-            Settings ReleaseReturn(Settings from)
-            {
-                _semaphoreSlim.Release();
-                return Copy(from, new Settings());
-            }
+        private Settings ReleaseReturn(Settings from)
+        {
+            _semaphoreSlim.Release();
+            return Copy(from, new Settings());
         }
 
         private static Settings Copy(Settings from, Settings to)

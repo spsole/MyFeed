@@ -192,9 +192,9 @@
                                 <TextBlock Style="{StaticResource TitleTextBlockStyle}" 
                                     Margin="0 6" Text="myFeed" TextWrapping="Wrap"/>
                                 <TextBlock Text="© Artyom Graf 2017" TextWrapping="NoWrap"/>
-                                <HyperlinkButton Content="worldbeater.github.io" Margin="0 6"
+                                <HyperlinkButton Content="GitHub" Margin="0 6"
                                     Style="{StaticResource TextBlockButtonStyle}" Padding="0"
-                                    NavigateUri="https://worldbeater.github.io"/>
+                                    NavigateUri="https://github.com/worldbeater/myFeed"/>
                                 <TextBlock Text="{Binding About.Version}"/>
                             </StackPanel>
                         </Grid>

@@ -38,7 +38,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
-        <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchViewTitle}"/>
+        <controls:TitleBlock Grid.Row="0" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchViewTitle}"/>
         <controls:TransparentButton Grid.Row="0" HorizontalAlignment="Right" Symbol="Sync" Command="{Binding Fetch}">
             <ToolTipService.ToolTip>
                 <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}" />

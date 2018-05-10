@@ -10,7 +10,7 @@ namespace myFeed
         {
             registrator.WithMefAttributedModel();
             registrator.RegisterExports(new [] { typeof(Extensions).GetAssembly() });
-            registrator.Register<IMessageBus, MessageBus>(Reuse.Singleton);
+            registrator.Register(typeof(IMessageBus), typeof(MessageBus), Reuse.Singleton);
         }
     }
 }

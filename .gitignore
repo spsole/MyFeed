@@ -33,6 +33,7 @@ myFeed.Droid
 myFeed.Uwp/Assets
 myFeed.Uwp/AppPackages
 myFeed.Uwp/Package.StoreAssociation.xml
+myFeed.Uwp/Package.xml
 myFeed.Uwp/obj
 myFeed.Uwp/bin
 myFeed.Uwp/BundleArtifacts
@@ -81,3 +82,5 @@ Temporary Items
 *.pfx
 *.appxmanifest
 myFeed.Views.Uwp/Package.StoreAssociation.xml
+myFeed.Uwp/Package.xml
+myFeed.Uwp/Package.xml
