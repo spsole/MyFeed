@@ -19,7 +19,7 @@ Read news from websites via <b>myFeed</b>, find interesting feeds in the interne
 
 ## About App
 
-myFeed is an RSS reader for <b>Universal Windows Platform</b> (also planned support for more platforms using Xamarin and Avalonia UI frameworks). This app can collect news from websites, save them to your device and send toast notifications once new posts appear in your news feeds. Application is completely free and open-source! <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get myFeed from Windows Store</a>
+myFeed is an RSS reader for <b>Universal Windows Platform</b> (also planned support for more platforms using Xamarin and Avalonia UI frameworks). This app can collect news from websites, save them to your device and send toast notifications once new posts appear in your news feeds. Application is completely free and open-source! <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get myFeed from Windows Store</a> or <a href="https://medium.com/@worldbeater/reactive-mvvm-for-net-platform-175dc69cfc82">read a note on Reactive MVVM architecture</a>.
 
 ## Technologies and Tools Used
 

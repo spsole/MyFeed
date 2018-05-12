@@ -15,7 +15,6 @@ namespace myFeed.Services
         {
             var serializer = new XmlSerializer(typeof(TObject));
             using (stream) serializer.Serialize(stream, instance);
-            return Unit.Default;
         });
 
         public Task<TObject> Deserialize<TObject>(Stream stream) => Task.Run(() =>
