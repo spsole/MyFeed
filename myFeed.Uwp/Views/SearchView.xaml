@@ -64,8 +64,11 @@
             </Button>
         </Grid>
         <Grid Grid.Row="2">
-            <toolkit:PullToRefreshListView RefreshCommand="{Binding Fetch}" ItemsSource="{Binding Items}" 
-                ShowsScrollingPlaceholders="False" IsItemClickEnabled="True" SelectionMode="None">
+            <toolkit:PullToRefreshListView 
+                RefreshCommand="{Binding Fetch}" ItemsSource="{Binding Items}" 
+                ShowsScrollingPlaceholders="False" 
+                IsItemClickEnabled="True"
+                SelectionMode="None">
                 <toolkit:PullToRefreshListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -107,12 +110,13 @@
                                 <core:EventTriggerBehavior EventName="Holding">
                                     <actions:OpenFlyoutAction/>
                                 </core:EventTriggerBehavior>
-                                <core:EventTriggerBehavior EventName="Loaded">
-                                    <actions:ModalSelectAction Interaction="{Binding Select}"
-                                        Title="{Binding Converter={StaticResource Locale}, ConverterParameter=AddIntoCategory}"/>
+                                <core:EventTriggerBehavior EventName="DataContextChanged">
                                     <actions:ModalErrorAction Interaction="{Binding Error}" 
                                         Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorMessage}" 
                                         Title="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorTitle}"/>
+                                    <actions:ModalSelectAction Interaction="{Binding Select}"
+                                        Title="{Binding Converter={StaticResource Locale}, 
+                                                        ConverterParameter=AddIntoCategory}"/>
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                             <Grid.ColumnDefinitions>
@@ -149,10 +153,12 @@
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"
                 Visibility="{Binding IsEmpty, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE783;" FontSize="50" TextAlignment="Center" 
-                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                    <TextBlock FontFamily="Segoe MDL2 Assets" 
+                               Text="&#xE783;" FontSize="50" TextAlignment="Center" 
+                               Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                     <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingTitle}" 
-                        TextAlignment="Center" FontSize="24" FontWeight="SemiLight" TextWrapping="Wrap" Margin="36 6"/>
+                               TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
+                               TextWrapping="Wrap" Margin="36 6"/>
                     <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingSubTitle}" 
                         TextWrapping="Wrap" TextAlignment="Center" FontSize="17" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                     <Button Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"

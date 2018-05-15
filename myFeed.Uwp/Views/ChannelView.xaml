@@ -68,6 +68,8 @@
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Loaded">
                                 <actions:ReactiveCommandAction Command="{Binding Load}"/>
+                            </core:EventTriggerBehavior>
+                            <core:EventTriggerBehavior EventName="DataContextChanged">
                                 <actions:ModalPromptAction Interaction="{Binding RenameRequest}"
                                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategory}"
                                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategoryTitle}"/>
@@ -133,7 +135,7 @@
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <interactivity:Interaction.Behaviors>
-                                                    <core:EventTriggerBehavior EventName="Loaded">
+                                                    <core:EventTriggerBehavior EventName="DataContextChanged">
                                                         <actions:ModalConfirmAction Interaction="{Binding DeleteRequest}"
                                                             Message="{Binding Converter={StaticResource Locale}, ConverterParameter=DeleteChannel}"
                                                             Title="{Binding Converter={StaticResource Locale}, ConverterParameter=DeleteElement}"/>

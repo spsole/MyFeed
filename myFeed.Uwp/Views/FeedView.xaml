@@ -160,7 +160,7 @@
                                                 <core:EventTriggerBehavior EventName="Tapped">
                                                     <actions:ReactiveCommandAction Command="{Binding Open}"/>
                                                 </core:EventTriggerBehavior>
-                                                <core:EventTriggerBehavior EventName="Loaded">
+                                                <core:EventTriggerBehavior EventName="DataContextChanged">
                                                     <actions:ModalConfirmAction Interaction="{Binding CopyConfirm}"
                                                         Message="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLinkSuccess}"
                                                         Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
