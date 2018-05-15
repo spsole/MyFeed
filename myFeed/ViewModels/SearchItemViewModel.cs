@@ -19,6 +19,7 @@ namespace myFeed.ViewModels
     public sealed class SearchItemViewModel
     {
         public Interaction<IList<string>, int> Select { get; }
+        public Interaction<Exception, bool> Error { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
         public ReactiveCommand<Unit, Unit> Copy { get; }
         public ReactiveCommand<Unit, Unit> Add { get; }
@@ -37,14 +38,20 @@ namespace myFeed.ViewModels
             Image = feedlyItem.IconUrl;
             Title = feedlyItem.Title;
             Url = feedlyItem.Website;
-            
+
             Select = new Interaction<IList<string>, int>();
             Add = ReactiveCommand.CreateFromTask(
                 () => DoAdd(categoryManager, feedlyItem), Observable
                     .Return(feedlyItem.FeedId?.Substring(5))
                     .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
             );
-            
+
+            Error = new Interaction<Exception, bool>();
+            Add.ThrownExceptions
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .SelectMany(error => Error.Handle(error))
+                .Subscribe();
+
             Open = ReactiveCommand.CreateFromTask(
                 () => platformService.LaunchUri(new Uri(Url)),
                 Observable.Return(Uri.IsWellFormedUriString(Url, UriKind.Absolute))

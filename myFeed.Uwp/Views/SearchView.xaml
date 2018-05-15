@@ -109,8 +109,10 @@
                                 </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="Loaded">
                                     <actions:ModalSelectAction Interaction="{Binding Select}"
-                                        Title="{Binding Converter={StaticResource Locale}, 
-                                            ConverterParameter=AddIntoCategory}"/> 
+                                        Title="{Binding Converter={StaticResource Locale}, ConverterParameter=AddIntoCategory}"/>
+                                    <actions:ModalErrorAction Interaction="{Binding Error}" 
+                                        Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorMessage}" 
+                                        Title="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorTitle}"/>
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                             <Grid.ColumnDefinitions>

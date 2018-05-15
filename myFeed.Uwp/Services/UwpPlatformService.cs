@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reactive;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
@@ -52,6 +51,7 @@ namespace myFeed.Uwp.Services
         {
             var dataPackage = new DataPackage {RequestedOperation = DataPackageOperation.Copy};
             dataPackage.SetText(text);
+            Clipboard.Clear();
             Clipboard.SetContent(dataPackage);
             return Task.CompletedTask;
         }

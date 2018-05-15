@@ -72,6 +72,7 @@ namespace myFeed.ViewModels
                 await CopyConfirm.Handle(Unit.Default);
             });
 
+            Copy.ThrownExceptions.Subscribe();
             MarkFave = ReactiveCommand.CreateFromTask(async () =>
             {
                 if (Fave) await favoriteManager.Remove(article);
