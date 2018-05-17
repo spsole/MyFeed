@@ -9,6 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels"
+    xmlns:converters="using:myFeed.Uwp.Converters"
     xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -103,8 +104,8 @@
                 <Grid>
                     <Frame x:Name="NavigationFrame"/>
                     <Button x:Name="MenuBtn" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" 
-                        FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" 
                         VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent"
+                        FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" 
                         Width="48" Height="48">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Click">
@@ -114,9 +115,7 @@
                             </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                         <ToolTipService.ToolTip>
-                            <TextBlock Text="{Binding 
-                                Converter={StaticResource Locale},
-                                ConverterParameter=OpenMenu}"/>
+                            <TextBlock Text="{converters:Locale Key=OpenMenu}"/>
                         </ToolTipService.ToolTip>
                     </Button>
                 </Grid>

@@ -11,6 +11,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:views="using:myFeed.Uwp.Views"
+    xmlns:converters="using:myFeed.Uwp.Converters"
     xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -42,9 +43,10 @@
         </VisualStateManager.VisualStateGroups>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
-                <actions:ModalErrorAction Interaction="{Binding Error}" 
-                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorMessage}" 
-                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorTitle}"/>
+                <actions:ModalErrorAction 
+                    Interaction="{Binding Error}" 
+                    Message="{converters:Locale Key=ErrorMessage}" 
+                    Title="{converters:Locale Key=ErrorTitle}"/>
             </core:EventTriggerBehavior>
         </interactivity:Interaction.Behaviors>
         <Grid.ColumnDefinitions>
@@ -57,10 +59,12 @@
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid Grid.RowSpan="2" Height="96" VerticalAlignment="Top" Background="{ThemeResource LowBackgroundThemeBrush}"/>
-            <controls:TitleBlock Grid.Row="0" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedViewTitle}"/>
+            <Grid Grid.RowSpan="2" Height="96" VerticalAlignment="Top"
+                  Background="{ThemeResource LowBackgroundThemeBrush}"/>
+            <controls:TitleBlock Grid.Row="0" Text="{converters:Locale Key=FeedViewTitle}"/>
             <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
-                <controls:TransparentButton Symbol="Bookmarks" Visibility="{Binding IsEmpty, Converter={StaticResource FalsyToVisible}}">
+                <controls:TransparentButton Symbol="Bookmarks" 
+                    Visibility="{Binding IsEmpty, Converter={StaticResource FalsyToVisible}}">
                     <controls:TransparentButton.Flyout>
                         <Flyout Placement="Bottom">
                             <Flyout.FlyoutPresenterStyle>
@@ -86,16 +90,17 @@
                         </Flyout>
                     </controls:TransparentButton.Flyout>
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding ConverterParameter=SelectCategory, Converter={StaticResource Locale}}"/>
+                        <TextBlock Text="{converters:Locale Key=SelectCategory}"/>
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
                 <controls:TransparentButton Symbol="Sync" Command="{Binding Load}">
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}" />
+                        <TextBlock Text="{converters:Locale Key=Refresh}" />
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
             </StackPanel>
-            <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}" SelectedItem="{Binding Selection, Mode=TwoWay}">
+            <Pivot Grid.Row="1" ItemsSource="{Binding Items, Mode=OneTime}" 
+                   SelectedItem="{Binding Selection, Mode=TwoWay}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Loaded">
                         <actions:ReactiveCommandAction Command="{Binding Load}"/>
@@ -121,8 +126,8 @@
                                     <core:EventTriggerBehavior EventName="Loaded">
                                         <actions:ReactiveCommandAction Command="{Binding Fetch}"/>
                                         <actions:ModalErrorAction Interaction="{Binding Error}" 
-                                            Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorMessage}" 
-                                            Title="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorTitle}"/>
+                                            Message="{converters:Locale Key=ErrorMessage}" 
+                                            Title="{converters:Locale Key=ErrorTitle}"/>
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                                 <toolkit:PullToRefreshListView.ItemContainerStyle>
@@ -140,11 +145,11 @@
                                 </toolkit:PullToRefreshListView.ItemContainerTransitions>
                                 <toolkit:PullToRefreshListView.PullToRefreshContent>
                                     <Border HorizontalAlignment="Center" CornerRadius="10" Width="20" Height="20" 
-                                        Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
+                                            Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
                                 </toolkit:PullToRefreshListView.PullToRefreshContent>
                                 <toolkit:PullToRefreshListView.ReleaseToRefreshContent>
                                     <Border HorizontalAlignment="Center" CornerRadius="10" Width="20" Height="20" 
-                                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                                            Background="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                                 </toolkit:PullToRefreshListView.ReleaseToRefreshContent>
                                 <toolkit:PullToRefreshListView.ItemTemplate>
                                     <DataTemplate x:DataType="implementations:FeedItemViewModel">
@@ -161,29 +166,42 @@
                                                     <actions:ReactiveCommandAction Command="{Binding Open}"/>
                                                 </core:EventTriggerBehavior>
                                                 <core:EventTriggerBehavior EventName="DataContextChanged">
-                                                    <actions:ModalConfirmAction Interaction="{Binding CopyConfirm}"
-                                                        Message="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLinkSuccess}"
-                                                        Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
+                                                    <actions:ModalConfirmAction 
+                                                        Interaction="{Binding CopyConfirm}"
+                                                        Message="{converters:Locale Key=CopyLinkSuccess}"
+                                                        Title="{converters:Locale Key=SettingsNotification}"/>
                                                 </core:EventTriggerBehavior>
                                             </interactivity:Interaction.Behaviors>
                                             <FlyoutBase.AttachedFlyout>
                                                 <MenuFlyout>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding Launch}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding Copy}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
+                                                    <MenuFlyoutItem 
+                                                        Text="{converters:Locale Key=Read}"
+                                                        Icon="PostUpdate" Command="{Binding Open}"/>
+                                                    <MenuFlyoutItem 
+                                                        Icon="Link" Command="{Binding Launch}" 
+                                                        Text="{converters:Locale Key=OpenInBrowser}"/>
+                                                    <MenuFlyoutItem 
+                                                        Icon="Copy" Command="{Binding Copy}" 
+                                                        Text="{converters:Locale Key=CopyLink}"/>
+                                                    <MenuFlyoutItem 
+                                                        Icon="ReShare" Command="{Binding Share}"
+                                                        Text="{converters:Locale Key=ReShare}"/>
                                                     <MenuFlyoutSeparator />
-                                                    <controls:MenuFlyoutItemWithIcon Icon="Read" Command="{Binding MarkRead}" 
-                                                        Text="{Binding Converter={StaticResource Locale}, ConverterParameter=MarkAsRead}"
+                                                    <MenuFlyoutItem 
+                                                        Icon="Read" Command="{Binding MarkRead}" 
+                                                        Text="{converters:Locale Key=MarkAsRead}"
                                                         Visibility="{Binding Read, Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="Mail" Command="{Binding MarkRead}" 
-                                                        Text="{Binding Converter={StaticResource Locale}, ConverterParameter=MarkAsUnread}"
+                                                    <MenuFlyoutItem 
+                                                        Icon="Mail" Command="{Binding MarkRead}" 
+                                                        Text="{converters:Locale Key=MarkAsUnread}"
                                                         Visibility="{Binding Read, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="OutlineStar" Command="{Binding MarkFave}"
-                                                        Text="{Binding Converter={StaticResource Locale}, ConverterParameter=RemoveFromFavorites}"
+                                                    <MenuFlyoutItem 
+                                                        Icon="OutlineStar" Command="{Binding MarkFave}"
+                                                        Text="{converters:Locale Key=RemoveFromFavorites}"
                                                         Visibility="{Binding Fave, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"/>
-                                                    <controls:MenuFlyoutItemWithIcon Icon="SolidStar" Command="{Binding MarkFave}" 
-                                                        Text="{Binding Converter={StaticResource Locale}, ConverterParameter=AddToFavorites}"
+                                                    <MenuFlyoutItem 
+                                                        Icon="SolidStar" Command="{Binding MarkFave}" 
+                                                        Text="{converters:Locale Key=AddToFavorites}"
                                                         Visibility="{Binding Fave, Mode=OneWay, Converter={StaticResource FalsyToVisible}}"/>
                                                 </MenuFlyout>
                                             </FlyoutBase.AttachedFlyout>
@@ -223,17 +241,19 @@
                                 </toolkit:PullToRefreshListView.ItemTemplate>
                             </toolkit:PullToRefreshListView>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"
-                                Visibility="{Binding IsEmpty, Converter={StaticResource TruthyToVisible}}">
+                                        Visibility="{Binding IsEmpty, Converter={StaticResource TruthyToVisible}}">
                                 <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEB5E;" TextAlignment="Center"
                                     FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                                <TextBlock TextAlignment="Center" FontWeight="SemiLight" Margin="12 6" TextWrapping="Wrap" FontSize="24" 
-                                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedNothingTitle}"/>
+                                <TextBlock TextAlignment="Center" FontWeight="SemiLight" 
+                                    Margin="12 6" TextWrapping="Wrap" FontSize="24" 
+                                    Text="{converters:Locale Key=FeedNothingTitle}"/>
                                 <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="17"
                                     Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedNothing}"/>
-                                <Button Content="{Binding Converter={StaticResource Locale}, ConverterParameter=AddChannel}"
-                                    Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White" 
-                                    Margin="12" HorizontalAlignment="Center" Command="{Binding Modify}"/>
+                                    Text="{converters:Locale Key=FeedNothing}"/>
+                                <Button Content="{converters:Locale Key=AddChannel}"
+                                    Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                                    Foreground="White" Margin="12" HorizontalAlignment="Center" 
+                                    Command="{Binding Modify}"/>
                             </StackPanel>
                             <controls:LoadingScreen IsActive="{Binding IsLoading, Mode=OneWay}"/>
                         </Grid>
@@ -245,14 +265,16 @@
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -48 0 0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE897;" TextAlignment="Center"
                         FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                    <TextBlock TextAlignment="Center" FontWeight="SemiLight" Margin="12 6" TextWrapping="Wrap" FontSize="24" 
-                       Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedWelcomeTitle}"/>
+                    <TextBlock TextAlignment="Center" FontWeight="SemiLight" 
+                        Margin="12 6" TextWrapping="Wrap" FontSize="24" 
+                       Text="{converters:Locale Key=FeedWelcomeTitle}"/>
                     <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="17"
                         Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                        Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FeedWelcome}"/>
-                    <Button Content="{Binding Converter={StaticResource Locale}, ConverterParameter=AddChannel}"
-                        Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White" 
-                        Margin="12" HorizontalAlignment="Center" Command="{Binding Modify}"/>
+                        Text="{converters:Locale Key=FeedWelcome}"/>
+                    <Button Content="{converters:Locale Key=AddChannel}"
+                        Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                        Foreground="White" Margin="12" HorizontalAlignment="Center" 
+                        Command="{Binding Modify}"/>
                 </StackPanel>
             </Grid>
             <controls:LoadingScreen Grid.Row="1" IsActive="{Binding IsLoading}" Margin="0 48 0 0"/>

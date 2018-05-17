@@ -10,7 +10,7 @@
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:views="using:myFeed.Uwp.Views"
     xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:converters="using:myFeed.Uwp.Converters"
     xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -51,21 +51,24 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
-            <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveViewTitle}"/>
+            <controls:TitleBlock Text="{converters:Locale Key=FaveViewTitle}"/>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
                 <controls:TransparentButton Symbol="Sort">
                     <controls:TransparentButton.Flyout>
                         <MenuFlyout>
-                            <controls:MenuFlyoutItemWithIcon Icon="CalendarDay" Command="{Binding OrderByDate}"
-                                Text="{Binding ConverterParameter=OrderByDate, Converter={StaticResource Locale}}"/>
-                            <controls:MenuFlyoutItemWithIcon Icon="CalendarWeek" Command="{Binding OrderByMonth}"
-                                Text="{Binding ConverterParameter=OrderByMonth, Converter={StaticResource Locale}}"/>
-                            <controls:MenuFlyoutItemWithIcon Icon="FontSize" Command="{Binding OrderByFeed}"
-                                Text="{Binding ConverterParameter=OrderByFeed, Converter={StaticResource Locale}}"/>
+                            <MenuFlyoutItem 
+                                Icon="CalendarDay" Command="{Binding OrderByDate}"
+                                Text="{converters:Locale Key=OrderByDate}"/>
+                            <MenuFlyoutItem 
+                                Icon="CalendarWeek" Command="{Binding OrderByMonth}"
+                                Text="{converters:Locale Key=OrderByMonth}"/>
+                            <MenuFlyoutItem 
+                                Icon="FontSize" Command="{Binding OrderByFeed}"
+                                Text="{converters:Locale Key=OrderByFeed}"/>
                         </MenuFlyout>
                     </controls:TransparentButton.Flyout>
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding ConverterParameter=OrderBy, Converter={StaticResource Locale}}"/>
+                        <TextBlock Text="{converters:Locale Key=OrderBy}"/>
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
             </StackPanel>
@@ -159,15 +162,31 @@
                                             <core:EventTriggerBehavior EventName="Tapped">
                                                 <actions:ReactiveCommandAction Command="{Binding Open}"/>
                                             </core:EventTriggerBehavior>
+                                            <core:EventTriggerBehavior EventName="DataContextChanged">
+                                                <actions:ModalConfirmAction 
+                                                    Interaction="{Binding CopyConfirm}"
+                                                    Message="{converters:Locale Key=CopyLinkSuccess}"
+                                                    Title="{converters:Locale Key=SettingsNotification}"/>
+                                            </core:EventTriggerBehavior>
                                         </interactivity:Interaction.Behaviors>
                                         <FlyoutBase.AttachedFlyout>
                                             <MenuFlyout>
-                                                <controls:MenuFlyoutItemWithIcon Icon="PostUpdate" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" Command="{Binding Open}"/>
-                                                <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding Launch}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
-                                                <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding Copy}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
-                                                <controls:MenuFlyoutItemWithIcon Icon="ReShare" Command="{Binding Share}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
+                                                <MenuFlyoutItem 
+                                                    Icon="PostUpdate" Command="{Binding Open}"
+                                                    Text="{converters:Locale Key=Read}" />
+                                                <MenuFlyoutItem 
+                                                    Icon="Link" Command="{Binding Launch}" 
+                                                    Text="{converters:Locale Key=OpenInBrowser}"/>
+                                                <MenuFlyoutItem
+                                                    Icon="Copy" Command="{Binding Copy}" 
+                                                    Text="{converters:Locale Key=CopyLink}"/>
+                                                <MenuFlyoutItem 
+                                                    Icon="ReShare" Command="{Binding Share}"
+                                                    Text="{converters:Locale Key=ReShare}"/>
                                                 <MenuFlyoutSeparator />
-                                                <controls:MenuFlyoutItemWithIcon Icon="Delete" Command="{Binding MarkFave}" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
+                                                <MenuFlyoutItem 
+                                                    Icon="Delete" Command="{Binding MarkFave}"
+                                                    Text="{converters:Locale Key=Remove}"/>
                                             </MenuFlyout>
                                         </FlyoutBase.AttachedFlyout>
                                         <Grid.ColumnDefinitions>
@@ -209,11 +228,12 @@
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12 -38 12 12">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE734;" TextAlignment="Center" 
                             FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveWelcomeTitle}" 
-                            TextAlignment="Center" FontSize="24" FontWeight="SemiLight" TextWrapping="Wrap" Margin="12 6"/>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveWelcomeSubTitle}" 
-                            TextWrapping="Wrap" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" 
-                            TextAlignment="Center" FontSize="17"/>
+                        <TextBlock Text="{converters:Locale Key=FaveWelcomeTitle}" 
+                            TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
+                            TextWrapping="Wrap" Margin="12 6"/>
+                        <TextBlock Text="{converters:Locale Key=FaveWelcomeSubTitle}" 
+                            TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
+                            Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                     </StackPanel>
                 </Grid>
             </Grid>

@@ -9,6 +9,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:implementations="using:myFeed.ViewModels"
+    xmlns:converters="using:myFeed.Uwp.Converters"
     xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -27,79 +28,91 @@
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
                 <actions:ReactiveCommandAction Command="{Binding Personal.Load}"/>
-                <actions:ModalConfirmAction Interaction="{Binding Special.ResetConfirm}" 
-                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ResetAppNoRestore}" 
-                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
-                <actions:ModalConfirmAction Interaction="{Binding Special.ImportSuccess}"
-                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ImportOpmlSuccess}" 
-                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
-                <actions:ModalConfirmAction Interaction="{Binding Special.ExportSuccess}"
-                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ExportOpmlSuccess}" 
-                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
+                <actions:ModalConfirmAction 
+                    Interaction="{Binding Special.ResetConfirm}" 
+                    Message="{converters:Locale Key=ResetAppNoRestore}" 
+                    Title="{converters:Locale Key=SettingsNotification}"/>
+                <actions:ModalConfirmAction 
+                    Interaction="{Binding Special.ImportSuccess}"
+                    Message="{converters:Locale Key=ImportOpmlSuccess}" 
+                    Title="{converters:Locale Key=SettingsNotification}"/>
+                <actions:ModalConfirmAction 
+                    Interaction="{Binding Special.ExportSuccess}"
+                    Message="{converters:Locale Key=ExportOpmlSuccess}" 
+                    Title="{converters:Locale Key=SettingsNotification}"/>
             </core:EventTriggerBehavior>
         </interactivity:Interaction.Behaviors>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Top" Height="96" Background="{ThemeResource LowBackgroundThemeBrush}"/>
-        <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsViewTitle}"/>
+        <Grid Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Top" Height="96" 
+              Background="{ThemeResource LowBackgroundThemeBrush}"/>
+        <controls:TitleBlock Text="{converters:Locale Key=SettingsViewTitle}"/>
         <Pivot Grid.Row="1">
-            <PivotItem Margin="0" Header="{Binding Converter={StaticResource Locale}, ConverterParameter=Personalization}">
+            <PivotItem Margin="0" Header="{converters:Locale Key=Personalization}">
                 <ScrollViewer Padding="12 0">
                     <StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
-                                ConverterParameter=ChangeTextSizeTitle, Converter={StaticResource Locale}}"/>
-                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding ConverterParameter=
-                                ChangeTextSize, Converter={StaticResource Locale}}"/>
+                            <TextBlock Margin="0 6 0 0" 
+                                Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=ChangeTextSizeTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                                Text="{converters:Locale Key=ChangeTextSize}"/>
                             <Slider Value="{Binding Personal.Font, Mode=TwoWay}" 
-                                Minimum="14" Maximum="22" Width="300" HorizontalAlignment="Left"/>
+                                Minimum="14" Maximum="22" Width="300" 
+                                HorizontalAlignment="Left"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
-                                ConverterParameter=ShowReadArticlesTitle, Converter={StaticResource Locale}}"/>
-                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
-                                Locale}, ConverterParameter=ShowReadArticles}"/>
+                            <TextBlock Margin="0 6 0 0" 
+                                Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=ShowReadArticlesTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                                Text="{converters:Locale Key=ShowReadArticles}"/>
                             <ToggleSwitch IsOn="{Binding Personal.Read, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
-                                ConverterParameter=DisableImagesTitle, Converter={StaticResource Locale}}"/>
-                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
-                                Locale}, ConverterParameter=DisableImages}"/>
+                            <TextBlock Margin="0 6 0 0" 
+                                Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=DisableImagesTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                                Text="{converters:Locale Key=DisableImages}"/>
                             <ToggleSwitch IsOn="{Binding Personal.Images, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
-                                ConverterParameter=NotifyCheckTimeTitle, Converter={StaticResource Locale}}"/>
-                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
-                                Locale}, ConverterParameter=NotifyCheckTime}"/>
+                            <TextBlock Margin="0 6 0 0" 
+                                Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=NotifyCheckTimeTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                                Text="{converters:Locale Key=NotifyCheckTime}"/>
                             <Slider Value="{Binding Personal.Period, Mode=TwoWay}" Minimum="0" 
                                 Maximum="180" Width="300" HorizontalAlignment="Left" StepFrequency="30"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding
-                                Converter={StaticResource Locale}, ConverterParameter=NotifyBannersTitle}"/>
-                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
-                                Locale}, ConverterParameter=NotifyBanners}"/>
+                            <TextBlock Margin="0 6 0 0" 
+                                Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=NotifyBannersTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                                Text="{converters:Locale Key=NotifyBanners}"/>
                             <ToggleSwitch IsOn="{Binding Personal.Banners, Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding
-                                Converter={StaticResource Locale}, ConverterParameter=MaxArticlesPerFeedTitle}"/>
-                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource
-                                Locale}, ConverterParameter=MaxArticlesPerFeed}"/>
-                            <Slider Value="{Binding Personal.Max, Mode=TwoWay}" Minimum="50"
-                                Maximum="300" Width="300" HorizontalAlignment="Left" StepFrequency="50"/>
+                            <TextBlock Margin="0 6 0 0" 
+                                Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=MaxArticlesPerFeedTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                                Text="{converters:Locale Key=MaxArticlesPerFeed}"/>
+                            <Slider Value="{Binding Personal.Max, Mode=TwoWay}" 
+                                Minimum="50" Maximum="300" Width="300" StepFrequency="50"
+                                HorizontalAlignment="Left"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
-                                Converter={StaticResource Locale}, ConverterParameter=ChangeThemeTitle}"/>
-                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
-                                Locale}, ConverterParameter=ChangeTheme}"/>
-                            <RadioButton x:Name="DefaultRadioButton" Content="{Binding Converter=
-                                {StaticResource Locale}, ConverterParameter=DefaultThemeOption}">
+                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=ChangeThemeTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                                Text="{converters:Locale Key=ChangeTheme}"/>
+                            <RadioButton x:Name="DefaultRadioButton" 
+                                Content="{converters:Locale Key=DefaultThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
                                         <core:ChangePropertyAction TargetObject="{Binding Personal}" PropertyName="Theme" Value="default"/>
@@ -113,8 +126,7 @@
                                     </core:DataTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                             </RadioButton>
-                            <RadioButton x:Name="DarkRadioButton" Content="{Binding Converter=
-                                {StaticResource Locale}, ConverterParameter=DarkThemeOption}">
+                            <RadioButton x:Name="DarkRadioButton" Content="{converters:Locale Key=DarkThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
                                         <core:ChangePropertyAction TargetObject="{Binding Personal}" PropertyName="Theme" Value="dark"/>
@@ -128,8 +140,7 @@
                                     </core:DataTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                             </RadioButton>
-                            <RadioButton x:Name="LightRadioButton" Content="{Binding Converter=
-                                {StaticResource Locale}, ConverterParameter=LightThemeOption}">
+                            <RadioButton x:Name="LightRadioButton" Content="{converters:Locale Key=LightThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
                                         <core:ChangePropertyAction TargetObject="{Binding Personal}" PropertyName="Theme" Value="light"/>
@@ -147,37 +158,43 @@
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
-            <PivotItem Header="{Binding Converter={StaticResource Locale}, ConverterParameter=Special}" Margin="0">
+            <PivotItem Header="{converters:Locale Key=Special}" Margin="0">
                 <ScrollViewer Padding="12 0">
                     <StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
-                                Converter={StaticResource Locale}, ConverterParameter=ExportOpmlTitle}"/>
-                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
-                                Locale}, ConverterParameter=ExportOpml}"/>
-                            <Button Command="{Binding Special.Export}" Margin="0 6" Content="{Binding 
-                                Converter={StaticResource Locale}, ConverterParameter=Export}"/>
+                            <TextBlock Margin="0 6 0 0" 
+                                Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=ExportOpmlTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                                Text="{converters:Locale Key=ExportOpml}"/>
+                            <Button Command="{Binding Special.Export}" Margin="0 6" 
+                                Style="{StaticResource ButtonRevealStyle}"
+                                Content="{converters:Locale Key=Export}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
-                                Converter={StaticResource Locale}, ConverterParameter=ImportOpmlTitle}"/>
-                            <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource 
-                                Locale}, ConverterParameter=ImportOpml}"/>
-                            <Button Command="{Binding Special.Import}" Margin="0 6" Content="{Binding 
-                                Converter={StaticResource Locale}, ConverterParameter=Import}"/>
+                            <TextBlock Margin="0 6 0 0" 
+                                Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=ImportOpmlTitle}"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                                Text="{converters:Locale Key=ImportOpml}"/>
+                            <Button Command="{Binding Special.Import}" Margin="0 6" 
+                                Style="{StaticResource ButtonRevealStyle}"
+                                Content="{converters:Locale Key=Import}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
-                            <TextBlock Margin="0 6 0 0" Style="{StaticResource TitleTextBlockStyle}" Text="{Binding 
-                                Converter={StaticResource Locale}, ConverterParameter=Reset}"/>
-                            <TextBlock Margin="0 6" TextWrapping="Wrap" Text="{Binding Converter={StaticResource 
-                                Locale}, ConverterParameter=ResetText}"/>
-                            <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, 
-                                ConverterParameter=Reset}" Command="{Binding Special.Reset}"/>
+                            <TextBlock Margin="0 6 0 0" 
+                                Style="{StaticResource TitleTextBlockStyle}" 
+                                Text="{converters:Locale Key=Reset}"/>
+                            <TextBlock Margin="0 6" TextWrapping="Wrap" 
+                                Text="{converters:Locale Key=ResetText}"/>
+                            <Button Margin="0 6" Command="{Binding Special.Reset}"
+                                Style="{StaticResource ButtonRevealStyle}"
+                                Content="{converters:Locale Key=Reset}"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
-            <PivotItem Margin="0" Header="{Binding Converter={StaticResource Locale}, ConverterParameter=AboutApp}">
+            <PivotItem Margin="0" Header="{converters:Locale Key=AboutApp}">
                 <ScrollViewer Padding="12 0">
                     <StackPanel>
                         <Grid Margin="0 12">
@@ -185,7 +202,8 @@
                                 <ColumnDefinition Width="120"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Grid MaxWidth="120" MaxHeight="120" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+                            <Grid MaxWidth="120" MaxHeight="120" 
+                                  Background="{ThemeResource SystemControlBackgroundAccentBrush}">
                                 <Image Source="ms-appx:///Assets/StoreLogo.png" Height="120" Width="120" />
                             </Grid>
                             <StackPanel Grid.Column="1" Margin="12 0">
@@ -198,10 +216,16 @@
                                 <TextBlock Text="{Binding About.Version}"/>
                             </StackPanel>
                         </Grid>
-                        <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMail}"/>
-                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendMailButton}" Command="{Binding About.Feedback}"/>
-                        <TextBlock TextWrapping="Wrap" Margin="0 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedback}"/>
-                        <Button Margin="0 6" Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SendFeedbackButton}" Command="{Binding About.Review}"/>
+                        <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                            Text="{converters:Locale Key=SendMail}"/>
+                        <Button Margin="0 6" Command="{Binding About.Feedback}"
+                            Style="{StaticResource ButtonRevealStyle}"
+                            Content="{converters:Locale Key=SendMailButton}"/>
+                        <TextBlock TextWrapping="Wrap" Margin="0 6" 
+                            Text="{converters:Locale Key=SendFeedback}"/>
+                        <Button Margin="0 6" Command="{Binding About.Review}"
+                            Style="{StaticResource ButtonRevealStyle}"
+                            Content="{converters:Locale Key=SendFeedbackButton}"/>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

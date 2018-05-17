@@ -5,10 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:implementations="using:myFeed.ViewModels"
+    xmlns:converters="using:myFeed.Uwp.Converters"
+    xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -58,34 +59,34 @@
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
             <Grid x:Name="BackGrid" Background="{ThemeResource LowBackgroundThemeBrush}"/>
-            <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Article}"/>
+            <controls:TitleBlock Text="{converters:Locale Key=Article}"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <controls:TransparentButton Symbol="Link" Command="{Binding Article.Launch}">
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}"/>
+                        <TextBlock Text="{converters:Locale Key=Read}"/>
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
                 <controls:TransparentButton Symbol="Copy" Command="{Binding Article.Copy}">
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
+                        <TextBlock Text="{converters:Locale Key=CopyLink}"/>
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
                 <controls:TransparentButton Symbol="ReShare" Command="{Binding Article.Share}">
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
+                        <TextBlock Text="{converters:Locale Key=ReShare}"/>
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
                 <controls:TransparentButton Symbol="OutlineStar" Command="{Binding Article.MarkFave}" 
                     Visibility="{Binding Article.Fave, Converter={StaticResource FalsyToVisible}}">
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=AddToFavorites}"/>
+                        <TextBlock Text="{converters:Locale Key=AddToFavorites}"/>
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
                 <controls:TransparentButton Symbol="OutlineStar" Command="{Binding Article.MarkFave}" 
-                    Background="{ThemeResource SystemControlBackgroundAccentBrush}" Visibility="{Binding 
-                        Article.Fave, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
+                    Visibility="{Binding Article.Fave, Mode=OneWay, Converter={StaticResource TruthyToVisible}}"
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}">
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=RemoveFromFavorites}"/>
+                        <TextBlock Text="{converters:Locale Key=RemoveFromFavorites}"/>
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
             </StackPanel>
@@ -100,12 +101,14 @@
                         TextWrapping="Wrap" Margin="12 8" FontWeight="SemiBold"/>
                     <TextBlock x:Name="Date" FontStyle="Italic" TextWrapping="Wrap" FontSize="12"
                         Margin="12 0 12 12" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}">
-                        <Run Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Published}"/>
+                        <Run Text="{converters:Locale Key=Published}"/>
                         <Run Text="{Binding Article.Published}"/>
                     </TextBlock>
                     <controls:HtmlBlock x:Name="HtmlContent"
-                        Html="{Binding Article.Content}" Margin="12 0" 
-                        Images="{Binding Images}" HtmlFontSize="{Binding Font}"/> 
+                        Html="{Binding Article.Content}"
+                        HtmlFontSize="{Binding Font}"
+                        Images="{Binding Images}"
+                        Margin="12 0"/> 
                 </StackPanel>
             </ScrollViewer>
         </Grid>

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:myFeed.Uwp.Converters"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -30,12 +31,13 @@
             <TextBlock TextAlignment="Center" HorizontalAlignment="Center" 
                 FontFamily="Segoe MDL2 Assets" Text="&#xE8F3;" FontSize="70" 
                 Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-            <TextBlock Style="{ThemeResource TitleTextBlockStyle}" TextWrapping="Wrap" TextAlignment="Center"
-                Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ChooseArticleTitle}"/>
+            <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
+                Text="{converters:Locale Key=ChooseArticleTitle}"
+                TextWrapping="Wrap" TextAlignment="Center"/>
             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" FontSize="17" 
                 Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" 
-                TextWrapping="Wrap" TextAlignment="Center" Margin="6" Text="{Binding
-                Converter={StaticResource Locale}, ConverterParameter=ChooseArticle}"/>
+                TextWrapping="Wrap" TextAlignment="Center" Margin="6" 
+                Text="{converters:Locale Key=ChooseArticle}"/>
         </StackPanel>
     </Grid>
 </Page>

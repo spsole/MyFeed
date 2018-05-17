@@ -10,6 +10,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels"
+    xmlns:converters="using:myFeed.Uwp.Converters"
     xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -27,9 +28,10 @@
     <Grid>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
-                <actions:ModalErrorAction Interaction="{Binding Error}" 
-                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorMessage}" 
-                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorTitle}"/>
+                <actions:ModalErrorAction 
+                    Interaction="{Binding Error}" 
+                    Message="{converters:Locale Key=ErrorMessage}" 
+                    Title="{converters:Locale Key=ErrorTitle}"/>
             </core:EventTriggerBehavior>
         </interactivity:Interaction.Behaviors>
         <Grid.RowDefinitions>
@@ -38,10 +40,11 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
-        <controls:TitleBlock Grid.Row="0" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchViewTitle}"/>
-        <controls:TransparentButton Grid.Row="0" HorizontalAlignment="Right" Symbol="Sync" Command="{Binding Fetch}">
+        <controls:TitleBlock Grid.Row="0" Text="{converters:Locale Key=SearchViewTitle}"/>
+        <controls:TransparentButton Grid.Row="0" Symbol="Sync" 
+            HorizontalAlignment="Right" Command="{Binding Fetch}">
             <ToolTipService.ToolTip>
-                <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}" />
+                <TextBlock Text="{converters:Locale Key=Refresh}" />
             </ToolTipService.ToolTip>
         </controls:TransparentButton>
         <Grid Grid.Row="1" Background="{ThemeResource LowBackgroundThemeBrush}">
@@ -50,23 +53,26 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
-                <TextBox InputScope="Search" Margin="12 0" Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    PlaceholderText="{Binding Converter={StaticResource Locale}, ConverterParameter=ProvideSearchQuery}"/>
+                <TextBox InputScope="Search" Margin="12 0" 
+                    Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    PlaceholderText="{converters:Locale Key=ProvideSearchQuery}"/>
             </StackPanel>
             <Button Grid.Column="1" Command="{Binding Fetch}" Margin="0 0 12 0" 
-                Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                Style="{StaticResource ButtonRevealStyle}">
                 <Button.Content>
                     <TextBlock Foreground="White">
                         <Run FontSize="12" FontFamily="Segoe MDL2 Assets" Text="&#xE71E;"/>
-                        <Run FontSize="15" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Find}"/>
+                        <Run FontSize="15" Text="{converters:Locale Key=Find}"/>
                     </TextBlock>
                 </Button.Content>
             </Button>
         </Grid>
         <Grid Grid.Row="2">
             <toolkit:PullToRefreshListView 
-                RefreshCommand="{Binding Fetch}" ItemsSource="{Binding Items}" 
                 ShowsScrollingPlaceholders="False" 
+                RefreshCommand="{Binding Fetch}" 
+                ItemsSource="{Binding Items}" 
                 IsItemClickEnabled="True"
                 SelectionMode="None">
                 <toolkit:PullToRefreshListView.ItemContainerStyle>
@@ -83,24 +89,27 @@
                 </toolkit:PullToRefreshListView.ItemContainerTransitions>
                 <toolkit:PullToRefreshListView.PullToRefreshContent>
                     <Border HorizontalAlignment="Center" CornerRadius="10" Width="20" Height="20" 
-                        Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
+                            Background="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}"/>
                 </toolkit:PullToRefreshListView.PullToRefreshContent>
                 <toolkit:PullToRefreshListView.ReleaseToRefreshContent>
                     <Border HorizontalAlignment="Center" CornerRadius="10" Width="20" Height="20" 
-                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                            Background="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                 </toolkit:PullToRefreshListView.ReleaseToRefreshContent>
                 <toolkit:PullToRefreshListView.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="12">
                             <FlyoutBase.AttachedFlyout>
                                 <MenuFlyout>
-                                    <controls:MenuFlyoutItemWithIcon Icon="Add" Command="{Binding Add}" Text="{Binding 
-                                        Converter={StaticResource Locale}, ConverterParameter=AddChannel}"/>
+                                    <MenuFlyoutItem 
+                                        Icon="Add" Command="{Binding Add}" 
+                                        Text="{converters:Locale Key=AddChannel}"/>
                                     <MenuFlyoutSeparator />
-                                    <controls:MenuFlyoutItemWithIcon Icon="Link" Command="{Binding Open}" Text="{Binding  
-                                        Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
-                                    <controls:MenuFlyoutItemWithIcon Icon="Copy" Command="{Binding Copy}" Text="{Binding
-                                        Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
+                                    <MenuFlyoutItem 
+                                        Icon="Link" Command="{Binding Open}" 
+                                        Text="{converters:Locale Key=OpenInBrowser}"/>
+                                    <MenuFlyoutItem 
+                                        Icon="Copy" Command="{Binding Copy}" 
+                                        Text="{converters:Locale Key=CopyLink}"/>
                                 </MenuFlyout>
                             </FlyoutBase.AttachedFlyout>
                             <interactivity:Interaction.Behaviors>
@@ -111,12 +120,13 @@
                                     <actions:OpenFlyoutAction/>
                                 </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="DataContextChanged">
-                                    <actions:ModalErrorAction Interaction="{Binding Error}" 
-                                        Message="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorMessage}" 
-                                        Title="{Binding Converter={StaticResource Locale}, ConverterParameter=ErrorTitle}"/>
-                                    <actions:ModalSelectAction Interaction="{Binding Select}"
-                                        Title="{Binding Converter={StaticResource Locale}, 
-                                                        ConverterParameter=AddIntoCategory}"/>
+                                    <actions:ModalErrorAction 
+                                        Interaction="{Binding Error}" 
+                                        Message="{converters:Locale Key=ErrorMessage}" 
+                                        Title="{converters:Locale Key=ErrorTitle}"/>
+                                    <actions:ModalSelectAction 
+                                        Interaction="{Binding Select}"
+                                        Title="{converters:Locale Key=AddIntoCategory}"/>
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                             <Grid.ColumnDefinitions>
@@ -137,10 +147,11 @@
                                     Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                             </StackPanel>
                             <Grid Grid.Column="1" VerticalAlignment="Top">
-                                <Ellipse Fill="{ThemeResource SystemControlBackgroundAccentBrush}" 
-                                    Width="40" Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                <Button Style="{ThemeResource TextBlockButtonStyle}" Foreground="White"
-                                    HorizontalAlignment="Center" Command="{Binding Add}">
+                                <Ellipse Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="40" 
+                                         Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                <Button Foreground="White" HorizontalAlignment="Center"
+                                        Style="{ThemeResource TextBlockButtonStyle}"
+                                        Command="{Binding Add}">
                                     <Button.Content>
                                         <SymbolIcon Symbol="Add"/>
                                     </Button.Content>
@@ -151,30 +162,34 @@
                 </toolkit:PullToRefreshListView.ItemTemplate>
             </toolkit:PullToRefreshListView>
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"
-                Visibility="{Binding IsEmpty, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
+                  Visibility="{Binding IsEmpty, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -50 0 0">
                     <TextBlock FontFamily="Segoe MDL2 Assets" 
-                               Text="&#xE783;" FontSize="50" TextAlignment="Center" 
-                               Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingTitle}" 
-                               TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
-                               TextWrapping="Wrap" Margin="36 6"/>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingSubTitle}" 
-                        TextWrapping="Wrap" TextAlignment="Center" FontSize="17" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                    <Button Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
-                        Content="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
+                        Text="&#xE783;" FontSize="50" TextAlignment="Center" 
+                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                    <TextBlock Text="{converters:Locale Key=SearchNothingTitle}" 
+                        TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
+                        TextWrapping="Wrap" Margin="36 6"/>
+                    <TextBlock Text="{converters:Locale Key=SearchNothingSubTitle}" 
+                        TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
+                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                    <Button Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                        Foreground="White" Content="{converters:Locale Key=RefreshPage}"
                         HorizontalAlignment="Center" Margin="0 12 0 0" Command="{Binding Fetch}"/>
                 </StackPanel>
             </Grid>
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"
                 Visibility="{Binding IsGreeting, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE71E;" FontSize="50" TextAlignment="Center" 
+                    <TextBlock FontFamily="Segoe MDL2 Assets" 
+                        Text="&#xE71E;" FontSize="50" TextAlignment="Center" 
                         Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeTitle}" 
-                        TextAlignment="Center" FontSize="24" FontWeight="SemiLight" TextWrapping="Wrap" Margin="36 6"/>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeSubTitle}" 
-                        TextWrapping="Wrap" TextAlignment="Center" FontSize="17" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                    <TextBlock Text="{converters:Locale Key=SearchWelcomeTitle}" 
+                        TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
+                        TextWrapping="Wrap" Margin="36 6"/>
+                    <TextBlock Text="{converters:Locale Key=SearchWelcomeSubTitle}" 
+                        TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
+                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                 </StackPanel>
             </Grid>
             <controls:LoadingScreen IsActive="{Binding IsLoading, Mode=OneWay}"/>
