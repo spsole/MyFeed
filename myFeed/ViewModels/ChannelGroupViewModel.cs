@@ -17,6 +17,11 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(ChannelGroupViewModel))]
     public sealed class ChannelGroupViewModel
     {
+        private readonly Func<Channel, ChannelItemViewModel> _factory;
+        private readonly ICategoryManager _categoryManager;
+        private readonly IMessageBus _messageBus;
+        private readonly Category _category;
+
         public ReactiveList<ChannelItemViewModel> Items { get; }
         public Interaction<Unit, string> RenameRequest { get; }  
         public Interaction<Unit, bool> RemoveRequest { get; }
@@ -35,54 +40,56 @@ namespace myFeed.ViewModels
             IMessageBus messageBus,
             Category category)
         {
+            _categoryManager = categoryManager;
+            _messageBus = messageBus;
+            _category = category;
+            _factory = factory;
+
             Title = category.Title;
             Items = new ReactiveList<ChannelItemViewModel>();
             messageBus.Listen<ChannelDeleteEvent>()
-                .Where(x => category.Channels.Contains(x.Channel))
-                .Do(x => category.Channels.Remove(x.Channel))
+                .Where(x => _category.Channels.Contains(x.Channel))
+                .Do(x => _category.Channels.Remove(x.Channel))
                 .Where(x => Items.Contains(x.ChannelItemViewModel))
                 .Do(x => Items.Remove(x.ChannelItemViewModel))
-                .SelectMany(x => categoryManager.Update(category))
+                .SelectMany(x => _categoryManager.Update(category))
                 .Subscribe();
 
             Load = ReactiveCommand.Create(
-                () => Items.AddRange(category.Channels.Select(factory))
+                () => Items.AddRange(_category.Channels.Select(factory))
             );
-            AddChannel = ReactiveCommand.CreateFromTask(
-                () => DoAddChannel(factory, categoryManager, category),
+            AddChannel = ReactiveCommand.CreateFromTask(DoAddChannel,
                 this.WhenAnyValue(x => x.ChannelUri, x => Uri
-                    .IsWellFormedUriString(x, UriKind.Absolute))
-            );
+                    .IsWellFormedUriString(x, UriKind.Absolute)));
 
             RemoveRequest = new Interaction<Unit, bool>();
-            Remove = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (!await RemoveRequest.Handle(Unit.Default)) return;
-                messageBus.SendMessage(new CategoryDeleteEvent(category, this));
-            });
-
             RenameRequest = new Interaction<Unit, string>();
-            Rename = ReactiveCommand.CreateFromTask(async () =>
-            {
-                var name = await RenameRequest.Handle(Unit.Default);
-                if (string.IsNullOrWhiteSpace(name)) return;
-                Title = category.Title = name;
-                await categoryManager.Update(category);
-            });
+            Remove = ReactiveCommand.CreateFromTask(DoRemove);
+            Rename = ReactiveCommand.CreateFromTask(DoRename);
         }
 
-        private async Task DoAddChannel(
-            Func<Channel, ChannelItemViewModel> factory,
-            ICategoryManager categoryManager,
-            Category category)
+        private async Task DoAddChannel()
         {
             var uri = ChannelUri;
             ChannelUri = string.Empty;
             var model = new Channel { Uri = uri, Notify = true };
-            
-            category.Channels.Add(model);
-            await categoryManager.Update(category); 
-            Items.Add(factory(model));   
+            _category.Channels.Add(model);
+            await _categoryManager.Update(_category); 
+            Items.Add(_factory(model));   
+        }
+
+        private async Task DoRemove() 
+        {
+            if (!await RemoveRequest.Handle(Unit.Default)) return;
+            _messageBus.SendMessage(new CategoryDeleteEvent(_category, this));
+        }
+
+        private async Task DoRename() 
+        {
+            var name = await RenameRequest.Handle(Unit.Default);
+            if (string.IsNullOrWhiteSpace(name)) return;
+            Title = _category.Title = name;
+            await _categoryManager.Update(_category);
         }
     }
 }

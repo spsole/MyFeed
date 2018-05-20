@@ -1,4 +1,5 @@
 ﻿using System.Reactive;
+using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using PropertyChanged;
@@ -11,24 +12,27 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class FeedItemFullViewModel
     {
-        public FeedItemViewModel Article { get; }
+        private readonly ISettingManager _settingManager;
+
         public ReactiveCommand<Unit, Unit> Load { get; }
-        public bool IsLoading { get; private set; } = true;
-        public bool Images { get; private set; }
+        public FeedItemViewModel Article { get; }
         public double Font { get; private set; }
+        public bool Images { get; private set; }
 
         public FeedItemFullViewModel(
             FeedItemViewModel feedItemViewModel,
             ISettingManager settingManager)
         {
             Article = feedItemViewModel;
-            Load = ReactiveCommand.CreateFromTask(async () =>
-            {
-                var settings = await settingManager.Read();
-                Images = settings.Images;
-                Font = settings.Font;
-                IsLoading = false;
-            });
+            _settingManager = settingManager;
+            Load = ReactiveCommand.CreateFromTask(DoLoad);
+        }
+
+        private async Task DoLoad()
+        {
+            var settings = await _settingManager.Read();
+            Images = settings.Images;
+            Font = settings.Font;
         }
     }
 }

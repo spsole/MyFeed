@@ -12,17 +12,22 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(FaveGroupViewModel))]
     public sealed class FaveGroupViewModel
     {
+        private readonly Func<Article, FeedItemViewModel> _factory;
+        private readonly IReactiveList<FeedItemViewModel> _source;
+        private readonly IGrouping<string, Article> _grouping;
+
         public IReactiveDerivedList<FeedItemViewModel> Items { get; }
-        public string Title { get; }
+        public string Title => _grouping.Key;
 
         public FaveGroupViewModel(
             Func<Article, FeedItemViewModel> factory,
             IGrouping<string, Article> grouping)
         {
-            Title = grouping.Key;
-            var cache = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
-            Items = cache.CreateDerivedCollection(x => x, x => x.Fave);
-            cache.AddRange(grouping.Select(factory));
+            _factory = factory;
+            _grouping = grouping;
+            _source = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
+            Items = _source.CreateDerivedCollection(x => x, x => x.Fave);
+            _source.AddRange(_grouping.Select(_factory));
         }
     }
 }

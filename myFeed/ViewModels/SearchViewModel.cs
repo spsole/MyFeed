@@ -16,6 +16,9 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class SearchViewModel
     {
+        private readonly Func<FeedlyItem, SearchItemViewModel> _factory;
+        private readonly ISearchService _searchService;
+
         public ReactiveList<SearchItemViewModel> Items { get; }
         public Interaction<Exception, bool> Error { get; }
         public ReactiveCommand<Unit, Unit> Fetch { get; }
@@ -29,8 +32,10 @@ namespace myFeed.ViewModels
             Func<FeedlyItem, SearchItemViewModel> factory,
             ISearchService searchService)
         {
+            _factory = factory;
+            _searchService = searchService;
             Items = new ReactiveList<SearchItemViewModel>();
-            Fetch = ReactiveCommand.CreateFromTask(() => DoFetch(factory, searchService));
+            Fetch = ReactiveCommand.CreateFromTask(DoFetch);
             this.WhenAnyValue(x => x.SearchQuery)
                 .Select(x => x?.Trim())
                 .DistinctUntilChanged()
@@ -40,6 +45,13 @@ namespace myFeed.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .InvokeCommand(Fetch);
 
+            Fetch.IsExecuting.Skip(1)
+                .Do(x => IsGreeting = false)
+                .Subscribe(x => IsLoading = x);
+            Items.CountChanged
+                .Select(count => count == 0)
+                .Subscribe(x => IsEmpty = x);
+
             Error = new Interaction<Exception, bool>();
             Fetch.ThrownExceptions
                 .SelectMany(x => Error.Handle(x))
@@ -48,17 +60,12 @@ namespace myFeed.ViewModels
                 .InvokeCommand(Fetch);
         }
 
-        private async Task DoFetch(
-            Func<FeedlyItem, SearchItemViewModel> factory,
-            ISearchService searchService)
+        private async Task DoFetch()
         {
-            IsLoading = true;
-            var search = await searchService.Search(SearchQuery);
-            var viewModels = search.Results.Select(factory);
+            var search = await _searchService.Search(SearchQuery);
+            var viewModels = search.Results.Select(_factory);
             Items.Clear();
             Items.AddRange(viewModels);
-            IsEmpty = Items.Count == 0;
-            IsGreeting = IsLoading = false;
         }
     }
 }

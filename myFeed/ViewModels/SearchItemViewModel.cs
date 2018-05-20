@@ -18,65 +18,64 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class SearchItemViewModel
     {
+        private readonly ICategoryManager _categoryManager;
+        private readonly IPlatformService _platformService;
+        private readonly FeedlyItem _feedlyItem;
+
         public Interaction<IList<string>, int> Select { get; }
         public Interaction<Exception, bool> Error { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
         public ReactiveCommand<Unit, Unit> Copy { get; }
         public ReactiveCommand<Unit, Unit> Add { get; }
-        
-        public string Description { get; } 
-        public string Image { get; } 
-        public string Title { get; } 
-        public string Url { get; } 
+
+        public string Description => _feedlyItem.Description;
+        public string Image => _feedlyItem.IconUrl;
+        public string Title => _feedlyItem.Title;
+        public string Url => _feedlyItem.Website;
         
         public SearchItemViewModel(
             ICategoryManager categoryManager,
             IPlatformService platformService,
             FeedlyItem feedlyItem)
         {
-            Description = feedlyItem.Description;
-            Image = feedlyItem.IconUrl;
-            Title = feedlyItem.Title;
-            Url = feedlyItem.Website;
+            _categoryManager = categoryManager;
+            _platformService = platformService;
+            _feedlyItem = feedlyItem;
 
             Select = new Interaction<IList<string>, int>();
-            Add = ReactiveCommand.CreateFromTask(
-                () => DoAdd(categoryManager, feedlyItem), Observable
-                    .Return(feedlyItem.FeedId?.Substring(5))
-                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute))
-            );
+            Add = ReactiveCommand.CreateFromTask(DoAdd, Observable
+                .Return(feedlyItem.FeedId?.Substring(5))
+                .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
 
             Error = new Interaction<Exception, bool>();
             Add.ThrownExceptions
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .SelectMany(error => Error.Handle(error))
-                .Subscribe();
+                .Subscribe(error => Error.Handle(error));
 
             Open = ReactiveCommand.CreateFromTask(
-                () => platformService.LaunchUri(new Uri(Url)),
+                () => _platformService.LaunchUri(new Uri(Url)),
                 Observable.Return(Uri.IsWellFormedUriString(Url, UriKind.Absolute))
             );
             Copy = ReactiveCommand.CreateFromTask(
-                () => platformService.CopyTextToClipboard(Url),
+                () => _platformService.CopyTextToClipboard(Url),
                 Observable.Return(!string.IsNullOrWhiteSpace(Url))
             );
         }
 
-        private async Task DoAdd(
-            ICategoryManager categoryManager,
-            FeedlyItem feedlyItem)
+        private async Task DoAdd()
         {
-            var response = await categoryManager.GetAll();
+            var response = await _categoryManager.GetAll();
             var categories = new List<Category>(response);
             var titles = categories.Select(i => i.Title).ToList(); 
             var index = await Select.Handle(titles);
             if (index < 0) return;
 
-            var feed = feedlyItem.FeedId?.Substring(5);
-            var source = new Channel { Notify = true, Uri = feed }; 
-            var category = categories[index]; 
+            var feed = _feedlyItem.FeedId?.Substring(5);
+            var category = categories[index];
+
+            var source = new Channel { Notify = true, Uri = feed };
             category.Channels.Add(source); 
-            await categoryManager.Update(category); 
+            await _categoryManager.Update(category); 
         }
     }
 }

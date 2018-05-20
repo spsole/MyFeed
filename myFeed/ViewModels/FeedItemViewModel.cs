@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -15,6 +16,13 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class FeedItemViewModel
     {
+        private readonly Func<FeedItemViewModel, FeedItemFullViewModel> _factory;
+        private readonly INavigationService _navigationService;
+        private readonly ICategoryManager _categoryManager;
+        private readonly IFavoriteManager _favoriteManager;
+        private readonly IPlatformService _platformService;
+        private readonly Article _article;
+
         public Interaction<Unit, bool> CopyConfirm { get; }
         public ReactiveCommand<Unit, Unit> MarkFave { get; }
         public ReactiveCommand<Unit, Unit> MarkRead { get; }
@@ -23,13 +31,14 @@ namespace myFeed.ViewModels
         public ReactiveCommand<Unit, Unit> Copy { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
 
+        public DateTime Published => _article.PublishedDate;
+        public string Content => _article.Content;
+        public string Image => _article.ImageUri;
+        public string Feed => _article.FeedTitle;
+        public string Title => _article.Title;
+
         public bool Fave { get; private set; }
         public bool Read { get; private set; }
-        public DateTime Published { get; }
-        public string Content { get; }
-        public string Image { get; }
-        public string Title { get; }
-        public string Feed { get; }
 
         public FeedItemViewModel(
             Func<FeedItemViewModel, FeedItemFullViewModel> factory,
@@ -39,46 +48,50 @@ namespace myFeed.ViewModels
             IPlatformService platformService,
             Article article)
         {
-            Published = article.PublishedDate;
-            Content = article.Content;
-            Image = article.ImageUri;
-            Feed = article.FeedTitle;
-            Title = article.Title;
-            Fave = article.Fave;
-            Read = article.Read;
+            _navigationService = navigationService;
+            _categoryManager = categoryManager;
+            _favoriteManager = favoriteManager;
+            _platformService = platformService;
+            _article = article;
+            _factory = factory;
 
             Launch = ReactiveCommand.CreateFromTask(
-                () => platformService.LaunchUri(new Uri(article.Uri)),
-                Observable.Return(Uri.IsWellFormedUriString(article.Uri, UriKind.Absolute))
+                () => _platformService.LaunchUri(new Uri(_article.Uri)),
+                Observable.Return(Uri.IsWellFormedUriString(_article.Uri, UriKind.Absolute))
             );
             Share = ReactiveCommand.CreateFromTask(
-                () => platformService.Share($"{article.Title} {article.Uri}")
+                () => _platformService.Share($"{_article.Title} {_article.Uri}")
             );
             Open = ReactiveCommand.CreateFromTask(
-                () => navigationService.Navigate<FeedItemFullViewModel>(factory(this))
+                () => _navigationService.Navigate<FeedItemFullViewModel>(_factory(this))
             );
 
-            MarkRead = ReactiveCommand.Create(() => { Read = !Read; });
+            Fave = _article.Fave;
+            Read = _article.Read;
             Open.Subscribe(x => Read = true);
-            this.WhenAnyValue(x => x.Read)
-                .Skip(1).Do(x => article.Read = x)
-                .SelectMany(x => categoryManager.Update(article))
+            this.WhenAnyValue(x => x.Read).Skip(1)
+                .Do(read => _article.Read = read)
+                .Select(read => _article)
+                .SelectMany(_categoryManager.Update)
                 .Subscribe();
-            
-            CopyConfirm = new Interaction<Unit, bool>();
-            Copy = ReactiveCommand.CreateFromTask(async () =>
-            {
-                await platformService.CopyTextToClipboard(article.Uri);
-                await CopyConfirm.Handle(Unit.Default);
-            });
 
-            Copy.ThrownExceptions.Subscribe();
-            MarkFave = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (Fave) await favoriteManager.Remove(article);
-                else await favoriteManager.Insert(article);
-                Fave = article.Fave;
-            });
+            CopyConfirm = new Interaction<Unit, bool>();
+            Copy = ReactiveCommand.CreateFromTask(DoCopy);
+            MarkFave = ReactiveCommand.CreateFromTask(DoMarkFave);
+            MarkRead = ReactiveCommand.Create(() => { Read = !Read; });
+        }
+
+        private async Task DoCopy()
+        {
+            await _platformService.CopyTextToClipboard(_article.Uri);
+            await CopyConfirm.Handle(Unit.Default);
+        }
+
+        private async Task DoMarkFave()
+        {
+            if (Fave) await _favoriteManager.Remove(_article);
+            else await _favoriteManager.Insert(_article);
+            Fave = _article.Fave;
         }
     }
 }

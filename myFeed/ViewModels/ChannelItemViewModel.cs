@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Events;
 using myFeed.Interfaces;
@@ -16,14 +17,19 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(ChannelItemViewModel))]
     public sealed class ChannelItemViewModel
     {
+        private readonly ICategoryManager _categoryManager;
+        private readonly IPlatformService _platformService;
+        private readonly IMessageBus _messageBus;
+        private readonly Channel _channel;
+
         public Interaction<Unit, bool> DeleteRequest { get; }
         public ReactiveCommand<Unit, Unit> Delete { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
         public ReactiveCommand<Unit, Unit> Copy { get; }
 
+        public string Name => new Uri(_channel.Uri).Host;
+        public string Url => _channel.Uri;
         public bool Notify { get; set; }
-        public string Name { get; }
-        public string Url { get; }
 
         public ChannelItemViewModel(
             ICategoryManager categoryManager,
@@ -31,30 +37,40 @@ namespace myFeed.ViewModels
             IMessageBus messageBus,
             Channel channel)
         {
-            Url = channel.Uri;
-            Notify = channel.Notify;
-            Name = new Uri(channel.Uri).Host;
-            this.WhenAnyValue(x => x.Notify)
-                .Skip(1).Do(x => channel.Notify = x)
-                .SelectMany(x => categoryManager.Update(channel))
+            _categoryManager = categoryManager;
+            _platformService = platformService;
+            _messageBus = messageBus;
+            _channel = channel;
+
+            Notify = _channel.Notify;
+            this.WhenAnyValue(x => x.Notify).Skip(1)
+                .Do(notify => _channel.Notify = notify)
+                .Select(notify => channel)
+                .SelectMany(_categoryManager.Update)
                 .Subscribe();
             
             DeleteRequest = new Interaction<Unit, bool>();
-            Delete = ReactiveCommand.CreateFromTask(async () =>
-            {
-                if (!await DeleteRequest.Handle(Unit.Default)) return;
-                messageBus.SendMessage(new ChannelDeleteEvent(channel, this));
-            });
+            Delete = ReactiveCommand.CreateFromTask(DoDelete);
+            Copy = ReactiveCommand.CreateFromTask(
+                () => _platformService.CopyTextToClipboard(Url)
+            );
 
-            Copy = ReactiveCommand.CreateFromTask(() => platformService.CopyTextToClipboard(Url));
-            Open = ReactiveCommand.CreateFromTask(async () =>
-            {
-                var url = new Uri(Url);
-                var builder = new UriBuilder(url) {Fragment = string.Empty};
-                await platformService.LaunchUri(builder.Uri);
-            },
-            this.WhenAnyValue(x => x.Url).Select(x => Uri
-                .IsWellFormedUriString(x, UriKind.Absolute)));
+            Open = ReactiveCommand.CreateFromTask(DoOpen,
+                this.WhenAnyValue(x => x.Url).Select(x => Uri
+                    .IsWellFormedUriString(x, UriKind.Absolute)));
+        }
+
+        private async Task DoDelete() 
+        {
+            if (!await DeleteRequest.Handle(Unit.Default)) return;
+            _messageBus.SendMessage(new ChannelDeleteEvent(_channel, this));
+        }
+
+        private async Task DoOpen()
+        {
+            var url = new Uri(Url);
+            var builder = new UriBuilder(url) { Fragment = string.Empty };
+            await _platformService.LaunchUri(builder.Uri);
         }
     }
 }

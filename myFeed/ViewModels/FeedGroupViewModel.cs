@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -18,6 +17,13 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(FeedGroupViewModel))]
     public sealed class FeedGroupViewModel
     {
+        private readonly Func<Article, FeedItemViewModel> _factory;
+        private readonly IReactiveList<FeedItemViewModel> _source;
+        private readonly INavigationService _navigationService;
+        private readonly IFeedStoreService _feedStoreService;
+        private readonly ISettingManager _settingManager;
+        private readonly Category _category;
+
         public IReactiveDerivedList<FeedItemViewModel> Items { get; }
         public Interaction<Exception, bool> Error { get; }
         public ReactiveCommand<Unit, Unit> Modify { get; }
@@ -26,7 +32,7 @@ namespace myFeed.ViewModels
         public bool IsLoading { get; private set; } = true;
         public bool ShowRead { get; private set; } = true;
         public bool IsEmpty { get; private set; }
-        public string Title { get; }
+        public string Title => _category.Title;
 
         public FeedGroupViewModel(
             Func<Article, FeedItemViewModel> factory,
@@ -35,14 +41,19 @@ namespace myFeed.ViewModels
             ISettingManager settingManager,
             Category category)
         {
-            Title = category.Title;
-            var cache = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
-            Items = cache.CreateDerivedCollection(x => x, x => !(!ShowRead && x.Read));            
-            Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
-            Fetch = ReactiveCommand.CreateFromTask(
-                () => DoFetch(factory, cache, feedStoreService, settingManager, category.Channels)
+            _navigationService = navigationService;
+            _feedStoreService = feedStoreService;
+            _settingManager = settingManager;
+            _category = category;
+            _factory = factory;
+
+            _source = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
+            Items = _source.CreateDerivedCollection(x => x, x => !(!ShowRead && x.Read));            
+            Modify = ReactiveCommand.CreateFromTask(
+                () => _navigationService.Navigate<ChannelViewModel>()
             );
 
+            Fetch = ReactiveCommand.CreateFromTask(DoFetch);
             Fetch.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
             Items.CountChanged
@@ -58,19 +69,14 @@ namespace myFeed.ViewModels
                 .InvokeCommand(Fetch);
         }
         
-        private async Task DoFetch(
-            Func<Article, FeedItemViewModel> factory,
-            IReactiveList<FeedItemViewModel> cache,
-            IFeedStoreService feedStoreService,
-            ISettingManager settingManager,
-            IEnumerable<Channel> channels)
+        private async Task DoFetch()
         {
-            var settings = await settingManager.Read();
-            var response = await feedStoreService.Load(channels);
-            var viewModels = response.Select(factory).ToList();
+            var settings = await _settingManager.Read();
+            var response = await _feedStoreService.Load(_category.Channels);
+            var viewModels = response.Select(_factory).ToList();
             ShowRead = settings.Read;
-            cache.Clear();
-            cache.AddRange(viewModels);
+            _source.Clear();
+            _source.AddRange(viewModels);
         }
     }
 }

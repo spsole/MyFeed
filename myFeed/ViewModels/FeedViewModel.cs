@@ -17,11 +17,17 @@ namespace myFeed.ViewModels
     [AddINotifyPropertyChangedInterface]
     public sealed class FeedViewModel
     {
+        private readonly Func<Category, FeedGroupViewModel> _factory;
+        private readonly INavigationService _navigationService;
+        private readonly ICategoryManager _categoryManager;
+        private readonly ISettingManager _settingManager;
+
         public ReactiveList<FeedGroupViewModel> Items { get; }
+        public FeedGroupViewModel Selection { get; set; }
+
         public Interaction<Exception, bool> Error { get; }
         public ReactiveCommand<Unit, Unit> Modify { get; }
         public ReactiveCommand<Unit, Unit> Load { get; }
-        public FeedGroupViewModel Selection { get; set; }
 
         public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
@@ -33,10 +39,17 @@ namespace myFeed.ViewModels
             ICategoryManager categoryManager,
             ISettingManager settingManager)
         {
-            Items = new ReactiveList<FeedGroupViewModel>();
-            Modify = ReactiveCommand.CreateFromTask(() => navigationService.Navigate<ChannelViewModel>());
-            Load = ReactiveCommand.CreateFromTask(() => DoLoad(factory, categoryManager, settingManager));
+            _navigationService = navigationService;
+            _categoryManager = categoryManager;
+            _settingManager = settingManager;
+            _factory = factory;
 
+            Items = new ReactiveList<FeedGroupViewModel>();
+            Modify = ReactiveCommand.CreateFromTask(
+                () => _navigationService.Navigate<ChannelViewModel>()
+            );
+
+            Load = ReactiveCommand.CreateFromTask(DoLoad);
             Load.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
             Items.CountChanged
@@ -52,14 +65,11 @@ namespace myFeed.ViewModels
                 .InvokeCommand(Load);
         }
 
-        private async Task DoLoad(
-            Func<Category, FeedGroupViewModel> factory,
-            ICategoryManager categoryManager,
-            ISettingManager settingManager)
+        private async Task DoLoad()
         {
-            var settings = await settingManager.Read();
-            var categories = await categoryManager.GetAll();
-            var viewModels = categories.Select(factory);
+            var settings = await _settingManager.Read();
+            var categories = await _categoryManager.GetAll();
+            var viewModels = categories.Select(_factory);
             Items.Clear();
             Items.AddRange(viewModels);
             Selection = Items.FirstOrDefault();
