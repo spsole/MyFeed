@@ -27,17 +27,16 @@
     <Grid>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
-                <actions:ReactiveCommandAction Command="{Binding Personal.Load}"/>
                 <actions:ModalConfirmAction 
-                    Interaction="{Binding Special.ResetConfirm}" 
+                    Interaction="{Binding ResetConfirm}" 
                     Message="{converters:Locale Key=ResetAppNoRestore}" 
                     Title="{converters:Locale Key=SettingsNotification}"/>
                 <actions:ModalConfirmAction 
-                    Interaction="{Binding Special.ImportSuccess}"
+                    Interaction="{Binding ImportSuccess}"
                     Message="{converters:Locale Key=ImportOpmlSuccess}" 
                     Title="{converters:Locale Key=SettingsNotification}"/>
                 <actions:ModalConfirmAction 
-                    Interaction="{Binding Special.ExportSuccess}"
+                    Interaction="{Binding ExportSuccess}"
                     Message="{converters:Locale Key=ExportOpmlSuccess}" 
                     Title="{converters:Locale Key=SettingsNotification}"/>
             </core:EventTriggerBehavior>
@@ -59,7 +58,7 @@
                                 Text="{converters:Locale Key=ChangeTextSizeTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" 
                                 Text="{converters:Locale Key=ChangeTextSize}"/>
-                            <Slider Value="{Binding Personal.Font, Mode=TwoWay}" 
+                            <Slider Value="{Binding Font, Mode=TwoWay}" 
                                 Minimum="14" Maximum="22" Width="300" 
                                 HorizontalAlignment="Left"/>
                         </StackPanel>
@@ -69,7 +68,7 @@
                                 Text="{converters:Locale Key=ShowReadArticlesTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" 
                                 Text="{converters:Locale Key=ShowReadArticles}"/>
-                            <ToggleSwitch IsOn="{Binding Personal.Read, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{Binding Read, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" 
@@ -77,7 +76,7 @@
                                 Text="{converters:Locale Key=DisableImagesTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" 
                                 Text="{converters:Locale Key=DisableImages}"/>
-                            <ToggleSwitch IsOn="{Binding Personal.Images, Mode=TwoWay}" />
+                            <ToggleSwitch IsOn="{Binding Images, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" 
@@ -85,7 +84,7 @@
                                 Text="{converters:Locale Key=NotifyCheckTimeTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" 
                                 Text="{converters:Locale Key=NotifyCheckTime}"/>
-                            <Slider Value="{Binding Personal.Period, Mode=TwoWay}" Minimum="0" 
+                            <Slider Value="{Binding Period, Mode=TwoWay}" Minimum="0" 
                                 Maximum="180" Width="300" HorizontalAlignment="Left" StepFrequency="30"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
@@ -94,7 +93,7 @@
                                 Text="{converters:Locale Key=NotifyBannersTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" 
                                 Text="{converters:Locale Key=NotifyBanners}"/>
-                            <ToggleSwitch IsOn="{Binding Personal.Banners, Mode=TwoWay}"/>
+                            <ToggleSwitch IsOn="{Binding Banners, Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Margin="0 6">
                             <TextBlock Margin="0 6 0 0" 
@@ -102,7 +101,7 @@
                                 Text="{converters:Locale Key=MaxArticlesPerFeedTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" 
                                 Text="{converters:Locale Key=MaxArticlesPerFeed}"/>
-                            <Slider Value="{Binding Personal.Max, Mode=TwoWay}" 
+                            <Slider Value="{Binding Max, Mode=TwoWay}" 
                                 Minimum="50" Maximum="300" Width="300" StepFrequency="50"
                                 HorizontalAlignment="Left"/>
                         </StackPanel>
@@ -115,9 +114,9 @@
                                 Content="{converters:Locale Key=DefaultThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction TargetObject="{Binding Personal}" PropertyName="Theme" Value="default"/>
+                                        <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="Theme" Value="default"/>
                                     </core:EventTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{Binding Personal.Theme}" ComparisonCondition="Equal" Value="default">
+                                    <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="default">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=DefaultRadioButton}" PropertyName="IsChecked">
                                             <core:ChangePropertyAction.Value>
                                                 <x:Boolean>True</x:Boolean>
@@ -129,9 +128,9 @@
                             <RadioButton x:Name="DarkRadioButton" Content="{converters:Locale Key=DarkThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction TargetObject="{Binding Personal}" PropertyName="Theme" Value="dark"/>
+                                        <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="Theme" Value="dark"/>
                                     </core:EventTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{Binding Personal.Theme}" ComparisonCondition="Equal" Value="dark">
+                                    <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="dark">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=DarkRadioButton}" PropertyName="IsChecked">
                                             <core:ChangePropertyAction.Value>
                                                 <x:Boolean>True</x:Boolean>
@@ -143,9 +142,9 @@
                             <RadioButton x:Name="LightRadioButton" Content="{converters:Locale Key=LightThemeOption}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction TargetObject="{Binding Personal}" PropertyName="Theme" Value="light"/>
+                                        <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="Theme" Value="light"/>
                                     </core:EventTriggerBehavior>
-                                    <core:DataTriggerBehavior Binding="{Binding Personal.Theme}" ComparisonCondition="Equal" Value="light">
+                                    <core:DataTriggerBehavior Binding="{Binding Theme}" ComparisonCondition="Equal" Value="light">
                                         <core:ChangePropertyAction TargetObject="{Binding ElementName=LightRadioButton}" PropertyName="IsChecked">
                                             <core:ChangePropertyAction.Value>
                                                 <x:Boolean>True</x:Boolean>
@@ -167,7 +166,7 @@
                                 Text="{converters:Locale Key=ExportOpmlTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" 
                                 Text="{converters:Locale Key=ExportOpml}"/>
-                            <Button Command="{Binding Special.Export}" Margin="0 6" 
+                            <Button Command="{Binding Export}" Margin="0 6" 
                                 Style="{StaticResource ButtonRevealStyle}"
                                 Content="{converters:Locale Key=Export}"/>
                         </StackPanel>
@@ -177,7 +176,7 @@
                                 Text="{converters:Locale Key=ImportOpmlTitle}"/>
                             <TextBlock TextWrapping="Wrap" Margin="0 6" 
                                 Text="{converters:Locale Key=ImportOpml}"/>
-                            <Button Command="{Binding Special.Import}" Margin="0 6" 
+                            <Button Command="{Binding Import}" Margin="0 6" 
                                 Style="{StaticResource ButtonRevealStyle}"
                                 Content="{converters:Locale Key=Import}"/>
                         </StackPanel>
@@ -187,7 +186,7 @@
                                 Text="{converters:Locale Key=Reset}"/>
                             <TextBlock Margin="0 6" TextWrapping="Wrap" 
                                 Text="{converters:Locale Key=ResetText}"/>
-                            <Button Margin="0 6" Command="{Binding Special.Reset}"
+                            <Button Margin="0 6" Command="{Binding Reset}"
                                 Style="{StaticResource ButtonRevealStyle}"
                                 Content="{converters:Locale Key=Reset}"/>
                         </StackPanel>
@@ -213,17 +212,17 @@
                                 <HyperlinkButton Content="GitHub" Margin="0 6"
                                     Style="{StaticResource TextBlockButtonStyle}" Padding="0"
                                     NavigateUri="https://github.com/worldbeater/myFeed"/>
-                                <TextBlock Text="{Binding About.Version}"/>
+                                <TextBlock Text="{Binding Version}"/>
                             </StackPanel>
                         </Grid>
                         <TextBlock TextWrapping="Wrap" Margin="0 6" 
                             Text="{converters:Locale Key=SendMail}"/>
-                        <Button Margin="0 6" Command="{Binding About.Feedback}"
+                        <Button Margin="0 6" Command="{Binding Feedback}"
                             Style="{StaticResource ButtonRevealStyle}"
                             Content="{converters:Locale Key=SendMailButton}"/>
                         <TextBlock TextWrapping="Wrap" Margin="0 6" 
                             Text="{converters:Locale Key=SendFeedback}"/>
-                        <Button Margin="0 6" Command="{Binding About.Review}"
+                        <Button Margin="0 6" Command="{Binding Review}"
                             Style="{StaticResource ButtonRevealStyle}"
                             Content="{converters:Locale Key=SendFeedbackButton}"/>
                     </StackPanel>

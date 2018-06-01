@@ -35,7 +35,7 @@ namespace myFeed.Services
             };
         }
 
-        public async Task Write(Settings settings)
+        public async Task<bool> Write(Settings settings)
         {
             await _semaphoreSlim.WaitAsync().ConfigureAwait(false);
             var collection = _liteDatabase.GetCollection<Settings>();
@@ -47,6 +47,7 @@ namespace myFeed.Services
             _cachedConfiguration = new Settings();
             Copy(settings, _cachedConfiguration);
             _semaphoreSlim.Release();
+            return true;
         }
 
         public async Task<Settings> Read()

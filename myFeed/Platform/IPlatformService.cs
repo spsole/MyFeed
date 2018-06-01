@@ -5,15 +5,15 @@ namespace myFeed.Platform
 {
     public interface IPlatformService
     {
-        Task LaunchUri(Uri uri);
-        
-        Task Share(string content);
+        Task<bool> RegisterBackgroundTask(int freq);
+
+        Task<bool> RegisterTheme(string theme);
 
         Task CopyTextToClipboard(string text);
 
-        Task RegisterBackgroundTask(int freq);
-        
-        Task RegisterTheme(string theme);
+        Task Share(string content);
+
+        Task LaunchUri(Uri uri);
 
         Task ResetApp();
     }
