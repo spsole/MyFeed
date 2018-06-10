@@ -1,9 +1,9 @@
-module myFeed.Tests.Fixtures.Setting
+module myFeed.Tests.LiteSettingManager
 
 open Xunit
 open myFeed.Models
 open myFeed.Services
-open myFeed.Tests.Extensions
+open myFeed.Tests
 
 [<Theory>]
 [<InlineData(10.0)>]

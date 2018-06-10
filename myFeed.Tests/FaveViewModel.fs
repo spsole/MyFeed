@@ -1,11 +1,11 @@
-module myFeed.Tests.Fixtures.FaveViewModel
+module myFeed.Tests.FaveViewModel
 
 open Xunit
 open NSubstitute
 open myFeed.Models
 open myFeed.ViewModels
 open myFeed.Interfaces
-open myFeed.Tests.Extensions
+open myFeed.Tests
 open System.Threading.Tasks
 open System.Linq
 open System

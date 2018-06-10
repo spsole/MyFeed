@@ -1,8 +1,8 @@
-module myFeed.Tests.Fixtures.Database
+module myFeed.Tests.Database
 
 open Xunit
 open LiteDB
-open myFeed.Tests.Extensions
+open myFeed.Tests
 open myFeed.Models
 open System
 

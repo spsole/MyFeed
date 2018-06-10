@@ -1,7 +1,7 @@
-module myFeed.Tests.Fixtures.Category
+module myFeed.Tests.LiteCategoryManager
 
 open Xunit
-open myFeed.Tests.Extensions
+open myFeed.Tests
 open myFeed.Services
 open myFeed.Models
 open System

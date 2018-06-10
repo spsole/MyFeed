@@ -1,11 +1,11 @@
-module myFeed.Tests.Fixtures.ParallelFeedStore
+module myFeed.Tests.ParallelFeedStoreService
 
 open Xunit
 open NSubstitute
 open myFeed.Models
 open myFeed.Interfaces
 open myFeed.Services
-open myFeed.Tests.Extensions
+open myFeed.Tests
 open System.Threading.Tasks
 open System
 

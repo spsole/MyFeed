@@ -1,7 +1,7 @@
-﻿module myFeed.Tests.Fixtures.XmlSerialization
+﻿module myFeed.Tests.XmlSerializationService
 
 open Xunit
-open myFeed.Tests.Extensions
+open myFeed.Tests
 open myFeed.Services
 open myFeed.Models
 open System.IO

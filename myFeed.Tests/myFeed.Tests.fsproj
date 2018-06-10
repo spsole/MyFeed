@@ -4,16 +4,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AutoOpen.fs" />
-    <Compile Include="Background.fs" />
-    <Compile Include="Category.fs" />
+    <Compile Include="BackgroundService.fs" />
     <Compile Include="Database.fs" />
+    <Compile Include="DefaultOpmlService.fs" />
     <Compile Include="FaveViewModel.fs" />
-    <Compile Include="Favorite.fs" />
-    <Compile Include="Opml.fs" />
-    <Compile Include="ParallelFeedStore.fs" />
-    <Compile Include="RegexImage.fs" />
-    <Compile Include="Settings.fs" />
-    <Compile Include="XmlSerialization.fs" />
+    <Compile Include="LiteCategoryManager.fs" />
+    <Compile Include="LiteFavoriteManager.fs" />
+    <Compile Include="LiteSettingManager.fs" />
+    <Compile Include="ParallelFeedStoreService.fs" />
+    <Compile Include="RegexImageService.fs" />
+    <Compile Include="XmlSerializationService.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\myFeed\myFeed.csproj" />

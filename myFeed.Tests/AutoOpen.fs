@@ -1,5 +1,5 @@
 [<AutoOpen>]
-module myFeed.Tests.Extensions.Default
+module myFeed.Tests.AutoOpen
 
 open Xunit
 open Xunit.Sdk

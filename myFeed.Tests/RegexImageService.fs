@@ -1,7 +1,7 @@
-module myFeed.Tests.Fixtures.RegexImage
+module myFeed.Tests.RegexImageService
 
 open Xunit
-open myFeed.Tests.Extensions
+open myFeed.Tests
 open myFeed.Services
 
 [<Theory>]

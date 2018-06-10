@@ -1,9 +1,9 @@
-﻿module myFeed.Tests.Fixtures.Favorite
+﻿module myFeed.Tests.LiteFavoriteManager
 
 open Xunit
 open myFeed.Models
 open myFeed.Services
-open myFeed.Tests.Extensions
+open myFeed.Tests
 
 let private repository = produce<LiteFavoriteManager> [connection]
 
