@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -19,9 +20,9 @@ namespace myFeed.ViewModels
         private readonly Func<FeedlyItem, SearchItemViewModel> _factory;
         private readonly ISearchService _searchService;
 
-        public ReactiveList<SearchItemViewModel> Items { get; }
+        public ReactiveCommand<Unit, SearchItemViewModel> Fetch { get; }
+        public IReactiveDerivedList<SearchItemViewModel> Items { get; }
         public Interaction<Exception, bool> Error { get; }
-        public ReactiveCommand<Unit, Unit> Fetch { get; }
 
         public string SearchQuery { get; set; } = string.Empty;
         public bool IsGreeting { get; private set; } = true;
@@ -34,8 +35,13 @@ namespace myFeed.ViewModels
         {
             _factory = factory;
             _searchService = searchService;
-            Items = new ReactiveList<SearchItemViewModel>();
-            Fetch = ReactiveCommand.CreateFromTask(DoFetch);
+            var fetch = Observable.Return(SearchQuery)
+                .SelectMany(_searchService.Search)
+                .SelectMany(x => x.Results)
+                .Select(_factory);
+
+            Fetch = ReactiveCommand.CreateFromObservable(() => fetch);
+            Items = Fetch.CreateCollection(RxApp.MainThreadScheduler);
             this.WhenAnyValue(x => x.SearchQuery)
                 .Select(x => x?.Trim())
                 .DistinctUntilChanged()
@@ -58,14 +64,6 @@ namespace myFeed.ViewModels
                 .Where(retry => retry)
                 .Select(x => Unit.Default)
                 .InvokeCommand(Fetch);
-        }
-
-        private async Task DoFetch()
-        {
-            var search = await _searchService.Search(SearchQuery);
-            var viewModels = search.Results.Select(_factory);
-            Items.Clear();
-            Items.AddRange(viewModels);
         }
     }
 }

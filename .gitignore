@@ -39,7 +39,6 @@ myFeed.Uwp/bin
 myFeed.Uwp/BundleArtifacts
 myFeed.Uwp.Notifications/obj
 myFeed.Uwp.Notifications/bin
-myFeed.sln
 
 # OSX
 # =========================
@@ -80,7 +79,6 @@ Temporary Items
 *.user
 *.appx
 *.pfx
-*.appxmanifest
 myFeed.Views.Uwp/Package.StoreAssociation.xml
 myFeed.Uwp/Package.xml
 myFeed.Uwp/Package.xml
