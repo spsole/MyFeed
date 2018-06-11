@@ -31,18 +31,19 @@ namespace myFeed.Services
         public async Task<bool> CheckForUpdates(DateTime dateTime)
         {
             var categories = await _categoryManager.GetAll().ConfigureAwait(false);
-            var notifyables = categories.SelectMany(x => x.Channels).Where(x => x.Notify);
+            var notifyables = categories
+                .SelectMany(category => category.Channels)
+                .Where(channel => channel.Notify);
 
             var articles = await _feedStoreService.Load(notifyables).ConfigureAwait(false);
             var settings = await _settingManager.Read().ConfigureAwait(false);
-            var recent = articles
-                .Where(x => x.PublishedDate > settings.Fetched)
-                .OrderByDescending(x => x.PublishedDate)
+            var recentArticles = articles
+                .Where(article => article.PublishedDate > settings.Fetched)
+                .OrderByDescending(article => article.PublishedDate)
                 .Take(15).Reverse().ToList();
 
-            await _notificationService.SendNotifications(recent).ConfigureAwait(false);
-            if (!recent.Any()) return false;
-
+            await _notificationService.SendNotifications(recentArticles).ConfigureAwait(false);
+            if (!recentArticles.Any()) return false;
             settings.Fetched = dateTime;
             await _settingManager.Write(settings).ConfigureAwait(false);
             return true;

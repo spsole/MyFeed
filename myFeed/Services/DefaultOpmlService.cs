@@ -17,7 +17,7 @@ namespace myFeed.Services
         private readonly ICategoryManager _categoryManager;
 
         public DefaultOpmlService(
-            ISerializationService serializationService,
+            ISerializationService serializationService, 
             ICategoryManager categoryManager)
         {
             _serializationService = serializationService;
@@ -26,26 +26,25 @@ namespace myFeed.Services
 
         public async Task<bool> ExportOpml(Stream stream)
         {
-            var opml = new Opml {Head = new OpmlHead {Title = "Feeds from myFeed App"}};
+            var opml = new Opml { Head = new OpmlHead { Title = "Feeds from myFeed App" } };
             var categories = await _categoryManager.GetAll().ConfigureAwait(false);
-            var outlines = categories.Select(x => new OpmlOutline
+            var outlines = categories.Select(category => new OpmlOutline
             {
-                Text = x.Title,
-                Title = x.Title,
-                ChildOutlines = x.Channels
-                .Select(i => new {Entity = i, Uri = new Uri(i.Uri)})
-                .Select(y => new OpmlOutline
+                Text = category.Title,
+                Title = category.Title,
+                ChildOutlines = category.Channels
+                .Select(channel => new { Entity = channel, Uri = new Uri(channel.Uri) })
+                .Select(entityWithUri => new OpmlOutline
                 {
-                    HtmlUrl = $"{y.Uri.Scheme}://{y.Uri.Host}",
-                    XmlUrl = y.Uri.ToString(),
-                    Title = y.Uri.Host,
-                    Text = y.Uri.Host,
+                    HtmlUrl = $"{entityWithUri.Uri.Scheme}://{entityWithUri.Uri.Host}",
+                    XmlUrl = entityWithUri.Uri.ToString(),
+                    Title = entityWithUri.Uri.Host,
+                    Text = entityWithUri.Uri.Host,
                     Version = "rss",
                     Type = "rss"
                 })
                 .ToList()
             });
-
             opml.Body = new List<OpmlOutline>(outlines);
             if (stream == null) return false;
             await _serializationService.Serialize(opml, stream).ConfigureAwait(false);
@@ -57,13 +56,13 @@ namespace myFeed.Services
             var opml = await _serializationService.Deserialize<Opml>(stream).ConfigureAwait(false);
             if (opml == null) return false;
             var categories = opml.Body
-                .Where(i => i.XmlUrl == null && i.HtmlUrl == null)
-                .Select(i => new {Title = i.Title ?? i.Text, Outline = i})
-                .Where(i => i.Title != null)
-                .Select(i => new Category
+                .Where(outline => outline.XmlUrl == null && outline.HtmlUrl == null)
+                .Select(outline => new {Title = outline.Title ?? outline.Text, Outline = outline})
+                .Where(namedOutline => namedOutline.Title != null)
+                .Select(namedOutline => new Category
                 {
-                    Title = i.Title,
-                    Channels = i.Outline.ChildOutlines
+                    Title = namedOutline.Title,
+                    Channels = namedOutline.Outline.ChildOutlines
                     .Select(o => new Channel { Uri = o.XmlUrl, Notify = true })
                     .ToList()
                 })
@@ -71,10 +70,10 @@ namespace myFeed.Services
 
             var uncategorized = new Category
             {
-                Title = "Unknown category",
+                Title = "Unknown",
                 Channels = opml.Body
-                .Where(i => Uri.IsWellFormedUriString(i.XmlUrl, UriKind.Absolute))
-                .Select(i => new Channel {Uri = i.XmlUrl, Notify = true})
+                .Where(outline => Uri.IsWellFormedUriString(outline.XmlUrl, UriKind.Absolute))
+                .Select(outline => new Channel { Uri = outline.XmlUrl, Notify = true })
                 .ToList()
             };
             if (uncategorized.Channels.Any()) categories.Add(uncategorized);
