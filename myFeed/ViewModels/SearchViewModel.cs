@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -19,9 +17,9 @@ namespace myFeed.ViewModels
     {
         private readonly Func<FeedlyItem, SearchItemViewModel> _factory;
         private readonly ISearchService _searchService;
-
-        public ReactiveCommand<Unit, SearchItemViewModel> Fetch { get; }
-        public IReactiveDerivedList<SearchItemViewModel> Items { get; }
+        
+        public ReactiveCommand<Unit, FeedlyRoot> Fetch { get; }
+        public ReactiveList<SearchItemViewModel> Items { get; }
         public Interaction<Exception, bool> Error { get; }
 
         public string SearchQuery { get; set; } = string.Empty;
@@ -35,13 +33,16 @@ namespace myFeed.ViewModels
         {
             _factory = factory;
             _searchService = searchService;
-            var fetch = Observable.Return(SearchQuery)
-                .SelectMany(_searchService.Search)
-                .SelectMany(x => x.Results)
-                .Select(_factory);
-
-            Fetch = ReactiveCommand.CreateFromObservable(() => fetch);
-            Items = Fetch.CreateCollection(RxApp.MainThreadScheduler);
+            Items = new ReactiveList<SearchItemViewModel>();
+            Fetch = ReactiveCommand.CreateFromTask(() => _searchService.Search(SearchQuery));
+            Fetch.Select(response => response.Results)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(models => Items.Clear())
+                .SelectMany(models => models)
+                .Select(_factory)
+                .Subscribe(Items.Add);
+            
+            // Live search support.
             this.WhenAnyValue(x => x.SearchQuery)
                 .Select(x => x?.Trim())
                 .DistinctUntilChanged()
@@ -50,7 +51,7 @@ namespace myFeed.ViewModels
                 .Select(x => Unit.Default)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .InvokeCommand(Fetch);
-
+            
             Fetch.IsExecuting.Skip(1)
                 .Do(x => IsGreeting = false)
                 .Subscribe(x => IsLoading = x);
