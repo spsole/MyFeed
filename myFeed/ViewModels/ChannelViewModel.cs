@@ -51,7 +51,6 @@ namespace myFeed.ViewModels
 
             _lookup = new Dictionary<ChannelGroupViewModel, Category>();
             _messageBus.Listen<CategoryDeleteEvent>()
-                .Where(x => Items.Contains(x.ChannelGroupViewModel))
                 .Do(x => Items.Remove(x.ChannelGroupViewModel))
                 .SelectMany(x => _categoryManager.Remove(x.Category))
                 .Subscribe();

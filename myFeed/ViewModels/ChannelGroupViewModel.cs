@@ -48,9 +48,7 @@ namespace myFeed.ViewModels
             Title = category.Title;
             Items = new ReactiveList<ChannelItemViewModel>();
             messageBus.Listen<ChannelDeleteEvent>()
-                .Where(x => _category.Channels.Contains(x.Channel))
                 .Do(x => _category.Channels.Remove(x.Channel))
-                .Where(x => Items.Contains(x.ChannelItemViewModel))
                 .Do(x => Items.Remove(x.ChannelItemViewModel))
                 .SelectMany(x => _categoryManager.Update(category))
                 .Subscribe();
