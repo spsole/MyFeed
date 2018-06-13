@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.4</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DryIoc.MefAttributedModel.dll" Version="3.2.0" />
-    <PackageReference Include="DryIoc.dll" Version="2.12.9" />
+    <PackageReference Include="DryIoc.dll" Version="2.12.8" />
     <PackageReference Include="DryIocAttributes.dll" Version="3.1.0" />
-    <PackageReference Include="LiteDB" Version="4.1.2" />
-    <PackageReference Include="PropertyChanged.Fody" Version="2.5.6" />
-    <PackageReference Include="ReactiveUI" Version="8.0.0-alpha0117" />
-    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
+    <PackageReference Include="LiteDB" Version="4.1.4" />
+    <PackageReference Include="PropertyChanged.Fody" Version="2.5.7" />
+    <PackageReference Include="ReactiveUI" Version="8.3.1" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="CodeHollow.FeedReader" Version="1.1.2" />
     <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />

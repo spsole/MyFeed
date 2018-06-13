@@ -72,16 +72,6 @@
                             <core:EventTriggerBehavior EventName="Loaded">
                                 <actions:ReactiveCommandAction Command="{Binding Load}"/>
                             </core:EventTriggerBehavior>
-                            <core:EventTriggerBehavior EventName="DataContextChanged">
-                                <actions:ModalPromptAction 
-                                    Interaction="{Binding RenameRequest}"
-                                    Message="{converters:Locale Key=EnterNameOfNewCategory}"
-                                    Title="{converters:Locale Key=EnterNameOfNewCategoryTitle}"/>
-                                <actions:ModalConfirmAction 
-                                    Interaction="{Binding RemoveRequest}"
-                                    Message="{converters:Locale Key=DeleteCategory}"
-                                    Title="{converters:Locale Key=DeleteElement}"/>
-                            </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                         <controls:Expander.HeaderContent>
                             <Grid>
@@ -98,6 +88,14 @@
                                     Style="{StaticResource TextBlockButtonStyle}"
                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                     Grid.Column="1" Command="{Binding Rename}">
+                                    <interactivity:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="Click">
+                                            <actions:ModalPromptAction 
+                                                Interaction="{Binding RenameRequest}"
+                                                Message="{converters:Locale Key=EnterNameOfNewCategory}"
+                                                Title="{converters:Locale Key=EnterNameOfNewCategoryTitle}"/>
+                                        </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
                                     <Button.Content>
                                         <SymbolIcon Symbol="Edit"/>
                                     </Button.Content>
@@ -109,6 +107,14 @@
                                     Style="{StaticResource TextBlockButtonStyle}" 
                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                     Grid.Column="2" Command="{Binding Remove}">
+                                    <interactivity:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="Click">
+                                            <actions:ModalConfirmAction 
+                                                Interaction="{Binding RemoveRequest}"
+                                                Message="{converters:Locale Key=DeleteCategory}"
+                                                Title="{converters:Locale Key=DeleteElement}"/>
+                                        </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
                                     <Button.Content>
                                         <SymbolIcon Symbol="Delete"/>
                                     </Button.Content>
