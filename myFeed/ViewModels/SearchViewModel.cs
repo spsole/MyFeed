@@ -42,14 +42,12 @@ namespace myFeed.ViewModels
                 .Select(_factory)
                 .Subscribe(Items.Add);
             
-            // Live search support.
             this.WhenAnyValue(x => x.SearchQuery)
                 .Select(x => x?.Trim())
                 .DistinctUntilChanged()
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Throttle(TimeSpan.FromSeconds(0.8))
                 .Select(x => Unit.Default)
-                .ObserveOn(RxApp.MainThreadScheduler)
                 .InvokeCommand(Fetch);
             
             Fetch.IsExecuting.Skip(1)

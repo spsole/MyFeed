@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -23,11 +23,11 @@ namespace myFeed.ViewModels
         private readonly IFeedStoreService _feedStoreService;
         private readonly ISettingManager _settingManager;
         private readonly Category _category;
-
+        
+        public ReactiveCommand<Unit, IEnumerable<Article>> Fetch { get; }
         public IReactiveDerivedList<FeedItemViewModel> Items { get; }
         public Interaction<Exception, bool> Error { get; }
         public ReactiveCommand<Unit, Unit> Modify { get; }
-        public ReactiveCommand<Unit, Unit> Fetch { get; }
 
         public bool IsLoading { get; private set; } = true;
         public bool ShowRead { get; private set; } = true;
@@ -48,17 +48,30 @@ namespace myFeed.ViewModels
             _factory = factory;
 
             _source = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
-            Items = _source.CreateDerivedCollection(x => x, x => !(!ShowRead && x.Read));            
-            Modify = ReactiveCommand.CreateFromTask(
-                () => _navigationService.Navigate<ChannelViewModel>()
+            Items = _source.CreateDerivedCollection(x => x, x => !(!ShowRead && x.Read)); 
+            Fetch = ReactiveCommand.CreateFromTask(
+                () => _feedStoreService.Load(_category.Channels)    
             );
 
-            Fetch = ReactiveCommand.CreateFromTask(DoFetch);
+            Fetch.ObserveOn(RxApp.MainThreadScheduler)
+                .Do(articles => _source.Clear())
+                .SelectMany(articles => articles)
+                .Select(_factory)
+                .Subscribe(_source.Add);
+            Fetch.SelectMany(_ => _settingManager.Read())
+                .Select(settings => settings.Read)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => ShowRead = x);
+
             Fetch.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
             Items.CountChanged
                 .Select(count => count == 0)
                 .Subscribe(x => IsEmpty = x);
+            
+            Modify = ReactiveCommand.CreateFromTask(
+                () => _navigationService.Navigate<ChannelViewModel>()
+            );
 
             Error = new Interaction<Exception, bool>();
             Fetch.ThrownExceptions
@@ -67,16 +80,6 @@ namespace myFeed.ViewModels
                 .Where(retryRequested => retryRequested)
                 .Select(x => Unit.Default)
                 .InvokeCommand(Fetch);
-        }
-        
-        private async Task DoFetch()
-        {
-            var settings = await _settingManager.Read();
-            var response = await _feedStoreService.Load(_category.Channels);
-            var viewModels = response.Select(_factory).ToList();
-            ShowRead = settings.Read;
-            _source.Clear();
-            _source.AddRange(viewModels);
         }
     }
 }
