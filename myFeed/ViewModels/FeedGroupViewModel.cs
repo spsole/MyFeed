@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using DryIocAttributes;
@@ -50,7 +49,7 @@ namespace myFeed.ViewModels
             _source = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
             Items = _source.CreateDerivedCollection(x => x, x => !(!ShowRead && x.Read)); 
             Fetch = ReactiveCommand.CreateFromTask(
-                () => _feedStoreService.Load(_category.Channels)    
+                () => _feedStoreService.Load(_category.Channels)
             );
 
             Fetch.ObserveOn(RxApp.MainThreadScheduler)
@@ -68,12 +67,11 @@ namespace myFeed.ViewModels
             Items.CountChanged
                 .Select(count => count == 0)
                 .Subscribe(x => IsEmpty = x);
-            
+
+            Error = new Interaction<Exception, bool>();
             Modify = ReactiveCommand.CreateFromTask(
                 () => _navigationService.Navigate<ChannelViewModel>()
             );
-
-            Error = new Interaction<Exception, bool>();
             Fetch.ThrownExceptions
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .SelectMany(error => Error.Handle(error))

@@ -25,13 +25,15 @@ namespace myFeed.ViewModels
         private readonly ICategoryManager _categoryManager;
         private readonly IMessageBus _messageBus;
 
+        public ReactiveCommand<Unit, IEnumerable<Category>> Load { get; }
         public ReactiveList<ChannelGroupViewModel> Items { get; }
-        public Interaction<Unit, string> AddRequest { get; }
         public ReactiveCommand<Unit, Unit> Search { get; }
-        public ReactiveCommand<Unit, Unit> Load { get; }
+        
+        public Interaction<Unit, string> AddRequest { get; }
         public ReactiveCommand<Unit, Unit> Add { get; }
 
         public bool IsLoading { get; private set; } = true;
+        public bool IsLoaded { get; private set; } = false;
         public bool IsEmpty { get; private set; } = true;
 
         public ChannelViewModel(
@@ -45,47 +47,46 @@ namespace myFeed.ViewModels
             _messageBus = messageBus;
             _factory = factory;
 
-            AddRequest = new Interaction<Unit, string>();
             Items = new ReactiveList<ChannelGroupViewModel>();
+            AddRequest = new Interaction<Unit, string>();
             Add = ReactiveCommand.CreateFromTask(DoAdd);
-
-            _lookup = new Dictionary<ChannelGroupViewModel, Category>();
-            _messageBus.Listen<CategoryDeleteEvent>()
-                .Do(x => Items.Remove(x.ChannelGroupViewModel))
-                .SelectMany(x => _categoryManager.Remove(x.Category))
-                .Subscribe();
-
-            Load = ReactiveCommand.CreateFromTask(DoLoad);
             Search = ReactiveCommand.CreateFromTask(
                 () => _navigationService.Navigate<SearchViewModel>()
             );
+
+            _lookup = new Dictionary<ChannelGroupViewModel, Category>();
+            _messageBus.Listen<CategoryDeleteEvent>()
+                .Do(message => Items.Remove(message.ChannelGroupViewModel))
+                .SelectMany(message => _categoryManager.Remove(message.Category))
+                .Subscribe();
+
+            var isLoaded = this.WhenAnyValue(x => x.IsLoaded);
+            Load = ReactiveCommand.CreateFromTask(_categoryManager.GetAll, isLoaded);
+            Load.SelectMany(categories => categories)
+                .Select(category => (category, _factory(category)))
+                .Do(tuple => _lookup[tuple.Item2] = tuple.Item1)
+                .Select(tuple => tuple.Item2)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(model => IsLoaded = true)
+                .Subscribe(Items.Add);
 
             Load.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
             Items.CountChanged
                 .Select(count => count == 0)
                 .Subscribe(x => IsEmpty = x);
-            
             Items.Changed.Skip(1)
-                .Select(x => Items)
-                .Select(x => x.Select(i => _lookup[i]))
+                .Select(arguments => Items)
+                .Select(items => items.Select(x => _lookup[x]))
                 .SelectMany(_categoryManager.Rearrange)
                 .Subscribe();
-        }
-
-        private async Task DoLoad()
-        {
-            _lookup.Clear();
-            var categories = await _categoryManager.GetAll();
-            categories.ToList().ForEach(x => _lookup[_factory(x)] = x);
-            Items.AddRange(_lookup.Keys);
         }
 
         private async Task DoAdd()
         {
             var name = await AddRequest.Handle(Unit.Default);
             if (string.IsNullOrWhiteSpace(name)) return;
-            var category = new Category { Title = name };
+            var category = new Category {Title = name};
             await _categoryManager.Insert(category);
 
             var viewModel = _factory(category);

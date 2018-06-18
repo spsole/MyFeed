@@ -1,7 +1,10 @@
-﻿using System.Reactive;
+﻿using System;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
+using myFeed.Models;
 using PropertyChanged;
 using ReactiveUI;
 
@@ -14,8 +17,9 @@ namespace myFeed.ViewModels
     {
         private readonly ISettingManager _settingManager;
 
-        public ReactiveCommand<Unit, Unit> Load { get; }
+        public ReactiveCommand<Unit, Settings> Load { get; }
         public FeedItemViewModel Article { get; }
+
         public double Font { get; private set; }
         public bool Images { get; private set; }
 
@@ -23,16 +27,13 @@ namespace myFeed.ViewModels
             FeedItemViewModel feedItemViewModel,
             ISettingManager settingManager)
         {
-            Article = feedItemViewModel;
             _settingManager = settingManager;
-            Load = ReactiveCommand.CreateFromTask(DoLoad);
-        }
-
-        private async Task DoLoad()
-        {
-            var settings = await _settingManager.Read();
-            Images = settings.Images;
-            Font = settings.Font;
+            Article = feedItemViewModel;
+            Load = ReactiveCommand.CreateFromTask(_settingManager.Read);
+            Load.ObserveOn(RxApp.MainThreadScheduler)
+                .Do(settings => Images = settings.Images)
+                .Do(settings => Font = settings.Font)
+                .Subscribe();
         }
     }
 }
