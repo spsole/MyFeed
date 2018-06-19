@@ -23,9 +23,10 @@ myFeed is an RSS reader for <b>Universal Windows Platform</b>. The app can colle
 
 ## Technologies and Tools Used
 
-- <a href="https://docs.microsoft.com/en-us/dotnet/csharp/csharp">C Sharp</a> and <a href="https://docs.microsoft.com/en-us/dotnet/fsharp/">F Sharp</a> programming languages 
 - <a href="https://docs.microsoft.com/en-us/dotnet/standard/net-standard">.NET Standard Library</a> to reuse code on various platforms 
-- <a href="http://xunit.github.io/">xUnit</a> tests on <a href="https://www.microsoft.com/net/core">.NET Core</a> with <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a>
+- <a href="http://xunit.github.io/">xUnit</a> tests on <a href="https://www.microsoft.com/net/core">.NET Core</a> 
+- <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a> fpr stubs and mocks
+- <a href="https://github.com/fluentassertions/fluentassertions">FluentAssertions</a> to improve tests readability
 - <a href="https://reactiveui.net/">Reactive UI</a> modern MVVM framework
 - <a href="http://reactivex.io/">Reactive Extensions</a> for the <a href="https://github.com/Reactive-Extensions/Rx.NET">.NET platform</a> 
 - <a href="https://github.com/Fody/PropertyChanged">PropertyChanged.Fody</a> for INotifyPropertyChanged injections
