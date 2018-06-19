@@ -23,13 +23,13 @@ namespace myFeed.ViewModels
         private readonly Category _category;
 
         public ReactiveList<ChannelItemViewModel> Items { get; }
-        public Interaction<Unit, string> RenameRequest { get; }  
-        public Interaction<Unit, bool> RemoveRequest { get; }
-        
         public ReactiveCommand<Unit, Unit> AddChannel { get; }
+        
+        public Interaction<Unit, bool> RemoveRequest { get; }
         public ReactiveCommand<Unit, Unit> Remove { get; }
+        
+        public Interaction<Unit, string> RenameRequest { get; }  
         public ReactiveCommand<Unit, Unit> Rename { get; }
-        public ReactiveCommand<Unit, Unit> Load { get; }
 
         public string ChannelUri { get; set; } = string.Empty;
         public string Title { get; private set; }
@@ -47,23 +47,21 @@ namespace myFeed.ViewModels
 
             Title = category.Title;
             Items = new ReactiveList<ChannelItemViewModel>();
+            Items.AddRange(_category.Channels.Select(_factory));
             messageBus.Listen<ChannelDeleteEvent>()
                 .Do(x => _category.Channels.Remove(x.Channel))
                 .Do(x => Items.Remove(x.ChannelItemViewModel))
                 .SelectMany(x => _categoryManager.Update(category))
                 .Subscribe();
+            
+            RemoveRequest = new Interaction<Unit, bool>();
+            Remove = ReactiveCommand.CreateFromTask(DoRemove);
+            RenameRequest = new Interaction<Unit, string>();
+            Rename = ReactiveCommand.CreateFromTask(DoRename);
 
-            Load = ReactiveCommand.Create(
-                () => Items.AddRange(_category.Channels.Select(factory))
-            );
             AddChannel = ReactiveCommand.CreateFromTask(DoAddChannel,
                 this.WhenAnyValue(x => x.ChannelUri, x => Uri
                     .IsWellFormedUriString(x, UriKind.Absolute)));
-
-            RemoveRequest = new Interaction<Unit, bool>();
-            RenameRequest = new Interaction<Unit, string>();
-            Remove = ReactiveCommand.CreateFromTask(DoRemove);
-            Rename = ReactiveCommand.CreateFromTask(DoRename);
         }
 
         private async Task DoAddChannel()

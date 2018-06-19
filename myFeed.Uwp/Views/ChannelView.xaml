@@ -68,11 +68,6 @@
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                         CanDrag="{Binding ElementName=SourcesListView, Path=CanReorderItems, Converter={StaticResource NegateBool}}"
                         IsEnabled="{Binding ElementName=SourcesListView, Path=CanReorderItems, Converter={StaticResource NegateBool}}">
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Loaded">
-                                <actions:ReactiveCommandAction Command="{Binding Load}"/>
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
                         <controls:Expander.HeaderContent>
                             <Grid>
                                 <Grid.ColumnDefinitions>

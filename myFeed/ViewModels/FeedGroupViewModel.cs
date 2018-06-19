@@ -47,20 +47,21 @@ namespace myFeed.ViewModels
             _factory = factory;
 
             _source = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
-            Items = _source.CreateDerivedCollection(x => x, x => !(!ShowRead && x.Read)); 
+            Items = _source.CreateDerivedCollection(x => x, x => !(!ShowRead && x.Read));
             Fetch = ReactiveCommand.CreateFromTask(
                 () => _feedStoreService.Load(_category.Channels)
             );
-
+            
+            Observable.Return(Unit.Default)
+                .SelectMany(_ => _settingManager.Read())
+                .Select(settings => settings.Read)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => ShowRead = x);
             Fetch.ObserveOn(RxApp.MainThreadScheduler)
                 .Do(articles => _source.Clear())
                 .SelectMany(articles => articles)
                 .Select(_factory)
                 .Subscribe(_source.Add);
-            Fetch.SelectMany(_ => _settingManager.Read())
-                .Select(settings => settings.Read)
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(x => ShowRead = x);
 
             Fetch.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
