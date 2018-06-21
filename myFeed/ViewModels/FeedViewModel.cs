@@ -50,21 +50,25 @@ namespace myFeed.ViewModels
             );
 
             Load = ReactiveCommand.CreateFromTask(_categoryManager.GetAll);
-            Load.ObserveOn(RxApp.MainThreadScheduler)
-                .Do(categories => Items.Clear())
-                .SelectMany(categories => categories)
-                .Select(_factory)
-                .Subscribe(Items.Add);
-            Load.SelectMany(_ => _settingManager.Read())
+            Load.Select(categories => categories.Select(_factory))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(models => Items.Clear())
+                .Subscribe(Items.AddRange);
+            Load.IsExecuting
+                .Where(executing => executing)
+                .SelectMany(x => _settingManager.Read())
                 .Select(settings => settings.Images)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => Images = x);
 
-            Load.IsExecuting.Skip(1)
+            Items.IsEmptyChanged.Subscribe(x => IsEmpty = x);
+            Load.IsExecuting
+                .Skip(count: 1)
                 .Subscribe(x => IsLoading = x);
-            Items.CountChanged
-                .Select(count => count == 0)
-                .Subscribe(x => IsEmpty = x);
+            Items.Changed
+                .Select(args => Items.FirstOrDefault())
+                .Where(selection => selection != null)
+                .Subscribe(x => Selection = x);
 
             Error = new Interaction<Exception, bool>();
             Load.ThrownExceptions

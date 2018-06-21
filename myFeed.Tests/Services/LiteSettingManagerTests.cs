@@ -31,7 +31,7 @@ namespace myFeed.Tests.Services
         
         [Fact]
         [CleanUpCollection(nameof(Settings))]
-        public async Task ShouldSAveSettingsToNonVolatileStorage()
+        public async Task ShouldSaveSettingsToNonVolatileStorage()
         {
             var settings = new Settings();
             foreach (var _ in Enumerable.Range(0, 200))

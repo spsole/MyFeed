@@ -18,8 +18,8 @@ namespace myFeed.ViewModels
         private readonly Func<FeedlyItem, SearchItemViewModel> _factory;
         private readonly ISearchService _searchService;
         
+        public ReactiveList<SearchItemViewModel> Items { get; private set; }
         public ReactiveCommand<Unit, FeedlyRoot> Fetch { get; }
-        public ReactiveList<SearchItemViewModel> Items { get; }
         public Interaction<Exception, bool> Error { get; }
 
         public string SearchQuery { get; set; } = string.Empty;
@@ -35,27 +35,25 @@ namespace myFeed.ViewModels
             _searchService = searchService;
             Items = new ReactiveList<SearchItemViewModel>();
             Fetch = ReactiveCommand.CreateFromTask(() => _searchService.Search(SearchQuery));
-            Fetch.Select(response => response.Results)
+            Fetch.Select(response => response.Results.Select(_factory))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Do(models => Items.Clear())
-                .SelectMany(models => models)
-                .Select(_factory)
-                .Subscribe(Items.Add);
-            
+                .Subscribe(Items.AddRange);
+
             this.WhenAnyValue(x => x.SearchQuery)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Throttle(TimeSpan.FromSeconds(0.8))
                 .Select(x => x?.Trim())
                 .DistinctUntilChanged()
                 .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Throttle(TimeSpan.FromSeconds(0.8))
                 .Select(x => Unit.Default)
                 .InvokeCommand(Fetch);
             
-            Fetch.IsExecuting.Skip(1)
+            Items.IsEmptyChanged.Subscribe(x => IsEmpty = x);
+            Fetch.IsExecuting
+                .Skip(count: 1)
                 .Do(x => IsGreeting = false)
                 .Subscribe(x => IsLoading = x);
-            Items.CountChanged
-                .Select(count => count == 0)
-                .Subscribe(x => IsEmpty = x);
 
             Error = new Interaction<Exception, bool>();
             Fetch.ThrownExceptions

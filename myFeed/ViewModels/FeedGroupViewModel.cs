@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using DryIocAttributes;
@@ -52,22 +53,21 @@ namespace myFeed.ViewModels
                 () => _feedStoreService.Load(_category.Channels)
             );
             
-            Observable.Return(Unit.Default)
-                .SelectMany(_ => _settingManager.Read())
+            Fetch.Select(articles => articles.Select(_factory))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(articles => _source.Clear())
+                .Subscribe(_source.AddRange);
+            Fetch.IsExecuting
+                .Where(executing => executing)
+                .SelectMany(x => _settingManager.Read())
                 .Select(settings => settings.Read)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ShowRead = x);
-            Fetch.ObserveOn(RxApp.MainThreadScheduler)
-                .Do(articles => _source.Clear())
-                .SelectMany(articles => articles)
-                .Select(_factory)
-                .Subscribe(_source.Add);
 
-            Fetch.IsExecuting.Skip(1)
+            Items.IsEmptyChanged.Subscribe(x => IsEmpty = x);
+            Fetch.IsExecuting
+                .Skip(count: 1)
                 .Subscribe(x => IsLoading = x);
-            Items.CountChanged
-                .Select(count => count == 0)
-                .Subscribe(x => IsEmpty = x);
 
             Error = new Interaction<Exception, bool>();
             Modify = ReactiveCommand.CreateFromTask(
