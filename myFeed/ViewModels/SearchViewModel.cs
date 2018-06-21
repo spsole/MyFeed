@@ -41,7 +41,6 @@ namespace myFeed.ViewModels
                 .Subscribe(Items.AddRange);
 
             this.WhenAnyValue(x => x.SearchQuery)
-                .ObserveOn(RxApp.MainThreadScheduler)
                 .Throttle(TimeSpan.FromSeconds(0.8))
                 .Select(x => x?.Trim())
                 .DistinctUntilChanged()
