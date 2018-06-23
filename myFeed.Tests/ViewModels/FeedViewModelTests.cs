@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -31,6 +32,21 @@ namespace myFeed.Tests.ViewModels
             _feedViewModel.IsLoading.Should().BeTrue();
             _feedViewModel.IsEmpty.Should().BeFalse();
             _feedViewModel.Items.Any().Should().BeFalse();
+        }
+        
+        [Fact]
+        public async Task ShouldNotifyOfPropertyChange()
+        {
+            _categoryManager.GetAll().Returns(new List<Category>());
+            _settingManager.Read().Returns(new Settings());
+
+            var triggered = false;
+            var notifyPropertyChanged = (INotifyPropertyChanged)(object)_feedViewModel;
+            notifyPropertyChanged.PropertyChanged += delegate { triggered = true; };
+            _feedViewModel.Load.Execute().Subscribe();
+            await Task.Delay(100);
+
+            triggered.Should().BeTrue();
         }
 
         [Fact]

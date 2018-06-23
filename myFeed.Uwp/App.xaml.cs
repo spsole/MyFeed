@@ -17,17 +17,27 @@ namespace myFeed.Uwp
 {
     public sealed partial class App : Application
     {
-        private readonly IContainer _container;
+        private readonly IContainer _container = new Container();
 
-        public App()
+        public App() => InitializeComponent();
+
+        private async Task EnsureDefaultViewIsPresent()
         {
-            var localFolder = ApplicationData.Current.LocalFolder;
-            var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
-            _container = new Container();
-            _container.RegisterDelegate(x => new LiteDatabase(filePath), Reuse.Singleton);
-            _container.RegisterExports(new[] {typeof(App).GetAssembly()});
-            _container.RegisterShared();
-            InitializeComponent();
+            if (Window.Current.Content == null) 
+                Window.Current.Content = new Frame();
+            var frame = (Frame)Window.Current.Content;
+            if (frame.Content == null) 
+            {
+                var localFolder = ApplicationData.Current.LocalFolder;
+                var filePath = Path.Combine(localFolder.Path, "MyFeed.db");
+                _container.RegisterDelegate(x => new LiteDatabase(filePath), Reuse.Singleton);
+                _container.RegisterExports(new[] {typeof(App).GetAssembly()});
+                _container.RegisterShared();
+
+                var navigator = _container.Resolve<INavigationService>();
+                await navigator.Navigate<MenuViewModel>(); 
+            }
+            Window.Current.Activate();
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
@@ -44,14 +54,6 @@ namespace myFeed.Uwp
                 args is IToastNotificationActivatedEventArgs e &&
                 Guid.TryParse(e.Argument, out var guid))
                 await NavigateToToast(guid);
-        }
-
-        private async Task EnsureDefaultViewIsPresent()
-        {
-            if (Window.Current.Content == null) Window.Current.Content = new Frame();
-            var frame = (Frame)Window.Current.Content;
-            if (frame.Content == null) await _container.Resolve<INavigationService>().Navigate<MenuViewModel>();
-            Window.Current.Activate();
         }
 
         private async Task NavigateToToast(Guid guid)

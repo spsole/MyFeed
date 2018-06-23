@@ -30,21 +30,24 @@ namespace myFeed.Tests.ViewModels
         }
         
         [Fact]
-        public void ShouldNotifyOfPropertyChange()
+        public async Task ShouldNotifyOfPropertyChange()
         {
+            _searchService.Search("q").Returns(new FeedlyRoot {Results = new List<FeedlyItem>()});
+            
             var triggered = false;
-            var searchViewModelPropertyChanged = (INotifyPropertyChanged)(object)_searchViewModel;
-            searchViewModelPropertyChanged.PropertyChanged += delegate { triggered = true; };
+            var notifyPropertyChanged = (INotifyPropertyChanged)(object)_searchViewModel;
+            notifyPropertyChanged.PropertyChanged += delegate { triggered = true; };
             _searchViewModel.SearchQuery = "q";
             _searchViewModel.Fetch.Execute().Subscribe();
+            await Task.Delay(100);
+
             triggered.Should().BeTrue();
         }
 
         [Fact]
         public async Task ShouldLoadItemsReceivedFromSearchService()
         {
-            var response = new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}};
-            _searchService.Search("q").Returns(response);
+            _searchService.Search("q").Returns(new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}});
             _searchViewModel.SearchQuery = "q";
             _searchViewModel.Fetch.Execute().Subscribe();
             await Task.Delay(100);
@@ -59,8 +62,7 @@ namespace myFeed.Tests.ViewModels
         [Fact]
         public async Task ShouldCorrectlyIndicateIfNothingIsFound()
         {
-            var response = new FeedlyRoot {Results = new List<FeedlyItem>()};
-            _searchService.Search("q").Returns(response);
+            _searchService.Search("q").Returns(new FeedlyRoot {Results = new List<FeedlyItem>()});
             _searchViewModel.SearchQuery = "q";
             _searchViewModel.Fetch.Execute().Subscribe();
             await Task.Delay(100);
@@ -74,8 +76,7 @@ namespace myFeed.Tests.ViewModels
         [Fact]
         public async Task ShouldTriggerFetchCommandWhenSearchQueryChanges()
         {
-            var response = new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}};
-            _searchService.Search("q").Returns(response);
+            _searchService.Search("q").Returns(new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}});
             _searchViewModel.SearchQuery = "q";
             await Task.Delay(1000);    
             

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using FluentAssertions;
 using myFeed.Interfaces;
@@ -31,6 +32,21 @@ namespace myFeed.Tests.ViewModels
             _feedGroupViewModel.IsLoading.Should().BeTrue();
             _feedGroupViewModel.IsEmpty.Should().BeFalse();
             _feedGroupViewModel.Items.Count.Should().Be(0);
+        }
+        
+        [Fact]
+        public async Task ShouldNotifyOfPropertyChange()
+        {
+            _feedStoreService.Load(Arg.Any<IEnumerable<Channel>>()).Returns(new List<Article>());
+            _settingManager.Read().Returns(new Settings());
+
+            var triggered = false;
+            var notifyPropertyChanged = (INotifyPropertyChanged)(object)_feedGroupViewModel;
+            notifyPropertyChanged.PropertyChanged += delegate { triggered = true; };
+            _feedGroupViewModel.Fetch.Execute().Subscribe();
+            await Task.Delay(100);
+
+            triggered.Should().BeTrue();
         }
 
         [Fact]
