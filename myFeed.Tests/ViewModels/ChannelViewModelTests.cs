@@ -77,8 +77,10 @@ namespace myFeed.Tests.ViewModels
             _channelViewModel.Items.First().Title.Should().Be("Foo");
             _channelViewModel.Items.Last().Title.Should().Be("Bar");
 
-            _channelViewModel.Items.Move(0, 1);
-            await Task.Delay(100);
+            var last = _channelViewModel.Items.Last();
+            _channelViewModel.Items.Remove(last);
+            _channelViewModel.Items.Insert(0, last);
+            await Task.Delay(200);
             await _categoryManager.Received(1).Rearrange(
                 Arg.Any<IEnumerable<Category>>()
             );

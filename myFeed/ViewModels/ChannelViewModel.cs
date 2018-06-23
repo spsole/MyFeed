@@ -25,9 +25,8 @@ namespace myFeed.ViewModels
 
         public ReactiveCommand<Unit, IEnumerable<Category>> Load { get; }
         public ReactiveList<ChannelGroupViewModel> Items { get; }
-        public ReactiveCommand<Unit, Unit> Search { get; }
-        
         public Interaction<Unit, string> AddRequest { get; }
+        public ReactiveCommand<Unit, Unit> Search { get; }
         public ReactiveCommand<Unit, Unit> Add { get; }
 
         public bool IsLoading { get; private set; } = true;
@@ -59,14 +58,16 @@ namespace myFeed.ViewModels
                 .Select(tuple => tuple.Item2)
                 .Subscribe(Items.Add);
 
-            Load.IsExecuting.Skip(1)
+            Load.IsExecuting
+                .Skip(count: 1)
                 .Subscribe(x => IsLoading = x);
             Items.CountChanged
                 .Select(count => count == 0)
                 .Subscribe(x => IsEmpty = x);
-            Items.ItemsMoved
-                .Select(arguments => Items)
-                .Select(items => items.Select(x => _lookup[x]))
+            Items.Changed
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .Skip(count: 1)
+                .Select(arguments => Items.Select(x => _lookup[x]))
                 .SelectMany(_categoryManager.Rearrange)
                 .Subscribe();
         }
