@@ -26,7 +26,7 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.IsEmpty.Should().BeFalse();
             _searchViewModel.IsLoading.Should().BeFalse();
             _searchViewModel.IsGreeting.Should().BeTrue();
-            _searchViewModel.Items.Any().Should().BeFalse();
+            _searchViewModel.Items.Should().BeEmpty();
         }
         
         [Fact]
@@ -55,7 +55,7 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.IsGreeting.Should().BeFalse();
             _searchViewModel.IsLoading.Should().BeFalse();
             _searchViewModel.IsEmpty.Should().BeFalse();
-            _searchViewModel.Items.Count().Should().Be(1);
+            _searchViewModel.Items.Count.Should().Be(1);
             await _searchService.Received().Search("q");
         }
 
@@ -70,7 +70,7 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.IsGreeting.Should().BeFalse();
             _searchViewModel.IsLoading.Should().BeFalse();
             _searchViewModel.IsEmpty.Should().BeTrue();
-            _searchViewModel.Items.Count().Should().Be(0);
+            _searchViewModel.Items.Should().BeEmpty();
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.IsGreeting.Should().BeFalse();
             _searchViewModel.IsLoading.Should().BeFalse();
             _searchViewModel.IsEmpty.Should().BeFalse();
-            _searchViewModel.Items.Count().Should().Be(1);
+            _searchViewModel.Items.Count.Should().Be(1);
         }
     }
 }

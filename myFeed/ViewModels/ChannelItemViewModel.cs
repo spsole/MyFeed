@@ -3,7 +3,6 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
-using myFeed.Events;
 using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
@@ -17,9 +16,10 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(ChannelItemViewModel))]
     public sealed class ChannelItemViewModel
     {
+        private readonly ChannelGroupViewModel _channelGroup;
         private readonly ICategoryManager _categoryManager;
         private readonly IPlatformService _platformService;
-        private readonly IMessageBus _messageBus;
+        private readonly Category _category;
         private readonly Channel _channel;
 
         public Interaction<Unit, bool> DeleteRequest { get; }
@@ -32,14 +32,16 @@ namespace myFeed.ViewModels
         public bool Notify { get; set; }
 
         public ChannelItemViewModel(
+            ChannelGroupViewModel channelGroup,
             ICategoryManager categoryManager,
             IPlatformService platformService,
-            IMessageBus messageBus,
+            Category category,
             Channel channel)
         {
             _categoryManager = categoryManager;
             _platformService = platformService;
-            _messageBus = messageBus;
+            _channelGroup = channelGroup;
+            _category = category;
             _channel = channel;
 
             Notify = _channel.Notify;
@@ -63,7 +65,9 @@ namespace myFeed.ViewModels
         private async Task DoDelete() 
         {
             if (!await DeleteRequest.Handle(Unit.Default)) return;
-            _messageBus.SendMessage(new ChannelDeleteEvent(_channel, this));
+            _category.Channels.Remove(_channel);
+            await _categoryManager.Update(_category);
+            _channelGroup.Items.Remove(this);
         }
 
         private async Task DoOpen()

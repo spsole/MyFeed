@@ -4,7 +4,6 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using DryIocAttributes;
-using myFeed.Events;
 using myFeed.Interfaces;
 using myFeed.Models;
 using PropertyChanged;
@@ -17,48 +16,45 @@ namespace myFeed.ViewModels
     [ExportEx(typeof(ChannelGroupViewModel))]
     public sealed class ChannelGroupViewModel
     {
-        private readonly Func<Channel, ChannelItemViewModel> _factory;
+        private readonly Func<Channel, Category, ChannelGroupViewModel, ChannelItemViewModel> _factory;
+        private readonly ChannelViewModel _channelsViewModel;
         private readonly ICategoryManager _categoryManager;
-        private readonly IMessageBus _messageBus;
         private readonly Category _category;
 
         public ReactiveList<ChannelItemViewModel> Items { get; }
-        public ReactiveCommand<Unit, Unit> AddChannel { get; }
-        
+        public Interaction<Unit, string> RenameRequest { get; } 
         public Interaction<Unit, bool> RemoveRequest { get; }
-        public ReactiveCommand<Unit, Unit> Remove { get; }
         
-        public Interaction<Unit, string> RenameRequest { get; }  
+        public ReactiveCommand<Unit, Unit> AddChannel { get; }
+        public ReactiveCommand<Unit, Unit> Remove { get; } 
         public ReactiveCommand<Unit, Unit> Rename { get; }
 
         public string ChannelUri { get; set; } = string.Empty;
         public string Title { get; private set; }
         
         public ChannelGroupViewModel(
-            Func<Channel, ChannelItemViewModel> factory,
-            ICategoryManager categoryManager, 
-            IMessageBus messageBus,
+            Func<Channel, Category, 
+                ChannelGroupViewModel, 
+                ChannelItemViewModel> factory,
+            ChannelViewModel channelsViewModel,
+            ICategoryManager categoryManager,
             Category category)
         {
+            Items = new ReactiveList<ChannelItemViewModel>();
+            RenameRequest = new Interaction<Unit, string>();
+            RemoveRequest = new Interaction<Unit, bool>();
+            _channelsViewModel = channelsViewModel;
             _categoryManager = categoryManager;
-            _messageBus = messageBus;
             _category = category;
             _factory = factory;
 
             Title = category.Title;
-            Items = new ReactiveList<ChannelItemViewModel>();
-            Items.AddRange(_category.Channels.Select(_factory));
-            messageBus.Listen<ChannelDeleteEvent>()
-                .Do(x => _category.Channels.Remove(x.Channel))
-                .Do(x => Items.Remove(x.ChannelItemViewModel))
-                .SelectMany(x => _categoryManager.Update(category))
-                .Subscribe();
+            var channels = _category.Channels;
+            var models = channels.Select(x => _factory(x, _category, this));
+            Items.AddRange(models);
             
-            RemoveRequest = new Interaction<Unit, bool>();
             Remove = ReactiveCommand.CreateFromTask(DoRemove);
-            RenameRequest = new Interaction<Unit, string>();
             Rename = ReactiveCommand.CreateFromTask(DoRename);
-
             AddChannel = ReactiveCommand.CreateFromTask(DoAddChannel,
                 this.WhenAnyValue(x => x.ChannelUri, x => Uri
                     .IsWellFormedUriString(x, UriKind.Absolute)));
@@ -71,13 +67,14 @@ namespace myFeed.ViewModels
             var model = new Channel { Uri = uri, Notify = true };
             _category.Channels.Add(model);
             await _categoryManager.Update(_category); 
-            Items.Add(_factory(model));   
+            Items.Add(_factory(model, _category, this));   
         }
 
         private async Task DoRemove() 
         {
             if (!await RemoveRequest.Handle(Unit.Default)) return;
-            _messageBus.SendMessage(new CategoryDeleteEvent(_category, this));
+            await _categoryManager.Remove(_category);
+            _channelsViewModel.Items.Remove(this);
         }
 
         private async Task DoRename() 

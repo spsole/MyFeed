@@ -31,7 +31,7 @@ namespace myFeed.Tests.ViewModels
             _feedGroupViewModel.ShowRead.Should().BeTrue();
             _feedGroupViewModel.IsLoading.Should().BeTrue();
             _feedGroupViewModel.IsEmpty.Should().BeFalse();
-            _feedGroupViewModel.Items.Count.Should().Be(0);
+            _feedGroupViewModel.Items.Should().BeEmpty();
         }
         
         [Fact]
@@ -59,7 +59,7 @@ namespace myFeed.Tests.ViewModels
 
             _feedGroupViewModel.IsLoading.Should().BeFalse();
             _feedGroupViewModel.IsEmpty.Should().BeTrue();
-            _feedGroupViewModel.Items.Count.Should().Be(0);
+            _feedGroupViewModel.Items.Should().BeEmpty();
             _feedGroupViewModel.ShowRead.Should().BeTrue();
         }
     }

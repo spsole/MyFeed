@@ -31,7 +31,7 @@ namespace myFeed.Tests.ViewModels
             _feedViewModel.Selection.Should().BeNull();
             _feedViewModel.IsLoading.Should().BeTrue();
             _feedViewModel.IsEmpty.Should().BeFalse();
-            _feedViewModel.Items.Any().Should().BeFalse();
+            _feedViewModel.Items.Should().BeEmpty();
         }
         
         [Fact]
@@ -59,7 +59,7 @@ namespace myFeed.Tests.ViewModels
 
             _feedViewModel.IsEmpty.Should().BeFalse();
             _feedViewModel.IsLoading.Should().BeFalse();
-            _feedViewModel.Items.Any().Should().BeTrue();
+            _feedViewModel.Items.Should().NotBeEmpty();
             await _categoryManager.Received(1).GetAll();
         }
 
@@ -88,7 +88,7 @@ namespace myFeed.Tests.ViewModels
             _feedViewModel.IsEmpty.Should().BeTrue();
             _feedViewModel.Images.Should().BeTrue();
             _feedViewModel.IsLoading.Should().BeFalse();
-            _feedViewModel.Items.Any().Should().BeFalse();
+            _feedViewModel.Items.Should().BeEmpty();
         }
     }
 }
