@@ -17,11 +17,11 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
-    <PackageCertificateKeyFile>myFeed.Uwp_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>myFeed.Uwp_StoreKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>53738C29D6565B7DB262F05CF97A5670676C77E2</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>EB49CD24E17B120173A5D7972286C37A8E0A68D2</PackageCertificateThumbprint>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
@@ -166,8 +166,6 @@
     </PRIResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="myFeed.Uwp_TemporaryKey.pfx" />
-    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\BadgeLogo.scale-100.png" />
     <Content Include="Assets\BadgeLogo.scale-200.png" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
@@ -199,7 +197,8 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <EmbeddedResource Include="FodyWeavers.xml" />
-    <None Include="Package.xml" />
+    <None Include="myFeed.Uwp_StoreKey.pfx" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>

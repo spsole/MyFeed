@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using FluentAssertions;
 using myFeed.Interfaces;
 using myFeed.Models;
+using myFeed.Platform;
 using myFeed.ViewModels;
 using NSubstitute;
 using Xunit;
@@ -14,12 +14,19 @@ namespace myFeed.Tests.ViewModels
 {
     public sealed class SearchViewModelTests
     {
+        private readonly ICategoryManager _categoryManager = Substitute.For<ICategoryManager>();
+        private readonly IPlatformService _platformService = Substitute.For<IPlatformService>();
         private readonly ISearchService _searchService = Substitute.For<ISearchService>();
-        private readonly Func<FeedlyItem, SearchItemViewModel> _factory = _ => null;
+        
+        private readonly Func<FeedlyItem, SearchItemViewModel> _factory;
         private readonly SearchViewModel _searchViewModel;
 
-        public SearchViewModelTests() => _searchViewModel = new SearchViewModel(_factory, _searchService);
-        
+        public SearchViewModelTests()
+        {
+            _factory = x => new SearchItemViewModel(_categoryManager, _platformService, x);
+            _searchViewModel = new SearchViewModel(_factory, _searchService);
+        }
+
         [Fact]
         public void ShouldBeEmptyLoadingAndGreetingWhenInitialized()
         {
@@ -28,11 +35,20 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.IsGreeting.Should().BeTrue();
             _searchViewModel.Items.Should().BeEmpty();
         }
+
+        [Fact]
+        public void ShouldInitializeChildViewModelFromModel()
+        {
+            var searchItemViewModel = _factory.Invoke(new FeedlyItem {Description = "Bar", Title = "Foo"});
+            searchItemViewModel.Description.Should().Be("Bar");
+            searchItemViewModel.Title.Should().Be("Foo");
+        }
         
         [Fact]
         public async Task ShouldNotifyOfPropertyChange()
         {
-            _searchService.Search("q").Returns(new FeedlyRoot {Results = new List<FeedlyItem>()});
+            var response = new FeedlyRoot {Results = new List<FeedlyItem>()};
+            _searchService.Search("q").Returns(response);
             
             var triggered = false;
             var notifyPropertyChanged = (INotifyPropertyChanged)(object)_searchViewModel;
@@ -47,7 +63,8 @@ namespace myFeed.Tests.ViewModels
         [Fact]
         public async Task ShouldLoadItemsReceivedFromSearchService()
         {
-            _searchService.Search("q").Returns(new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}});
+            var response = new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}};
+            _searchService.Search("q").Returns(response);
             _searchViewModel.SearchQuery = "q";
             _searchViewModel.Fetch.Execute().Subscribe();
             await Task.Delay(100);
@@ -62,7 +79,8 @@ namespace myFeed.Tests.ViewModels
         [Fact]
         public async Task ShouldCorrectlyIndicateIfNothingIsFound()
         {
-            _searchService.Search("q").Returns(new FeedlyRoot {Results = new List<FeedlyItem>()});
+            var response = new FeedlyRoot {Results = new List<FeedlyItem>()};
+            _searchService.Search("q").Returns(response);
             _searchViewModel.SearchQuery = "q";
             _searchViewModel.Fetch.Execute().Subscribe();
             await Task.Delay(100);
@@ -76,7 +94,8 @@ namespace myFeed.Tests.ViewModels
         [Fact]
         public async Task ShouldTriggerFetchCommandWhenSearchQueryChanges()
         {
-            _searchService.Search("q").Returns(new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}});
+            var response = new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}};
+            _searchService.Search("q").Returns(response);
             _searchViewModel.SearchQuery = "q";
             await Task.Delay(1000);    
             

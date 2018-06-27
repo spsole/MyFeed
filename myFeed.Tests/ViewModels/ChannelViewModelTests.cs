@@ -14,11 +14,12 @@ namespace myFeed.Tests.ViewModels
 {
     public sealed class ChannelViewModelTests
     {
-        private readonly Func<Channel, Category, ChannelGroupViewModel, ChannelItemViewModel> _itemFactory;
-        private readonly Func<Category, ChannelViewModel, ChannelGroupViewModel> _groupFactory;
         private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
         private readonly ICategoryManager _categoryManager = Substitute.For<ICategoryManager>();
         private readonly IPlatformService _platformService = Substitute.For<IPlatformService>();
+        
+        private readonly Func<Channel, Category, ChannelGroupViewModel, ChannelItemViewModel> _itemFactory;
+        private readonly Func<Category, ChannelViewModel, ChannelGroupViewModel> _groupFactory;
         private readonly ChannelViewModel _channelViewModel;
         
         public ChannelViewModelTests()

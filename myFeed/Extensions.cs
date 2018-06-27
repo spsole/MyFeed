@@ -1,5 +1,4 @@
 using DryIoc.MefAttributedModel;
-using ReactiveUI;
 using DryIoc;
 
 namespace myFeed
