@@ -26,7 +26,7 @@ myFeed is an RSS reader for <b>Universal Windows Platform</b>. The app can colle
 - <a href="https://reactiveui.net/">Reactive UI</a> modern MVVM framework
 - <a href="http://reactivex.io/">Reactive Extensions</a> for the <a href="https://github.com/Reactive-Extensions/Rx.NET">.NET platform</a>
 - <a href="https://github.com/Fody/PropertyChanged">PropertyChanged.Fody</a> for INotifyPropertyChanged injections
-- <a href="https://bitbucket.org/dadhi/dryioc/">DryIoc</a> and <a href="https://bitbucket.org/dadhi/dryioc/wiki/Extensions/MefAttributedModel">DryIoc.Attributes</a> for <a href="https://en.wikipedia.org/wiki/Dependency_injection">Dependency Injection</a>
+- <a href="https://github.com/dadhi/DryIoc">DryIoc</a> and <a href="https://bitbucket.org/dadhi/dryioc/wiki/Extensions/MefAttributedModel">DryIoc.Attributes</a> for <a href="https://en.wikipedia.org/wiki/Dependency_injection">Dependency Injection</a>
 - <a href="https://github.com/codehollow/FeedReader">CodeHollow.FeedReader</a> to parse RSS feeds
 - <a href="http://xunit.github.io/">xUnit</a> tests on <a href="https://www.microsoft.com/net/core">.NET Core</a> 
 - <a href="https://github.com/nsubstitute/NSubstitute">NSubstitute</a> for stubs and mocks
