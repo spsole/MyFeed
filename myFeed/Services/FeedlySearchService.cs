@@ -18,16 +18,11 @@ namespace myFeed.Services
 
         public async Task<FeedlyRoot> Search(string query)
         {
-            var requestUrl = string.Concat(QueryUrl, query);
-            var fetch = _client.Value.GetStreamAsync(requestUrl);
-            using (var stream = await fetch.ConfigureAwait(false))
+            var url = string.Concat(QueryUrl, query);
+            using (var stream = await _client.Value.GetStreamAsync(url).ConfigureAwait(false))
             using (var streamReader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(streamReader))
-            {
-                var serializer = new JsonSerializer();
-                var response = serializer.Deserialize<FeedlyRoot>(jsonReader);
-                return response;
-            }
+                return new JsonSerializer().Deserialize<FeedlyRoot>(jsonReader);
         }
     }
 }

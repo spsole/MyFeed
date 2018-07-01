@@ -67,7 +67,7 @@ namespace myFeed.ViewModels
             if (Selection == null) return;
             typeof(INavigationService)
                 .GetMethod("Navigate", new Type[] { })
-                .MakeGenericMethod(Selection.Type)
+                ?.MakeGenericMethod(Selection.Type)
                 .Invoke(_navigationService, null);
         }
     }

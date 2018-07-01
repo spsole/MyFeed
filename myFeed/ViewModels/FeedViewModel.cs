@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using DryIocAttributes;
+using JetBrains.Annotations;
 using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
@@ -73,8 +74,8 @@ namespace myFeed.ViewModels
             Error = new Interaction<Exception, bool>();
             Load.ThrownExceptions
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .SelectMany(error => Error.Handle(error))
-                .Where(retryRequested => retryRequested)
+                .SelectMany(Error.Handle)
+                .Where(retry => retry)
                 .Select(x => Unit.Default)
                 .InvokeCommand(Load);
         }

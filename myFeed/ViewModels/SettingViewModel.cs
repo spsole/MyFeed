@@ -100,6 +100,7 @@ namespace myFeed.ViewModels
         private async Task DoImport()
         {
             var stream = await _filePickerService.PickFileForReadAsync();
+            if (stream == null) return;
             var success = await _opmlService.ImportOpml(stream);
             if (success) await ImportSuccess.Handle(Unit.Default);
         }
@@ -107,6 +108,7 @@ namespace myFeed.ViewModels
         private async Task DoExport()
         {
             var stream = await _filePickerService.PickFileForWriteAsync();
+            if (stream == null) return;
             var success = await _opmlService.ExportOpml(stream);
             if (success) await ExportSuccess.Handle(Unit.Default);
         }

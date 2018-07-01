@@ -18,7 +18,7 @@ namespace myFeed.ViewModels
         private readonly Func<FeedlyItem, SearchItemViewModel> _factory;
         private readonly ISearchService _searchService;
         
-        public ReactiveList<SearchItemViewModel> Items { get; private set; }
+        public ReactiveList<SearchItemViewModel> Items { get; }
         public ReactiveCommand<Unit, FeedlyRoot> Fetch { get; }
         public Interaction<Exception, bool> Error { get; }
 
@@ -56,7 +56,7 @@ namespace myFeed.ViewModels
 
             Error = new Interaction<Exception, bool>();
             Fetch.ThrownExceptions
-                .SelectMany(x => Error.Handle(x))
+                .SelectMany(Error.Handle)
                 .Where(retry => retry)
                 .Select(x => Unit.Default)
                 .InvokeCommand(Fetch);

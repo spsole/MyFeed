@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using myFeed.Interfaces;
@@ -29,6 +28,7 @@ namespace myFeed.Tests.ViewModels
 
         public FeedViewModelTests()
         {
+            _fullFactory = x => new FeedItemFullViewModel(x, _settingManager);
             _itemFactory = x => new FeedItemViewModel(_fullFactory, _navigationService, _categoryManager, _favoriteManager, _platformService, x);
             _groupFactory = x => new FeedGroupViewModel(_itemFactory, _navigationService, _feedStoreService, _settingManager, x);
             _feedViewModel = new FeedViewModel(_groupFactory, _navigationService, _categoryManager, _settingManager);
