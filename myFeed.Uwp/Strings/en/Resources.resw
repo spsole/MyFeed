@@ -385,4 +385,16 @@
   <data name="ErrorMessage">
     <value>Something went wrong while performing a request!</value>
   </data>
+  <data name="SearchAddedMessage">
+    <value>The channel was successfully added!</value>
+  </data>
+  <data name="SearchAddedTitle">
+    <value>Notification</value>
+  </data>
+  <data name="SearchCopiedMessage">
+    <value>Notification was successfully copied!</value>
+  </data>
+  <data name="SearchCopiedTitle">
+    <value>Notification</value>
+  </data>
 </root>

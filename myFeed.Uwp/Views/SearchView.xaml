@@ -26,55 +26,104 @@
     </Page.Transitions>
 
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WindowStates">
+                <VisualState x:Name="WideState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SearchBar.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="CategoryBar.(Grid.ColumnSpan)" Value="1"/>
+                        <Setter Target="CategoryBar.(Grid.Column)" Value="1"/>
+                        <Setter Target="CategoryBar.(Grid.Row)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
                 <actions:ModalErrorAction 
                     Interaction="{Binding Error}" 
                     Message="{converters:Locale Key=ErrorMessage}" 
                     Title="{converters:Locale Key=ErrorTitle}"/>
+                <actions:ModalConfirmAction 
+                    Interaction="{Binding Added}" 
+                    Message="{converters:Locale Key=SearchAddedMessage}" 
+                    Title="{converters:Locale Key=SearchAddedTitle}"/>
+                <actions:ReactiveCommandAction 
+                    Command="{Binding RefreshCategories}"/>
             </core:EventTriggerBehavior>
         </interactivity:Interaction.Behaviors>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
-            <RowDefinition Height="48"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
         <controls:TitleBlock Grid.Row="0" Text="{converters:Locale Key=SearchViewTitle}"/>
         <controls:TransparentButton Grid.Row="0" Symbol="Sync" 
-            HorizontalAlignment="Right" Command="{Binding Fetch}">
+            HorizontalAlignment="Right" Command="{Binding Search}">
             <ToolTipService.ToolTip>
                 <TextBlock Text="{converters:Locale Key=Refresh}" />
             </ToolTipService.ToolTip>
         </controls:TransparentButton>
-        <Grid Grid.Row="1" Background="{ThemeResource LowBackgroundThemeBrush}">
+        <Grid Grid.Row="1" Padding="0 0 0 6"
+              Background="{ThemeResource LowBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel VerticalAlignment="Center">
-                <TextBox InputScope="Search" Margin="12 0" 
-                    Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    PlaceholderText="{converters:Locale Key=ProvideSearchQuery}"/>
-            </StackPanel>
-            <Button Grid.Column="1" Command="{Binding Fetch}" Margin="0 0 12 0" 
-                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                Style="{StaticResource ButtonRevealStyle}">
-                <Button.Content>
-                    <TextBlock Foreground="White">
-                        <Run FontSize="12" FontFamily="Segoe MDL2 Assets" Text="&#xE71E;"/>
-                        <Run FontSize="15" Text="{converters:Locale Key=Find}"/>
-                    </TextBlock>
-                </Button.Content>
-            </Button>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid x:Name="SearchBar" Grid.Row="0" Grid.ColumnSpan="2" Height="48">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBox InputScope="Search" Margin="12 0 12 0" 
+                        Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        PlaceholderText="{converters:Locale Key=ProvideSearchQuery}"/>
+                </StackPanel>
+                <Button Grid.Column="1" Command="{Binding Search}" Margin="0 0 12 0"
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    Style="{StaticResource ButtonRevealStyle}">
+                    <Button.Content>
+                        <TextBlock Foreground="White">
+                            <Run FontSize="12" FontFamily="Segoe MDL2 Assets" Text="&#xE71E;"/>
+                            <Run FontSize="15" Text="{converters:Locale Key=Find}"/>
+                        </TextBlock>
+                    </Button.Content>
+                </Button>
+            </Grid>
+            <Grid x:Name="CategoryBar" Grid.Row="1" Grid.ColumnSpan="2" Height="48">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <ComboBox ItemsSource="{Binding Categories}" Margin="12 0 12 0"
+                        DisplayMemberPath="Title" HorizontalAlignment="Stretch"
+                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
+                </StackPanel>
+                <Button Grid.Column="1" Command="{Binding Add}" Margin="0 0 12 0"
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    Content="{converters:Locale Key=AddChannel}"
+                    Style="{StaticResource ButtonRevealStyle}"/>
+            </Grid>
         </Grid>
         <Grid Grid.Row="2">
             <toolkit:PullToRefreshListView 
+                IsMultiSelectCheckBoxEnabled="False"
+                SelectedItem="{Binding SelectedFeed, Mode=TwoWay}"
                 ShowsScrollingPlaceholders="False" 
-                RefreshCommand="{Binding Fetch}" 
-                ItemsSource="{Binding Items}" 
-                IsItemClickEnabled="True"
-                SelectionMode="None">
+                RefreshCommand="{Binding Search}" 
+                ItemsSource="{Binding Feeds}" 
+                IsItemClickEnabled="False"
+                SelectionMode="Single">
                 <toolkit:PullToRefreshListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -97,67 +146,44 @@
                 </toolkit:PullToRefreshListView.ReleaseToRefreshContent>
                 <toolkit:PullToRefreshListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="12">
-                            <FlyoutBase.AttachedFlyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem 
-                                        Icon="Add" Command="{Binding Add}" 
-                                        Text="{converters:Locale Key=AddChannel}"/>
-                                    <MenuFlyoutSeparator />
-                                    <MenuFlyoutItem 
-                                        Icon="Link" Command="{Binding Open}" 
-                                        Text="{converters:Locale Key=OpenInBrowser}"/>
-                                    <MenuFlyoutItem 
-                                        Icon="Copy" Command="{Binding Copy}" 
-                                        Text="{converters:Locale Key=CopyLink}"/>
-                                </MenuFlyout>
-                            </FlyoutBase.AttachedFlyout>
-                            <interactivity:Interaction.Behaviors>
-                                <core:EventTriggerBehavior EventName="RightTapped">
-                                    <actions:OpenFlyoutAction/>
-                                </core:EventTriggerBehavior>
-                                <core:EventTriggerBehavior EventName="Holding">
-                                    <actions:OpenFlyoutAction/>
-                                </core:EventTriggerBehavior>
-                                <core:EventTriggerBehavior EventName="DataContextChanged">
-                                    <actions:ModalErrorAction 
-                                        Interaction="{Binding Error}" 
-                                        Message="{converters:Locale Key=ErrorMessage}" 
-                                        Title="{converters:Locale Key=ErrorTitle}"/>
-                                    <actions:ModalSelectAction 
-                                        Interaction="{Binding Select}"
-                                        Title="{converters:Locale Key=AddIntoCategory}"/>
-                                </core:EventTriggerBehavior>
-                            </interactivity:Interaction.Behaviors>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="42"/>
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Margin="0 0 12 0">
-                                <StackPanel Orientation="Horizontal">
-                                    <toolkit:RoundImageEx Source="{Binding Image}"
-                                        DecodePixelType="Logical" DecodePixelHeight="70" 
-                                        HorizontalAlignment="Center" VerticalAlignment="Center"
-                                        Width="16" Height="16" CornerRadius="8"/>
-                                    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Margin="6 0 0 0"/>
-                                </StackPanel>
-                                <TextBlock Text="{Binding Description}" TextWrapping="Wrap" 
-                                    Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                                <TextBlock Text="{Binding Url}" TextTrimming="CharacterEllipsis" 
-                                    Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                        <StackPanel Margin="12 6">
+                            <StackPanel Orientation="Horizontal">
+                                <toolkit:RoundImageEx Source="{Binding Image}"
+                                    DecodePixelType="Logical" DecodePixelHeight="70" 
+                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Width="16" Height="16" CornerRadius="8"/>
+                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Margin="6 0 0 0"/>
                             </StackPanel>
-                            <Grid Grid.Column="1" VerticalAlignment="Top">
-                                <Ellipse Fill="{ThemeResource SystemControlBackgroundAccentBrush}" Width="40" 
-                                         Height="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                <Button Foreground="White" HorizontalAlignment="Center"
-                                        Style="{ThemeResource TextBlockButtonStyle}"
-                                        Command="{Binding Add}">
-                                    <Button.Content>
-                                        <SymbolIcon Symbol="Add"/>
-                                    </Button.Content>
+                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" 
+                                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
+                            <TextBlock Text="{Binding Url}" TextTrimming="CharacterEllipsis" 
+                                Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
+                            <Grid Margin="0 6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <CheckBox Grid.Column="0" VerticalAlignment="Center"
+                                          MinWidth="0" Padding="0" IsEnabled="False"
+                                          IsChecked="{Binding IsSelected, Mode=OneWay}"/>
+                                <Button Grid.Column="1" Command="{Binding Open}" Margin="12 0"
+                                        Content="{converters:Locale Key=OpenInBrowser}" 
+                                        Style="{StaticResource ButtonRevealStyle}"/>
+                                <Button Grid.Column="2" Command="{Binding Copy}"
+                                        Content="{converters:Locale Key=CopyLink}"
+                                        Style="{StaticResource ButtonRevealStyle}">
+                                    <interactivity:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="Click">
+                                            <actions:ModalConfirmAction 
+                                                Interaction="{Binding Copied}" 
+                                                Message="{converters:Locale Key=SearchCopiedMessage}" 
+                                                Title="{converters:Locale Key=SearchCopiedTitle}"/>
+                                        </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
                                 </Button>
                             </Grid>
-                        </Grid>
+                        </StackPanel>
                     </DataTemplate>
                 </toolkit:PullToRefreshListView.ItemTemplate>
             </toolkit:PullToRefreshListView>

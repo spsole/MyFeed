@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using DryIocAttributes;
-using JetBrains.Annotations;
 using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
@@ -63,8 +62,7 @@ namespace myFeed.ViewModels
                 .Subscribe(x => Images = x);
 
             Items.IsEmptyChanged.Subscribe(x => IsEmpty = x);
-            Load.IsExecuting
-                .Skip(count: 1)
+            Load.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
             Items.Changed
                 .Select(args => Items.FirstOrDefault())

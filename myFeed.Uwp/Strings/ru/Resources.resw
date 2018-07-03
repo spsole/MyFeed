@@ -385,4 +385,16 @@
   <data name="ErrorMessage">
     <value>Что-то пошло не так!</value>
   </data>
+  <data name="SearchAddedMessage">
+    <value>Канал был успешно добавлен!</value>
+  </data>
+  <data name="SearchAddedTitle">
+    <value>Уведомление</value>
+  </data>
+  <data name="SearchCopiedMessage">
+    <value>Ссылка была успешно скопирована!</value>
+  </data>
+  <data name="SearchCopiedTitle">
+    <value>Уведомление</value>
+  </data>
 </root>

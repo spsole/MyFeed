@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using FluentAssertions;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -17,14 +19,13 @@ namespace myFeed.Tests.ViewModels
         private readonly ICategoryManager _categoryManager = Substitute.For<ICategoryManager>();
         private readonly IPlatformService _platformService = Substitute.For<IPlatformService>();
         private readonly ISearchService _searchService = Substitute.For<ISearchService>();
-        
         private readonly Func<FeedlyItem, SearchItemViewModel> _factory;
         private readonly SearchViewModel _searchViewModel;
 
         public SearchViewModelTests()
         {
-            _factory = x => new SearchItemViewModel(_categoryManager, _platformService, x);
-            _searchViewModel = new SearchViewModel(_factory, _searchService);
+            _factory = x => new SearchItemViewModel(_platformService, x);
+            _searchViewModel = new SearchViewModel(_factory, _categoryManager, _searchService);
         }
 
         [Fact]
@@ -33,7 +34,8 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.IsEmpty.Should().BeFalse();
             _searchViewModel.IsLoading.Should().BeFalse();
             _searchViewModel.IsGreeting.Should().BeTrue();
-            _searchViewModel.Items.Should().BeEmpty();
+            _searchViewModel.Categories.Should().BeEmpty();
+            _searchViewModel.Feeds.Should().BeEmpty();
         }
 
         [Fact]
@@ -54,7 +56,7 @@ namespace myFeed.Tests.ViewModels
             var notifyPropertyChanged = (INotifyPropertyChanged)(object)_searchViewModel;
             notifyPropertyChanged.PropertyChanged += delegate { triggered = true; };
             _searchViewModel.SearchQuery = "q";
-            _searchViewModel.Fetch.Execute().Subscribe();
+            _searchViewModel.Search.Execute().Subscribe();
             await Task.Delay(100);
 
             triggered.Should().BeTrue();
@@ -66,13 +68,13 @@ namespace myFeed.Tests.ViewModels
             var response = new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}};
             _searchService.Search("q").Returns(response);
             _searchViewModel.SearchQuery = "q";
-            _searchViewModel.Fetch.Execute().Subscribe();
+            _searchViewModel.Search.Execute().Subscribe();
             await Task.Delay(100);
 
             _searchViewModel.IsGreeting.Should().BeFalse();
             _searchViewModel.IsLoading.Should().BeFalse();
             _searchViewModel.IsEmpty.Should().BeFalse();
-            _searchViewModel.Items.Count.Should().Be(1);
+            _searchViewModel.Feeds.Count.Should().Be(1);
             await _searchService.Received().Search("q");
         }
 
@@ -82,13 +84,13 @@ namespace myFeed.Tests.ViewModels
             var response = new FeedlyRoot {Results = new List<FeedlyItem>()};
             _searchService.Search("q").Returns(response);
             _searchViewModel.SearchQuery = "q";
-            _searchViewModel.Fetch.Execute().Subscribe();
+            _searchViewModel.Search.Execute().Subscribe();
             await Task.Delay(100);
 
             _searchViewModel.IsGreeting.Should().BeFalse();
             _searchViewModel.IsLoading.Should().BeFalse();
             _searchViewModel.IsEmpty.Should().BeTrue();
-            _searchViewModel.Items.Should().BeEmpty();
+            _searchViewModel.Feeds.Should().BeEmpty();
         }
 
         [Fact]
@@ -102,7 +104,120 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.IsGreeting.Should().BeFalse();
             _searchViewModel.IsLoading.Should().BeFalse();
             _searchViewModel.IsEmpty.Should().BeFalse();
-            _searchViewModel.Items.Count.Should().Be(1);
+            _searchViewModel.Feeds.Count.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task ShouldLoadCategoriesFromCategoryManager()
+        {
+            var response = new[] {new Category {Title = "Foo"}};
+            _categoryManager.GetAll().Returns(response);
+            _searchViewModel.RefreshCategories.Execute().Subscribe();
+            await Task.Delay(100);
+
+            _searchViewModel.IsLoading.Should().BeFalse();
+            _searchViewModel.Categories.Should().NotBeEmpty();
+            _searchViewModel.Categories.First().Title.Should().Be("Foo");
+        }
+
+        [Fact]
+        public async Task ShouldAutoSelectFirstCategoryWhenLoadingCategories()
+        {
+            var categories = new List<Category> {new Category {Title = "Foo"}};
+            _categoryManager.GetAll().Returns(categories);
+            _searchViewModel.RefreshCategories.Execute().Subscribe();
+            await Task.Delay(100);
+
+            _searchViewModel.IsLoading.Should().BeFalse();
+            _searchViewModel.Categories.Count.Should().Be(1);
+            _searchViewModel.Categories.First().Title.Should().Be("Foo");
+            
+            _searchViewModel.SelectedCategory.Should().NotBeNull();
+            _searchViewModel.SelectedCategory.Title.Should().Be("Foo");
+        }
+        
+        [Fact]
+        public async Task ShouldNotAllowAddingFeedsUntilFeedAndCategoryAreSelected()
+        {
+            _searchViewModel.SelectedCategory = null;
+            _searchViewModel.SelectedFeed = null;
+            await Task.Delay(100);
+
+            var command = (ICommand)_searchViewModel.Add;
+            command.CanExecute(null).Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task ShouldTryToAddFeedWhenInputIsCompletelyValid()
+        {
+            var handled = false;
+            var item = new FeedlyItem {FeedId = "feed/http://google.com"};
+            var categories = new List<Category> {new Category {Title = "Foo"}};
+            var response = new FeedlyRoot {Results = new List<FeedlyItem> {item}};
+            _categoryManager.GetAll().Returns(categories);
+            _searchService.Search("q").Returns(response);
+
+            _searchViewModel.SearchQuery = "q";
+            _searchViewModel.Added.RegisterHandler(handle => handle.SetOutput(handled = true));
+            _searchViewModel.RefreshCategories.Execute().Subscribe();
+            _searchViewModel.Search.Execute().Subscribe();
+            await Task.Delay(100);
+
+            _searchViewModel.IsLoading.Should().BeFalse();
+            _searchViewModel.SelectedCategory.Should().NotBeNull();
+            _searchViewModel.Feeds.Should().NotBeEmpty();
+
+            _searchViewModel.SelectedFeed = _searchViewModel.Feeds.First();
+            _searchViewModel.Add.Execute().Subscribe();
+            await _categoryManager.Received(1).Update(Arg.Any<Category>());
+            handled.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task ShouldSetIsChangedItemPropertyToTrueWhenSelectionChanges()
+        {
+            var items = new List<FeedlyItem> {new FeedlyItem(), new FeedlyItem()};
+            _searchService.Search("q").Returns(new FeedlyRoot {Results = items});
+            _searchViewModel.SearchQuery = "q";
+            _searchViewModel.Search.Execute().Subscribe();
+            await Task.Delay(100);
+
+            _searchViewModel.IsLoading.Should().BeFalse();
+            _searchViewModel.Feeds.Count.Should().Be(2);
+            _searchViewModel.SelectedFeed = _searchViewModel.Feeds[1];            
+            _searchViewModel.Feeds[0].IsSelected.Should().BeFalse();           
+            _searchViewModel.Feeds[1].IsSelected.Should().BeTrue();
+        }
+        
+        [Fact]
+        public async Task ShouldSetIsChangedItemPropertyToFalseWhenSelectionBecomesNull()
+        {
+            var items = new List<FeedlyItem> {new FeedlyItem(), new FeedlyItem()};
+            _searchService.Search("q").Returns(new FeedlyRoot {Results = items});
+            _searchViewModel.SearchQuery = "q";
+            _searchViewModel.Search.Execute().Subscribe();
+            await Task.Delay(100);
+
+            _searchViewModel.IsLoading.Should().BeFalse();
+            _searchViewModel.Feeds.Count.Should().Be(2);
+            
+            _searchViewModel.SelectedFeed = _searchViewModel.Feeds[0];            
+            _searchViewModel.Feeds[0].IsSelected.Should().BeTrue();           
+            _searchViewModel.Feeds[1].IsSelected.Should().BeFalse();
+
+            _searchViewModel.SelectedFeed = null;         
+            _searchViewModel.Feeds[0].IsSelected.Should().BeFalse();           
+            _searchViewModel.Feeds[1].IsSelected.Should().BeFalse();
+        }
+
+        [Fact]
+        public void ShouldTriggerCopyInteractionWhenCopyingIsRequested()
+        {
+            var handled = false;
+            var searchItemViewModel = _factory(new FeedlyItem());
+            searchItemViewModel.Copied.RegisterHandler(handler => handler.SetOutput(handled = true));
+            searchItemViewModel.Copy.Execute().Subscribe();
+            handled.Should().BeTrue();
         }
     }
 }

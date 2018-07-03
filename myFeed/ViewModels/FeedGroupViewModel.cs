@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using DryIocAttributes;
-using JetBrains.Annotations;
 using myFeed.Interfaces;
 using myFeed.Models;
 using myFeed.Platform;
@@ -66,8 +65,7 @@ namespace myFeed.ViewModels
                 .Subscribe(x => ShowRead = x);
 
             Items.IsEmptyChanged.Subscribe(x => IsEmpty = x);
-            Fetch.IsExecuting
-                .Skip(count: 1)
+            Fetch.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
 
             Error = new Interaction<Exception, bool>();
