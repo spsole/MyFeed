@@ -131,7 +131,7 @@
     <value>Edit</value>
   </data>
   <data name="EnterLinkToRss">
-    <value>ENTER A LINK TO RSS FEED</value>
+    <value>Enter a link to RSS feed...</value>
   </data>
   <data name="AddChannel">
     <value>Add channel</value>
@@ -248,7 +248,7 @@
     <value>Category editor</value>
   </data>
   <data name="EnterNameOfNewCategory">
-    <value>Enter new name of the category:</value>
+    <value>Enter the name of a new category...</value>
   </data>
   <data name="DeleteCategory">
     <value>Category will be deleted with all nested channels. This action can't be undone.</value>

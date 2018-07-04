@@ -131,7 +131,7 @@
     <value>Изменить</value>
   </data>
   <data name="EnterLinkToRss">
-    <value>ВВЕДИТЕ ССЫЛКУ НА ИСТОЧНИК RSS</value>
+    <value>Введите ссылку на канал RSS...</value>
   </data>
   <data name="AddChannel">
     <value>Дoбавить источник</value>
@@ -248,7 +248,7 @@
     <value>Редактирование категории</value>
   </data>
   <data name="EnterNameOfNewCategory">
-    <value>Введите новое название категории:</value>
+    <value>Введите название новой категории...</value>
   </data>
   <data name="DeleteCategory">
     <value>Категория будет удалена вместе со всеми источниками. Это действите будет невозможно отменить.</value>

@@ -22,7 +22,6 @@ namespace myFeed.ViewModels
         private readonly Category _category;
         private readonly Channel _channel;
 
-        public Interaction<Unit, bool> DeleteRequest { get; }
         public ReactiveCommand<Unit, Unit> Delete { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
         public ReactiveCommand<Unit, Unit> Copy { get; }
@@ -51,7 +50,6 @@ namespace myFeed.ViewModels
                 .SelectMany(_categoryManager.Update)
                 .Subscribe();
             
-            DeleteRequest = new Interaction<Unit, bool>();
             Delete = ReactiveCommand.CreateFromTask(DoDelete);
             Copy = ReactiveCommand.CreateFromTask(
                 () => _platformService.CopyTextToClipboard(Url)
@@ -64,10 +62,9 @@ namespace myFeed.ViewModels
 
         private async Task DoDelete() 
         {
-            if (!await DeleteRequest.Handle(Unit.Default)) return;
             _category.Channels.Remove(_channel);
             await _categoryManager.Update(_category);
-            _channelGroup.Items.Remove(this);
+            _channelGroup.Channels.Remove(this);
         }
 
         private async Task DoOpen()

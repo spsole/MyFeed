@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using FluentAssertions;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -17,7 +18,6 @@ namespace myFeed.Tests.ViewModels
         private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
         private readonly ICategoryManager _categoryManager = Substitute.For<ICategoryManager>();
         private readonly IPlatformService _platformService = Substitute.For<IPlatformService>();
-        
         private readonly Func<Channel, Category, ChannelGroupViewModel, ChannelItemViewModel> _itemFactory;
         private readonly Func<Category, ChannelViewModel, ChannelGroupViewModel> _groupFactory;
         private readonly ChannelViewModel _channelViewModel;
@@ -32,9 +32,18 @@ namespace myFeed.Tests.ViewModels
         [Fact]
         public void ShouldInitializeChannelViewModelProperly()
         {
+            _channelViewModel.Categories.Should().BeEmpty();
             _channelViewModel.IsLoading.Should().BeTrue();
             _channelViewModel.IsEmpty.Should().BeFalse();
-            _channelViewModel.Items.Should().BeEmpty();
+        }
+
+        [Fact]
+        public void ShouldDisableAddCommandWhenCategoryNameIsEmpty()
+        {
+            var command = (ICommand) _channelViewModel.Add;
+            command.CanExecute(null).Should().BeFalse();
+            _channelViewModel.CategoryName = "Hello, world!";
+            command.CanExecute(null).Should().BeTrue();
         }
 
         [Fact]
@@ -46,7 +55,7 @@ namespace myFeed.Tests.ViewModels
 
             _channelViewModel.IsLoading.Should().BeFalse();
             _channelViewModel.IsEmpty.Should().BeTrue();
-            _channelViewModel.Items.Should().BeEmpty();
+            _channelViewModel.Categories.Should().BeEmpty();
         }
 
         [Fact]
@@ -59,8 +68,8 @@ namespace myFeed.Tests.ViewModels
 
             _channelViewModel.IsLoading.Should().BeFalse();
             _channelViewModel.IsEmpty.Should().BeFalse();
-            _channelViewModel.Items.Should().NotBeEmpty();
-            _channelViewModel.Items.First().Title.Should().Be("Foo");
+            _channelViewModel.Categories.Should().NotBeEmpty();
+            _channelViewModel.Categories.First().Title.Should().Be("Foo");
         }
 
         [Fact]
@@ -74,17 +83,41 @@ namespace myFeed.Tests.ViewModels
 
             _channelViewModel.IsLoading.Should().BeFalse();
             _channelViewModel.IsEmpty.Should().BeFalse();
-            _channelViewModel.Items.Count.Should().Be(2);
-            _channelViewModel.Items.First().Title.Should().Be("Foo");
-            _channelViewModel.Items.Last().Title.Should().Be("Bar");
+            _channelViewModel.Categories.Count.Should().Be(2);
+            _channelViewModel.Categories.First().Title.Should().Be("Foo");
+            _channelViewModel.Categories.Last().Title.Should().Be("Bar");
 
-            var last = _channelViewModel.Items.Last();
-            _channelViewModel.Items.Remove(last);
-            _channelViewModel.Items.Insert(0, last);
+            var last = _channelViewModel.Categories.Last();
+            _channelViewModel.Categories.Remove(last);
+            _channelViewModel.Categories.Insert(0, last);
             await Task.Delay(200);
             await _categoryManager.Received(1).Rearrange(
                 Arg.Any<IEnumerable<Category>>()
             );
+        }
+
+        [Fact]
+        public async Task ShouldUpdateCategoryInDatabaseOnceWhenTitlePropertyChanges()
+        {
+            var category = new Category {Title = "Foo", Channels = new List<Channel>()};
+            _categoryManager.GetAll().Returns(new List<Category> {category});
+            _channelViewModel.Load.Execute().Subscribe();
+            await Task.Delay(300);
+
+            _channelViewModel.Categories.Should().NotBeEmpty();
+            var groupViewModel = _channelViewModel.Categories.First();
+            groupViewModel.RealTitle.Should().Be("Foo");
+            groupViewModel.Title.Should().Be("Foo");
+            groupViewModel.Title = "B";
+            groupViewModel.Title = "Ba";
+            groupViewModel.Title = "Bar";
+            groupViewModel.RealTitle.Should().Be("Foo");
+            await Task.Delay(1000);
+
+            groupViewModel.RealTitle.Should().Be("Bar");
+            groupViewModel.Title.Should().Be("Bar");
+            category.Title.Should().Be("Bar");
+            await _categoryManager.Received(1).Update(category);
         }
     }
 }

@@ -24,11 +24,11 @@ namespace myFeed.ViewModels
         private readonly ICategoryManager _categoryManager;
 
         public ReactiveCommand<Unit, IEnumerable<Category>> Load { get; }
-        public ReactiveList<ChannelGroupViewModel> Items { get; }
-        public Interaction<Unit, string> AddRequest { get; }
+        public ReactiveList<ChannelGroupViewModel> Categories { get; }
         public ReactiveCommand<Unit, Unit> Search { get; }
         public ReactiveCommand<Unit, Unit> Add { get; }
-
+        
+        public string CategoryName { get; set; }
         public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
 
@@ -38,50 +38,46 @@ namespace myFeed.ViewModels
             ICategoryManager categoryManager)
         {
             _lookup = new Dictionary<ChannelGroupViewModel, Category>();
-            Items = new ReactiveList<ChannelGroupViewModel>();
-            AddRequest = new Interaction<Unit, string>();
             _navigationService = navigationService;
             _categoryManager = categoryManager;
             _factory = factory;
-
-            Add = ReactiveCommand.CreateFromTask(DoAdd);
-            Search = ReactiveCommand.CreateFromTask(
-                () => _navigationService.Navigate<SearchViewModel>()
-            );
             
+            Categories = new ReactiveList<ChannelGroupViewModel>();
             Load = ReactiveCommand.CreateFromTask(_categoryManager.GetAll);
             Load.ObserveOn(RxApp.MainThreadScheduler)
-                .Do(categories => Items.Clear())
+                .Do(categories => Categories.Clear())
                 .SelectMany(categories => categories)
                 .Select(category => (category, _factory(category, this)))
                 .Do(tuple => _lookup[tuple.Item2] = tuple.Item1)
                 .Select(tuple => tuple.Item2)
-                .Subscribe(Items.Add);
+                .Subscribe(Categories.Add);
+            
+            Search = ReactiveCommand.CreateFromTask(() => 
+                _navigationService.Navigate<SearchViewModel>());
+            Add = ReactiveCommand.CreateFromTask(DoAdd,
+                this.WhenAnyValue(x => x.CategoryName)
+                    .Select(x => !string.IsNullOrWhiteSpace(x)));
 
-            Load.IsExecuting
-                .Skip(count: 1)
+            Load.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
-            Items.CountChanged
+            Categories.CountChanged
                 .Select(count => count == 0)
                 .Subscribe(x => IsEmpty = x);
-            Items.Changed
-                .Throttle(TimeSpan.FromMilliseconds(100))
-                .Skip(count: 1)
-                .Select(arguments => Items.Select(x => _lookup[x]))
+            Categories.Changed
+                .Throttle(TimeSpan.FromMilliseconds(100)).Skip(1)
+                .Select(arguments => Categories.Select(x => _lookup[x]))
                 .SelectMany(_categoryManager.Rearrange)
                 .Subscribe();
         }
 
         private async Task DoAdd()
         {
-            var name = await AddRequest.Handle(Unit.Default);
-            if (string.IsNullOrWhiteSpace(name)) return;
-            var category = new Category {Title = name};
+            var category = new Category {Title = CategoryName};
             await _categoryManager.Insert(category);
-
             var viewModel = _factory(category, this);
             _lookup[viewModel] = category;
-            Items.Add(viewModel);
+            Categories.Add(viewModel);
+            CategoryName = null;
         }
     }
 }

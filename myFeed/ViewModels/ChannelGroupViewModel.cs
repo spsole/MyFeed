@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -21,68 +22,59 @@ namespace myFeed.ViewModels
         private readonly ICategoryManager _categoryManager;
         private readonly Category _category;
 
-        public ReactiveList<ChannelItemViewModel> Items { get; }
-        public Interaction<Unit, string> RenameRequest { get; } 
-        public Interaction<Unit, bool> RemoveRequest { get; }
-        
-        public ReactiveCommand<Unit, Unit> AddChannel { get; }
-        public ReactiveCommand<Unit, Unit> Remove { get; } 
-        public ReactiveCommand<Unit, Unit> Rename { get; }
+        public ReactiveList<ChannelItemViewModel> Channels { get; }
+        public ReactiveCommand<Unit, Unit> Remove { get; }
+        public ReactiveCommand<Unit, Unit> Add { get; }
 
         public string ChannelUri { get; set; } = string.Empty;
-        public string Title { get; private set; }
+        public string RealTitle { get; private set; }
+        public string Title { get; set; }
         
         public ChannelGroupViewModel(
-            Func<Channel, Category, 
-                ChannelGroupViewModel, 
-                ChannelItemViewModel> factory,
+            Func<Channel, Category, ChannelGroupViewModel, ChannelItemViewModel> factory,
             ChannelViewModel channelsViewModel,
             ICategoryManager categoryManager,
             Category category)
         {
-            Items = new ReactiveList<ChannelItemViewModel>();
-            RenameRequest = new Interaction<Unit, string>();
-            RemoveRequest = new Interaction<Unit, bool>();
             _channelsViewModel = channelsViewModel;
             _categoryManager = categoryManager;
             _category = category;
             _factory = factory;
 
-            Title = category.Title;
-            var channels = _category.Channels;
-            var models = channels.Select(x => _factory(x, _category, this));
-            Items.AddRange(models);
+            Title = RealTitle = category.Title;
+            Channels = new ReactiveList<ChannelItemViewModel>();
+            Channels.AddRange(_category.Channels.Select(x => _factory(x, _category, this)));
+            Add = ReactiveCommand.CreateFromTask(DoAdd,
+                this.WhenAnyValue(x => x.ChannelUri)
+                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
             
-            Remove = ReactiveCommand.CreateFromTask(DoRemove);
-            Rename = ReactiveCommand.CreateFromTask(DoRename);
-            AddChannel = ReactiveCommand.CreateFromTask(DoAddChannel,
-                this.WhenAnyValue(x => x.ChannelUri, x => Uri
-                    .IsWellFormedUriString(x, UriKind.Absolute)));
+            Remove = ReactiveCommand.CreateFromTask(DoRemove);   
+            this.WhenAnyValue(x => x.Title).Skip(1)
+                .Throttle(TimeSpan.FromSeconds(0.8))
+                .Select(title => title?.Trim())
+                .Where(str => !string.IsNullOrWhiteSpace(str))
+                .DistinctUntilChanged()
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(title => RealTitle = _category.Title = title)
+                .Select(title => _category)
+                .SelectMany(_categoryManager.Update)
+                .Subscribe();            
         }
 
-        private async Task DoAddChannel()
+        private async Task DoAdd()
         {
             var uri = ChannelUri;
             ChannelUri = string.Empty;
             var model = new Channel { Uri = uri, Notify = true };
             _category.Channels.Add(model);
             await _categoryManager.Update(_category); 
-            Items.Add(_factory(model, _category, this));   
+            Channels.Add(_factory(model, _category, this));   
         }
 
         private async Task DoRemove() 
         {
-            if (!await RemoveRequest.Handle(Unit.Default)) return;
             await _categoryManager.Remove(_category);
-            _channelsViewModel.Items.Remove(this);
-        }
-
-        private async Task DoRename() 
-        {
-            var name = await RenameRequest.Handle(Unit.Default);
-            if (string.IsNullOrWhiteSpace(name)) return;
-            Title = _category.Title = name;
-            await _categoryManager.Update(_category);
+            _channelsViewModel.Categories.Remove(this);
         }
     }
 }
