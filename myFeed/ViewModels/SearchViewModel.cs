@@ -74,10 +74,6 @@ namespace myFeed.ViewModels
                 .Select(x => Unit.Default)
                 .InvokeCommand(RefreshCategories);
 
-            Categories.Changed
-                .Select(args => Categories.FirstOrDefault())
-                .Where(category => category != null)
-                .Subscribe(x => SelectedCategory = x);
             Feeds.IsEmptyChanged.Subscribe(x => IsEmpty = x);
             Search.IsExecuting.Skip(1)
                 .Do(x => IsGreeting = false)

@@ -90,14 +90,8 @@
                 </StackPanel>
                 <Button Grid.Column="1" Command="{Binding Search}" Margin="0 0 12 0"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                    Style="{StaticResource ButtonRevealStyle}">
-                    <Button.Content>
-                        <TextBlock Foreground="White">
-                            <Run FontSize="12" FontFamily="Segoe MDL2 Assets" Text="&#xE71E;"/>
-                            <Run FontSize="15" Text="{converters:Locale Key=Find}"/>
-                        </TextBlock>
-                    </Button.Content>
-                </Button>
+                    Style="{StaticResource ButtonRevealStyle}"
+                    Content="{converters:Locale Key=Find}"/>
             </Grid>
             <Grid x:Name="CategoryBar" Grid.Row="1" Grid.ColumnSpan="2" Height="48">
                 <Grid.ColumnDefinitions>
@@ -106,6 +100,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <ComboBox ItemsSource="{Binding Categories}" Margin="12 0 12 0"
+                        PlaceholderText="{converters:Locale Key=SearchCategorySelect}"
                         DisplayMemberPath="Title" HorizontalAlignment="Stretch"
                         SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
                 </StackPanel>

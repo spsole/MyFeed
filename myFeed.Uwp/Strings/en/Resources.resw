@@ -134,7 +134,7 @@
     <value>ENTER A LINK TO RSS FEED</value>
   </data>
   <data name="AddChannel">
-    <value>Add channel</value>
+    <value>Save channel</value>
   </data>
   <data name="AddCategory">
     <value>Add category</value>
@@ -396,5 +396,8 @@
   </data>
   <data name="SearchCopiedTitle">
     <value>Notification</value>
+  </data>
+  <data name="SearchCategorySelect">
+    <value>Choose a category...</value>
   </data>
 </root>

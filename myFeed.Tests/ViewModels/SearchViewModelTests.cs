@@ -121,22 +121,6 @@ namespace myFeed.Tests.ViewModels
         }
 
         [Fact]
-        public async Task ShouldAutoSelectFirstCategoryWhenLoadingCategories()
-        {
-            var categories = new List<Category> {new Category {Title = "Foo"}};
-            _categoryManager.GetAll().Returns(categories);
-            _searchViewModel.RefreshCategories.Execute().Subscribe();
-            await Task.Delay(100);
-
-            _searchViewModel.IsLoading.Should().BeFalse();
-            _searchViewModel.Categories.Count.Should().Be(1);
-            _searchViewModel.Categories.First().Title.Should().Be("Foo");
-            
-            _searchViewModel.SelectedCategory.Should().NotBeNull();
-            _searchViewModel.SelectedCategory.Title.Should().Be("Foo");
-        }
-        
-        [Fact]
         public async Task ShouldNotAllowAddingFeedsUntilFeedAndCategoryAreSelected()
         {
             _searchViewModel.SelectedCategory = null;
@@ -164,9 +148,9 @@ namespace myFeed.Tests.ViewModels
             await Task.Delay(100);
 
             _searchViewModel.IsLoading.Should().BeFalse();
-            _searchViewModel.SelectedCategory.Should().NotBeNull();
             _searchViewModel.Feeds.Should().NotBeEmpty();
 
+            _searchViewModel.SelectedCategory = _searchViewModel.Categories.First();
             _searchViewModel.SelectedFeed = _searchViewModel.Feeds.First();
             _searchViewModel.Add.Execute().Subscribe();
             await _categoryManager.Received(1).Update(Arg.Any<Category>());
