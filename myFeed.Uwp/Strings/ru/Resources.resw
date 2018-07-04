@@ -134,7 +134,7 @@
     <value>ВВЕДИТЕ ССЫЛКУ НА ИСТОЧНИК RSS</value>
   </data>
   <data name="AddChannel">
-    <value>Сохранить источник</value>
+    <value>Дoбавить источник</value>
   </data>
   <data name="AddCategory">
     <value>Добавить категорию</value>
@@ -399,5 +399,8 @@
   </data>
   <data name="SearchCategorySelect">
     <value>Выберите категoрию...</value>
+  </data>
+  <data name="SearchAddChannel">
+    <value>Сoхранить истoчник</value>
   </data>
 </root>

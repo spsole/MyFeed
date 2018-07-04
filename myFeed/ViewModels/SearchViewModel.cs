@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
+using myFeed.Platform;
 using PropertyChanged;
 using ReactiveUI;
 
@@ -18,6 +19,7 @@ namespace myFeed.ViewModels
     public sealed class SearchViewModel
     {
         private readonly Func<FeedlyItem, SearchItemViewModel> _factory;
+        private readonly INavigationService _navigationService;
         private readonly ICategoryManager _categoryManager;
         private readonly ISearchService _searchService;
         
@@ -28,6 +30,7 @@ namespace myFeed.ViewModels
         public Interaction<Unit, bool> Added { get; }
         
         public ReactiveCommand<Unit, IEnumerable<Category>> RefreshCategories { get; }
+        public ReactiveCommand<Unit, Unit> ViewCategories { get; }
         public ReactiveList<Category> Categories { get; }
         public Category SelectedCategory { get; set; }
         public Interaction<Exception, bool> Error { get; }
@@ -39,45 +42,50 @@ namespace myFeed.ViewModels
 
         public SearchViewModel(
             Func<FeedlyItem, SearchItemViewModel> factory,
+            INavigationService navigationService,
             ICategoryManager categoryManager,
             ISearchService searchService)
         {
             _factory = factory;
-            _searchService = searchService;
             _categoryManager = categoryManager;
+            _navigationService = navigationService;
+            _searchService = searchService;
 
-            Error = new Interaction<Exception, bool>();
             Feeds = new ReactiveList<SearchItemViewModel>();
             Search = ReactiveCommand.CreateFromTask(
                 () => _searchService.Search(SearchQuery),
                 this.WhenAnyValue(x => x.SearchQuery)
                     .Select(x => !string.IsNullOrWhiteSpace(x)));
-
+            
             Search.Select(response => response.Results.Select(_factory))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Do(feeds => Feeds.Clear())
                 .Subscribe(Feeds.AddRange);
+            
+            Feeds.IsEmptyChanged.Subscribe(x => IsEmpty = x);
+            Search.IsExecuting.Skip(1)
+                .Do(x => IsGreeting = false)
+                .Subscribe(x => IsLoading = x);
+      
+            Categories = new ReactiveList<Category>();
+            ViewCategories = ReactiveCommand.CreateFromTask(() => _navigationService.Navigate<ChannelViewModel>());
+            RefreshCategories = ReactiveCommand.CreateFromTask(() => _categoryManager.GetAll());
+            RefreshCategories
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(categories => Categories.Clear())
+                .Subscribe(Categories.AddRange);
+            
+            Error = new Interaction<Exception, bool>();
             Search.ThrownExceptions
                 .SelectMany(Error.Handle)
                 .Where(retry => retry)
                 .Select(x => Unit.Default)
                 .InvokeCommand(Search);
-      
-            Categories = new ReactiveList<Category>();
-            RefreshCategories = ReactiveCommand.CreateFromTask(() => _categoryManager.GetAll());
-            RefreshCategories.ObserveOn(RxApp.MainThreadScheduler)
-                .Do(categories => Categories.Clear())
-                .Subscribe(Categories.AddRange);
             RefreshCategories.ThrownExceptions
                 .SelectMany(Error.Handle)
                 .Where(retry => retry)
                 .Select(x => Unit.Default)
                 .InvokeCommand(RefreshCategories);
-
-            Feeds.IsEmptyChanged.Subscribe(x => IsEmpty = x);
-            Search.IsExecuting.Skip(1)
-                .Do(x => IsGreeting = false)
-                .Subscribe(x => IsLoading = x);
             
             this.WhenAnyValue(x => x.SearchQuery)
                 .Throttle(TimeSpan.FromSeconds(0.8))

@@ -16,6 +16,7 @@ namespace myFeed.Tests.ViewModels
 {
     public sealed class SearchViewModelTests
     {
+        private readonly INavigationService _navigationService = Substitute.For<INavigationService>();
         private readonly ICategoryManager _categoryManager = Substitute.For<ICategoryManager>();
         private readonly IPlatformService _platformService = Substitute.For<IPlatformService>();
         private readonly ISearchService _searchService = Substitute.For<ISearchService>();
@@ -25,7 +26,7 @@ namespace myFeed.Tests.ViewModels
         public SearchViewModelTests()
         {
             _factory = x => new SearchItemViewModel(_platformService, x);
-            _searchViewModel = new SearchViewModel(_factory, _categoryManager, _searchService);
+            _searchViewModel = new SearchViewModel(_factory, _navigationService, _categoryManager, _searchService);
         }
 
         [Fact]

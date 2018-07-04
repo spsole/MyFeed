@@ -62,14 +62,19 @@
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
         <controls:TitleBlock Grid.Row="0" Text="{converters:Locale Key=SearchViewTitle}"/>
-        <controls:TransparentButton Grid.Row="0" Symbol="Sync" 
-            HorizontalAlignment="Right" Command="{Binding Search}">
-            <ToolTipService.ToolTip>
-                <TextBlock Text="{converters:Locale Key=Refresh}" />
-            </ToolTipService.ToolTip>
-        </controls:TransparentButton>
-        <Grid Grid.Row="1" Padding="0 0 0 6"
-              Background="{ThemeResource LowBackgroundThemeBrush}">
+        <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
+            <controls:TransparentButton Symbol="List" Command="{Binding ViewCategories}">
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="{converters:Locale Key=Modify}" />
+                </ToolTipService.ToolTip>
+            </controls:TransparentButton>
+            <controls:TransparentButton Symbol="Sync" Command="{Binding Search}">
+                <ToolTipService.ToolTip>
+                    <TextBlock Text="{converters:Locale Key=Refresh}" />
+                </ToolTipService.ToolTip>
+            </controls:TransparentButton>
+        </StackPanel>
+        <Grid Grid.Row="1" Padding="0 0 0 6" Background="{ThemeResource LowBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -78,7 +83,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Grid x:Name="SearchBar" Grid.Row="0" Grid.ColumnSpan="2" Height="48">
+            <Grid x:Name="SearchBar" Height="48" Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -88,12 +93,13 @@
                         Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         PlaceholderText="{converters:Locale Key=ProvideSearchQuery}"/>
                 </StackPanel>
-                <Button Grid.Column="1" Command="{Binding Search}" Margin="0 0 12 0"
+                <Button Grid.Column="1" Command="{Binding Search}" 
+                    Margin="0 0 12 0" VerticalAlignment="Center"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     Style="{StaticResource ButtonRevealStyle}"
                     Content="{converters:Locale Key=Find}"/>
             </Grid>
-            <Grid x:Name="CategoryBar" Grid.Row="1" Grid.ColumnSpan="2" Height="48">
+            <Grid x:Name="CategoryBar" Height="48" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -104,9 +110,10 @@
                         DisplayMemberPath="Title" HorizontalAlignment="Stretch"
                         SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
                 </StackPanel>
-                <Button Grid.Column="1" Command="{Binding Add}" Margin="0 0 12 0"
+                <Button Grid.Column="1" Command="{Binding Add}" 
+                    Margin="0 0 12 0" VerticalAlignment="Center"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                    Content="{converters:Locale Key=AddChannel}"
+                    Content="{converters:Locale Key=SearchAddChannel}"
                     Style="{StaticResource ButtonRevealStyle}"/>
             </Grid>
         </Grid>
