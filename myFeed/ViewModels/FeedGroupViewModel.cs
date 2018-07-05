@@ -41,13 +41,13 @@ namespace myFeed.ViewModels
             ISettingManager settingManager,
             Category category)
         {
+            _source = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
             _navigationService = navigationService;
             _feedStoreService = feedStoreService;
             _settingManager = settingManager;
             _category = category;
             _factory = factory;
 
-            _source = new ReactiveList<FeedItemViewModel> {ChangeTrackingEnabled = true};
             Items = _source.CreateDerivedCollection(x => x, x => !(!ShowRead && x.Read));
             Fetch = ReactiveCommand.CreateFromTask(
                 () => _feedStoreService.Load(_category.Channels)
@@ -63,15 +63,15 @@ namespace myFeed.ViewModels
                 .Select(settings => settings.Read)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ShowRead = x);
-
-            Items.IsEmptyChanged.Subscribe(x => IsEmpty = x);
-            Fetch.IsExecuting.Skip(1)
+            Items.IsEmptyChanged
+                .Subscribe(x => IsEmpty = x);
+            Fetch.IsExecuting
+                .Skip(1)
                 .Subscribe(x => IsLoading = x);
 
             Error = new Interaction<Exception, bool>();
             Modify = ReactiveCommand.CreateFromTask(
-                () => _navigationService.Navigate<ChannelViewModel>()
-            );
+                () => _navigationService.Navigate<ChannelViewModel>());
             Fetch.ThrownExceptions
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .SelectMany(Error.Handle)

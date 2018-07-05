@@ -63,7 +63,8 @@ namespace myFeed.ViewModels
                 .Subscribe(Feeds.AddRange);
             
             Feeds.IsEmptyChanged.Subscribe(x => IsEmpty = x);
-            Search.IsExecuting.Skip(1)
+            Search.IsExecuting
+                .Skip(1)
                 .Do(x => IsGreeting = false)
                 .Subscribe(x => IsLoading = x);
       

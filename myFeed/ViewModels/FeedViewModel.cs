@@ -61,8 +61,10 @@ namespace myFeed.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => Images = x);
 
-            Items.IsEmptyChanged.Subscribe(x => IsEmpty = x);
-            Load.IsExecuting.Skip(1)
+            Items.IsEmptyChanged
+                .Subscribe(x => IsEmpty = x);
+            Load.IsExecuting
+                .Skip(1)
                 .Subscribe(x => IsLoading = x);
             Items.Changed
                 .Select(args => Items.FirstOrDefault())

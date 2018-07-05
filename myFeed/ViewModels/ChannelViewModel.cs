@@ -58,14 +58,15 @@ namespace myFeed.ViewModels
                 this.WhenAnyValue(x => x.CategoryName)
                     .Select(x => !string.IsNullOrWhiteSpace(x)));
 
-            Load.IsExecuting.Skip(1)
+            Load.IsExecuting
+                .Skip(1)
                 .Subscribe(x => IsLoading = x);
-            Categories.CountChanged
-                .Select(count => count == 0)
+            Categories.IsEmptyChanged
                 .Subscribe(x => IsEmpty = x);
             Categories.Changed
-                .Throttle(TimeSpan.FromMilliseconds(100)).Skip(1)
-                .Select(arguments => Categories.Select(x => _lookup[x]))
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .Skip(1)
+                .Select(args => Categories.Select(x => _lookup[x]))
                 .SelectMany(_categoryManager.Rearrange)
                 .Subscribe();
         }

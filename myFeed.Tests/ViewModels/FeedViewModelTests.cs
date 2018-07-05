@@ -74,14 +74,15 @@ namespace myFeed.Tests.ViewModels
         {
             var triggered = false;
             var groupViewModel = _groupFactory.Invoke(new Category {Title = "Foo"});
-            var notifyPropertyChanged = (INotifyPropertyChanged)(object)groupViewModel;
-            notifyPropertyChanged.PropertyChanged += delegate { triggered = true; };
-            
             _feedStoreService.Load(Arg.Any<IEnumerable<Channel>>()).Returns(new List<Article>());
             _settingManager.Read().Returns(new Settings());
-            groupViewModel.Fetch.Execute().Subscribe();
             
+            // ReSharper disable once PossibleInvalidCastException
+            var notifyPropertyChanged = (INotifyPropertyChanged)(object)groupViewModel;
+            notifyPropertyChanged.PropertyChanged += delegate { triggered = true; };
+            groupViewModel.Fetch.Execute().Subscribe();
             await Task.Delay(100);
+            
             triggered.Should().BeTrue();
         }
 

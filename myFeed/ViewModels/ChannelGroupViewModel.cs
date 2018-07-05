@@ -49,16 +49,17 @@ namespace myFeed.ViewModels
                     .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
             
             Remove = ReactiveCommand.CreateFromTask(DoRemove);   
-            this.WhenAnyValue(x => x.Title).Skip(1)
+            this.ObservableForProperty(x => x.Title)
+                .Select(property => property.Value)
                 .Throttle(TimeSpan.FromSeconds(0.8))
                 .Select(title => title?.Trim())
                 .Where(str => !string.IsNullOrWhiteSpace(str))
                 .DistinctUntilChanged()
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Do(title => RealTitle = _category.Title = title)
+                .Do(title => _category.Title = title)
                 .Select(title => _category)
                 .SelectMany(_categoryManager.Update)
-                .Subscribe();            
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => RealTitle = _category.Title);            
         }
 
         private async Task DoAdd()

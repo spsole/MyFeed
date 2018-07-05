@@ -69,7 +69,8 @@ namespace myFeed.ViewModels
             Fave = _article.Fave;
             Read = _article.Read;
             Open.Subscribe(x => Read = true);
-            this.WhenAnyValue(x => x.Read).Skip(1)
+            this.ObservableForProperty(x => x.Read)
+                .Select(property => property.Value)
                 .Do(read => _article.Read = read)
                 .Select(read => _article)
                 .SelectMany(_categoryManager.Update)

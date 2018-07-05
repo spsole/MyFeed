@@ -77,21 +77,33 @@ namespace myFeed.ViewModels
                 .Do(x => Max = x.Max)
                 .Subscribe();
 
-            this.WhenAnyValue(x => x.Period).Skip(1)
+            this.ObservableForProperty(x => x.Period)
+                .Select(property => property.Value)
                 .SelectMany(platformService.RegisterBackgroundTask)
                 .Subscribe();
-            this.WhenAnyValue(x => x.Theme).Skip(1)
+            this.ObservableForProperty(x => x.Theme)
+                .Select(property => property.Value)
                 .SelectMany(platformService.RegisterTheme)
                 .Subscribe();
+
             this.WhenAnyValue(
-                    x => x.Period, x => x.Theme, 
-                    x => x.Banners, x => x.Images,
-                    x => x.Read, x => x.Font, x => x.Max)
-                .Skip(1).Select(x => new Settings
+                    x => x.Period,
+                    x => x.Banners,
+                    x => x.Images,
+                    x => x.Theme,  
+                    x => x.Read, 
+                    x => x.Font, 
+                    x => x.Max)
+                .Skip(1)
+                .Select(x => new Settings
                 {
-                    Period = x.Item1, Theme = x.Item2,
-                    Banners = x.Item3, Images = x.Item4,
-                    Read = x.Item5, Font = x.Item6, Max = x.Item7
+                    Period = x.Item1, 
+                    Banners = x.Item2, 
+                    Images = x.Item3,
+                    Theme = x.Item4,
+                    Read = x.Item5, 
+                    Font = x.Item6, 
+                    Max = x.Item7
                 })
                 .SelectMany(settingManager.Write)
                 .Subscribe();

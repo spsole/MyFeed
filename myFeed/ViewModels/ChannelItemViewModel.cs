@@ -44,7 +44,8 @@ namespace myFeed.ViewModels
             _channel = channel;
 
             Notify = _channel.Notify;
-            this.WhenAnyValue(x => x.Notify).Skip(1)
+            this.ObservableForProperty(x => x.Notify)
+                .Select(property => property.Value)
                 .Do(notify => _channel.Notify = notify)
                 .Select(notify => channel)
                 .SelectMany(_categoryManager.Update)
