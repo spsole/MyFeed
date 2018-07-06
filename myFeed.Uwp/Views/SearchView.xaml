@@ -203,7 +203,7 @@
                         Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                     <Button Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
                         Foreground="White" Content="{converters:Locale Key=RefreshPage}"
-                        HorizontalAlignment="Center" Margin="0 12 0 0" Command="{Binding Fetch}"/>
+                        HorizontalAlignment="Center" Margin="0 12 0 0" Command="{Binding Search}"/>
                 </StackPanel>
             </Grid>
             <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"

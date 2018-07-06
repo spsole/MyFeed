@@ -154,6 +154,8 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.SelectedCategory = _searchViewModel.Categories.First();
             _searchViewModel.SelectedFeed = _searchViewModel.Feeds.First();
             _searchViewModel.Add.Execute().Subscribe();
+            await Task.Delay(100);
+
             await _categoryManager.Received(1).Update(Arg.Any<Category>());
             handled.Should().BeTrue();
         }
@@ -194,14 +196,15 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.Feeds[0].IsSelected.Should().BeFalse();           
             _searchViewModel.Feeds[1].IsSelected.Should().BeFalse();
         }
-
+        
         [Fact]
-        public void ShouldTriggerCopyInteractionWhenCopyingIsRequested()
+        public async Task ShouldTriggerCopyInteractionWhenCopyingIsRequested()
         {
             var handled = false;
             var searchItemViewModel = _factory(new FeedlyItem());
             searchItemViewModel.Copied.RegisterHandler(handler => handler.SetOutput(handled = true));
             searchItemViewModel.Copy.Execute().Subscribe();
+            await Task.Delay(100);
             handled.Should().BeTrue();
         }
     }

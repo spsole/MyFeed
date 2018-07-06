@@ -66,7 +66,7 @@ namespace myFeed.Uwp
             var factory = _container.Resolve<Func<Article, FeedItemViewModel>>();
             var articleFactory = _container.Resolve<Func<FeedItemViewModel, FeedItemFullViewModel>>();
             var articleViewModel = articleFactory.Invoke(factory.Invoke(article));
-            await navigationService.Navigate<FeedItemFullViewModel>(articleViewModel);
+            await navigationService.NavigateWith<FeedItemFullViewModel>(articleViewModel);
         }
     }
 }

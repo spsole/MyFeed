@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Models;
 using myFeed.Platform;
@@ -18,9 +17,9 @@ namespace myFeed.ViewModels
         private readonly IPlatformService _platformService;
         private readonly FeedlyItem _feedlyItem;
          
-        public Interaction<Unit, bool> Copied { get; }
-        public ReactiveCommand<Unit, Unit> Copy { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
+        public ReactiveCommand<Unit, Unit> Copy { get; }
+        public Interaction<Unit, bool> Copied { get; }
         public bool IsSelected { get; set; }  
         
         public string Description => _feedlyItem.Description;
@@ -39,15 +38,14 @@ namespace myFeed.ViewModels
                 () => _platformService.LaunchUri(new Uri(Url)),
                 Observable.Return(Uri.IsWellFormedUriString(Url, UriKind.Absolute)));
 
-            Copied = new Interaction<Unit, bool>();
-            Copy = ReactiveCommand.CreateFromTask(DoCopy,
+            Copy = ReactiveCommand.CreateFromTask(
+                () => _platformService.CopyTextToClipboard(Url),
                 Observable.Return(!string.IsNullOrWhiteSpace(Url)));
-        }
-
-        private async Task DoCopy()
-        {
-            await _platformService.CopyTextToClipboard(Url);
-            await Copied.Handle(Unit.Default);
+            
+            Copied = new Interaction<Unit, bool>();
+            Copy.ObserveOn(RxApp.MainThreadScheduler)
+                .SelectMany(Copied.Handle)
+                .Subscribe();
         }
     }
 }

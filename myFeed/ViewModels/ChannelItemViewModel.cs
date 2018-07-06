@@ -26,7 +26,7 @@ namespace myFeed.ViewModels
         public ReactiveCommand<Unit, Unit> Open { get; }
         public ReactiveCommand<Unit, Unit> Copy { get; }
 
-        public string Name => new Uri(_channel.Uri).Host;
+        public string Name => new Uri(_channel.Uri).Host.ToUpperInvariant();
         public string Url => _channel.Uri;
         public bool Notify { get; set; }
 
@@ -43,6 +43,11 @@ namespace myFeed.ViewModels
             _category = category;
             _channel = channel;
 
+            Copy = ReactiveCommand.CreateFromTask(() => _platformService.CopyTextToClipboard(Url));
+            Open = ReactiveCommand.CreateFromTask(DoOpen,
+                this.WhenAnyValue(x => x.Url, url => Uri
+                    .IsWellFormedUriString(url, UriKind.Absolute)));
+            
             Notify = _channel.Notify;
             this.ObservableForProperty(x => x.Notify)
                 .Select(property => property.Value)
@@ -52,20 +57,14 @@ namespace myFeed.ViewModels
                 .Subscribe();
             
             Delete = ReactiveCommand.CreateFromTask(DoDelete);
-            Copy = ReactiveCommand.CreateFromTask(
-                () => _platformService.CopyTextToClipboard(Url)
-            );
-
-            Open = ReactiveCommand.CreateFromTask(DoOpen,
-                this.WhenAnyValue(x => x.Url).Select(x => Uri
-                    .IsWellFormedUriString(x, UriKind.Absolute)));
+            Delete.ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => _channelGroup.Channels.Remove(this));
         }
 
         private async Task DoDelete() 
         {
             _category.Channels.Remove(_channel);
             await _categoryManager.Update(_category);
-            _channelGroup.Channels.Remove(this);
         }
 
         private async Task DoOpen()

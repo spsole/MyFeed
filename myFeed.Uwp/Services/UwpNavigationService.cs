@@ -67,9 +67,9 @@ namespace myFeed.Uwp.Services
 
         public IReadOnlyDictionary<Type, (string, object)> Icons { get; }
 
-        public Task Navigate<T>() where T : class => Navigate<T>(_resolver.Resolve<Func<T>>()());
-
-        public async Task Navigate<T>(object parameter) where T : class
+        public Task Navigate<T>() where T : class => NavigateWith<T>(_resolver.Resolve<Func<T>>()());
+        
+        public async Task NavigateWith<T>(object parameter) where T : class
         {
             switch (typeof(T).Name)
             {

@@ -55,16 +55,10 @@ namespace myFeed.ViewModels
             _article = article;
             _factory = factory;
 
-            Launch = ReactiveCommand.CreateFromTask(
-                () => _platformService.LaunchUri(new Uri(_article.Uri)),
-                Observable.Return(Uri.IsWellFormedUriString(_article.Uri, UriKind.Absolute))
-            );
             Share = ReactiveCommand.CreateFromTask(
-                () => _platformService.Share($"{_article.Title} {_article.Uri}")
-            );
+                () => _platformService.Share($"{_article.Title} {_article.Uri}"));
             Open = ReactiveCommand.CreateFromTask(
-                () => _navigationService.Navigate<FeedItemFullViewModel>(_factory(this))
-            );
+                () => _navigationService.NavigateWith<FeedItemFullViewModel>(_factory(this)));
 
             Fave = _article.Fave;
             Read = _article.Read;
@@ -76,16 +70,21 @@ namespace myFeed.ViewModels
                 .SelectMany(_categoryManager.Update)
                 .Subscribe();
 
+            Launch = ReactiveCommand.CreateFromTask(
+                () => _platformService.LaunchUri(new Uri(_article.Uri)),
+                Observable.Return(Uri.IsWellFormedUriString(_article.Uri, UriKind.Absolute)));
+
+            Copy = ReactiveCommand.CreateFromTask(
+                () => _platformService.CopyTextToClipboard(_article.Uri),
+                Observable.Return(!string.IsNullOrWhiteSpace(_article.Uri)));
+            
             CopyConfirm = new Interaction<Unit, bool>();
-            Copy = ReactiveCommand.CreateFromTask(DoCopy);
+            Copy.ObserveOn(RxApp.MainThreadScheduler)
+                .SelectMany(CopyConfirm.Handle)
+                .Subscribe();
+
             MarkFave = ReactiveCommand.CreateFromTask(DoMarkFave);
             MarkRead = ReactiveCommand.Create(() => { Read = !Read; });
-        }
-
-        private async Task DoCopy()
-        {
-            await _platformService.CopyTextToClipboard(_article.Uri);
-            await CopyConfirm.Handle(Unit.Default);
         }
 
         private async Task DoMarkFave()

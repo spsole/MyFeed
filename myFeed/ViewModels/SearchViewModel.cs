@@ -50,7 +50,7 @@ namespace myFeed.ViewModels
             _categoryManager = categoryManager;
             _navigationService = navigationService;
             _searchService = searchService;
-
+            
             Feeds = new ReactiveList<SearchItemViewModel>();
             Search = ReactiveCommand.CreateFromTask(
                 () => _searchService.Search(SearchQuery),
@@ -61,16 +61,16 @@ namespace myFeed.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Do(feeds => Feeds.Clear())
                 .Subscribe(Feeds.AddRange);
-            
-            Feeds.IsEmptyChanged.Subscribe(x => IsEmpty = x);
-            Search.IsExecuting
-                .Skip(1)
+
+            Search.IsExecuting.Skip(1)
                 .Do(x => IsGreeting = false)
                 .Subscribe(x => IsLoading = x);
+            Feeds.IsEmptyChanged
+                .Subscribe(x => IsEmpty = x);
       
             Categories = new ReactiveList<Category>();
-            ViewCategories = ReactiveCommand.CreateFromTask(() => _navigationService.Navigate<ChannelViewModel>());
-            RefreshCategories = ReactiveCommand.CreateFromTask(() => _categoryManager.GetAll());
+            ViewCategories = ReactiveCommand.CreateFromTask(_navigationService.Navigate<ChannelViewModel>);
+            RefreshCategories = ReactiveCommand.CreateFromTask(_categoryManager.GetAll);
             RefreshCategories
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Do(categories => Categories.Clear())
@@ -99,13 +99,17 @@ namespace myFeed.ViewModels
             this.WhenAnyValue(x => x.SelectedFeed)
                 .Do(feed => Feeds.ToList().ForEach(x => x.IsSelected = false))
                 .Where(selection => selection != null)
-                .Subscribe(feed => feed.IsSelected = true);
+                .Subscribe(x => x.IsSelected = true);
             
             Added = new Interaction<Unit, bool>();
             Add = ReactiveCommand.CreateFromTask(DoAdd,
                 this.WhenAnyValue(x => x.SelectedCategory, x => x.SelectedFeed)
                     .Select(sel => sel.Item1 != null && sel.Item2 != null)
                     .DistinctUntilChanged());
+
+            Add.ObserveOn(RxApp.MainThreadScheduler)
+                .SelectMany(Added.Handle)
+                .Subscribe(x => SelectedFeed = null);
         }
 
         private async Task DoAdd()
@@ -114,8 +118,6 @@ namespace myFeed.ViewModels
             var channel = new Channel {Notify = true, Uri = url};
             SelectedCategory.Channels.Add(channel);
             await _categoryManager.Update(SelectedCategory);
-            await Added.Handle(Unit.Default);
-            SelectedFeed = null;
         }
     }
 }

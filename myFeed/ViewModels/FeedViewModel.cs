@@ -22,12 +22,11 @@ namespace myFeed.ViewModels
         private readonly ICategoryManager _categoryManager;
         private readonly ISettingManager _settingManager;
         
+        public Interaction<Exception, bool> Error { get; }
+        public ReactiveCommand<Unit, Unit> Modify { get; }
         public ReactiveCommand<Unit, IEnumerable<Category>> Load { get; }
         public ReactiveList<FeedGroupViewModel> Items { get; }
         public FeedGroupViewModel Selection { get; set; }
-
-        public Interaction<Exception, bool> Error { get; }
-        public ReactiveCommand<Unit, Unit> Modify { get; }
 
         public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
@@ -45,10 +44,6 @@ namespace myFeed.ViewModels
             _factory = factory;
 
             Items = new ReactiveList<FeedGroupViewModel>();
-            Modify = ReactiveCommand.CreateFromTask(
-                () => _navigationService.Navigate<ChannelViewModel>()
-            );
-
             Load = ReactiveCommand.CreateFromTask(_categoryManager.GetAll);
             Load.Select(categories => categories.Select(_factory))
                 .ObserveOn(RxApp.MainThreadScheduler)
@@ -70,7 +65,8 @@ namespace myFeed.ViewModels
                 .Select(args => Items.FirstOrDefault())
                 .Where(selection => selection != null)
                 .Subscribe(x => Selection = x);
-
+            
+            Modify = ReactiveCommand.CreateFromTask(_navigationService.Navigate<ChannelViewModel>);
             Error = new Interaction<Exception, bool>();
             Load.ThrownExceptions
                 .ObserveOn(RxApp.MainThreadScheduler)

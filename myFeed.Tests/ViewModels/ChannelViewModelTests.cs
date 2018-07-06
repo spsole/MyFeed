@@ -40,7 +40,7 @@ namespace myFeed.Tests.ViewModels
         [Fact]
         public void ShouldDisableAddCommandWhenCategoryNameIsEmpty()
         {
-            var command = (ICommand) _channelViewModel.Add;
+            var command = (ICommand) _channelViewModel.CreateCategory;
             command.CanExecute(null).Should().BeFalse();
             _channelViewModel.CategoryName = "Hello, world!";
             command.CanExecute(null).Should().BeTrue();
@@ -81,8 +81,6 @@ namespace myFeed.Tests.ViewModels
             _channelViewModel.Load.Execute().Subscribe();
             await Task.Delay(300);
 
-            _channelViewModel.IsLoading.Should().BeFalse();
-            _channelViewModel.IsEmpty.Should().BeFalse();
             _channelViewModel.Categories.Count.Should().Be(2);
             _channelViewModel.Categories.First().Title.Should().Be("Foo");
             _channelViewModel.Categories.Last().Title.Should().Be("Bar");
@@ -94,6 +92,47 @@ namespace myFeed.Tests.ViewModels
             await _categoryManager.Received(1).Rearrange(
                 Arg.Any<IEnumerable<Category>>()
             );
+        }
+
+        [Fact]
+        public async Task ShouldRemoveCategoryFromDatabaseAndFromUi()
+        {
+            var category = new Category {Title = "Foo"};
+            _categoryManager.GetAll().Returns(new List<Category> {category});
+            _categoryManager.Remove(Arg.Any<Category>()).Returns(true);
+            _channelViewModel.Load.Execute().Subscribe();
+            await Task.Delay(300);
+            
+            _channelViewModel.IsLoading.Should().BeFalse();
+            _channelViewModel.Categories.Count.Should().Be(1);
+            var group = _channelViewModel.Categories.First();
+            group.Remove.Execute().Subscribe();
+
+            await _categoryManager.Received(1).Remove(Arg.Any<Category>());
+            _channelViewModel.Categories.Should().BeEmpty();
+            _channelViewModel.IsEmpty.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task ShouldAddChannelsToCategories()
+        {
+            var category = new Category {Title = "Foo"};
+            _categoryManager.GetAll().Returns(new List<Category> {category});
+            _categoryManager.Remove(Arg.Any<Category>()).Returns(true);
+            _channelViewModel.Load.Execute().Subscribe();
+            await Task.Delay(300);
+            
+            _channelViewModel.IsLoading.Should().BeFalse();
+            _channelViewModel.Categories.Count.Should().Be(1);
+            var group = _channelViewModel.Categories.First();
+
+            group.ChannelUri = "http://foo.bar";
+            group.CreateChannel.Execute().Subscribe();
+            await Task.Delay(100);
+            
+            group.Channels.Should().NotBeEmpty();
+            group.Channels.First().Url.Should().Be("http://foo.bar");
+            group.ChannelUri.Should().BeEmpty();
         }
 
         [Fact]

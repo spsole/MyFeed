@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using DryIoc;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
@@ -20,11 +19,11 @@ namespace myFeed.ViewModels
         private readonly Func<Channel, Category, ChannelGroupViewModel, ChannelItemViewModel> _factory;
         private readonly ChannelViewModel _channelsViewModel;
         private readonly ICategoryManager _categoryManager;
-        private readonly Category _category;
 
         public ReactiveList<ChannelItemViewModel> Channels { get; }
-        public ReactiveCommand<Unit, Unit> Remove { get; }
-        public ReactiveCommand<Unit, Unit> Add { get; }
+        public ReactiveCommand<Unit, Channel> CreateChannel { get; }
+        public ReactiveCommand<Unit, bool> Remove { get; }
+        public Category Category { get; }
 
         public string ChannelUri { get; set; } = string.Empty;
         public string RealTitle { get; private set; }
@@ -36,46 +35,48 @@ namespace myFeed.ViewModels
             ICategoryManager categoryManager,
             Category category)
         {
-            _channelsViewModel = channelsViewModel;
-            _categoryManager = categoryManager;
-            _category = category;
             _factory = factory;
+            _categoryManager = categoryManager;
+            _channelsViewModel = channelsViewModel;
 
-            Title = RealTitle = category.Title;
+            Category = category;
             Channels = new ReactiveList<ChannelItemViewModel>();
-            Channels.AddRange(_category.Channels.Select(x => _factory(x, _category, this)));
-            Add = ReactiveCommand.CreateFromTask(DoAdd,
-                this.WhenAnyValue(x => x.ChannelUri)
-                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
+            Channels.AddRange(Category.Channels.Select(x => _factory(x, Category, this)));
+            CreateChannel = ReactiveCommand.CreateFromTask(DoCreateChannel,
+                this.WhenAnyValue(x => x.ChannelUri, url => Uri
+                    .IsWellFormedUriString(url, UriKind.Absolute)));
             
-            Remove = ReactiveCommand.CreateFromTask(DoRemove);   
+            CreateChannel
+                .Select(channel => _factory(channel, Category, this))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(channels => ChannelUri = string.Empty)
+                .Subscribe(x => Channels.Insert(0, x));
+            
+            Remove = ReactiveCommand.CreateFromTask(() => _categoryManager.Remove(Category));
+            Remove.ObserveOn(RxApp.MainThreadScheduler)
+                .Where(successfullyRemoved => successfullyRemoved)
+                .Subscribe(x => _channelsViewModel.Categories.Remove(this));
+            
+            Title = RealTitle = category.Title;
             this.ObservableForProperty(x => x.Title)
                 .Select(property => property.Value)
                 .Throttle(TimeSpan.FromSeconds(0.8))
                 .Select(title => title?.Trim())
                 .Where(str => !string.IsNullOrWhiteSpace(str))
                 .DistinctUntilChanged()
-                .Do(title => _category.Title = title)
-                .Select(title => _category)
+                .Do(title => Category.Title = title)
+                .Select(title => Category)
                 .SelectMany(_categoryManager.Update)
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(x => RealTitle = _category.Title);            
+                .Subscribe(x => RealTitle = Category.Title);            
         }
 
-        private async Task DoAdd()
+        private async Task<Channel> DoCreateChannel()
         {
-            var uri = ChannelUri;
-            ChannelUri = string.Empty;
-            var model = new Channel { Uri = uri, Notify = true };
-            _category.Channels.Add(model);
-            await _categoryManager.Update(_category); 
-            Channels.Add(_factory(model, _category, this));   
-        }
-
-        private async Task DoRemove() 
-        {
-            await _categoryManager.Remove(_category);
-            _channelsViewModel.Categories.Remove(this);
+            var channel = new Channel {Uri = ChannelUri, Notify = true};
+            Category.Channels.Insert(0, channel);
+            await _categoryManager.Update(Category);
+            return channel;
         }
     }
 }

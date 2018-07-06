@@ -87,7 +87,7 @@
                 <TextBox Margin="12 0 12 0" PlaceholderText="{converters:Locale Key=EnterNameOfNewCategory}"
                          Text="{Binding CategoryName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
-            <Button Grid.Column="1" Command="{Binding Add}" 
+            <Button Grid.Column="1" Command="{Binding CreateCategory}" 
                     Margin="0 0 12 0" VerticalAlignment="Center"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                     Content="{converters:Locale Key=AddCategory}"
@@ -130,6 +130,20 @@
                                     <Button Grid.Column="1" Command="{Binding Remove}" Margin="12 0 0 0"
                                             Style="{StaticResource ButtonRevealStyle}"
                                             Content="{converters:Locale Key=Remove}"/>
+                                </Grid>
+                                <Grid Height="48">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBox Margin="0 6" PlaceholderText="http://example.com/feed"
+                                                 Text="{Binding ChannelUri, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Command="{Binding CreateChannel}" Margin="12 0 0 0"
+                                            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                            Style="{StaticResource ButtonRevealStyle}"
+                                            Content="{converters:Locale Key=AddChannel}"/>
                                 </Grid>
                                 <ItemsControl ItemsSource="{Binding Channels}" HorizontalAlignment="Stretch">
                                     <ItemsControl.ItemTemplate>
@@ -180,20 +194,6 @@
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
-                                <Grid Height="48">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBox Margin="0 6" PlaceholderText="http://example.com/feed"
-                                                 Text="{Binding ChannelUri, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="1" Command="{Binding Add}" Margin="12 0 0 0"
-                                            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                            Style="{StaticResource ButtonRevealStyle}"
-                                            Content="{converters:Locale Key=AddChannel}"/>
-                                </Grid>
                             </StackPanel>
                         </controls:Expander.Content>
                     </controls:Expander>

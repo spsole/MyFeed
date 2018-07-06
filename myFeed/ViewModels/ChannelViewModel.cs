@@ -19,14 +19,13 @@ namespace myFeed.ViewModels
     public sealed class ChannelViewModel
     {
         private readonly Func<Category, ChannelViewModel, ChannelGroupViewModel> _factory;
-        private readonly IDictionary<ChannelGroupViewModel, Category> _lookup;
         private readonly INavigationService _navigationService;
         private readonly ICategoryManager _categoryManager;
 
         public ReactiveCommand<Unit, IEnumerable<Category>> Load { get; }
         public ReactiveList<ChannelGroupViewModel> Categories { get; }
+        public ReactiveCommand<Unit, Category> CreateCategory { get; }
         public ReactiveCommand<Unit, Unit> Search { get; }
-        public ReactiveCommand<Unit, Unit> Add { get; }
         
         public string CategoryName { get; set; }
         public bool IsLoading { get; private set; } = true;
@@ -37,26 +36,27 @@ namespace myFeed.ViewModels
             INavigationService navigationService,
             ICategoryManager categoryManager)
         {
-            _lookup = new Dictionary<ChannelGroupViewModel, Category>();
             _navigationService = navigationService;
             _categoryManager = categoryManager;
             _factory = factory;
             
             Categories = new ReactiveList<ChannelGroupViewModel>();
             Load = ReactiveCommand.CreateFromTask(_categoryManager.GetAll);
-            Load.ObserveOn(RxApp.MainThreadScheduler)
-                .Do(categories => Categories.Clear())
-                .SelectMany(categories => categories)
-                .Select(category => (category, _factory(category, this)))
-                .Do(tuple => _lookup[tuple.Item2] = tuple.Item1)
-                .Select(tuple => tuple.Item2)
-                .Subscribe(Categories.Add);
+            Load.Select(categories => categories.Select(x => _factory(x, this)))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(models => Categories.Clear())
+                .Subscribe(Categories.AddRange);
             
-            Search = ReactiveCommand.CreateFromTask(() => 
-                _navigationService.Navigate<SearchViewModel>());
-            Add = ReactiveCommand.CreateFromTask(DoAdd,
-                this.WhenAnyValue(x => x.CategoryName)
-                    .Select(x => !string.IsNullOrWhiteSpace(x)));
+            Search = ReactiveCommand.CreateFromTask(_navigationService.Navigate<SearchViewModel>);
+            CreateCategory = ReactiveCommand.CreateFromTask(DoCreateCategory,
+                this.WhenAnyValue(x => x.CategoryName, name =>
+                    !string.IsNullOrWhiteSpace(name)));
+
+            CreateCategory
+                .Select(category => _factory(category, this))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Do(model => CategoryName = string.Empty)
+                .Subscribe(Categories.Add);
 
             Load.IsExecuting
                 .Skip(1)
@@ -66,19 +66,16 @@ namespace myFeed.ViewModels
             Categories.Changed
                 .Throttle(TimeSpan.FromMilliseconds(100))
                 .Skip(1)
-                .Select(args => Categories.Select(x => _lookup[x]))
+                .Select(args => Categories.Select(x => x.Category))
                 .SelectMany(_categoryManager.Rearrange)
                 .Subscribe();
         }
 
-        private async Task DoAdd()
+        private async Task<Category> DoCreateCategory()
         {
             var category = new Category {Title = CategoryName};
             await _categoryManager.Insert(category);
-            var viewModel = _factory(category, this);
-            _lookup[viewModel] = category;
-            Categories.Add(viewModel);
-            CategoryName = null;
+            return category;
         }
     }
 }
