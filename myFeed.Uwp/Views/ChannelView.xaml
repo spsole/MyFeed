@@ -179,7 +179,16 @@
                                                 <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
                                                     <Button contract5Present:Style="{ThemeResource ButtonRevealStyle}"
                                                             Content="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"
-                                                            Command="{Binding Copy}" />
+                                                            Command="{Binding Copy}">
+                                                        <interactivity:Interaction.Behaviors>
+                                                            <core:EventTriggerBehavior EventName="Click">
+                                                    <actions:ModalConfirmAction 
+                                                        Interaction="{Binding Copied}"
+                                                        Message="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLinkSuccess}"
+                                                        Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
+                                                            </core:EventTriggerBehavior>
+                                                        </interactivity:Interaction.Behaviors>
+                                                    </Button>
                                                     <Button Margin="12 0" Style="{ThemeResource TextBlockButtonStyle}"
                                                             Content="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"
                                                             Command="{Binding Open}" />

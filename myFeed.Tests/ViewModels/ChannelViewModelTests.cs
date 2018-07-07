@@ -158,5 +158,31 @@ namespace myFeed.Tests.ViewModels
             category.Title.Should().Be("Bar");
             await _categoryManager.Received(1).Update(category);
         }
+
+        [Fact]
+        public async Task ShouldOpenAbsoluteUriHost()
+        {
+            var channel = new Channel {Uri = "http://vc.ru/feed"};
+            var category = new Category {Channels = new List<Channel> {channel}};
+            _categoryManager.GetAll().Returns(new List<Category> {category});
+            _channelViewModel.Load.Execute().Subscribe();
+            await Task.Delay(300);
+
+            _channelViewModel.Categories.Should().NotBeEmpty();
+            _channelViewModel.Categories.First().Channels.Should().NotBeEmpty();
+            var item = _channelViewModel.Categories.First().Channels.First();
+            item.Open.Execute().Subscribe();
+
+            await _platformService.Received(1).LaunchUri(Arg.Any<Uri>());
+            _platformService
+                .ReceivedCalls()
+                .First()
+                .GetArguments()
+                .First()
+                .As<Uri>()
+                .ToString()
+                .Should()
+                .Be("http://vc.ru/");
+        }
     }
 }

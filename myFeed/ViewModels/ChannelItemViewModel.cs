@@ -25,6 +25,7 @@ namespace myFeed.ViewModels
         public ReactiveCommand<Unit, Unit> Delete { get; }
         public ReactiveCommand<Unit, Unit> Open { get; }
         public ReactiveCommand<Unit, Unit> Copy { get; }
+        public Interaction<Unit, bool> Copied { get; }
 
         public string Name => new Uri(_channel.Uri).Host.ToUpperInvariant();
         public string Url => _channel.Uri;
@@ -43,7 +44,6 @@ namespace myFeed.ViewModels
             _category = category;
             _channel = channel;
 
-            Copy = ReactiveCommand.CreateFromTask(() => _platformService.CopyTextToClipboard(Url));
             Open = ReactiveCommand.CreateFromTask(DoOpen,
                 this.WhenAnyValue(x => x.Url, url => Uri
                     .IsWellFormedUriString(url, UriKind.Absolute)));
@@ -59,6 +59,13 @@ namespace myFeed.ViewModels
             Delete = ReactiveCommand.CreateFromTask(DoDelete);
             Delete.ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => _channelGroup.Channels.Remove(this));
+
+            Copied = new Interaction<Unit, bool>();
+            Copy = ReactiveCommand.CreateFromTask(() => 
+                _platformService.CopyTextToClipboard(Url));
+            Copy.ObserveOn(RxApp.MainThreadScheduler)
+                .SelectMany(Copied.Handle)
+                .Subscribe();
         }
 
         private async Task DoDelete() 
@@ -69,9 +76,9 @@ namespace myFeed.ViewModels
 
         private async Task DoOpen()
         {
-            var url = new Uri(Url);
-            var builder = new UriBuilder(url) { Fragment = string.Empty };
-            await _platformService.LaunchUri(builder.Uri);
+            var url = new Uri(_channel.Uri);
+            var site = $"http://{url.Host}";
+            await _platformService.LaunchUri(new Uri(site));
         }
     }
 }

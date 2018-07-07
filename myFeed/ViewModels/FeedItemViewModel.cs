@@ -78,13 +78,12 @@ namespace myFeed.ViewModels
                 () => _platformService.CopyTextToClipboard(_article.Uri),
                 Observable.Return(!string.IsNullOrWhiteSpace(_article.Uri)));
             
+            MarkFave = ReactiveCommand.CreateFromTask(DoMarkFave);
+            MarkRead = ReactiveCommand.Create(() => { Read = !Read; });
             CopyConfirm = new Interaction<Unit, bool>();
             Copy.ObserveOn(RxApp.MainThreadScheduler)
                 .SelectMany(CopyConfirm.Handle)
                 .Subscribe();
-
-            MarkFave = ReactiveCommand.CreateFromTask(DoMarkFave);
-            MarkRead = ReactiveCommand.Create(() => { Read = !Read; });
         }
 
         private async Task DoMarkFave()
