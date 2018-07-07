@@ -252,7 +252,7 @@
                             </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                         <ToolTipService.ToolTip>
-                            <TextBlock Text="{converters:Locale Key=OpenMenu}"/>
+                            <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenMenu}"/>
                         </ToolTipService.ToolTip>
                     </Button>
                 </Grid>

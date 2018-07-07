@@ -22,7 +22,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Grid x:Name="BackGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"/>
-        <ProgressRing IsActive="False" Height="70" Width="70" VerticalAlignment="Center" 
+        <ProgressRing IsActive="False" Height="80" Width="80" VerticalAlignment="Center" 
             x:Name="LoadRing" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
     </Grid>
 </UserControl>

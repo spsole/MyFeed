@@ -146,10 +146,10 @@
     <value>Добавить из поиска</value>
   </data>
   <data name="OpenInBrowser">
-    <value>Открыть в браузере</value>
+    <value>Открыть</value>
   </data>
   <data name="CopyLink">
-    <value>Копировать ссылку</value>
+    <value>Копировать</value>
   </data>
   <data name="ReShare">
     <value>Поделиться</value>
@@ -188,7 +188,7 @@
     <value>Обновить страницу</value>
   </data>
   <data name="ProvideSearchQuery">
-    <value>Введите запрос...</value>
+    <value>Введите поисковый запрос...</value>
   </data>
   <data name="ChangeTextSizeTitle">
     <value>Размер текста</value>
@@ -248,10 +248,10 @@
     <value>Редактирование категории</value>
   </data>
   <data name="EnterNameOfNewCategory">
-    <value>Введите название новой категории...</value>
+    <value>Введите название...</value>
   </data>
   <data name="DeleteCategory">
-    <value>Категория будет удалена вместе со всеми источниками. Это действите будет невозможно отменить.</value>
+    <value>Удалить категoрию</value>
   </data>
   <data name="DeleteChannel">
     <value>Канал будет удалён.</value>
@@ -401,6 +401,6 @@
     <value>Выберите категoрию...</value>
   </data>
   <data name="SearchAddChannel">
-    <value>Сoхранить истoчник</value>
+    <value>Сoхранить сюда</value>
   </data>
 </root>

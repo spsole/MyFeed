@@ -146,7 +146,7 @@
     <value>Add from search</value>
   </data>
   <data name="OpenInBrowser">
-    <value>Open in browser</value>
+    <value>Open</value>
   </data>
   <data name="CopyLink">
     <value>Copy link</value>
@@ -248,10 +248,10 @@
     <value>Category editor</value>
   </data>
   <data name="EnterNameOfNewCategory">
-    <value>Enter the name of a new category...</value>
+    <value>Enter a title...</value>
   </data>
   <data name="DeleteCategory">
-    <value>Category will be deleted with all nested channels. This action can't be undone.</value>
+    <value>Delete category</value>
   </data>
   <data name="DeleteChannel">
     <value>Channel will be deleted.</value>
@@ -401,6 +401,6 @@
     <value>Choose a category...</value>
   </data>
   <data name="SearchAddChannel">
-    <value>Save channel</value>
+    <value>Save here</value>
   </data>
 </root>

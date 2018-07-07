@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Reflection;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Platform;

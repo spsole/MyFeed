@@ -10,6 +10,9 @@ namespace myFeed.Uwp.Converters
             return ((string) value)?.ToUpperInvariant();
         }
 
-        public object ConvertBack(object value, Type type, object parameter, string language) => null;
+        public object ConvertBack(object value, Type type, object parameter, string language)
+        {
+            throw new NotImplementedException();    
+        }
     }
 }

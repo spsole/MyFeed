@@ -16,18 +16,9 @@ namespace myFeed.Uwp.Actions
             set => SetValue(CommandProperty, value);
         }
 
-        public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register(
-            nameof(CommandParameter), typeof(object), typeof(ReactiveCommandAction), new PropertyMetadata(null));
-
-        public object CommandParameter
-        {
-            get => GetValue(CommandParameterProperty);
-            set => SetValue(CommandParameterProperty, value);
-        }
-
         public object Execute(object sender, object parameter)
         {
-            Command?.Execute(CommandParameter ?? Unit.Default);
+            Command?.Execute(Unit.Default);
             return null;
         }
     }

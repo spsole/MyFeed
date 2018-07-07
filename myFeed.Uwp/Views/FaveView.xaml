@@ -51,24 +51,24 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
-            <controls:TitleBlock Text="{converters:Locale Key=FaveViewTitle}"/>
+            <controls:TitleBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveViewTitle}"/>
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
                 <controls:TransparentButton Symbol="Sort">
                     <controls:TransparentButton.Flyout>
                         <MenuFlyout>
                             <MenuFlyoutItem 
                                 Icon="CalendarDay" Command="{Binding OrderByDate}"
-                                Text="{converters:Locale Key=OrderByDate}"/>
+                                Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OrderByDate}"/>
                             <MenuFlyoutItem 
                                 Icon="CalendarWeek" Command="{Binding OrderByMonth}"
-                                Text="{converters:Locale Key=OrderByMonth}"/>
+                                Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OrderByMonth}"/>
                             <MenuFlyoutItem 
                                 Icon="FontSize" Command="{Binding OrderByFeed}"
-                                Text="{converters:Locale Key=OrderByFeed}"/>
+                                Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OrderByFeed}"/>
                         </MenuFlyout>
                     </controls:TransparentButton.Flyout>
                     <ToolTipService.ToolTip>
-                        <TextBlock Text="{converters:Locale Key=OrderBy}"/>
+                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OrderBy}"/>
                     </ToolTipService.ToolTip>
                 </controls:TransparentButton>
             </StackPanel>
@@ -165,28 +165,28 @@
                                             <core:EventTriggerBehavior EventName="DataContextChanged">
                                                 <actions:ModalConfirmAction 
                                                     Interaction="{Binding CopyConfirm}"
-                                                    Message="{converters:Locale Key=CopyLinkSuccess}"
-                                                    Title="{converters:Locale Key=SettingsNotification}"/>
+                                                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLinkSuccess}"
+                                                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
                                             </core:EventTriggerBehavior>
                                         </interactivity:Interaction.Behaviors>
                                         <FlyoutBase.AttachedFlyout>
                                             <MenuFlyout>
                                                 <MenuFlyoutItem 
                                                     Icon="PostUpdate" Command="{Binding Open}"
-                                                    Text="{converters:Locale Key=Read}" />
+                                                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Read}" />
                                                 <MenuFlyoutItem 
                                                     Icon="Link" Command="{Binding Launch}" 
-                                                    Text="{converters:Locale Key=OpenInBrowser}"/>
+                                                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"/>
                                                 <MenuFlyoutItem
                                                     Icon="Copy" Command="{Binding Copy}" 
-                                                    Text="{converters:Locale Key=CopyLink}"/>
+                                                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"/>
                                                 <MenuFlyoutItem 
                                                     Icon="ReShare" Command="{Binding Share}"
-                                                    Text="{converters:Locale Key=ReShare}"/>
+                                                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ReShare}"/>
                                                 <MenuFlyoutSeparator />
                                                 <MenuFlyoutItem 
                                                     Icon="Delete" Command="{Binding MarkFave}"
-                                                    Text="{converters:Locale Key=Remove}"/>
+                                                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"/>
                                             </MenuFlyout>
                                         </FlyoutBase.AttachedFlyout>
                                         <Grid.ColumnDefinitions>
@@ -228,10 +228,10 @@
                     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12 -38 12 12">
                         <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE734;" TextAlignment="Center" 
                             FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                        <TextBlock Text="{converters:Locale Key=FaveWelcomeTitle}" 
+                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveWelcomeTitle}" 
                             TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
                             TextWrapping="Wrap" Margin="12 6"/>
-                        <TextBlock Text="{converters:Locale Key=FaveWelcomeSubTitle}" 
+                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveWelcomeSubTitle}" 
                             TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
                             Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                     </StackPanel>

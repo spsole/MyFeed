@@ -1,4 +1,5 @@
 ﻿<Page
+    xmlns:contract5Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 5)"
     d:DataContext="{d:DesignInstance Type=implementations:SearchViewModel}"
     x:Class="myFeed.Uwp.Views.SearchView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -10,7 +11,6 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:converters="using:myFeed.Uwp.Converters"
     xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -43,14 +43,10 @@
         </VisualStateManager.VisualStateGroups>
         <interactivity:Interaction.Behaviors>
             <core:EventTriggerBehavior EventName="Loaded">
-                <actions:ModalErrorAction 
-                    Interaction="{Binding Error}" 
-                    Message="{converters:Locale Key=ErrorMessage}" 
-                    Title="{converters:Locale Key=ErrorTitle}"/>
                 <actions:ModalConfirmAction 
                     Interaction="{Binding Added}" 
-                    Message="{converters:Locale Key=SearchAddedMessage}" 
-                    Title="{converters:Locale Key=SearchAddedTitle}"/>
+                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchAddedMessage}" 
+                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchAddedTitle}"/>
                 <actions:ReactiveCommandAction 
                     Command="{Binding RefreshCategories}"/>
             </core:EventTriggerBehavior>
@@ -61,16 +57,16 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
-        <controls:TitleBlock Grid.Row="0" Text="{converters:Locale Key=SearchViewTitle}"/>
+        <controls:TitleBlock Grid.Row="0" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchViewTitle}"/>
         <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
             <controls:TransparentButton Symbol="List" Command="{Binding ViewCategories}">
                 <ToolTipService.ToolTip>
-                    <TextBlock Text="{converters:Locale Key=Modify}" />
+                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=AddCategory}" />
                 </ToolTipService.ToolTip>
             </controls:TransparentButton>
             <controls:TransparentButton Symbol="Sync" Command="{Binding Search}">
                 <ToolTipService.ToolTip>
-                    <TextBlock Text="{converters:Locale Key=Refresh}" />
+                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}" />
                 </ToolTipService.ToolTip>
             </controls:TransparentButton>
         </StackPanel>
@@ -91,13 +87,12 @@
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <TextBox InputScope="Search" Margin="12 0 12 0" 
                         Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        PlaceholderText="{converters:Locale Key=ProvideSearchQuery}"/>
+                        PlaceholderText="{Binding Converter={StaticResource Locale}, ConverterParameter=ProvideSearchQuery}"/>
                 </StackPanel>
                 <Button Grid.Column="1" Command="{Binding Search}" 
                     Margin="0 0 12 0" VerticalAlignment="Center"
-                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                    Style="{StaticResource ButtonRevealStyle}"
-                    Content="{converters:Locale Key=Find}"/>
+                    Style="{StaticResource AccentButtonStyle}"
+                    Content="{Binding Converter={StaticResource Locale}, ConverterParameter=Find}"/>
             </Grid>
             <Grid x:Name="CategoryBar" Height="48" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0">
                 <Grid.ColumnDefinitions>
@@ -106,15 +101,14 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
                     <ComboBox ItemsSource="{Binding Categories}" Margin="12 0 12 0"
-                        PlaceholderText="{converters:Locale Key=SearchCategorySelect}"
+                        PlaceholderText="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchCategorySelect}"
                         DisplayMemberPath="Title" HorizontalAlignment="Stretch"
                         SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
                 </StackPanel>
                 <Button Grid.Column="1" Command="{Binding Add}" 
                     Margin="0 0 12 0" VerticalAlignment="Center"
-                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                    Content="{converters:Locale Key=SearchAddChannel}"
-                    Style="{StaticResource ButtonRevealStyle}"/>
+                    Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchAddChannel}"
+                    Style="{StaticResource AccentButtonStyle}"/>
             </Grid>
         </Grid>
         <Grid Grid.Row="2">
@@ -170,17 +164,17 @@
                                           MinWidth="0" Padding="0" IsEnabled="False"
                                           IsChecked="{Binding IsSelected, Mode=OneWay}"/>
                                 <Button Grid.Column="1" Command="{Binding Open}" Margin="12 0"
-                                        Content="{converters:Locale Key=OpenInBrowser}" 
-                                        Style="{StaticResource ButtonRevealStyle}"/>
+                                        Content="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}" 
+                                        contract5Present:Style="{StaticResource ButtonRevealStyle}"/>
                                 <Button Grid.Column="2" Command="{Binding Copy}"
-                                        Content="{converters:Locale Key=CopyLink}"
-                                        Style="{StaticResource ButtonRevealStyle}">
+                                        Content="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"
+                                        contract5Present:Style="{StaticResource ButtonRevealStyle}">
                                     <interactivity:Interaction.Behaviors>
                                         <core:EventTriggerBehavior EventName="Click">
                                             <actions:ModalConfirmAction 
                                                 Interaction="{Binding Copied}" 
-                                                Message="{converters:Locale Key=SearchCopiedMessage}" 
-                                                Title="{converters:Locale Key=SearchCopiedTitle}"/>
+                                                Message="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchCopiedMessage}" 
+                                                Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchCopiedTitle}"/>
                                         </core:EventTriggerBehavior>
                                     </interactivity:Interaction.Behaviors>
                                 </Button>
@@ -195,14 +189,14 @@
                     <TextBlock FontFamily="Segoe MDL2 Assets" 
                         Text="&#xE783;" FontSize="50" TextAlignment="Center" 
                         Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                    <TextBlock Text="{converters:Locale Key=SearchNothingTitle}" 
+                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingTitle}" 
                         TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
                         TextWrapping="Wrap" Margin="36 6"/>
-                    <TextBlock Text="{converters:Locale Key=SearchNothingSubTitle}" 
+                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingSubTitle}" 
                         TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
                         Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                    <Button Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
-                        Foreground="White" Content="{converters:Locale Key=RefreshPage}"
+                    <Button Style="{StaticResource AccentButtonStyle}"
+                        Content="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
                         HorizontalAlignment="Center" Margin="0 12 0 0" Command="{Binding Search}"/>
                 </StackPanel>
             </Grid>
@@ -212,10 +206,10 @@
                     <TextBlock FontFamily="Segoe MDL2 Assets" 
                         Text="&#xE71E;" FontSize="50" TextAlignment="Center" 
                         Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-                    <TextBlock Text="{converters:Locale Key=SearchWelcomeTitle}" 
+                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeTitle}" 
                         TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
                         TextWrapping="Wrap" Margin="36 6"/>
-                    <TextBlock Text="{converters:Locale Key=SearchWelcomeSubTitle}" 
+                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeSubTitle}" 
                         TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
                         Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
                 </StackPanel>

@@ -32,12 +32,12 @@
                 FontFamily="Segoe MDL2 Assets" Text="&#xE8F3;" FontSize="70" 
                 Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
             <TextBlock Style="{ThemeResource TitleTextBlockStyle}"
-                Text="{converters:Locale Key=ChooseArticleTitle}"
+                Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ChooseArticleTitle}"
                 TextWrapping="Wrap" TextAlignment="Center"/>
             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" FontSize="17" 
                 Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}" 
                 TextWrapping="Wrap" TextAlignment="Center" Margin="6" 
-                Text="{converters:Locale Key=ChooseArticle}"/>
+                Text="{Binding Converter={StaticResource Locale}, ConverterParameter=ChooseArticle}"/>
         </StackPanel>
     </Grid>
 </Page>
