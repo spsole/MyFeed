@@ -154,8 +154,6 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.SelectedCategory = _searchViewModel.Categories.First();
             _searchViewModel.SelectedFeed = _searchViewModel.Feeds.First();
             _searchViewModel.Add.Execute().Subscribe();
-            await Task.Delay(100);
-
             await _categoryManager.Received(1).Update(Arg.Any<Category>());
             handled.Should().BeTrue();
         }
@@ -195,6 +193,10 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.SelectedFeed = null;         
             _searchViewModel.Feeds[0].IsSelected.Should().BeFalse();           
             _searchViewModel.Feeds[1].IsSelected.Should().BeFalse();
+
+            _searchViewModel.SelectedFeed = _searchViewModel.Feeds[1];
+            _searchViewModel.Feeds[0].IsSelected.Should().BeFalse();
+            _searchViewModel.Feeds[1].IsSelected.Should().BeTrue();
         }
         
         [Fact]
@@ -206,6 +208,21 @@ namespace myFeed.Tests.ViewModels
             searchItemViewModel.Copy.Execute().Subscribe();
             await Task.Delay(100);
             handled.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task ShouldDeselectItemWhenSearchCommandBeginsExecuting()
+        {
+            var results = new List<FeedlyItem> {new FeedlyItem()};
+            _searchService.Search("q").Returns(new FeedlyRoot {Results = results});
+            _searchViewModel.SearchQuery = "q";
+            _searchViewModel.Search.Execute().Subscribe();
+            await Task.Delay(100);
+
+            _searchViewModel.Feeds.Should().NotBeEmpty();
+            _searchViewModel.SelectedFeed = _searchViewModel.Feeds[0];  
+            _searchViewModel.Search.Execute().Subscribe();
+            _searchViewModel.SelectedFeed.Should().BeNull();
         }
     }
 }

@@ -33,7 +33,6 @@ namespace myFeed.ViewModels
         public ReactiveCommand<Unit, Unit> ViewCategories { get; }
         public ReactiveList<Category> Categories { get; }
         public Category SelectedCategory { get; set; }
-        public Interaction<Exception, bool> Error { get; }
 
         public string SearchQuery { get; set; } = string.Empty;
         public bool IsGreeting { get; private set; } = true;
@@ -57,15 +56,22 @@ namespace myFeed.ViewModels
                 this.WhenAnyValue(x => x.SearchQuery)
                     .Select(x => !string.IsNullOrWhiteSpace(x)));
             
+            Feeds.IsEmptyChanged
+                .Subscribe(x => IsEmpty = x);
             Search.Select(response => response.Results.Select(_factory))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Do(feeds => Feeds.Clear())
                 .Subscribe(Feeds.AddRange);
-
+            
             Search.IsExecuting.Skip(1)
-                .Do(x => IsGreeting = false)
+                .Do(executing => IsGreeting = false)
                 .Subscribe(x => IsLoading = x);
-            Feeds.IsEmptyChanged
+            Search.IsExecuting
+                .Where(executing => executing)
+                .Subscribe(x => SelectedFeed = null);
+            Search.ThrownExceptions
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Select(exception => true)
                 .Subscribe(x => IsEmpty = x);
       
             Categories = new ReactiveList<Category>();
@@ -76,24 +82,12 @@ namespace myFeed.ViewModels
                 .Do(categories => Categories.Clear())
                 .Subscribe(Categories.AddRange);
             
-            Error = new Interaction<Exception, bool>();
-            Search.ThrownExceptions
-                .SelectMany(Error.Handle)
-                .Where(retry => retry)
-                .Select(x => Unit.Default)
-                .InvokeCommand(Search);
-            RefreshCategories.ThrownExceptions
-                .SelectMany(Error.Handle)
-                .Where(retry => retry)
-                .Select(x => Unit.Default)
-                .InvokeCommand(RefreshCategories);
-            
             this.WhenAnyValue(x => x.SearchQuery)
                 .Throttle(TimeSpan.FromSeconds(0.8))
-                .Select(x => x?.Trim())
+                .Select(query => query?.Trim())
                 .DistinctUntilChanged()
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Select(x => Unit.Default)
+                .Where(text => !string.IsNullOrWhiteSpace(text))
+                .Select(query => Unit.Default)
                 .InvokeCommand(Search);
 
             this.WhenAnyValue(x => x.SelectedFeed)
@@ -106,10 +100,6 @@ namespace myFeed.ViewModels
                 this.WhenAnyValue(x => x.SelectedCategory, x => x.SelectedFeed)
                     .Select(sel => sel.Item1 != null && sel.Item2 != null)
                     .DistinctUntilChanged());
-
-            Add.ObserveOn(RxApp.MainThreadScheduler)
-                .SelectMany(Added.Handle)
-                .Subscribe(x => SelectedFeed = null);
         }
 
         private async Task DoAdd()
@@ -117,7 +107,10 @@ namespace myFeed.ViewModels
             var url = SelectedFeed.Feed?.Substring(5);
             var channel = new Channel {Notify = true, Uri = url};
             SelectedCategory.Channels.Add(channel);
+
             await _categoryManager.Update(SelectedCategory);
+            await Added.Handle(Unit.Default);
+            SelectedFeed = null;
         }
     }
 }
