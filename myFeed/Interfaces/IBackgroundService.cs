@@ -5,6 +5,6 @@ namespace myFeed.Interfaces
 {
     public interface IBackgroundService
     {
-        Task<bool> CheckForUpdates(DateTime dateTime);
+        Task CheckForUpdates(DateTime dateTime);
     }
 }

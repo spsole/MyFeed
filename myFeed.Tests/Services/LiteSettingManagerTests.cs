@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using myFeed.Interfaces;
@@ -23,10 +24,9 @@ namespace myFeed.Tests.Services
         public async Task ShouldReadAndWriteSettings(double font)
         {
             var settings = new Settings {Font = font};
-            var success = await _settingManager.Write(settings);
+            await _settingManager.Write(settings);
             var read = await _settingManager.Read();
             read.Font.Should().Be(font);
-            success.Should().BeTrue();
         }
         
         [Fact]
@@ -35,10 +35,8 @@ namespace myFeed.Tests.Services
         {
             var settings = new Settings();
             foreach (var _ in Enumerable.Range(0, 200))
-            {
-                var success = await _settingManager.Write(settings);
-                success.Should().BeTrue();
-            }
+                await _settingManager.Write(settings);
+            
             var read = Environment.Database.GetCollection<Settings>();
             read.FindAll().Count().Should().Be(1);
         }

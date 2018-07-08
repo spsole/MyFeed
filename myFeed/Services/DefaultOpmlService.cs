@@ -57,7 +57,7 @@ namespace myFeed.Services
             if (opml == null) return false;
             var categories = opml.Body
                 .Where(outline => outline.XmlUrl == null && outline.HtmlUrl == null)
-                .Select(outline => new {Title = outline.Title ?? outline.Text, Outline = outline})
+                .Select(outline => new { Title = outline.Title ?? outline.Text, Outline = outline })
                 .Where(namedOutline => namedOutline.Title != null)
                 .Select(namedOutline => new Category
                 {

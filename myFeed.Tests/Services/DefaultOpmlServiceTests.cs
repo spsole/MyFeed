@@ -35,9 +35,7 @@ namespace myFeed.Tests.Services
             var channels = new List<Channel> {new Channel {Uri = url}};
             var categories = new List<Category> {new Category {Title = category, Channels = channels}};
             _categoryManager.GetAll().Returns(categories);
-
-            var success = await _opmlService.ExportOpml(new MemoryStream());
-            success.Should().BeTrue();
+            await _opmlService.ExportOpml(new MemoryStream());
             
             opml.Head.Should().NotBeNull();
             opml.Body.Count.Should().Be(1);
@@ -61,9 +59,7 @@ namespace myFeed.Tests.Services
             
             var opml = new Opml {Body = new List<OpmlOutline> {new OpmlOutline {XmlUrl = url}}};
             _serializationService.Deserialize<Opml>(Arg.Any<Stream>()).Returns(opml);
-            
-            var success = await _opmlService.ImportOpml(new MemoryStream());
-            success.Should().BeTrue();
+            await _opmlService.ImportOpml(new MemoryStream());
             
             category.Channels.Count.Should().Be(1);
             category.Channels[0].Uri.Should().Be(url);

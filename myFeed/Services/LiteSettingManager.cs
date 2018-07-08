@@ -24,18 +24,18 @@ namespace myFeed.Services
             _semaphoreSlim = new SemaphoreSlim(1, 1);
             _defaultConfiguration = new Settings
             {
-                Banners = false,
                 Fetched = DateTime.Now,
-                Theme = "default",
+                Banners = false,
                 Images = true,
-                Read = true,
                 Period = 60,
+                Theme = "default",
+                Read = true,
                 Max = 100,
                 Font = 17
             };
         }
 
-        public async Task<bool> Write(Settings settings)
+        public async Task Write(Settings settings)
         {
             await _semaphoreSlim.WaitAsync().ConfigureAwait(false);
             var collection = _liteDatabase.GetCollection<Settings>();
@@ -47,7 +47,6 @@ namespace myFeed.Services
             _cachedConfiguration = new Settings();
             Copy(settings, _cachedConfiguration);
             _semaphoreSlim.Release();
-            return true;
         }
 
         public async Task<Settings> Read()

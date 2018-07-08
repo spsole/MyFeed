@@ -30,62 +30,54 @@ namespace myFeed.Services
             return category?.Channels?.SelectMany(i => i.Articles).First(i => i.Id == guid);
         });
 
-        public Task<bool> Remove(Category category) => Task.Run(() =>
+        public Task Remove(Category category) => Task.Run(() =>
         {
             var collection = _liteDatabase.GetCollection<Category>();
             collection.Delete(i => i.Id == category.Id);
-            return true;
         });
 
-        public Task<bool> Update(Category category) => Task.Run(() =>
+        public Task Update(Category category) => Task.Run(() =>
         {
             var collection = _liteDatabase.GetCollection<Category>();
             collection.Update(category);
-            return true;
         });
 
-        public Task<bool> Insert(Category category) => Task.Run(() =>
+        public Task Insert(Category category) => Task.Run(() =>
         {
             var collection = _liteDatabase.GetCollection<Category>();
             var categories = collection.FindAll().ToList();
             category.Order = !categories.Any() ? 0 : categories.Max(i => i.Order) + 1;
             collection.Insert(category);
-            return true;
         });
 
-        public Task<bool> Rearrange(IEnumerable<Category> categories) => Task.Run(() =>
+        public Task Rearrange(IEnumerable<Category> categories) => Task.Run(() =>
         {
             var orderedCategories = categories.ToList();
             for (var x = 0; x < orderedCategories.Count; x++) orderedCategories[x].Order = x;
             _liteDatabase.GetCollection<Category>().Update(orderedCategories);
-            return true;
         });
 
-        public Task<bool> Update(Channel channel) => Task.Run(() =>
+        public Task Update(Channel channel) => Task.Run(() =>
         {
             var collection = _liteDatabase.GetCollection<Category>();
             var query = Query.EQ("$.Channels[*]._id", channel.Id);
-            var category = collection.FindOne(query);
-            if (category == null) return false;
+            var category = collection.FindOne(query) ?? throw new InvalidOperationException();
 
             category.Channels.RemoveAll(i => i.Id == channel.Id);
             category.Channels.Add(channel);
             collection.Update(category);
-            return true;
         });
 
-        public Task<bool> Update(Article article) => Task.Run(() =>
+        public Task Update(Article article) => Task.Run(() =>
         {
             var collection = _liteDatabase.GetCollection<Category>();
             var query = Query.EQ("$.Channels[*].Articles[*]._id", article.Id);
-            var category = collection.FindOne(query);
-            if (category == null) return false;
+            var category = collection.FindOne(query) ?? throw new InvalidOperationException();
 
             var channel = category.Channels.First(i => i.Articles.Any(x => x.Id == article.Id));
             channel.Articles.RemoveAll(i => i.Id == article.Id);
             channel.Articles.Add(article);
             collection.Update(category);
-            return true;
         });
     }
 }

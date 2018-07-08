@@ -79,11 +79,13 @@ namespace myFeed.ViewModels
 
             this.ObservableForProperty(x => x.Period)
                 .Select(property => property.Value)
-                .SelectMany(platformService.RegisterBackgroundTask)
+                .Select(platformService.RegisterBackgroundTask)
+                .SelectMany(task => task.ToObservable())
                 .Subscribe();
             this.ObservableForProperty(x => x.Theme)
                 .Select(property => property.Value)
-                .SelectMany(platformService.RegisterTheme)
+                .Select(platformService.RegisterTheme)
+                .SelectMany(task => task.ToObservable())
                 .Subscribe();
 
             this.WhenAnyValue(
@@ -105,7 +107,8 @@ namespace myFeed.ViewModels
                     Font = x.Item6, 
                     Max = x.Item7
                 })
-                .SelectMany(settingManager.Write)
+                .Select(settingManager.Write)
+                .SelectMany(task => task.ToObservable())
                 .Subscribe();
         }
 

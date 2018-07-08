@@ -28,7 +28,7 @@ namespace myFeed.Services
             _settingManager = settingManager;
         }
         
-        public async Task<bool> CheckForUpdates(DateTime dateTime)
+        public async Task CheckForUpdates(DateTime dateTime)
         {
             var categories = await _categoryManager.GetAll().ConfigureAwait(false);
             var notifyables = categories
@@ -43,10 +43,9 @@ namespace myFeed.Services
                 .Take(15).Reverse().ToList();
 
             await _notificationService.SendNotifications(recentArticles).ConfigureAwait(false);
-            if (!recentArticles.Any()) return false;
+            if (!recentArticles.Any()) return;
             settings.Fetched = dateTime;
             await _settingManager.Write(settings).ConfigureAwait(false);
-            return true;
         }
     }
 }

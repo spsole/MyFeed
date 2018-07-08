@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -67,7 +68,8 @@ namespace myFeed.ViewModels
                 .Throttle(TimeSpan.FromMilliseconds(100))
                 .Skip(1)
                 .Select(args => Categories.Select(x => x.Category))
-                .SelectMany(_categoryManager.Rearrange)
+                .Select(_categoryManager.Rearrange)
+                .SelectMany(task => task.ToObservable())
                 .Subscribe();
         }
 

@@ -8,8 +8,8 @@ namespace myFeed.Interfaces
     {
         Task<IEnumerable<Article>> GetAll();
         
-        Task<bool> Insert(Article article);
+        Task Insert(Article article);
 
-        Task<bool> Remove(Article article);
+        Task Remove(Article article);
     }
 }

@@ -88,7 +88,7 @@ namespace myFeed.Tests.ViewModels
             var last = _channelViewModel.Categories.Last();
             _channelViewModel.Categories.Remove(last);
             _channelViewModel.Categories.Insert(0, last);
-            await Task.Delay(200);
+            await Task.Delay(300);
             await _categoryManager.Received(1).Rearrange(
                 Arg.Any<IEnumerable<Category>>()
             );
@@ -99,7 +99,6 @@ namespace myFeed.Tests.ViewModels
         {
             var category = new Category {Title = "Foo"};
             _categoryManager.GetAll().Returns(new List<Category> {category});
-            _categoryManager.Remove(Arg.Any<Category>()).Returns(true);
             _channelViewModel.Load.Execute().Subscribe();
             await Task.Delay(300);
             
@@ -107,6 +106,7 @@ namespace myFeed.Tests.ViewModels
             _channelViewModel.Categories.Count.Should().Be(1);
             var group = _channelViewModel.Categories.First();
             group.Remove.Execute().Subscribe();
+            await Task.Delay(300);
 
             await _categoryManager.Received(1).Remove(Arg.Any<Category>());
             _channelViewModel.Categories.Should().BeEmpty();
@@ -118,7 +118,6 @@ namespace myFeed.Tests.ViewModels
         {
             var category = new Category {Title = "Foo"};
             _categoryManager.GetAll().Returns(new List<Category> {category});
-            _categoryManager.Remove(Arg.Any<Category>()).Returns(true);
             _channelViewModel.Load.Execute().Subscribe();
             await Task.Delay(300);
             

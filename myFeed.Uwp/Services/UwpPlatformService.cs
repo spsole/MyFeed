@@ -64,28 +64,27 @@ namespace myFeed.Uwp.Services
             Application.Current.Exit();
         }
         
-        public async Task<bool> RegisterBackgroundTask(int freq)
+        public async Task RegisterBackgroundTask(int freq)
         {
             var _ = await BackgroundExecutionManager.RequestAccessAsync();
             foreach (var task in BackgroundTaskRegistration.AllTasks)
                 if (task.Value.Name == "myFeedNotify")
                     task.Value.Unregister(true);
 
-            if (freq == 0) return false;
+            if (freq == 0) return;
             if (freq < 30) freq = 30;
             var builder = new BackgroundTaskBuilder {Name = "myFeedNotify"};
             builder.SetTrigger(new TimeTrigger((uint) freq, false));
             builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
             builder.TaskEntryPoint = typeof(Runner).FullName;
             builder.Register();
-            return true;
         }
 
-        public Task<bool> RegisterTheme(string theme)
+        public Task RegisterTheme(string theme)
         {
             var contentElement = (Frame)Window.Current.Content;
             contentElement.RequestedTheme = _themes[theme];
-            return Task.FromResult(true);
+            return Task.CompletedTask;
         }
     }
 }

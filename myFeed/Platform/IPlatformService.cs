@@ -5,9 +5,9 @@ namespace myFeed.Platform
 {
     public interface IPlatformService
     {
-        Task<bool> RegisterBackgroundTask(int freq);
+        Task RegisterBackgroundTask(int freq);
 
-        Task<bool> RegisterTheme(string theme);
+        Task RegisterTheme(string theme);
 
         Task CopyTextToClipboard(string text);
 

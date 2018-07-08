@@ -64,8 +64,10 @@ namespace myFeed.ViewModels
                 .Subscribe(Feeds.AddRange);
             
             Search.IsExecuting.Skip(1)
-                .Do(executing => IsGreeting = false)
                 .Subscribe(x => IsLoading = x);
+            Search.IsExecuting.Skip(1)
+                .Select(executing => false)
+                .Subscribe(x => IsGreeting = x);
             Search.IsExecuting
                 .Where(executing => executing)
                 .Subscribe(x => SelectedFeed = null);

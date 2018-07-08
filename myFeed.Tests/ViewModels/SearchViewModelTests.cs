@@ -100,7 +100,7 @@ namespace myFeed.Tests.ViewModels
             var response = new FeedlyRoot {Results = new List<FeedlyItem> {new FeedlyItem()}};
             _searchService.Search("q").Returns(response);
             _searchViewModel.SearchQuery = "q";
-            await Task.Delay(1000);    
+            await Task.Delay(1100);    
             
             _searchViewModel.IsGreeting.Should().BeFalse();
             _searchViewModel.IsLoading.Should().BeFalse();

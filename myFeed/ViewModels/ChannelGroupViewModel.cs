@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -22,7 +23,7 @@ namespace myFeed.ViewModels
 
         public ReactiveList<ChannelItemViewModel> Channels { get; }
         public ReactiveCommand<Unit, Channel> CreateChannel { get; }
-        public ReactiveCommand<Unit, bool> Remove { get; }
+        public ReactiveCommand<Unit, Unit> Remove { get; }
         public Category Category { get; }
 
         public string ChannelUri { get; set; } = string.Empty;
@@ -54,8 +55,7 @@ namespace myFeed.ViewModels
             
             Remove = ReactiveCommand.CreateFromTask(() => _categoryManager.Remove(Category));
             Remove.ObserveOn(RxApp.MainThreadScheduler)
-                .Where(successfullyRemoved => successfullyRemoved)
-                .Subscribe(x => _channelsViewModel.Categories.Remove(this));
+                  .Subscribe(x => _channelsViewModel.Categories.Remove(this));
             
             Title = RealTitle = category.Title;
             this.ObservableForProperty(x => x.Title)
@@ -66,7 +66,8 @@ namespace myFeed.ViewModels
                 .DistinctUntilChanged()
                 .Do(title => Category.Title = title)
                 .Select(title => Category)
-                .SelectMany(_categoryManager.Update)
+                .Select(_categoryManager.Update)
+                .SelectMany(task => task.ToObservable())
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => RealTitle = Category.Title);            
         }

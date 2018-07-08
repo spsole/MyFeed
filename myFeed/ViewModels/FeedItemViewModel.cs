@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -67,7 +68,8 @@ namespace myFeed.ViewModels
                 .Select(property => property.Value)
                 .Do(read => _article.Read = read)
                 .Select(read => _article)
-                .SelectMany(_categoryManager.Update)
+                .Select(_categoryManager.Update)
+                .SelectMany(task => task.ToObservable())
                 .Subscribe();
 
             Launch = ReactiveCommand.CreateFromTask(

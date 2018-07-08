@@ -26,22 +26,20 @@ namespace myFeed.Services
             () => _liteDatabase.GetCollection<Article>().FindAll()
         );
 
-        public async Task<bool> Insert(Article article) 
+        public async Task Insert(Article article) 
         {
-            if (article.Fave) return false;
+            if (article.Fave) return;
             article.Fave = true;
             await _categoryManager.Update(article).ConfigureAwait(false);
             _liteDatabase.GetCollection<Article>().Insert(article);
-            return true;
         }
 
-        public async Task<bool> Remove(Article article)
+        public async Task Remove(Article article)
         {
-            if (!article.Fave) return false;
+            if (!article.Fave) return;
             article.Fave = false;
             await _categoryManager.Update(article).ConfigureAwait(false);
             _liteDatabase.GetCollection<Article>().Delete(i => i.Id == article.Id);
-            return true;
         }
     }
 }

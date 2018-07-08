@@ -11,17 +11,17 @@ namespace myFeed.Interfaces
 
         Task<Article> GetArticleById(Guid guid);
         
-        Task<bool> Rearrange(IEnumerable<Category> categories);
+        Task Rearrange(IEnumerable<Category> categories);
 
-        Task<bool> Insert(Category category);
+        Task Insert(Category category);
 
-        Task<bool> Remove(Category category);
+        Task Remove(Category category);
 
-        Task<bool> Update(Category category);
+        Task Update(Category category);
 
-        Task<bool> Update(Channel channel);
+        Task Update(Channel channel);
 
-        Task<bool> Update(Article article);
+        Task Update(Article article);
     }
 }
 

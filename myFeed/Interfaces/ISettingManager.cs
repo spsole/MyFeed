@@ -5,7 +5,7 @@ namespace myFeed.Interfaces
 {
     public interface ISettingManager
     {
-        Task<bool> Write(Settings settings);
+        Task Write(Settings settings);
         
         Task<Settings> Read();
     }

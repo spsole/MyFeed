@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
@@ -53,12 +54,13 @@ namespace myFeed.ViewModels
                 .Select(property => property.Value)
                 .Do(notify => _channel.Notify = notify)
                 .Select(notify => channel)
-                .SelectMany(_categoryManager.Update)
+                .Select(_categoryManager.Update)
+                .SelectMany(task => task.ToObservable())
                 .Subscribe();
             
             Delete = ReactiveCommand.CreateFromTask(DoDelete);
             Delete.ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(x => _channelGroup.Channels.Remove(this));
+                  .Subscribe(x => _channelGroup.Channels.Remove(this));
 
             Copied = new Interaction<Unit, bool>();
             Copy = ReactiveCommand.CreateFromTask(() => 

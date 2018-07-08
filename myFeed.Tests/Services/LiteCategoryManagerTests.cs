@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FluentAssertions;
 using myFeed.Interfaces;
@@ -83,8 +84,7 @@ namespace myFeed.Tests.Services
                 await _categoryManager.Insert(category);
             }
             var rearranged = new[] {array[2], array[0], array[1]};
-            var success = await _categoryManager.Rearrange(rearranged);
-            success.Should().BeTrue();
+            await _categoryManager.Rearrange(rearranged);
 
             var response = await _categoryManager.GetAll();
             var categories = new List<Category>(response);
@@ -181,19 +181,15 @@ namespace myFeed.Tests.Services
 
         [Fact]
         [CleanUpCollection(nameof(Category))]
-        public async Task ShouldReturnFalseIfNoChannelExists()
-        {
-            var success = await _categoryManager.Update(new Channel());
-            success.Should().BeFalse();
-        }
+        public Task ShouldReturnFalseIfNoChannelExists() => Assert.ThrowsAsync<InvalidOperationException>(
+            async () => await _categoryManager.Update(new Channel())
+        );
 
         [Fact]
         [CleanUpCollection(nameof(Category))]
-        public async Task ShouldReturnFalseIfNoArticleExists()
-        {
-            var success = await _categoryManager.Update(new Article());
-            success.Should().BeFalse();
-        }
+        public Task ShouldReturnFalseIfNoArticleExists() => Assert.ThrowsAsync<InvalidOperationException>(
+            async () => await _categoryManager.Update(new Article())
+        );
 
         [Fact]
         [CleanUpCollection(nameof(Category))]
