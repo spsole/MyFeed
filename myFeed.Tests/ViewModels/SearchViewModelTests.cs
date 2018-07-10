@@ -224,5 +224,25 @@ namespace myFeed.Tests.ViewModels
             _searchViewModel.Search.Execute().Subscribe();
             _searchViewModel.SelectedFeed.Should().BeNull();
         }
+
+        [Fact]
+        public async Task ShouldMarkViewModelAsErroredWhenExceptionIsThrownInFetchCommand()
+        {
+            var called = 0;
+            _searchViewModel.SearchQuery = "q";
+            _searchService.Search("q").Returns(new FeedlyRoot {Results = new List<FeedlyItem>()});
+            _searchService.When(x => x.Search("q"))
+                          .Do(x => { if (called++ == 0) throw new Exception(); });
+
+            _searchViewModel.HasErrors.Should().BeFalse();
+            try { _searchViewModel.Search.Execute().Subscribe(); } catch { }
+
+            await Task.Delay(300);
+            _searchViewModel.HasErrors.Should().BeTrue("command terminates with exception");
+            _searchViewModel.Search.Execute().Subscribe();
+
+            await Task.Delay(300);
+            _searchViewModel.HasErrors.Should().BeFalse("command executes normally");
+        }
     }
 }

@@ -223,19 +223,11 @@
                     </SemanticZoom.ZoomedInView>
                 </SemanticZoom>
                 <controls:LoadingScreen IsActive="{Binding IsLoading, Mode=OneWay}"/>
-                <Grid Background="{ThemeResource LowBackgroundThemeBrush}" Visibility="{Binding 
-                    IsEmpty, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
-                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="12 -38 12 12">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE734;" TextAlignment="Center" 
-                            FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveWelcomeTitle}" 
-                            TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
-                            TextWrapping="Wrap" Margin="12 6"/>
-                        <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveWelcomeSubTitle}" 
-                            TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
-                            Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                    </StackPanel>
-                </Grid>
+                <controls:ErrorScreen IsVisible="{Binding IsEmpty, Mode=OneWay}" Symbol="OutlineStar"
+                                      Title="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveWelcomeTitle}"
+                                      Description="{Binding Converter={StaticResource Locale}, ConverterParameter=FaveWelcomeSubTitle}"
+                                      Action="{Binding Converter={StaticResource Locale}, ConverterParameter=GoToArticles}"
+                                      Command="{Binding ReadFeeds}"/>
             </Grid>
         </Grid>
     </Grid>

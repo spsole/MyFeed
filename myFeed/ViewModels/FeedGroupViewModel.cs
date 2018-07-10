@@ -26,11 +26,11 @@ namespace myFeed.ViewModels
         
         public ReactiveCommand<Unit, IEnumerable<Article>> Fetch { get; }
         public IReactiveDerivedList<FeedItemViewModel> Items { get; }
-        public Interaction<Exception, bool> Error { get; }
         public ReactiveCommand<Unit, Unit> Modify { get; }
-
-        public bool IsLoading { get; private set; } = true;
+        
         public bool ShowRead { get; private set; } = true;
+        public bool IsLoading { get; private set; } = true;
+        public bool HasErrors { get; private set; }
         public bool IsEmpty { get; private set; }
         public string Title => _category.Title;
 
@@ -56,25 +56,27 @@ namespace myFeed.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Do(articles => _source.Clear())
                 .Subscribe(_source.AddRange);
+            Items.IsEmptyChanged
+                .Subscribe(x => IsEmpty = x);
+            
+            Fetch.IsExecuting
+                .Skip(1)
+                .Subscribe(x => IsLoading = x);
             Fetch.IsExecuting
                 .Where(executing => executing)
                 .SelectMany(x => _settingManager.Read())
                 .Select(settings => settings.Read)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ShowRead = x);
-            Items.IsEmptyChanged
-                .Subscribe(x => IsEmpty = x);
+            
             Fetch.IsExecuting
-                .Skip(1)
-                .Subscribe(x => IsLoading = x);
-
-            Error = new Interaction<Exception, bool>();
+                .Where(executing => executing)
+                .Select(executing => false)
+                .Subscribe(x => HasErrors = x);
             Fetch.ThrownExceptions
+                .Select(exception => true)
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .SelectMany(Error.Handle)
-                .Where(retry => retry)
-                .Select(x => Unit.Default)
-                .InvokeCommand(Fetch);
+                .Subscribe(x => HasErrors = x);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace myFeed.Tests.ViewModels
             _fullItemFactory = x => new FeedItemFullViewModel(x, _settingManager);
             _itemFactory = x => new FeedItemViewModel(_fullItemFactory, _navigationService, _categoryManager, _favoriteManager, _platformService, x);
             _groupFactory = x => new FaveGroupViewModel(_itemFactory, x);
-            _faveViewModel = new FaveViewModel(_groupFactory, _favoriteManager, _settingManager);
+            _faveViewModel = new FaveViewModel(_groupFactory, _navigationService, _favoriteManager, _settingManager);
         }
 
         [Fact]

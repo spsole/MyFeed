@@ -99,14 +99,15 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Actions\ModalErrorAction.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Actions\CloseFlyoutAction.cs" />
-    <Compile Include="Actions\ModalActionBase.cs" />
     <Compile Include="Actions\ReactiveCommandAction.cs" />
     <Compile Include="Actions\ModalConfirmAction.cs" />
+    <Compile Include="Controls\ErrorScreen.xaml.cs">
+      <DependentUpon>ErrorScreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Expander.cs" />
     <Compile Include="Controls\HtmlBlock.cs" />
     <Compile Include="Controls\RoundImage.xaml.cs">
@@ -216,6 +217,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\ErrorScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Expander.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

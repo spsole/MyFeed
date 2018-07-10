@@ -36,6 +36,7 @@ namespace myFeed.ViewModels
 
         public string SearchQuery { get; set; } = string.Empty;
         public bool IsGreeting { get; private set; } = true;
+        public bool HasErrors { get; private set; }
         public bool IsLoading { get; private set; }
         public bool IsEmpty { get; private set; }
 
@@ -71,10 +72,18 @@ namespace myFeed.ViewModels
             Search.IsExecuting
                 .Where(executing => executing)
                 .Subscribe(x => SelectedFeed = null);
+
+            Search.IsExecuting
+                .Where(executing => executing)
+                .Select(executing => false)
+                .Subscribe(x => HasErrors = x);
+            Search.ThrownExceptions
+                .Select(exception => true)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => HasErrors = x);
             Search.ThrownExceptions
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Select(exception => true)
-                .Subscribe(x => IsEmpty = x);
+                .Subscribe(x => Feeds.Clear());
       
             Categories = new ReactiveList<Category>();
             ViewCategories = ReactiveCommand.CreateFromTask(_navigationService.Navigate<ChannelViewModel>);

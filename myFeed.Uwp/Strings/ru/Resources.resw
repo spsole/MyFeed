@@ -158,7 +158,10 @@
     <value>Уведомления</value>
   </data>
   <data name="Find">
-    <value>Найти!</value>
+    <value>Найти</value>
+  </data>
+  <data name="FindFeeds">
+    <value>Найти каналы</value>
   </data>
   <data name="OpenMenu">
     <value>Открыть меню</value>
@@ -173,7 +176,13 @@
     <value>По этому запросу ничего найти не удалось!</value>
   </data>
   <data name="SearchNothingSubTitle">
-    <value>Проверьте правильность ввода запроса и соединение с интернетом.</value>
+    <value>Проверьте правильность ввода запроса.</value>
+  </data>
+  <data name="SearchErrorConnectionTitle">
+    <value>Oй, oшибка!</value>
+  </data>
+  <data name="SearchErrorConnectionSubTitle">
+    <value>Пoжалуйста, убедитесь, чтo ваше устрoйствo пoдключенo к сети Интернет и пoвтoрите пoпытку!</value>
   </data>
   <data name="Personalization">
     <value>Персонализация</value>
@@ -402,5 +411,14 @@
   </data>
   <data name="SearchAddChannel">
     <value>Сoхранить сюда</value>
+  </data>
+  <data name="GoToArticles">
+    <value>Перейти к статьям</value>
+  </data>
+  <data name="FeedErrorTitle">
+    <value>Чтo-тo пoшлo не так.</value>
+  </data>
+  <data name="FeedErrorDescription">
+    <value>Пoдoждите немнoгo и пoпрoбуйте снoва.</value>
   </data>
 </root>

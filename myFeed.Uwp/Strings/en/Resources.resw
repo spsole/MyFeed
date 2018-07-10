@@ -158,7 +158,10 @@
     <value>Notifications</value>
   </data>
   <data name="Find">
-    <value>Find!</value>
+    <value>Find</value>
+  </data>
+  <data name="FindFeeds">
+    <value>Find feeds</value>
   </data>
   <data name="OpenMenu">
     <value>Open menu</value>
@@ -173,7 +176,13 @@
     <value>Can't find anything related to this query!</value>
   </data>
   <data name="SearchNothingSubTitle">
-    <value>Please, check your query and internet connection, then try again.</value>
+    <value>Please, check your search query.</value>
+  </data>
+  <data name="SearchErrorConnectionTitle">
+    <value>Something went wrong!</value>
+  </data>
+  <data name="SearchErrorConnectionSubTitle">
+    <value>Please, make sure your device is connected to the Internet, and then try again!</value>
   </data>
   <data name="Personalization">
     <value>Personalization</value>
@@ -338,7 +347,7 @@
     <value>Link was successfully copied!</value>
   </data>
   <data name="SearchWelcomeTitle">
-    <value>Here you can find RSS channels you are interested in.</value>
+    <value>Here you can find channels of your interest.</value>
   </data>
   <data name="SearchWelcomeSubTitle">
     <value>Enter search query into the text field above, for example "News", and press "Search"!</value>
@@ -402,5 +411,14 @@
   </data>
   <data name="SearchAddChannel">
     <value>Save here</value>
+  </data>
+  <data name="GoToArticles">
+    <value>Go to articles</value>
+  </data>
+  <data name="FeedErrorTitle">
+    <value>Something went wrong.</value>
+  </data>
+  <data name="FeedErrorDescription">
+    <value>We suggest you to wait a bit and try again.</value>
   </data>
 </root>

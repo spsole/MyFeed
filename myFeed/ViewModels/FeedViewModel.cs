@@ -22,13 +22,13 @@ namespace myFeed.ViewModels
         private readonly ICategoryManager _categoryManager;
         private readonly ISettingManager _settingManager;
         
-        public Interaction<Exception, bool> Error { get; }
         public ReactiveCommand<Unit, Unit> Modify { get; }
         public ReactiveCommand<Unit, IEnumerable<Category>> Load { get; }
         public ReactiveList<FeedGroupViewModel> Items { get; }
         public FeedGroupViewModel Selection { get; set; }
 
         public bool IsLoading { get; private set; } = true;
+        public bool HasErrors { get; private set; }
         public bool IsEmpty { get; private set; }
         public bool Images { get; private set; }
 
@@ -44,11 +44,13 @@ namespace myFeed.ViewModels
             _factory = factory;
 
             Items = new ReactiveList<FeedGroupViewModel>();
+            Modify = ReactiveCommand.CreateFromTask(_navigationService.Navigate<ChannelViewModel>);
             Load = ReactiveCommand.CreateFromTask(_categoryManager.GetAll);
             Load.Select(categories => categories.Select(_factory))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Do(models => Items.Clear())
                 .Subscribe(Items.AddRange);
+
             Load.IsExecuting
                 .Where(executing => executing)
                 .SelectMany(x => _settingManager.Read())
@@ -56,24 +58,24 @@ namespace myFeed.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => Images = x);
 
-            Items.IsEmptyChanged
-                .Subscribe(x => IsEmpty = x);
             Load.IsExecuting
                 .Skip(1)
                 .Subscribe(x => IsLoading = x);
+            Items.IsEmptyChanged
+                .Subscribe(x => IsEmpty = x);
             Items.Changed
                 .Select(args => Items.FirstOrDefault())
                 .Where(selection => selection != null)
                 .Subscribe(x => Selection = x);
             
-            Modify = ReactiveCommand.CreateFromTask(_navigationService.Navigate<ChannelViewModel>);
-            Error = new Interaction<Exception, bool>();
+            Load.IsExecuting
+                .Where(executing => executing)
+                .Select(executing => false)
+                .Subscribe(x => HasErrors = x);
             Load.ThrownExceptions
+                .Select(exception => true)
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .SelectMany(Error.Handle)
-                .Where(retry => retry)
-                .Select(x => Unit.Default)
-                .InvokeCommand(Load);
+                .Subscribe(x => HasErrors = x);
         }
     }
 }

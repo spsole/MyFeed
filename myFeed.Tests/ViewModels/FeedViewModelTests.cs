@@ -37,6 +37,7 @@ namespace myFeed.Tests.ViewModels
         [Fact]
         public void ShouldBeUninitializedAndLoadingWhenNotLoaded()
         {
+            _feedViewModel.HasErrors.Should().BeFalse();
             _feedViewModel.Selection.Should().BeNull();
             _feedViewModel.IsLoading.Should().BeTrue();
             _feedViewModel.IsEmpty.Should().BeFalse();
@@ -47,6 +48,7 @@ namespace myFeed.Tests.ViewModels
         public void ShouldInitializeGroupAsLoadingAndEmptyUntilBeingFetched()
         {
             var groupViewModel = _groupFactory.Invoke(new Category {Title = "Foo"});
+            groupViewModel.HasErrors.Should().BeFalse();
             groupViewModel.ShowRead.Should().BeTrue();
             groupViewModel.IsLoading.Should().BeTrue();
             groupViewModel.IsEmpty.Should().BeFalse();
@@ -141,6 +143,25 @@ namespace myFeed.Tests.ViewModels
             groupViewModel.IsEmpty.Should().BeTrue();
             groupViewModel.Items.Should().BeEmpty();
             groupViewModel.ShowRead.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task ShouldMarkGroupViewModelAsErroredWhenExceptionIsThrownInFetchCommand()
+        {
+            var called = 0;
+            _settingManager.Read().Returns(new Settings());
+            _feedStoreService.When(x => x.Load(Arg.Any<IEnumerable<Channel>>()))
+                             .Do(x => { if (called++ == 0) throw new Exception(); });
+
+            var group = _groupFactory.Invoke(new Category {Title = "Foo"});
+            try { group.Fetch.Execute().Subscribe(); } catch { }
+            
+            await Task.Delay(300);
+            group.HasErrors.Should().BeTrue("command terminates with exception");
+            group.Fetch.Execute().Subscribe();
+            
+            await Task.Delay(300);
+            group.HasErrors.Should().BeFalse("command executes normally");
         }
     }
 }

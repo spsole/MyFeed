@@ -1,7 +1,7 @@
 ﻿<Page
+    x:Class="myFeed.Uwp.Views.SearchView"
     xmlns:contract5Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 5)"
     d:DataContext="{d:DesignInstance Type=implementations:SearchViewModel}"
-    x:Class="myFeed.Uwp.Views.SearchView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -183,37 +183,24 @@
                     </DataTemplate>
                 </toolkit:PullToRefreshListView.ItemTemplate>
             </toolkit:PullToRefreshListView>
-            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"
-                  Visibility="{Binding IsEmpty, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -50 0 0">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" 
-                        Text="&#xE783;" FontSize="50" TextAlignment="Center" 
-                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingTitle}" 
-                        TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
-                        TextWrapping="Wrap" Margin="36 6"/>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingSubTitle}" 
-                        TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
-                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                    <Button Style="{StaticResource AccentButtonStyle}"
-                        Content="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
-                        HorizontalAlignment="Center" Margin="0 12 0 0" Command="{Binding Search}"/>
-                </StackPanel>
-            </Grid>
-            <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="12"
-                Visibility="{Binding IsGreeting, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-50,0,0">
-                    <TextBlock FontFamily="Segoe MDL2 Assets" 
-                        Text="&#xE71E;" FontSize="50" TextAlignment="Center" 
-                        Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeTitle}" 
-                        TextAlignment="Center" FontSize="24" FontWeight="SemiLight" 
-                        TextWrapping="Wrap" Margin="36 6"/>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeSubTitle}" 
-                        TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
-                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                </StackPanel>
-            </Grid>
+            <controls:ErrorScreen Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingTitle}"
+                                  Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingSubTitle}"
+                                  Action="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
+                                  IsVisible="{Binding IsEmpty, Mode=OneWay}"
+                                  Command="{Binding Search}"
+                                  Symbol="List"/>
+            <controls:ErrorScreen Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeTitle}"
+                                  Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeSubTitle}"
+                                  Action="{Binding Converter={StaticResource Locale}, ConverterParameter=FindFeeds}"
+                                  IsVisible="{Binding IsGreeting, Mode=OneWay}" 
+                                  Command="{Binding Search}" 
+                                  Symbol="Zoom"/>
+            <controls:ErrorScreen Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchErrorConnectionTitle}"
+                                  Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchErrorConnectionSubTitle}"
+                                  Action="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
+                                  IsVisible="{Binding HasErrors, Mode=OneWay}" 
+                                  Command="{Binding Search}" 
+                                  Symbol="Refresh"/>
             <controls:LoadingScreen IsActive="{Binding IsLoading, Mode=OneWay}"/>
         </Grid>
     </Grid>

@@ -206,18 +206,11 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Grid Grid.Row="2" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            Visibility="{Binding IsEmpty, Converter={StaticResource TruthyToVisible}}">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 -50 0 0">
-                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE71B;" TextAlignment="Center" 
-                    FontSize="50" Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                <TextBlock TextAlignment="Center" FontSize="24" FontWeight="SemiLight" TextWrapping="Wrap" 
-                    Margin="12 6" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesWelcomeTitle}"/>
-                <TextBlock TextWrapping="Wrap" TextAlignment="Center" FontSize="17" 
-                    Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                    Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesWelcome}"/>
-            </StackPanel>
-        </Grid>
+        <controls:ErrorScreen Grid.Row="2" IsVisible="{Binding IsEmpty, Mode=OneWay}" 
+                              Symbol="List" Command="{Binding CreateCategory}"
+                              Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesWelcomeTitle}"
+                              Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesWelcome}"
+                              Action="{Binding Converter={StaticResource Locale}, ConverterParameter=AddCategory}"/>
         <controls:LoadingScreen Grid.Row="2" IsActive="{Binding IsLoading, Mode=OneWay}"/>
     </Grid>
 </Page>

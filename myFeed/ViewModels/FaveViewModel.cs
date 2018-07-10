@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DryIocAttributes;
 using myFeed.Interfaces;
 using myFeed.Models;
+using myFeed.Platform;
 using PropertyChanged;
 using ReactiveUI;
 
@@ -17,13 +18,16 @@ namespace myFeed.ViewModels
     public sealed class FaveViewModel
     {
         private readonly Func<IGrouping<string, Article>, FaveGroupViewModel> _factory;
+        private readonly INavigationService _navigationService;
         private readonly IFavoriteManager _favoriteManager;
         private readonly ISettingManager _settingManager;
 
-        public ReactiveList<FaveGroupViewModel> Items { get; }
         public ReactiveCommand<Unit, Unit> OrderByMonth { get; }
         public ReactiveCommand<Unit, Unit> OrderByDate { get; }
         public ReactiveCommand<Unit, Unit> OrderByFeed { get; }
+
+        public ReactiveList<FaveGroupViewModel> Items { get; }
+        public ReactiveCommand<Unit, Unit> ReadFeeds { get; }
         public ReactiveCommand<Unit, Unit> Load { get; }
 
         public bool IsLoading { get; private set; } = true;
@@ -32,14 +36,17 @@ namespace myFeed.ViewModels
 
         public FaveViewModel(
             Func<IGrouping<string, Article>, FaveGroupViewModel> factory,
+            INavigationService navigationService,
             IFavoriteManager favoriteManager, 
             ISettingManager settingManager)
         {
+            _navigationService = navigationService;
             _favoriteManager = favoriteManager;
             _settingManager = settingManager;
             _factory = factory;
-
-            Items = new ReactiveList<FaveGroupViewModel> {ChangeTrackingEnabled = true};
+            
+            ReadFeeds = ReactiveCommand.CreateFromTask(_navigationService.Navigate<FeedViewModel>);
+            Items = new ReactiveList<FaveGroupViewModel> { ChangeTrackingEnabled = true };
             var month = CultureInfo.CurrentCulture.DateTimeFormat.YearMonthPattern;
             var date = CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern;
 
