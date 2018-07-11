@@ -48,9 +48,12 @@ namespace myFeed.ViewModels
                     .IsWellFormedUriString(url, UriKind.Absolute)));
             
             CreateChannel
+                .Select(channel => string.Empty)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => ChannelUri = x);
+            CreateChannel
                 .Select(channel => _factory(channel, Category, this))
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Do(channels => ChannelUri = string.Empty)
                 .Subscribe(x => Channels.Insert(0, x));
             
             Remove = ReactiveCommand.CreateFromTask(() => _categoryManager.Remove(Category));

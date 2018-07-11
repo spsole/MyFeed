@@ -54,9 +54,12 @@ namespace myFeed.ViewModels
                     !string.IsNullOrWhiteSpace(name)));
 
             CreateCategory
+                .Select(category => string.Empty)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(x => CategoryName = x);
+            CreateCategory
                 .Select(category => _factory(category, this))
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Do(model => CategoryName = string.Empty)
                 .Subscribe(Categories.Add);
 
             Load.IsExecuting

@@ -53,7 +53,7 @@ namespace myFeed.ViewModels
             this.ObservableForProperty(x => x.Notify)
                 .Select(property => property.Value)
                 .Do(notify => _channel.Notify = notify)
-                .Select(notify => channel)
+                .Select(notify => _channel)
                 .Select(_categoryManager.Update)
                 .SelectMany(task => task.ToObservable())
                 .Subscribe();

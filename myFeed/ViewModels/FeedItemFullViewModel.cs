@@ -26,13 +26,16 @@ namespace myFeed.ViewModels
             FeedItemViewModel feedItemViewModel,
             ISettingManager settingManager)
         {
-            _settingManager = settingManager;
             Article = feedItemViewModel;
+            _settingManager = settingManager;
+
             Load = ReactiveCommand.CreateFromTask(_settingManager.Read);
             Load.ObserveOn(RxApp.MainThreadScheduler)
-                .Do(settings => Images = settings.Images)
-                .Do(settings => Font = settings.Font)
-                .Subscribe();
+                .Select(settings => settings.Images)
+                .Subscribe(x => Images = x);
+            Load.ObserveOn(RxApp.MainThreadScheduler)
+                .Select(settings => settings.Font)
+                .Subscribe(x => Font = x);
         }
     }
 }
