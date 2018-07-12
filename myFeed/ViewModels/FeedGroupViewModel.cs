@@ -59,8 +59,7 @@ namespace myFeed.ViewModels
             Items.IsEmptyChanged
                 .Subscribe(x => IsEmpty = x);
             
-            Fetch.IsExecuting
-                .Skip(1)
+            Fetch.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
             Fetch.IsExecuting
                 .Where(executing => executing)

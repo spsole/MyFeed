@@ -50,9 +50,8 @@ namespace myFeed.ViewModels
             
             Search = ReactiveCommand.CreateFromTask(_navigationService.Navigate<SearchViewModel>);
             CreateCategory = ReactiveCommand.CreateFromTask(DoCreateCategory,
-                this.WhenAnyValue(x => x.CategoryName, name =>
-                    !string.IsNullOrWhiteSpace(name)));
-
+                this.WhenAnyValue(x => x.CategoryName)
+                    .Select(x => !string.IsNullOrWhiteSpace(x)));
             CreateCategory
                 .Select(category => string.Empty)
                 .ObserveOn(RxApp.MainThreadScheduler)
@@ -62,14 +61,12 @@ namespace myFeed.ViewModels
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(Categories.Add);
 
-            Load.IsExecuting
-                .Skip(1)
+            Load.IsExecuting.Skip(1)
                 .Subscribe(x => IsLoading = x);
             Categories.IsEmptyChanged
                 .Subscribe(x => IsEmpty = x);
             Categories.Changed
-                .Throttle(TimeSpan.FromMilliseconds(100))
-                .Skip(1)
+                .Throttle(TimeSpan.FromMilliseconds(100)).Skip(1)
                 .Select(args => Categories.Select(x => x.Category))
                 .Select(_categoryManager.Rearrange)
                 .SelectMany(task => task.ToObservable())

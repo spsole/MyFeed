@@ -36,11 +36,13 @@ namespace myFeed.ViewModels
             _platformService = platformService;
             Open = ReactiveCommand.CreateFromTask(
                 () => _platformService.LaunchUri(new Uri(Url)),
-                Observable.Return(Uri.IsWellFormedUriString(Url, UriKind.Absolute)));
+                this.WhenAnyValue(x => x.Url)
+                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
 
             Copy = ReactiveCommand.CreateFromTask(
                 () => _platformService.CopyTextToClipboard(Url),
-                Observable.Return(!string.IsNullOrWhiteSpace(Url)));
+                this.WhenAnyValue(x => x.Url)
+                    .Select(x => !string.IsNullOrWhiteSpace(x)));
             
             Copied = new Interaction<Unit, bool>();
             Copy.ObserveOn(RxApp.MainThreadScheduler)

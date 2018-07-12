@@ -53,14 +53,13 @@ namespace myFeed.ViewModels
             this.ObservableForProperty(x => x.Notify)
                 .Select(property => property.Value)
                 .Do(notify => _channel.Notify = notify)
-                .Select(notify => _channel)
-                .Select(_categoryManager.Update)
+                .Select(notify => _categoryManager.Update(_channel))
                 .SelectMany(task => task.ToObservable())
                 .Subscribe();
             
             Delete = ReactiveCommand.CreateFromTask(DoDelete);
             Delete.ObserveOn(RxApp.MainThreadScheduler)
-                  .Subscribe(x => _channelGroup.Channels.Remove(this));
+                .Subscribe(x => _channelGroup.Channels.Remove(this));
 
             Copied = new Interaction<Unit, bool>();
             Copy = ReactiveCommand.CreateFromTask(() => 

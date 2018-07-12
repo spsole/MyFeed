@@ -39,13 +39,13 @@ namespace myFeed.ViewModels
             _factory = factory;
             _categoryManager = categoryManager;
             _channelsViewModel = channelsViewModel;
-
             Category = category;
+
             Channels = new ReactiveList<ChannelItemViewModel>();
             Channels.AddRange(Category.Channels.Select(x => _factory(x, Category, this)));
             CreateChannel = ReactiveCommand.CreateFromTask(DoCreateChannel,
-                this.WhenAnyValue(x => x.ChannelUri, url => Uri
-                    .IsWellFormedUriString(url, UriKind.Absolute)));
+                this.WhenAnyValue(x => x.ChannelUri)
+                    .Select(x => Uri.IsWellFormedUriString(x, UriKind.Absolute)));
             
             CreateChannel
                 .Select(channel => string.Empty)
@@ -58,7 +58,7 @@ namespace myFeed.ViewModels
             
             Remove = ReactiveCommand.CreateFromTask(() => _categoryManager.Remove(Category));
             Remove.ObserveOn(RxApp.MainThreadScheduler)
-                  .Subscribe(x => _channelsViewModel.Categories.Remove(this));
+                .Subscribe(x => _channelsViewModel.Categories.Remove(this));
             
             Title = RealTitle = category.Title;
             this.ObservableForProperty(x => x.Title)
