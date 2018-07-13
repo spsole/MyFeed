@@ -214,7 +214,6 @@
                         SelectedItem="{Binding Selection, Mode=TwoWay}">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="SelectionChanged">
-                                <actions:ReactiveCommandAction Command="{Binding Navigate}"/>
                                 <core:ChangePropertyAction Value="False"
                                     TargetObject="{Binding ElementName=Menu}" 
                                     PropertyName="IsSwipeablePaneOpen"/>

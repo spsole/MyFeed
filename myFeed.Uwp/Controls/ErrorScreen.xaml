@@ -22,8 +22,7 @@
             <TextBlock Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
                        Text="{Binding ElementName=Root, Path=Description, Mode=OneTime}"
                        TextAlignment="Center" TextWrapping="Wrap"/>
-            <Button Visibility="{Binding ElementName=Root, Path=Action}"
-                    Content="{Binding ElementName=Root, Path=Action, Mode=OneTime}"
+            <Button Content="{Binding ElementName=Root, Path=Action, Mode=OneTime}"
                     Command="{Binding ElementName=Root, Path=Command}"
                     Style="{StaticResource AccentButtonStyle}"
                     HorizontalAlignment="Center" 

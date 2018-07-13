@@ -59,7 +59,7 @@ namespace myFeed.ViewModels
             Share = ReactiveCommand.CreateFromTask(
                 () => _platformService.Share($"{_article.Title} {_article.Uri}"));
             Open = ReactiveCommand.CreateFromTask(
-                () => _navigationService.NavigateWith<FeedItemFullViewModel>(_factory(this)));
+                () => _navigationService.NavigateTo(_factory(this)));
 
             Fave = _article.Fave;
             Read = _article.Read;

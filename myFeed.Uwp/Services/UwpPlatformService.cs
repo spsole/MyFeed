@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -10,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using DryIocAttributes;
 using myFeed.Platform;
 using myFeed.Uwp.Notifications;
+using myFeed.ViewModels;
 using LiteDB;
 
 namespace myFeed.Uwp.Services
@@ -18,19 +20,25 @@ namespace myFeed.Uwp.Services
     [ExportEx(typeof(IPlatformService))]
     public sealed class UwpPlatformService : IPlatformService
     {
-        private readonly Dictionary<string, ElementTheme> _themes;
         private readonly LiteDatabase _liteDatabase;
-
-        public UwpPlatformService(LiteDatabase liteDatabase)
+        private readonly ResourceLoader _resources = ResourceLoader.GetForViewIndependentUse();
+        private readonly Dictionary<string, ElementTheme> _themes = new Dictionary<string, ElementTheme>
         {
-            _liteDatabase = liteDatabase;
-            _themes = new Dictionary<string, ElementTheme>
-            {
-                {"dark", ElementTheme.Dark},
-                {"light", ElementTheme.Light},
-                {"default", ElementTheme.Default}
-            };
-        }
+            {"dark", ElementTheme.Dark}, 
+            {"light", ElementTheme.Light},
+            {"default", ElementTheme.Default}
+        };
+
+        public UwpPlatformService(LiteDatabase liteDatabase) => _liteDatabase = liteDatabase;
+
+        public IReadOnlyDictionary<Type, (string, object)> Icons => new Dictionary<Type, (string, object)>
+        {
+            {typeof(FeedViewModel), (_resources.GetString("FeedViewMenuItem"), Symbol.PostUpdate)},
+            {typeof(FaveViewModel), (_resources.GetString("FaveViewMenuItem"), Symbol.OutlineStar)},
+            {typeof(ChannelViewModel), (_resources.GetString("SourcesViewMenuItem"), Symbol.List)},
+            {typeof(SearchViewModel), (_resources.GetString("SearchViewMenuItem"), Symbol.Zoom)},
+            {typeof(SettingViewModel), (_resources.GetString("SettingsViewMenuItem"), Symbol.Setting)}
+        };
 
         public async Task LaunchUri(Uri uri) => await Launcher.LaunchUriAsync(uri);
 
@@ -39,9 +47,8 @@ namespace myFeed.Uwp.Services
             var dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += (sender, args) =>
             {
-                var request = args.Request;
-                request.Data.SetText(content);
-                request.Data.Properties.Title = "myFeed";
+                args.Request.Data.SetText(content);
+                args.Request.Data.Properties.Title = "myFeed";
             };
             DataTransferManager.ShowShareUI();
             return Task.CompletedTask;

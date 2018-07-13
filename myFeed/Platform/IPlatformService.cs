@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace myFeed.Platform
 {
     public interface IPlatformService
     {
+        IReadOnlyDictionary<Type, (string, object)> Icons { get; }
+
+        Task CopyTextToClipboard(string text);
+        
         Task RegisterBackgroundTask(int freq);
 
         Task RegisterTheme(string theme);
-
-        Task CopyTextToClipboard(string text);
 
         Task Share(string content);
 

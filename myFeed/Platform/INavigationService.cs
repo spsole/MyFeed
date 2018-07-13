@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace myFeed.Platform
 {
     public interface INavigationService
     {
-        Task Navigate<TViewModel>() where TViewModel : class;
+        Task Navigate<TViewModel>();
         
-        Task NavigateWith<TViewModel>(object parameter) where TViewModel : class;
-
-        IReadOnlyDictionary<Type, (string, object)> Icons { get; }
+        Task NavigateTo<TViewModel>(TViewModel viewModel);
 
         IObservable<Type> Navigated { get; }
+        
+        Type CurrentViewModelType { get; }
     }
 }

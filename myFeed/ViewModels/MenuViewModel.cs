@@ -23,7 +23,6 @@ namespace myFeed.ViewModels
         private readonly ISettingManager _settingManager;
 
         public ReactiveList<MenuItemViewModel> Items { get; }
-        public ReactiveCommand<Unit, Unit> Navigate { get; }
         public ReactiveCommand<Unit, Unit> Load { get; }
         public MenuItemViewModel Selection { get; set; }
 
@@ -39,12 +38,20 @@ namespace myFeed.ViewModels
             _factory = factory;
 
             Items = new ReactiveList<MenuItemViewModel>();
-            Navigate = ReactiveCommand.Create(DoNavigate);
             Load = ReactiveCommand.CreateFromTask(DoLoad);
             _navigationService.Navigated
-                .Where(x => x != Selection?.Type)
+                .Where(type => type != Selection?.Type)
                 .Select(x => Items.FirstOrDefault(i => i.Type == x))
                 .Subscribe(x => Selection = x);
+
+            this.WhenAnyValue(x => x.Selection)
+                .Where(selection => selection != null)
+                .Select(selection => selection.Type)
+                .Where(type => type != _navigationService.CurrentViewModelType)
+                .Subscribe(viewModelType => typeof(INavigationService)
+                    .GetMethod(nameof(INavigationService.Navigate), new Type[0])?
+                    .MakeGenericMethod(viewModelType)
+                    .Invoke(_navigationService, null));
         }
 
         private async Task DoLoad()
@@ -52,24 +59,15 @@ namespace myFeed.ViewModels
             await _navigationService.Navigate<FeedViewModel>();
             var settings = await _settingManager.Read();
             settings.Fetched = DateTime.Now;
-
+            
+            await _settingManager.Write(settings);
             await _platformService.RegisterBackgroundTask(settings.Period);
             await _platformService.RegisterTheme(settings.Theme);
-            await _settingManager.Write(settings);
 
-            _navigationService.Icons.ToList().ForEach(item => 
-                Items.Add(_factory(item.Key, item.Value.Item1, item.Value.Item2)
-            ));
+            _platformService.Icons
+                .Select(x => _factory(x.Key, x.Value.Item1, x.Value.Item2))
+                .ToList().ForEach(Items.Add);
             Selection = Items.FirstOrDefault();
-        }
-
-        private void DoNavigate()
-        {
-            if (Selection == null) return;
-            typeof(INavigationService)
-                .GetMethod("Navigate", new Type[] { })
-                ?.MakeGenericMethod(Selection.Type)
-                .Invoke(_navigationService, null);
         }
     }
 }

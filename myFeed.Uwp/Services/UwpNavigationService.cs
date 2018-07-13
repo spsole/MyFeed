@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Collections.Generic;
 using System.Reactive.Subjects;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Resources;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,7 +13,6 @@ using myFeed.Platform;
 using myFeed.Uwp.Controls;
 using myFeed.Uwp.Views;
 using myFeed.ViewModels;
-using Microsoft.Toolkit.Uwp.UI.Extensions;
 
 namespace myFeed.Uwp.Services
 {
@@ -25,12 +21,12 @@ namespace myFeed.Uwp.Services
     public sealed class UwpNavigationService : INavigationService
     {
         private readonly IResolver _resolver;
-        private readonly Subject<Type> _navigatedSubject = new Subject<Type>();
-        private readonly IReadOnlyDictionary<Type, Type> _pages = new Dictionary<Type, Type>
+        private readonly Subject<Type> _navigated = new Subject<Type>();
+        private readonly IReadOnlyDictionary<Type, Type> _views = new Dictionary<Type, Type>
         {
+            {typeof(FeedItemFullViewModel), typeof(ArticleView)},
             {typeof(SettingViewModel), typeof(SettingView)},
             {typeof(ChannelViewModel), typeof(ChannelView)},
-            {typeof(FeedItemFullViewModel), typeof(ArticleView)},
             {typeof(SearchViewModel), typeof(SearchView)},
             {typeof(MenuViewModel), typeof(MenuView)},
             {typeof(FaveViewModel), typeof(FaveView)},
@@ -43,100 +39,86 @@ namespace myFeed.Uwp.Services
             var systemNavigationManager = SystemNavigationManager.GetForCurrentView();
             systemNavigationManager.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             systemNavigationManager.BackRequested += NavigateBack;
-
-            var resources = ResourceLoader.GetForViewIndependentUse();
-            var page = (Page)((Frame)Window.Current.Content).Content;
-            var color = (Color)Application.Current.Resources["SystemChromeLowColor"];
-            StatusBar.SetBackgroundColor(page, color);
-            StatusBar.SetBackgroundOpacity(page, 1);
-
-            var menu = new[]
-            {
-                (typeof(FeedViewModel), "FeedViewMenuItem", Symbol.PostUpdate),
-                (typeof(FaveViewModel), "FaveViewMenuItem", Symbol.OutlineStar),
-                (typeof(ChannelViewModel), "SourcesViewMenuItem", Symbol.List),
-                (typeof(SearchViewModel), "SearchViewMenuItem", Symbol.Zoom),
-                (typeof(SettingViewModel), "SettingsViewMenuItem", Symbol.Setting)  
-            }
-            .Select(x => (x.Item1, resources.GetString(x.Item2), x.Item3))
-            .ToDictionary(x => x.Item1, x => (x.Item2, (object)x.Item3));
-            Icons = new ReadOnlyDictionary<Type, (string, object)>(menu);
         }
 
-        public IObservable<Type> Navigated => _navigatedSubject;
+        public IObservable<Type> Navigated => _navigated;
 
-        public IReadOnlyDictionary<Type, (string, object)> Icons { get; }
-
-        public Task Navigate<T>() where T : class => NavigateWith<T>(_resolver.Resolve<Func<T>>()());
+        public Type CurrentViewModelType { get; private set; }
         
-        public async Task NavigateWith<T>(object parameter) where T : class
+        public Task Navigate<TViewModel>() => NavigateTo(_resolver.Resolve<TViewModel>());
+        
+        public Task NavigateTo<TViewModel>(TViewModel viewModel)
         {
-            switch (typeof(T).Name)
-            {
-                case nameof(FeedViewModel):
-                case nameof(FaveViewModel):
-                case nameof(SearchViewModel):
-                case nameof(ChannelViewModel):
-                case nameof(SettingViewModel):
-                    NavigateFrame(GetChild<Frame>(Window.Current.Content, 0));
-                    break;
-                case nameof(MenuViewModel):
-                    NavigateFrame((Frame)Window.Current.Content);
-                    break;
-                case nameof(FeedItemFullViewModel):
-                    if (GetChild<Frame>(Window.Current.Content, 1) == null)
-                        await Navigate<FeedViewModel>();
-                    await Task.Delay(150);
-                    NavigateFrame(GetChild<Frame>(Window.Current.Content, 1));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            void NavigateFrame(Frame frame)
-            {
-                var viewModelType = typeof(T);
-                if ((Page)frame.Content != null &&
-                   ((Page)frame.Content).DataContext.GetType() == viewModelType &&
-                   ((Page)frame.Content).DataContext.GetType() != typeof(FeedItemFullViewModel)) return;
-                frame.Navigate(_pages[viewModelType], parameter);
-                ((Page)frame.Content).DataContext = parameter;
-                RaiseNavigated(viewModelType);
-            }
+            var viewModelType = typeof(TViewModel);
+            var depth = viewModelType.Name == nameof(FeedItemFullViewModel) ? 1 : 0;
+            var navigationFrame = GetChild<Frame>(Window.Current.Content, depth);
+            navigationFrame.Navigate(_views[viewModelType], viewModel);
+
+            var page = (Page)navigationFrame.Content ?? throw new NullReferenceException();
+            page.DataContext = viewModel;
+            RaiseNavigated(viewModelType);
+            return Task.CompletedTask;
         }
 
-        private void NavigateBack(object sender, BackRequestedEventArgs e)
+        private void NavigateBack(object sender, BackRequestedEventArgs args)
+        {
+            if (NavigateBackSplitView(args)) return;
+            if (NavigateBackArticleFrame(args)) return;
+            if (NavigateBackFrame(args)) return;
+        }
+
+        private bool NavigateBackFrame(BackRequestedEventArgs args)
+        {
+            var navigationFrame = GetChild<Frame>(Window.Current.Content, 0);
+            if (navigationFrame?.CanGoBack != true) return false;
+            var instance = navigationFrame.BackStack.Last().Parameter;
+            navigationFrame.GoBack();
+            navigationFrame.ForwardStack.Clear();
+            args.Handled = true;
+            
+            if (instance == null) return true;
+            var page = (Page)navigationFrame.Content ?? throw new NullReferenceException();
+            var type = instance.GetType();
+            page.DataContext = _resolver.Resolve(type);
+            RaiseNavigated(type);
+            return true;
+        }
+
+        private bool NavigateBackArticleFrame(BackRequestedEventArgs args)
+        {
+            var navigationFrame = GetChild<Frame>(Window.Current.Content, 1);
+            if (navigationFrame?.CanGoBack != true) return false;
+            var instance = navigationFrame.BackStack.Last().Parameter;
+            navigationFrame.GoBack();
+            navigationFrame.ForwardStack.Clear();
+            args.Handled = true;
+
+            if (instance == null) return true;
+            var page = (Page)navigationFrame.Content ?? throw new NullReferenceException();
+            page.DataContext = instance;
+            RaiseNavigated(instance.GetType());
+            return true;
+        }
+        
+        private bool NavigateBackSplitView(BackRequestedEventArgs args)
         {
             var splitView = GetChild<SwipeableSplitView>(Window.Current.Content, 0);
-            if (splitView.IsSwipeablePaneOpen && splitView.DisplayMode == SplitViewDisplayMode.Overlay)
-            {
-                splitView.IsSwipeablePaneOpen = false;
-                e.Handled = true;
-                return;
-            }
-
-            var articleFrame = GetChild<Frame>(Window.Current.Content, 1);
-            var splitViewFrame = GetChild<Frame>(Window.Current.Content, 0);
-            var frame = articleFrame?.CanGoBack == true ? articleFrame
-                      : splitViewFrame?.CanGoBack == true ? splitViewFrame : null;
-            if (frame == null) return;
-
-            var instance = frame.BackStack.Last().Parameter;
-            frame.GoBack();
-            e.Handled = true;
-            frame.ForwardStack.Clear();
-            if (instance == null) return;
-
-            ((Page) frame.Content).DataContext = instance is FeedItemFullViewModel
-                ? instance : _resolver.Resolve(instance.GetType());
-            RaiseNavigated(instance.GetType());
+            var shouldClose = splitView.IsSwipeablePaneOpen && splitView.DisplayMode == SplitViewDisplayMode.Overlay;
+            if (!shouldClose) return false;
+            splitView.IsSwipeablePaneOpen = false;
+            return args.Handled = true;
         }
 
         private void RaiseNavigated(Type type)
         {
             if (type == typeof(FeedItemFullViewModel))
-                type = ((Page)GetChild<Frame>(Window.Current.Content, 0)
-                    .Content).DataContext.GetType();
-            _navigatedSubject.OnNext(type);
+            {
+                var navigationFrame = GetChild<Frame>(Window.Current.Content, 0);
+                var page = (Page) navigationFrame.Content ?? throw new NullReferenceException();
+                type = page.DataContext.GetType();
+            }
+            CurrentViewModelType = type;
+            _navigated.OnNext(type);
         }
 
         private static T GetChild<T>(DependencyObject root, int depth) where T : DependencyObject
