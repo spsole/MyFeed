@@ -72,7 +72,8 @@ namespace myFeed.Services
         {
             var collection = _liteDatabase.GetCollection<Category>();
             var query = Query.EQ("$.Channels[*].Articles[*]._id", article.Id);
-            var category = collection.FindOne(query) ?? throw new InvalidOperationException();
+            var category = collection.FindOne(query);
+            if (category == null) return;
 
             var channel = category.Channels.First(i => i.Articles.Any(x => x.Id == article.Id));
             channel.Articles.RemoveAll(i => i.Id == article.Id);

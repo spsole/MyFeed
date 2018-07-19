@@ -24,7 +24,7 @@ namespace myFeed.ViewModels
         private readonly IPlatformService _platformService;
         private readonly Article _article;
 
-        public Interaction<Unit, bool> CopyConfirm { get; }
+        public Interaction<Unit, bool> Copied { get; }
         public ReactiveCommand<Unit, Unit> MarkFave { get; }
         public ReactiveCommand<Unit, Unit> MarkRead { get; }
         public ReactiveCommand<Unit, Unit> Launch { get; }
@@ -82,9 +82,9 @@ namespace myFeed.ViewModels
             
             MarkFave = ReactiveCommand.CreateFromTask(DoMarkFave);
             MarkRead = ReactiveCommand.Create(() => { Read = !Read; });
-            CopyConfirm = new Interaction<Unit, bool>();
+            Copied = new Interaction<Unit, bool>();
             Copy.ObserveOn(RxApp.MainThreadScheduler)
-                .SelectMany(CopyConfirm.Handle)
+                .SelectMany(Copied.Handle)
                 .Subscribe();
         }
 

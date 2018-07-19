@@ -164,7 +164,7 @@
                                             </core:EventTriggerBehavior>
                                             <core:EventTriggerBehavior EventName="DataContextChanged">
                                                 <actions:ModalConfirmAction 
-                                                    Interaction="{Binding CopyConfirm}"
+                                                    Interaction="{Binding Copied}"
                                                     Message="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLinkSuccess}"
                                                     Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
                                             </core:EventTriggerBehavior>
