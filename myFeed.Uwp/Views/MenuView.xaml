@@ -1,5 +1,6 @@
 ﻿<Page
     d:DataContext="{d:DesignInstance Type=implementations:MenuViewModel}"
+    DataContext="{Binding Source={StaticResource Bootstrapper}, Path=MenuViewModel}"
     x:Class="myFeed.Uwp.Views.MenuView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,7 +10,6 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:myFeed.Uwp.Controls"
     xmlns:implementations="using:myFeed.ViewModels"
-    xmlns:converters="using:myFeed.Uwp.Converters"
     xmlns:actions="using:myFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">

@@ -105,6 +105,7 @@
     <Compile Include="Actions\CloseFlyoutAction.cs" />
     <Compile Include="Actions\ReactiveCommandAction.cs" />
     <Compile Include="Actions\ModalConfirmAction.cs" />
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="Controls\ErrorScreen.xaml.cs">
       <DependentUpon>ErrorScreen.xaml</DependentUpon>
     </Compile>

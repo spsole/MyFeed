@@ -187,9 +187,7 @@ namespace myFeed.Tests.Services
 
         [Fact]
         [CleanUpCollection(nameof(Category))]
-        public Task ShouldReturnFalseIfNoArticleExists() => Assert.ThrowsAsync<InvalidOperationException>(
-            async () => await _categoryManager.Update(new Article())
-        );
+        public Task ShouldNotThrowIfNoArticleExists() => _categoryManager.Update(new Article());
 
         [Fact]
         [CleanUpCollection(nameof(Category))]

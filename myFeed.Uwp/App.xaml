@@ -5,10 +5,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:root="using:myFeed.Uwp"
     xmlns:converters="using:myFeed.Uwp.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <root:Bootstrapper x:Key="Bootstrapper"/>
+                </ResourceDictionary>
                 <ResourceDictionary>
                     <contract5Present:AcrylicBrush x:Key="LowBackgroundThemeBrush"
                         BackgroundSource="HostBackdrop" TintOpacity="0.8"
