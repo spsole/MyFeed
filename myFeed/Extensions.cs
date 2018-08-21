@@ -5,10 +5,10 @@ namespace myFeed
 {
     public static class Extensions 
     {
-        public static void RegisterShared(this IContainer registrator)
+        public static void RegisterShared(this IContainer container)
         {
-            registrator.WithMefAttributedModel();
-            registrator.RegisterExports(new [] { typeof(Extensions).GetAssembly() });
+            container.WithMefAttributedModel();
+            container.RegisterExports(new [] { typeof(Extensions).GetAssembly() });
         }
     }
 }
