@@ -25,20 +25,20 @@ $RECYCLE.BIN/
 .vscode/
 .idea/
 packages/
-myFeed.Tests/obj
-myFeed.Tests/bin
-myFeed/obj
-myFeed/bin
-myFeed.Droid
-myFeed.Uwp/Assets
-myFeed.Uwp/AppPackages
-myFeed.Uwp/Package.StoreAssociation.xml
-myFeed.Uwp/Package.xml
-myFeed.Uwp/obj
-myFeed.Uwp/bin
-myFeed.Uwp/BundleArtifacts
-myFeed.Uwp.Notifications/obj
-myFeed.Uwp.Notifications/bin
+MyFeed.Tests/obj
+MyFeed.Tests/bin
+MyFeed/obj
+MyFeed/bin
+MyFeed.Droid
+MyFeed.Uwp/Assets
+MyFeed.Uwp/AppPackages
+MyFeed.Uwp/Package.StoreAssociation.xml
+MyFeed.Uwp/Package.xml
+MyFeed.Uwp/obj
+MyFeed.Uwp/bin
+MyFeed.Uwp/BundleArtifacts
+MyFeed.Uwp.Notifications/obj
+MyFeed.Uwp.Notifications/bin
 
 # OSX
 # =========================
@@ -79,6 +79,6 @@ Temporary Items
 *.user
 *.appx
 *.pfx
-myFeed.Views.Uwp/Package.StoreAssociation.xml
-myFeed.Uwp/Package.xml
-myFeed.Uwp/Package.xml
+MyFeed.Views.Uwp/Package.StoreAssociation.xml
+MyFeed.Uwp/Package.xml
+MyFeed.Uwp/Package.xml

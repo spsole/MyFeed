@@ -1,10 +1,10 @@
 <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">
-    <img src="/myFeed.png" width="300px">
+    <img src="/MyFeed.png" width="300px">
 </a>
 
 <br />
 
-Read news from websites via <b>myFeed</b>, find interesting feeds on the Internet and group them by categories, save favorite articles to your device with an ability to read them offline, share interesting posts with friends. myFeed makes the process of reading RSS feeds ever more convenient.
+Read news from websites via <b>MyFeed</b>, find interesting feeds on the Internet and group them by categories, save favorite articles to your device with an ability to read them offline, share interesting posts with friends. MyFeed makes the process of reading RSS feeds ever more convenient.
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/built-by-hipsters.svg)](https://forthebadge.com)
@@ -14,12 +14,12 @@ Read news from websites via <b>myFeed</b>, find interesting feeds on the Interne
 <br />
 
 <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">
-  <img src="/myFeed.jpg" width="680"/>
+  <img src="/MyFeed.jpg" width="680"/>
 </a>
 
 ## About App
 
-myFeed is an RSS reader for <b>Universal Windows Platform</b>. The app can collect news from websites, save them to your device and send toast notifications once new posts appear in your news feeds. Application is completely free and open-source! <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get myFeed from Windows Store</a> or <a href="https://medium.com/@worldbeater/reactive-mvvm-for-net-platform-175dc69cfc82">read a note on Reactive MVVM architecture</a>.
+MyFeed is an RSS reader for <b>Universal Windows Platform</b>. The app can collect news from websites, save them to your device and send toast notifications once new posts appear in your news feeds. Application is completely free and open-source! <a href="https://www.microsoft.com/en-us/store/apps/myfeed/9nblggh4nw02">Get MyFeed from Windows Store</a> or <a href="https://medium.com/@worldbeater/reactive-mvvm-for-net-platform-175dc69cfc82">read a note on Reactive MVVM architecture</a>.
 
 ## Technologies and Tools Used
 

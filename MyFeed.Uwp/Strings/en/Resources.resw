@@ -1,0 +1,424 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="FaveViewTitle" xml:space="preserve">
+    <value>FAVORITES</value>
+  </data>
+  <data name="FeedViewTitle" xml:space="preserve">
+    <value>MY FEED</value>
+  </data>
+  <data name="SearchViewTitle" xml:space="preserve">
+    <value>SEARCH</value>
+  </data>
+  <data name="SettingsViewTitle" xml:space="preserve">
+    <value>SETTINGS</value>
+  </data>
+  <data name="Article">
+    <value>ARTICLE</value>
+  </data>
+  <data name="SourcesViewTitle" xml:space="preserve">
+    <value>CHANNELS</value>
+  </data>
+  <data name="FeedViewMenuItem">
+    <value>Feed</value>
+  </data>
+  <data name="FaveViewMenuItem">
+    <value>Favorites</value>
+  </data>
+  <data name="SourcesViewMenuItem">
+    <value>Channels</value>
+  </data>
+  <data name="SearchViewMenuItem">
+    <value>Search</value>
+  </data>
+  <data name="SettingsViewMenuItem">
+    <value>Settings</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="Read">
+    <value>Read</value>
+  </data>
+  <data name="Ok">
+    <value>Ok</value>
+  </data>
+  <data name="MarkAsRead">
+    <value>Mark as read</value>
+  </data>
+  <data name="MarkAsUnread">
+    <value>Mark as unread</value>
+  </data>
+  <data name="AddToFavorites">
+    <value>Add to favorites</value>
+  </data>
+  <data name="RemoveFromFavorites">
+    <value>Remove from favorites</value>
+  </data>
+  <data name="Add">
+    <value>Add</value>
+  </data>
+  <data name="Reorder">
+    <value>Reorder</value>
+  </data>
+  <data name="Cancel">
+    <value>Close</value>
+  </data>
+  <data name="Apply">
+    <value>Apply</value>
+  </data>
+  <data name="Remove">
+    <value>Remove</value>
+  </data>
+  <data name="Edit">
+    <value>Edit</value>
+  </data>
+  <data name="EnterLinkToRss">
+    <value>Enter a link to RSS feed...</value>
+  </data>
+  <data name="AddChannel">
+    <value>Add channel</value>
+  </data>
+  <data name="AddCategory">
+    <value>Add category</value>
+  </data>
+  <data name="AddIntoCategory">
+    <value>Add to category</value>
+  </data>
+  <data name="AddFromSearch">
+    <value>Add from search</value>
+  </data>
+  <data name="OpenInBrowser">
+    <value>Open</value>
+  </data>
+  <data name="CopyLink">
+    <value>Copy link</value>
+  </data>
+  <data name="ReShare">
+    <value>Share</value>
+  </data>
+  <data name="Notifications">
+    <value>Notifications</value>
+  </data>
+  <data name="Find">
+    <value>Find</value>
+  </data>
+  <data name="FindFeeds">
+    <value>Find feeds</value>
+  </data>
+  <data name="OpenMenu">
+    <value>Open menu</value>
+  </data>
+  <data name="FaveWelcomeTitle">
+    <value>Here your favorite articles will be displayed.</value>
+  </data>
+  <data name="FaveWelcomeSubTitle">
+    <value>Tap on star symbol when reading to add new article here!</value>
+  </data>
+  <data name="SearchNothingTitle">
+    <value>Can't find anything related to this query!</value>
+  </data>
+  <data name="SearchNothingSubTitle">
+    <value>Please, check your search query.</value>
+  </data>
+  <data name="SearchErrorConnectionTitle">
+    <value>Something went wrong!</value>
+  </data>
+  <data name="SearchErrorConnectionSubTitle">
+    <value>Please, make sure your device is connected to the Internet, and then try again!</value>
+  </data>
+  <data name="Personalization">
+    <value>Personalization</value>
+  </data>
+  <data name="AboutApp">
+    <value>About the app</value>
+  </data>
+  <data name="Special">
+    <value>Special</value>
+  </data>
+  <data name="RefreshPage">
+    <value>Refresh the page</value>
+  </data>
+  <data name="ProvideSearchQuery">
+    <value>Enter search query...</value>
+  </data>
+  <data name="ChangeTextSizeTitle">
+    <value>Font size</value>
+  </data>
+  <data name="ChangeTextSize">
+    <value>Change font size in reading mode.</value>
+  </data>
+  <data name="DisableImagesTitle">
+    <value>Images</value>
+  </data>
+  <data name="DisableImages">
+    <value>Should MyFeed download images from the Internet? Disabling this option may help to reduce cellular data usage if you are using limited internet connection.</value>
+  </data>
+  <data name="NotifyCheckTimeTitle">
+    <value>Notifications</value>
+  </data>
+  <data name="NotifyCheckTime">
+    <value>How often notifications service should check your feeds for recent updates (in minutes)? Set slider value to 0 (zero) if you would like to completely disable notifications.</value>
+  </data>
+  <data name="NotifyBannersTitle">
+    <value>Banners</value>
+  </data>
+  <data name="NotifyBanners">
+    <value>Should MyFeed notification service send you banners and sound alerts?</value>
+  </data>
+  <data name="ChangeThemeTitle">
+    <value>Appearance</value>
+  </data>
+  <data name="ChangeTheme">
+    <value>Choose application theme that should be used in the app.</value>
+  </data>
+  <data name="Export">
+    <value>Export</value>
+  </data>
+  <data name="ExportOpmlTitle">
+    <value>Export feeds</value>
+  </data>
+  <data name="ExportOpml">
+    <value>MyFeed provides an ability to export feeds in a popular RSS feeds storage format named OPML.</value>
+  </data>
+  <data name="Import">
+    <value>Import</value>
+  </data>
+  <data name="ImportOpmlTitle">
+    <value>Import feeds</value>
+  </data>
+  <data name="ImportOpml">
+    <value>Import channels from other feed readers to MyFeed and continue reading your favorite feeds!</value>
+  </data>
+  <data name="Reset">
+    <value>Reset</value>
+  </data>
+  <data name="ResetText">
+    <value>You can easily reinstall and reset MyFeed by using this option. Note: all your data will be deleted.</value>
+  </data>
+  <data name="EnterNameOfNewCategoryTitle">
+    <value>Category editor</value>
+  </data>
+  <data name="EnterNameOfNewCategory">
+    <value>Enter a title...</value>
+  </data>
+  <data name="DeleteCategory">
+    <value>Delete category</value>
+  </data>
+  <data name="DeleteChannel">
+    <value>Channel will be deleted.</value>
+  </data>
+  <data name="DeleteElement">
+    <value>Delete element</value>
+  </data>
+  <data name="FeedWelcomeTitle">
+    <value>Here your updates will be displayed.</value>
+  </data>
+  <data name="FeedWelcome">
+    <value>Add a new RSS channel!</value>
+  </data>
+  <data name="FeedNothingTitle">
+    <value>Nothing here!</value>
+  </data>
+  <data name="FeedNothing">
+    <value>Add a new channel?</value>
+  </data>
+  <data name="SourcesWelcomeTitle">
+    <value>Here your channels are stored.</value>
+  </data>
+  <data name="SourcesWelcome">
+    <value>Add a new category!</value>
+  </data>
+  <data name="DefaultThemeOption">
+    <value>Use system defaults</value>
+  </data>
+  <data name="DarkThemeOption">
+    <value>Dark theme</value>
+  </data>
+  <data name="LightThemeOption">
+    <value>Light theme</value>
+  </data>
+  <data name="ChooseArticleTitle">
+    <value>Choose an article!</value>
+  </data>
+  <data name="ChooseArticle">
+    <value>And start reading.</value>
+  </data>
+  <data name="SettingsNotification">
+    <value>Notification</value>
+  </data>
+  <data name="ExportOpmlSuccess">
+    <value>Feeds were successfully exported!</value>
+  </data>
+  <data name="ImportOpmlSuccess">
+    <value>Feeds were successfully imported!</value>
+  </data>
+  <data name="ExportOpmlFailure">
+    <value>Failed to export OPML feeds.</value>
+  </data>
+  <data name="ImportOpmlFailure">
+    <value>Failed to import OPML feeds.</value>
+  </data>
+  <data name="SendMailButton">
+    <value>Report an issue</value>
+  </data>
+  <data name="SendMail">
+    <value>If you have faced an issue when using MyFeed, please, report it!</value>
+  </data>
+  <data name="SendFeedbackButton">
+    <value>Rate the app</value>
+  </data>
+  <data name="SendFeedback">
+    <value>If you like MyFeed, please, rate the app in Windows Store!</value>
+  </data>
+  <data name="ResetAppNoRestore">
+    <value>This action will delete all your locally stored data, including favorite articles and channels list. This stuff will be lost forever! Are you sure you want to continue?</value>
+  </data>
+  <data name="SourcesMigrateSuccess">
+    <value>All your news feeds have been succesfully converted to new feed storage format. We hope you'll enjoy new and updated MyFeed!</value>
+  </data>
+  <data name="SourcesMigrateFailure">
+    <value>Error occured while converting news channels. Please, add missing ones once again. Error message: {0}</value>
+  </data>
+  <data name="ArticlesMigrateSuccess">
+    <value>All your favorite articles were successfully convertet to new article storage format. Thank you for using MyFeed!</value>
+  </data>
+  <data name="ArticlesMigrateFailure">
+    <value>Error occured while converting favorite articles. Error message: {0}</value>
+  </data>
+  <data name="CopyLinkSuccess">
+    <value>Link was successfully copied!</value>
+  </data>
+  <data name="SearchWelcomeTitle">
+    <value>Here you can find channels of your interest.</value>
+  </data>
+  <data name="SearchWelcomeSubTitle">
+    <value>Enter search query into the text field above, for example "News", and press "Search"!</value>
+  </data>
+  <data name="ImageOpenFullSize">
+    <value>Open in browser</value>
+  </data>
+  <data name="ImageCopyLink">
+    <value>Copy link</value>
+  </data>
+  <data name="OrderByDate">
+    <value>Order by day</value>
+  </data>
+  <data name="OrderByMonth">
+    <value>Order by month</value>
+  </data>
+  <data name="OrderByFeed">
+    <value>Order by feed title</value>
+  </data>
+  <data name="SelectCategory">
+    <value>Go to category</value>
+  </data>
+  <data name="OrderBy">
+    <value>Order by</value>
+  </data>
+  <data name="MaxArticlesPerFeedTitle">
+    <value>Cache size</value>
+  </data>
+  <data name="MaxArticlesPerFeed">
+    <value>Set maximum articles count related to a single feed. Higher number can allow you to keep more articles stored, lower number can potentially improve app performance.</value>
+  </data>
+  <data name="Published">
+    <value>Published:</value>
+  </data>
+  <data name="ShowReadArticlesTitle">
+    <value>Show read articles</value>
+  </data>
+  <data name="ShowReadArticles">
+    <value>Should the application show read articles in your news feeds?</value>
+  </data>
+  <data name="ErrorTitle">
+    <value>Error occured!</value>
+  </data>
+  <data name="ErrorMessage">
+    <value>Something went wrong while performing a request!</value>
+  </data>
+  <data name="SearchAddedMessage">
+    <value>The channel was successfully added!</value>
+  </data>
+  <data name="SearchAddedTitle">
+    <value>Notification</value>
+  </data>
+  <data name="SearchCopiedMessage">
+    <value>Notification was successfully copied!</value>
+  </data>
+  <data name="SearchCopiedTitle">
+    <value>Notification</value>
+  </data>
+  <data name="SearchCategorySelect">
+    <value>Choose a category...</value>
+  </data>
+  <data name="SearchAddChannel">
+    <value>Save here</value>
+  </data>
+  <data name="GoToArticles">
+    <value>Go to articles</value>
+  </data>
+  <data name="FeedErrorTitle">
+    <value>Something went wrong.</value>
+  </data>
+  <data name="FeedErrorDescription">
+    <value>We suggest you to wait a bit and try again.</value>
+  </data>
+</root>
