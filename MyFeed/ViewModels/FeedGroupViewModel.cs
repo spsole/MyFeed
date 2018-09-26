@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using DryIocAttributes;
 using MyFeed.Interfaces;
@@ -15,7 +16,7 @@ namespace MyFeed.ViewModels
     [Reuse(ReuseType.Transient)]
     [AddINotifyPropertyChangedInterface]
     [ExportEx(typeof(FeedGroupViewModel))]
-    public sealed class FeedGroupViewModel
+    public sealed class FeedGroupViewModel : ISupportsActivation
     {
         private readonly Func<Article, FeedItemViewModel> _factory;
         private readonly IReactiveList<FeedItemViewModel> _source;
@@ -27,7 +28,8 @@ namespace MyFeed.ViewModels
         public ReactiveCommand<Unit, IEnumerable<Article>> Fetch { get; }
         public IReactiveDerivedList<FeedItemViewModel> Items { get; }
         public ReactiveCommand<Unit, Unit> Modify { get; }
-        
+        public ViewModelActivator Activator { get; }
+
         public bool ShowRead { get; private set; } = true;
         public bool IsLoading { get; private set; } = true;
         public bool HasErrors { get; private set; }
@@ -76,6 +78,10 @@ namespace MyFeed.ViewModels
                 .Select(exception => true)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => HasErrors = x);
+
+            Activator = new ViewModelActivator();
+            this.WhenActivated((CompositeDisposable disposables) =>
+                Fetch.Execute().Subscribe());
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using DryIocAttributes;
 using MyFeed.Interfaces;
@@ -15,7 +16,7 @@ namespace MyFeed.ViewModels
     [Reuse(ReuseType.Transient)]
     [ExportEx(typeof(FaveViewModel))]
     [AddINotifyPropertyChangedInterface]
-    public sealed class FaveViewModel
+    public sealed class FaveViewModel : ISupportsActivation
     {
         private readonly Func<IGrouping<string, Article>, FaveGroupViewModel> _factory;
         private readonly INavigationService _navigationService;
@@ -28,7 +29,7 @@ namespace MyFeed.ViewModels
 
         public ReactiveList<FaveGroupViewModel> Items { get; }
         public ReactiveCommand<Unit, Unit> ReadFeeds { get; }
-        public ReactiveCommand<Unit, Unit> Load { get; }
+        public ViewModelActivator Activator { get; }
 
         public bool IsLoading { get; private set; } = true;
         public bool IsEmpty { get; private set; }
@@ -44,19 +45,23 @@ namespace MyFeed.ViewModels
             _favoriteManager = favoriteManager;
             _settingManager = settingManager;
             _factory = factory;
-            
+
             ReadFeeds = ReactiveCommand.CreateFromTask(_navigationService.Navigate<FeedViewModel>);
             Items = new ReactiveList<FaveGroupViewModel> { ChangeTrackingEnabled = true };
+
             var month = CultureInfo.CurrentCulture.DateTimeFormat.YearMonthPattern;
             var date = CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern;
 
-            Load = Filter(x => x.PublishedDate, x => x.ToString(date));
-            OrderByDate = Filter(x => x.PublishedDate, x => x.ToString(date));
-            OrderByMonth = Filter(x => x.PublishedDate, x => x.ToString(month));
-            OrderByFeed = Filter(x => x.FeedTitle, x => x);
+            OrderByDate = CreateFilter(x => x.PublishedDate, x => x.ToString(date));
+            OrderByMonth = CreateFilter(x => x.PublishedDate, x => x.ToString(month));
+            OrderByFeed = CreateFilter(x => x.FeedTitle, x => x);
+
+            Activator = new ViewModelActivator();
+            this.WhenActivated((CompositeDisposable disposables) => 
+                OrderByDate.Execute().Subscribe());
         }
         
-        private ReactiveCommand<Unit, Unit> Filter<TProperty>(
+        private ReactiveCommand<Unit, Unit> CreateFilter<TProperty>(
             Func<Article, TProperty> sequenceOrderer,
             Func<TProperty, string> itemDisplay)
         {

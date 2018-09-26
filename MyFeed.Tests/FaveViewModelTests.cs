@@ -20,14 +20,12 @@ namespace MyFeed.Tests
         private readonly ISettingManager _settingManager = Substitute.For<ISettingManager>();
 
         private readonly Func<IGrouping<string, Article>, FaveGroupViewModel> _groupFactory;
-        private readonly Func<FeedItemViewModel, FeedItemFullViewModel> _fullItemFactory;
         private readonly Func<Article, FeedItemViewModel> _itemFactory;
         private readonly FaveViewModel _faveViewModel;
 
         public FaveViewModelTests()
         {
-            _fullItemFactory = x => new FeedItemFullViewModel(x, _settingManager);
-            _itemFactory = x => new FeedItemViewModel(_fullItemFactory, _navigationService, _categoryManager, _favoriteManager, _platformService, x);
+            _itemFactory = x => new FeedItemViewModel(_navigationService, _categoryManager, _favoriteManager, _platformService, _settingManager, x);
             _groupFactory = x => new FaveGroupViewModel(_itemFactory, x);
             _faveViewModel = new FaveViewModel(_groupFactory, _navigationService, _favoriteManager, _settingManager);
         }
@@ -47,7 +45,7 @@ namespace MyFeed.Tests
             var article = new Article { Title = "Foo", FeedTitle = "Bar" };
             _favoriteManager.GetAll().Returns(new[] {article});
             _settingManager.Read().Returns(new Settings());
-            _faveViewModel.Load.Execute().Subscribe();
+            _faveViewModel.Activator.Activate();
             await Task.Delay(500);
 
             _faveViewModel.IsLoading.Should().BeFalse();
@@ -60,7 +58,7 @@ namespace MyFeed.Tests
         {
             _favoriteManager.GetAll().Returns(new Article[0]);
             _settingManager.Read().Returns(new Settings());
-            _faveViewModel.Load.Execute().Subscribe();
+            _faveViewModel.Activator.Activate();
             await Task.Delay(500);
 
             _faveViewModel.IsLoading.Should().BeFalse();
@@ -73,7 +71,7 @@ namespace MyFeed.Tests
         {
             _favoriteManager.GetAll().Returns(new Article[0]);
             _settingManager.Read().Returns(new Settings {Images = true});
-            _faveViewModel.Load.Execute().Subscribe();
+            _faveViewModel.Activator.Activate();
             await Task.Delay(500);
 
             _faveViewModel.IsLoading.Should().BeFalse();

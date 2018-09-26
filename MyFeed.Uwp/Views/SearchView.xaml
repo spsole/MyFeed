@@ -1,17 +1,12 @@
-﻿<Page
-    x:Class="MyFeed.Uwp.Views.SearchView"
-    xmlns:contract5Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 5)"
-    d:DataContext="{d:DesignInstance Type=implementations:SearchViewModel}"
+﻿<Page x:Class="MyFeed.Uwp.Views.SearchView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:controls="using:MyFeed.Uwp.Controls"
     xmlns:implementations="using:MyFeed.ViewModels"
-    xmlns:actions="using:MyFeed.Uwp.Actions"
+    xmlns:controls="using:MyFeed.Uwp.Controls"
+    xmlns:views="using:MyFeed.Uwp.Views"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -41,16 +36,6 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <interactivity:Interaction.Behaviors>
-            <core:EventTriggerBehavior EventName="Loaded">
-                <actions:ModalConfirmAction 
-                    Interaction="{Binding Added}" 
-                    Message="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchAddedMessage}" 
-                    Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchAddedTitle}"/>
-                <actions:ReactiveCommandAction 
-                    Command="{Binding RefreshCategories}"/>
-            </core:EventTriggerBehavior>
-        </interactivity:Interaction.Behaviors>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
             <RowDefinition Height="Auto"/>
@@ -59,14 +44,18 @@
         <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
         <controls:TitleBlock Grid.Row="0" Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchViewTitle}"/>
         <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
-            <controls:TransparentButton Symbol="List" Command="{Binding ViewCategories}">
+            <controls:TransparentButton x:Name="ViewCategoriesButton" Symbol="List">
                 <ToolTipService.ToolTip>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=AddCategory}" />
+                    <TextBlock Text="{Binding 
+                        Converter={StaticResource Locale}, 
+                        ConverterParameter=AddCategory}" />
                 </ToolTipService.ToolTip>
             </controls:TransparentButton>
-            <controls:TransparentButton Symbol="Sync" Command="{Binding Search}">
+            <controls:TransparentButton x:Name="RefreshButton" Symbol="Sync">
                 <ToolTipService.ToolTip>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}" />
+                    <TextBlock Text="{Binding 
+                        Converter={StaticResource Locale}, 
+                        ConverterParameter=Refresh}" />
                 </ToolTipService.ToolTip>
             </controls:TransparentButton>
         </StackPanel>
@@ -85,14 +74,15 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <TextBox InputScope="Search" Margin="12 0 12 0" 
-                        Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        PlaceholderText="{Binding Converter={StaticResource Locale}, ConverterParameter=ProvideSearchQuery}"/>
+                    <TextBox x:Name="SearchQueryTextBox" InputScope="Search" Margin="12 0 12 0" 
+                            PlaceholderText="{Binding Converter={StaticResource Locale}, 
+                                                      ConverterParameter=ProvideSearchQuery}"/>
                 </StackPanel>
-                <Button Grid.Column="1" Command="{Binding Search}" 
+                <Button x:Name="SearchButton" Grid.Column="1" 
                     Margin="0 0 12 0" VerticalAlignment="Center"
                     Style="{StaticResource AccentButtonStyle}"
-                    Content="{Binding Converter={StaticResource Locale}, ConverterParameter=Find}"/>
+                    Content="{Binding Converter={StaticResource Locale}, 
+                                      ConverterParameter=Find}"/>
             </Grid>
             <Grid x:Name="CategoryBar" Height="48" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0">
                 <Grid.ColumnDefinitions>
@@ -100,24 +90,21 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                    <ComboBox ItemsSource="{Binding Categories}" Margin="12 0 12 0"
-                        PlaceholderText="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchCategorySelect}"
+                    <ComboBox x:Name="CategoriesComboBox" Margin="12 0 12 0"
                         DisplayMemberPath="Title" HorizontalAlignment="Stretch"
-                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"/>
+                        PlaceholderText="{Binding Converter={StaticResource Locale}, 
+                                                  ConverterParameter=SearchCategorySelect}"/>
                 </StackPanel>
-                <Button Grid.Column="1" Command="{Binding Add}" 
-                    Margin="0 0 12 0" VerticalAlignment="Center"
+                <Button x:Name="AddButton" Grid.Column="1" VerticalAlignment="Center" Margin="0 0 12 0" 
                     Content="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchAddChannel}"
                     Style="{StaticResource AccentButtonStyle}"/>
             </Grid>
         </Grid>
         <Grid Grid.Row="2">
             <toolkit:PullToRefreshListView 
+                x:Name="FoundFeedsListView"
                 IsMultiSelectCheckBoxEnabled="False"
-                SelectedItem="{Binding SelectedFeed, Mode=TwoWay}"
                 ShowsScrollingPlaceholders="False" 
-                RefreshCommand="{Binding Search}" 
-                ItemsSource="{Binding Feeds}" 
                 IsItemClickEnabled="False"
                 SelectionMode="Single">
                 <toolkit:PullToRefreshListView.ItemContainerStyle>
@@ -141,67 +128,27 @@
                             Background="{ThemeResource SystemControlBackgroundAccentBrush}"/>
                 </toolkit:PullToRefreshListView.ReleaseToRefreshContent>
                 <toolkit:PullToRefreshListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="12 6">
-                            <StackPanel Orientation="Horizontal">
-                                <toolkit:RoundImageEx Source="{Binding Image}"
-                                    DecodePixelType="Logical" DecodePixelHeight="70" 
-                                    HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    Width="16" Height="16" CornerRadius="8"/>
-                                <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Margin="6 0 0 0"/>
-                            </StackPanel>
-                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" 
-                                Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                            <TextBlock Text="{Binding Url}" TextTrimming="CharacterEllipsis" 
-                                Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"/>
-                            <Grid Margin="0 6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <CheckBox Grid.Column="0" VerticalAlignment="Center"
-                                          MinWidth="0" Padding="0" IsEnabled="False"
-                                          IsChecked="{Binding IsSelected, Mode=OneWay}"/>
-                                <Button Grid.Column="1" Command="{Binding Open}" Margin="12 0"
-                                        Content="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}" 
-                                        contract5Present:Style="{StaticResource ButtonRevealStyle}"/>
-                                <Button Grid.Column="2" Command="{Binding Copy}"
-                                        Content="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"
-                                        contract5Present:Style="{StaticResource ButtonRevealStyle}">
-                                    <interactivity:Interaction.Behaviors>
-                                        <core:EventTriggerBehavior EventName="Click">
-                                            <actions:ModalConfirmAction 
-                                                Interaction="{Binding Copied}" 
-                                                Message="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchCopiedMessage}" 
-                                                Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchCopiedTitle}"/>
-                                        </core:EventTriggerBehavior>
-                                    </interactivity:Interaction.Behaviors>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
+                    <DataTemplate x:DataType="implementations:SearchItemViewModel">
+                        <views:SearchItemView DataContext="{Binding}" />
                     </DataTemplate>
                 </toolkit:PullToRefreshListView.ItemTemplate>
             </toolkit:PullToRefreshListView>
-            <controls:ErrorScreen Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingTitle}"
-                                  Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingSubTitle}"
-                                  Action="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
-                                  IsVisible="{Binding IsEmpty, Mode=OneWay}"
-                                  Command="{Binding Search}"
-                                  Symbol="List"/>
-            <controls:ErrorScreen Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeTitle}"
-                                  Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeSubTitle}"
-                                  Action="{Binding Converter={StaticResource Locale}, ConverterParameter=FindFeeds}"
-                                  IsVisible="{Binding IsGreeting, Mode=OneWay}" 
-                                  Command="{Binding Search}" 
-                                  Symbol="Zoom"/>
-            <controls:ErrorScreen Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchErrorConnectionTitle}"
-                                  Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchErrorConnectionSubTitle}"
-                                  Action="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
-                                  IsVisible="{Binding HasErrors, Mode=OneWay}" 
-                                  Command="{Binding Search}" 
-                                  Symbol="Refresh"/>
-            <controls:LoadingScreen IsActive="{Binding IsLoading, Mode=OneWay}"/>
+            <controls:ErrorScreen 
+                Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingTitle}"
+                Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchNothingSubTitle}"
+                Action="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
+                x:Name="EmptyScreen" Symbol="List" />
+            <controls:ErrorScreen 
+                Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeTitle}"
+                Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchWelcomeSubTitle}"
+                Action="{Binding Converter={StaticResource Locale}, ConverterParameter=FindFeeds}"
+                x:Name="GreetingScreen" Symbol="Zoom" />
+            <controls:ErrorScreen 
+                Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchErrorConnectionTitle}"
+                Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SearchErrorConnectionSubTitle}"
+                Action="{Binding Converter={StaticResource Locale}, ConverterParameter=RefreshPage}"
+                x:Name="HasErrorsScreen" Symbol="Refresh" />
+            <controls:LoadingScreen x:Name="LoadingScreen"/>
         </Grid>
     </Grid>
 </Page>

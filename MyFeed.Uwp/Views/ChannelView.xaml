@@ -1,16 +1,11 @@
-﻿<Page
-    x:Class="MyFeed.Uwp.Views.ChannelView"
-    xmlns:contract5Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 5)"
-    d:DataContext="{d:DesignInstance Type=implementations:ChannelViewModel}"
+﻿<Page x:Class="MyFeed.Uwp.Views.ChannelView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:MyFeed.Uwp.Controls"
     xmlns:implementations="using:MyFeed.ViewModels"
-    xmlns:actions="using:MyFeed.Uwp.Actions"
+    xmlns:views="using:MyFeed.Uwp.Views"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -25,55 +20,28 @@
     </Page.Transitions>
 
     <Grid>
-        <interactivity:Interaction.Behaviors>    
-            <core:EventTriggerBehavior EventName="Loaded">
-                <actions:ReactiveCommandAction Command="{Binding Load}"/>
-            </core:EventTriggerBehavior>
-        </interactivity:Interaction.Behaviors>
         <Grid.RowDefinitions>
             <RowDefinition Height="48"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Background="{ThemeResource LowBackgroundThemeBrush}"/>
-        <controls:TitleBlock Grid.Row="0" 
-            Count="{Binding Categories.Count, Mode=OneWay}" 
-            Text="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesViewTitle}"/>
+        <controls:TitleBlock Grid.Row="0" x:Name="CategoriesCountTitleBlock"
+                             Text="{Binding Converter={StaticResource Locale}, 
+                                            ConverterParameter=SourcesViewTitle}"/>
         <StackPanel Grid.Row="0" HorizontalAlignment="Right" Orientation="Horizontal">
-            <controls:TransparentButton Symbol="Cancel" Visibility="{Binding ElementName=SourcesListView, 
-                Path=CanReorderItems, Mode=OneWay, Converter={StaticResource TruthyToVisible}}">
+            <controls:TransparentButton x:Name="ReadButton" Symbol="Sync">
                 <ToolTipService.ToolTip>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Apply}"/>
-                </ToolTipService.ToolTip>
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Click">
-                        <core:ChangePropertyAction
-                            TargetObject="{Binding ElementName=SourcesListView}"
-                            PropertyName="CanReorderItems" Value="False"/>
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </controls:TransparentButton>
-            <controls:TransparentButton Symbol="Sort" Visibility="{Binding ElementName=SourcesListView, 
-                Path=CanReorderItems, Mode=OneWay, Converter={StaticResource FalsyToVisible}}">
-                <ToolTipService.ToolTip>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Reorder}"/>
-                </ToolTipService.ToolTip>
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Click">
-                        <core:ChangePropertyAction 
-                            TargetObject="{Binding ElementName=SourcesListView}"
-                            PropertyName="CanReorderItems" Value="True"/>
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </controls:TransparentButton>
-            <controls:TransparentButton Symbol="Sync" Command="{Binding Load}">
-                <ToolTipService.ToolTip>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Refresh}"/>
+                    <TextBlock Text="{Binding 
+                        Converter={StaticResource Locale}, 
+                        ConverterParameter=Refresh}"/>
                 </ToolTipService.ToolTip>
             </controls:TransparentButton>
-            <controls:TransparentButton Symbol="Zoom" Command="{Binding Search}">
+            <controls:TransparentButton x:Name="SearchButton" Symbol="Zoom">
                 <ToolTipService.ToolTip>
-                    <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Find}"/>
+                    <TextBlock Text="{Binding 
+                        Converter={StaticResource Locale}, 
+                        ConverterParameter=Find}"/>
                 </ToolTipService.ToolTip>
             </controls:TransparentButton>
         </StackPanel>
@@ -82,21 +50,22 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>    
+            </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                <TextBox Margin="12 0 12 0" PlaceholderText="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategory}"
-                         Text="{Binding CategoryName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox x:Name="CategoryNameTextBox" Margin="12 0 12 0" 
+                    PlaceholderText="{Binding 
+                        Converter={StaticResource Locale}, 
+                        ConverterParameter=EnterNameOfNewCategory}"/>
             </StackPanel>
-            <Button Grid.Column="1" Command="{Binding CreateCategory}" 
-                    Margin="0 0 12 0" VerticalAlignment="Center"
+            <Button x:Name="CreateCategoryButton" Grid.Column="1" Margin="0 0 12 0" VerticalAlignment="Center"
                     Content="{Binding Converter={StaticResource Locale}, ConverterParameter=AddCategory}"
-                    Style="{StaticResource AccentButtonStyle}"/>
+                    Style="{StaticResource AccentButtonStyle}" />
         </Grid>
-        <ListView x:Name="SourcesListView" Grid.Row="2" AllowDrop="True" 
-                  ItemsSource="{Binding Categories, Mode=OneTime}" 
-                  IsItemClickEnabled="False" SelectionMode="None" 
-                  Padding="0 6 0 54" CanReorderItems="False"
-                  ShowsScrollingPlaceholders="False">
+        <ListView 
+            x:Name="CategoriesListView" Grid.Row="2" AllowDrop="True"
+            IsItemClickEnabled="False" SelectionMode="None" 
+            Padding="0 6 0 54" CanReorderItems="False"
+            ShowsScrollingPlaceholders="False">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -104,113 +73,17 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
-                <DataTemplate>
-                    <controls:Expander Margin="12 6" HorizontalContentAlignment="Stretch"
-                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                        CanDrag="{Binding ElementName=SourcesListView, Path=CanReorderItems, Converter={StaticResource NegateBool}}"
-                        IsEnabled="{Binding ElementName=SourcesListView, Path=CanReorderItems, Converter={StaticResource NegateBool}}">
-                        <controls:Expander.HeaderContent>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding RealTitle, Mode=OneWay}" Margin="0 0 6 0"/>
-                                <TextBlock Text="{Binding Channels.Count, Mode=OneWay}" Opacity="0.5"/>
-                            </StackPanel>
-                        </controls:Expander.HeaderContent>
-                        <controls:Expander.Content>
-                            <StackPanel>
-                                <Grid Height="54" Padding="12 12 12 6" Background="{ThemeResource MediumBackgroundThemeBrush}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBox Margin="0 6" PlaceholderText="{Binding Converter={StaticResource Locale}, ConverterParameter=EnterNameOfNewCategory}"
-                                                 Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="1" Command="{Binding Remove}" Margin="12 0 0 0"
-                                            contract5Present:Style="{StaticResource ButtonRevealStyle}"
-                                            Content="{Binding Converter={StaticResource Locale}, ConverterParameter=DeleteCategory}"/>
-                                </Grid>
-                                <Grid Height="48" Padding="12 0 12 12" Background="{ThemeResource MediumBackgroundThemeBrush}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBox Margin="0 6" PlaceholderText="http://example.com/"
-                                                 Text="{Binding ChannelUri, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </StackPanel>
-                                    <Button Grid.Column="1" Command="{Binding CreateChannel}" Margin="12 0 0 0"
-                                            Content="{Binding Converter={StaticResource Locale}, ConverterParameter=Add}"
-                                            Style="{StaticResource AccentButtonStyle}"/>
-                                </Grid>
-                                <ListView ItemsSource="{Binding Channels}" SelectionMode="None" >
-                                    <ListView.ItemContainerStyle>
-                                        <Style TargetType="ListViewItem">
-                                            <Style.Setters>
-                                                <Setter Property="Background" Value="{ThemeResource LowBackgroundThemeBrush}"/>
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                            </Style.Setters>
-                                        </Style>
-                                    </ListView.ItemContainerStyle>
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid Margin="0 3 0 9">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-                                                    <TextBlock Text="{Binding Url}" FontSize="13" FontWeight="SemiBold"
-                                                        Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"/>
-                                                </StackPanel>
-                                                <StackPanel Grid.Row="0" Grid.Column="1" Margin="9 0 0 0" Width="100">
-                                                    <ToggleSwitch IsOn="{Binding Notify, Mode=TwoWay}"/>
-                                                    <TextBlock FontSize="12" Margin="0 -3 0 0" FontWeight="SemiBold"
-                                                               TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
-                                                               Foreground="{ThemeResource ApplicationSecondaryForegroundThemeBrush}"
-                                                               Text="{Binding Converter={StaticResource Locale}, ConverterParameter=Notifications}"/>
-                                                </StackPanel>
-                                                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-                                                    <Button contract5Present:Style="{ThemeResource ButtonRevealStyle}"
-                                                            Content="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLink}"
-                                                            Command="{Binding Copy}">
-                                                        <interactivity:Interaction.Behaviors>
-                                                            <core:EventTriggerBehavior EventName="Click">
-                                                    <actions:ModalConfirmAction 
-                                                        Interaction="{Binding Copied}"
-                                                        Message="{Binding Converter={StaticResource Locale}, ConverterParameter=CopyLinkSuccess}"
-                                                        Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SettingsNotification}"/>
-                                                            </core:EventTriggerBehavior>
-                                                        </interactivity:Interaction.Behaviors>
-                                                    </Button>
-                                                    <Button Margin="12 0" Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Content="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenInBrowser}"
-                                                            Command="{Binding Open}" />
-                                                    <Button Style="{ThemeResource TextBlockButtonStyle}"
-                                                            Content="{Binding Converter={StaticResource Locale}, ConverterParameter=Remove}"
-                                                            Command="{Binding Delete}" />
-                                                </StackPanel>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </StackPanel>
-                        </controls:Expander.Content>
-                    </controls:Expander>
+                <DataTemplate x:DataType="implementations:ChannelGroupViewModel">
+                    <views:ChannelGroupView DataContext="{Binding}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <controls:ErrorScreen Grid.Row="2" IsVisible="{Binding IsEmpty, Mode=OneWay}" 
-                              Symbol="List" Command="{Binding CreateCategory}"
-                              Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesWelcomeTitle}"
-                              Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesWelcome}"
-                              Action="{Binding Converter={StaticResource Locale}, ConverterParameter=AddCategory}"/>
-        <controls:LoadingScreen Grid.Row="2" IsActive="{Binding IsLoading, Mode=OneWay}"/>
+        <controls:ErrorScreen 
+            Title="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesWelcomeTitle}"
+            Description="{Binding Converter={StaticResource Locale}, ConverterParameter=SourcesWelcome}"
+            Action="{Binding Converter={StaticResource Locale}, ConverterParameter=AddCategory}"
+            x:Name="CreateCategoryScreen" 
+            Grid.Row="2" Symbol="List" />
+        <controls:LoadingScreen x:Name="LoadingScreen" Grid.Row="2"/>
     </Grid>
 </Page>

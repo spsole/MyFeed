@@ -35,13 +35,13 @@ namespace MyFeed.ViewModels
         public ReactiveCommand<Unit, Unit> Review { get; }
         public string Version { get; }
 
+        public double Max { get; set; }
+        public double Period { get; set; }
         public double Font { get; set; }
         public string Theme { get; set; }
         public bool Banners { get; set; }
         public bool Images { get; set; }
         public bool Read { get; set; }
-        public int Period { get; set; }
-        public int Max { get; set; }
 
         public SettingViewModel(
             IFilePickerService filePickerService,
@@ -78,7 +78,7 @@ namespace MyFeed.ViewModels
                 .Subscribe();
 
             this.ObservableForProperty(x => x.Period)
-                .Select(property => property.Value)
+                .Select(property => (int)property.Value)
                 .Select(platformService.RegisterBackgroundTask)
                 .SelectMany(task => task.ToObservable())
                 .Subscribe();
@@ -99,13 +99,13 @@ namespace MyFeed.ViewModels
                 .Skip(1)
                 .Select(x => new Settings
                 {
-                    Period = x.Item1, 
+                    Period = (int)x.Item1, 
                     Banners = x.Item2, 
                     Images = x.Item3,
                     Theme = x.Item4,
                     Read = x.Item5, 
                     Font = x.Item6, 
-                    Max = x.Item7
+                    Max = (int)x.Item7
                 })
                 .Select(settingManager.Write)
                 .SelectMany(task => task.ToObservable())

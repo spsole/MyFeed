@@ -21,17 +21,15 @@ namespace MyFeed.Tests
         private readonly IPlatformService _platformService = Substitute.For<IPlatformService>();
         private readonly ISettingManager _settingManager = Substitute.For<ISettingManager>();
         
-        private readonly Func<FeedItemViewModel, FeedItemFullViewModel> _fullFactory;
         private readonly Func<Category, FeedGroupViewModel> _groupFactory;
         private readonly Func<Article, FeedItemViewModel> _itemFactory;
         private readonly FeedViewModel _feedViewModel;
 
         public FeedViewModelTests()
         {
-            _fullFactory = x => new FeedItemFullViewModel(x, _settingManager);
-            _itemFactory = x => new FeedItemViewModel(_fullFactory, _navigationService, _categoryManager, _favoriteManager, _platformService, x);
+            _itemFactory = x => new FeedItemViewModel(_navigationService, _categoryManager, _favoriteManager, _platformService, _settingManager, x);
             _groupFactory = x => new FeedGroupViewModel(_itemFactory, _navigationService, _feedStoreService, _settingManager, x);
-            _feedViewModel = new FeedViewModel(_groupFactory, _navigationService, _categoryManager, _settingManager);
+            _feedViewModel = new FeedViewModel(_groupFactory, _navigationService, _categoryManager);
         }
 
         [Fact]
@@ -125,7 +123,6 @@ namespace MyFeed.Tests
             await Task.Delay(100);
             
             _feedViewModel.IsEmpty.Should().BeTrue();
-            _feedViewModel.Images.Should().BeTrue();
             _feedViewModel.IsLoading.Should().BeFalse();
             _feedViewModel.Items.Should().BeEmpty();
         }

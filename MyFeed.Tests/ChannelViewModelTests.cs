@@ -50,7 +50,7 @@ namespace MyFeed.Tests
         public async Task ShouldBeMarkedAsEmptyIfThereIsNoCategoriesInStorage()
         {
             _categoryManager.GetAll().Returns(new List<Category>());
-            _channelViewModel.Load.Execute().Subscribe();
+            _channelViewModel.Read.Execute().Subscribe();
             await Task.Delay(100);
 
             _channelViewModel.IsLoading.Should().BeFalse();
@@ -63,7 +63,7 @@ namespace MyFeed.Tests
         {
             var category = new Category {Title = "Foo", Channels = new List<Channel>()};
             _categoryManager.GetAll().Returns(new List<Category> {category});
-            _channelViewModel.Load.Execute().Subscribe();
+            _channelViewModel.Read.Execute().Subscribe();
             await Task.Delay(300);
 
             _channelViewModel.IsLoading.Should().BeFalse();
@@ -78,7 +78,7 @@ namespace MyFeed.Tests
             var foo = new Category {Title = "Foo", Channels = new List<Channel>()};
             var bar = new Category {Title = "Bar", Channels = new List<Channel>()};
             _categoryManager.GetAll().Returns(new List<Category> {foo, bar});
-            _channelViewModel.Load.Execute().Subscribe();
+            _channelViewModel.Read.Execute().Subscribe();
             await Task.Delay(300);
 
             _channelViewModel.Categories.Count.Should().Be(2);
@@ -99,7 +99,7 @@ namespace MyFeed.Tests
         {
             var category = new Category {Title = "Foo"};
             _categoryManager.GetAll().Returns(new List<Category> {category});
-            _channelViewModel.Load.Execute().Subscribe();
+            _channelViewModel.Read.Execute().Subscribe();
             await Task.Delay(300);
             
             _channelViewModel.IsLoading.Should().BeFalse();
@@ -118,7 +118,7 @@ namespace MyFeed.Tests
         {
             var category = new Category {Title = "Foo"};
             _categoryManager.GetAll().Returns(new List<Category> {category});
-            _channelViewModel.Load.Execute().Subscribe();
+            _channelViewModel.Read.Execute().Subscribe();
             await Task.Delay(300);
             
             _channelViewModel.IsLoading.Should().BeFalse();
@@ -139,7 +139,7 @@ namespace MyFeed.Tests
         {
             var category = new Category {Title = "Foo", Channels = new List<Channel>()};
             _categoryManager.GetAll().Returns(new List<Category> {category});
-            _channelViewModel.Load.Execute().Subscribe();
+            _channelViewModel.Read.Execute().Subscribe();
             await Task.Delay(300);
 
             _channelViewModel.Categories.Should().NotBeEmpty();
@@ -164,7 +164,7 @@ namespace MyFeed.Tests
             var channel = new Channel {Uri = "http://vc.ru/feed"};
             var category = new Category {Channels = new List<Channel> {channel}};
             _categoryManager.GetAll().Returns(new List<Category> {category});
-            _channelViewModel.Load.Execute().Subscribe();
+            _channelViewModel.Read.Execute().Subscribe();
             await Task.Delay(300);
 
             _channelViewModel.Categories.Should().NotBeEmpty();

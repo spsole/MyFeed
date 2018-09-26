@@ -4,10 +4,11 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using DryIocAttributes;
+using System.Reactive.Disposables;
 using MyFeed.Interfaces;
 using MyFeed.Models;
 using MyFeed.Platform;
+using DryIocAttributes;
 using PropertyChanged;
 using ReactiveUI;
 
@@ -16,7 +17,7 @@ namespace MyFeed.ViewModels
     [Reuse(ReuseType.Transient)]
     [ExportEx(typeof(SearchViewModel))]
     [AddINotifyPropertyChangedInterface]
-    public sealed class SearchViewModel
+    public sealed class SearchViewModel : ISupportsActivation
     {
         private readonly Func<FeedlyItem, SearchItemViewModel> _factory;
         private readonly INavigationService _navigationService;
@@ -33,6 +34,7 @@ namespace MyFeed.ViewModels
         public ReactiveCommand<Unit, Unit> ViewCategories { get; }
         public ReactiveList<Category> Categories { get; }
         public Category SelectedCategory { get; set; }
+        public ViewModelActivator Activator { get; }
 
         public string SearchQuery { get; set; } = string.Empty;
         public bool IsGreeting { get; private set; } = true;
@@ -50,7 +52,7 @@ namespace MyFeed.ViewModels
             _categoryManager = categoryManager;
             _navigationService = navigationService;
             _searchService = searchService;
-            
+
             Feeds = new ReactiveList<SearchItemViewModel>();
             Search = ReactiveCommand.CreateFromTask(
                 () => _searchService.Search(SearchQuery),
@@ -111,6 +113,10 @@ namespace MyFeed.ViewModels
                 this.WhenAnyValue(x => x.SelectedCategory, x => x.SelectedFeed)
                     .Select(sel => sel.Item1 != null && sel.Item2 != null)
                     .DistinctUntilChanged());
+
+            Activator = new ViewModelActivator();
+            this.WhenActivated((CompositeDisposable disposables) =>
+                RefreshCategories.Execute().Subscribe());
         }
 
         private async Task DoAdd()

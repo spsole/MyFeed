@@ -1,16 +1,10 @@
-﻿<Page
-    d:DataContext="{d:DesignInstance Type=implementations:MenuViewModel}"
+﻿<Page x:Class="MyFeed.Uwp.Views.MenuView"
     DataContext="{Binding Source={StaticResource Bootstrapper}, Path=MenuViewModel}"
-    x:Class="MyFeed.Uwp.Views.MenuView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:controls="using:MyFeed.Uwp.Controls"
-    xmlns:implementations="using:MyFeed.ViewModels"
-    xmlns:actions="using:MyFeed.Uwp.Actions"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
     
@@ -140,10 +134,10 @@
                                 ContentTransitions="{TemplateBinding ContentTransitions}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                 Style="{StaticResource BodyContentPresenterStyle}"
-                                TextWrapping="NoWrap"
-                                HorizontalAlignment="Stretch"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Padding="{TemplateBinding Padding}" />
+                                Padding="{TemplateBinding Padding}" 
+                                HorizontalAlignment="Stretch"
+                                TextWrapping="NoWrap"/>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -176,11 +170,6 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <interactivity:Interaction.Behaviors>
-            <core:EventTriggerBehavior EventName="Loaded">
-                <actions:ReactiveCommandAction Command="{Binding Load}"/>
-            </core:EventTriggerBehavior>
-        </interactivity:Interaction.Behaviors>
         <controls:SwipeableSplitView 
             x:Name="Menu" DisplayMode="Overlay" 
             CompactPaneLength="48" OpenPaneLength="270">
@@ -191,34 +180,18 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}">
-                        <StackPanel Orientation="Horizontal">
-                            <interactivity:Interaction.Behaviors>
-                                <core:EventTriggerBehavior EventName="Tapped">
-                                    <core:ChangePropertyAction 
-                                        Value="{Binding ElementName=Menu, Path=IsSwipeablePaneOpen, 
-                                            Converter={StaticResource NegateBool}}"
-                                        TargetObject="{Binding ElementName=Menu}" 
-                                        PropertyName="IsSwipeablePaneOpen"/>
-                                </core:EventTriggerBehavior>
-                            </interactivity:Interaction.Behaviors>
+                        <StackPanel x:Name="TapLayout" Orientation="Horizontal">
                             <Image Source="ms-appx:///Assets/StoreLogo.png" Margin="6 0" Height="36" Width="36"/>
                             <TextBlock Margin="12" Text="MyFeed" FontWeight="SemiBold" Foreground="White"/>
                         </StackPanel>
                     </Grid>
-                    <ListBox Background="Transparent" HorizontalAlignment="Right"
+                    <ListBox x:Name="MenuListBox" 
+                        Background="Transparent" HorizontalAlignment="Right"
                         Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                        ItemContainerStyle="{StaticResource MenuListBoxItem}"
                         Grid.Row="1" ManipulationMode="System, TranslateX" 
                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                        ScrollViewer.VerticalScrollMode="Disabled" ItemsSource="{Binding Items}" 
-                        ItemContainerStyle="{StaticResource MenuListBoxItem}"
-                        SelectedItem="{Binding Selection, Mode=TwoWay}">
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="SelectionChanged">
-                                <core:ChangePropertyAction Value="False"
-                                    TargetObject="{Binding ElementName=Menu}" 
-                                    PropertyName="IsSwipeablePaneOpen"/>
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
+                        ScrollViewer.VerticalScrollMode="Disabled">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Padding="12 0" Background="Transparent" Width="270" Height="48">
@@ -243,15 +216,9 @@
                         VerticalAlignment="Top" HorizontalAlignment="Left" Background="Transparent"
                         FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE700;" 
                         Width="48" Height="48">
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Click">
-                                <core:ChangePropertyAction Value="True"
-                                    TargetObject="{Binding ElementName=Menu}" 
-                                    PropertyName="IsSwipeablePaneOpen"/>
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
                         <ToolTipService.ToolTip>
-                            <TextBlock Text="{Binding Converter={StaticResource Locale}, ConverterParameter=OpenMenu}"/>
+                            <TextBlock Text="{Binding Converter={StaticResource Locale}, 
+                                                      ConverterParameter=OpenMenu}"/>
                         </ToolTipService.ToolTip>
                     </Button>
                 </Grid>

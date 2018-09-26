@@ -24,7 +24,7 @@ namespace MyFeed.Uwp.Services
         private readonly Subject<Type> _navigated = new Subject<Type>();
         private readonly IReadOnlyDictionary<Type, Type> _views = new Dictionary<Type, Type>
         {
-            {typeof(FeedItemFullViewModel), typeof(ArticleView)},
+            {typeof(FeedItemViewModel), typeof(ArticleView)},
             {typeof(SettingViewModel), typeof(SettingView)},
             {typeof(ChannelViewModel), typeof(ChannelView)},
             {typeof(SearchViewModel), typeof(SearchView)},
@@ -50,7 +50,7 @@ namespace MyFeed.Uwp.Services
         public Task NavigateTo<TViewModel>(TViewModel viewModel)
         {
             var viewModelType = typeof(TViewModel);
-            var depth = viewModelType.Name == nameof(FeedItemFullViewModel) ? 1 : 0;
+            var depth = viewModelType.Name == nameof(FeedItemViewModel) ? 1 : 0;
             var navigationFrame = GetChild<Frame>(Window.Current.Content, depth);
             navigationFrame.Navigate(_views[viewModelType], viewModel);
 
@@ -111,7 +111,7 @@ namespace MyFeed.Uwp.Services
 
         private void RaiseNavigated(Type type)
         {
-            if (type == typeof(FeedItemFullViewModel))
+            if (type == typeof(FeedItemViewModel))
             {
                 var navigationFrame = GetChild<Frame>(Window.Current.Content, 0);
                 var page = (Page) navigationFrame.Content ?? throw new NullReferenceException();

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using System.Reflection;
 using DryIocAttributes;
@@ -15,7 +16,7 @@ namespace MyFeed.ViewModels
     [Reuse(ReuseType.Transient)]
     [ExportEx(typeof(MenuViewModel))]
     [AddINotifyPropertyChangedInterface]
-    public sealed class MenuViewModel
+    public sealed class MenuViewModel : ISupportsActivation
     {
         private readonly Func<Type, string, object, MenuItemViewModel> _factory;
         private readonly INavigationService _navigationService;
@@ -23,8 +24,8 @@ namespace MyFeed.ViewModels
         private readonly ISettingManager _settingManager;
 
         public ReactiveList<MenuItemViewModel> Items { get; }
-        public ReactiveCommand<Unit, Unit> Load { get; }
         public MenuItemViewModel Selection { get; set; }
+        public ViewModelActivator Activator { get; }
 
         public MenuViewModel(
             Func<Type, string, object, MenuItemViewModel> factory,
@@ -38,7 +39,6 @@ namespace MyFeed.ViewModels
             _factory = factory;
 
             Items = new ReactiveList<MenuItemViewModel>();
-            Load = ReactiveCommand.CreateFromTask(DoLoad);
             _navigationService.Navigated
                 .Where(type => type != Selection?.Type)
                 .Select(x => Items.FirstOrDefault(i => i.Type == x))
@@ -52,17 +52,20 @@ namespace MyFeed.ViewModels
                     .GetMethod(nameof(INavigationService.Navigate), new Type[0])?
                     .MakeGenericMethod(viewModelType)
                     .Invoke(_navigationService, null));
+
+            Activator = new ViewModelActivator();
+            this.WhenActivated(async disposables => await Activate(disposables));
         }
 
-        private async Task DoLoad()
+        private async Task Activate(CompositeDisposable disposables)
         {
-            await _navigationService.Navigate<FeedViewModel>();
             var settings = await _settingManager.Read();
             settings.Fetched = DateTime.Now;
             
             await _settingManager.Write(settings);
             await _platformService.RegisterBackgroundTask(settings.Period);
             await _platformService.RegisterTheme(settings.Theme);
+            await Task.Delay(250);
 
             _platformService.Icons
                 .Select(x => _factory(x.Key, x.Value.Item1, x.Value.Item2))

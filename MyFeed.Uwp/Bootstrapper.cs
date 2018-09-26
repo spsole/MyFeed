@@ -34,9 +34,8 @@ namespace MyFeed.Uwp
             if (article == null) return;
 
             var factory = _container.Resolve<Func<Article, FeedItemViewModel>>();
-            var articleFactory = _container.Resolve<Func<FeedItemViewModel, FeedItemFullViewModel>>();
             var navigationService = _container.Resolve<INavigationService>();
-            var articleViewModel = articleFactory(factory(article));
+            var articleViewModel = factory(article);
 
             if (navigationService.CurrentViewModelType != typeof(FeedViewModel))
             {

@@ -10,7 +10,15 @@ namespace MyFeed.Uwp
 {
     public sealed partial class App : Application
     {
-        public App() => InitializeComponent();
+        public App()
+        {
+            InitializeComponent();
+            UnhandledException += (sender, e) =>
+            {
+                e.Handled = true;
+                System.Diagnostics.Debug.WriteLine(e.Exception);
+            };
+        }
 
         private void EnsureDefaultViewIsPresent()
         {

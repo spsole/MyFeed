@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="MyFeed.Uwp.Views.ChannelGroupView"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:contract5Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 5)"
+    xmlns:controls="using:MyFeed.Uwp.Controls"
+    xmlns:viewmodels="using:MyFeed.ViewModels"
+    xmlns:local="using:MyFeed.Uwp.Views"
+    mc:Ignorable="d">
+
+    <controls:Expander 
+        Margin="12 6" HorizontalContentAlignment="Stretch"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <controls:Expander.HeaderContent>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock x:Name="RealTitleTextBlock" Margin="0 0 6 0" />
+                <TextBlock x:Name="ChannelsCountTextBlock" Opacity="0.5" />
+            </StackPanel>
+        </controls:Expander.HeaderContent>
+        <controls:Expander.Content>
+            <StackPanel>
+                <Grid Height="54" Padding="12 12 12 6" Background="{ThemeResource MediumBackgroundThemeBrush}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBox x:Name="TitleTextBox" Margin="0 6" 
+                            PlaceholderText="{Binding 
+                                Converter={StaticResource Locale}, 
+                                ConverterParameter=EnterNameOfNewCategory}"/>
+                    </StackPanel>
+                    <Button x:Name="RemoveButton" Grid.Column="1" Margin="12 0 0 0"
+                            contract5Present:Style="{StaticResource ButtonRevealStyle}" 
+                            Content="{Binding Converter={StaticResource Locale}, 
+                                              ConverterParameter=DeleteCategory}"/>
+                </Grid>
+                <Grid Height="48" Padding="12 0 12 12" Background="{ThemeResource MediumBackgroundThemeBrush}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                        <TextBox x:Name="ChannelUriTextBox" Margin="0 6" 
+                                 PlaceholderText="http://example.com/"/>
+                    </StackPanel>
+                    <Button x:Name="CreateChannelButton" Grid.Column="1" Margin="12 0 0 0"
+                            Content="{Binding Converter={StaticResource Locale}, ConverterParameter=Add}"
+                            Style="{StaticResource AccentButtonStyle}"/>
+                </Grid>
+                <ListView x:Name="ChannelsListView" SelectionMode="None">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Style.Setters>
+                                <Setter Property="Background" Value="{ThemeResource LowBackgroundThemeBrush}"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                            </Style.Setters>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="viewmodels:ChannelItemViewModel">
+                            <local:ChannelItemView DataContext="{Binding}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackPanel>
+        </controls:Expander.Content>
+    </controls:Expander>
+</UserControl>
