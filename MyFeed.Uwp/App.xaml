@@ -5,8 +5,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Converters"
-    xmlns:root="using:MyFeed.Uwp"
-    xmlns:converters="using:MyFeed.Uwp.Converters">
+    xmlns:converters="using:MyFeed.Uwp.Converters"
+    xmlns:root="using:MyFeed.Uwp">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,6 +14,16 @@
                     <root:Bootstrapper x:Key="Bootstrapper"/>
                 </ResourceDictionary>
                 <ResourceDictionary>
+                    <converters:LocaleConverter x:Key="Locale"/>
+                    <converters:UpperStringConverter x:Key="StrToUpper"/>
+                    <toolkit:BoolToObjectConverter x:Key="TruthyToVisible">
+                        <toolkit:BoolToObjectConverter.FalseValue>
+                            <Visibility>Collapsed</Visibility>
+                        </toolkit:BoolToObjectConverter.FalseValue>
+                        <toolkit:BoolToObjectConverter.TrueValue>
+                            <Visibility>Visible</Visibility>
+                        </toolkit:BoolToObjectConverter.TrueValue>
+                    </toolkit:BoolToObjectConverter>
                     <contract5Present:AcrylicBrush x:Key="LowBackgroundThemeBrush"
                         BackgroundSource="HostBackdrop" TintOpacity="0.8"
                         TintColor="{ThemeResource SystemChromeLowColor}"
@@ -33,42 +43,6 @@
                 <ResourceDictionary Source="Controls/TransparentButton.xaml"/>
                 <ResourceDictionary Source="Controls/Expander.xaml" />
                 <ResourceDictionary Source="Controls/HtmlBlock.xaml"/>
-                <ResourceDictionary>
-                    <converters:UpperStringConverter x:Key="StrToUpper"/>
-                    <converters:LocaleConverter x:Key="Locale"/>
-                    <toolkit:BoolToObjectConverter x:Key="NegateBool">
-                        <toolkit:BoolToObjectConverter.FalseValue>
-                            <x:Boolean>True</x:Boolean>
-                        </toolkit:BoolToObjectConverter.FalseValue>
-                        <toolkit:BoolToObjectConverter.TrueValue>
-                            <x:Boolean>False</x:Boolean>
-                        </toolkit:BoolToObjectConverter.TrueValue>
-                    </toolkit:BoolToObjectConverter>
-                    <toolkit:BoolToObjectConverter x:Key="FalsyToVisible">
-                        <toolkit:BoolToObjectConverter.FalseValue>
-                            <Visibility>Visible</Visibility>
-                        </toolkit:BoolToObjectConverter.FalseValue>
-                        <toolkit:BoolToObjectConverter.TrueValue>
-                            <Visibility>Collapsed</Visibility>
-                        </toolkit:BoolToObjectConverter.TrueValue>
-                    </toolkit:BoolToObjectConverter>
-                    <toolkit:BoolToObjectConverter x:Key="TruthyToVisible">
-                        <toolkit:BoolToObjectConverter.FalseValue>
-                            <Visibility>Collapsed</Visibility>
-                        </toolkit:BoolToObjectConverter.FalseValue>
-                        <toolkit:BoolToObjectConverter.TrueValue>
-                            <Visibility>Visible</Visibility>
-                        </toolkit:BoolToObjectConverter.TrueValue>
-                    </toolkit:BoolToObjectConverter>
-                    <toolkit:BoolToObjectConverter x:Key="TruthyToTransparent">
-                        <toolkit:BoolToObjectConverter.FalseValue>
-                            <x:Double>1.0</x:Double>
-                        </toolkit:BoolToObjectConverter.FalseValue>
-                        <toolkit:BoolToObjectConverter.TrueValue>
-                            <x:Double>0.5</x:Double>
-                        </toolkit:BoolToObjectConverter.TrueValue>
-                    </toolkit:BoolToObjectConverter>
-                </ResourceDictionary>
                 <ResourceDictionary>
                     <Style TargetType="PivotHeaderItem">
                         <Setter Property="FontSize" Value="15" />
