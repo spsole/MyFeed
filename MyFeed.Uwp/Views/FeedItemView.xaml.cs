@@ -136,25 +136,24 @@ namespace MyFeed.Uwp.Views
                     view => view.PublishedTextBlock.Text)
                     .DisposeWith(disposables);
 
+                this.Events().Tapped
+                    .Select(routedEventArgs => ViewModel)
+                    .Where(viewModel => viewModel != null)
+                    .SelectMany(viewModel => viewModel.Open.Execute())
+                    .Subscribe(ignore => { })
+                    .DisposeWith(disposables);
+
+                Observable.FromEventPattern(LayoutGrid, nameof(Holding))
+                    .Merge(Observable.FromEventPattern(LayoutGrid, nameof(RightTapped)))
+                    .Select(args => args.Sender as FrameworkElement)
+                    .Subscribe(FlyoutBase.ShowAttachedFlyout)
+                    .DisposeWith(disposables);
+
                 this.WhenAnyValue(x => x.ViewModel)
                     .Where(viewModel => viewModel != null)
-                    .Subscribe(viewModel =>
-                    {
-                        viewModel.Copied
-                            .RegisterHandler(async x => x.SetOutput(await HandleCopied()))
-                            .DisposeWith(disposables);
-
-                        this.Events().Tapped
-                            .Select(routedEventArgs => Unit.Default)
-                            .InvokeCommand(ViewModel.Open)
-                            .DisposeWith(disposables);
-
-                        Observable.FromEventPattern(LayoutGrid, nameof(Holding))
-                            .Merge(Observable.FromEventPattern(LayoutGrid, nameof(RightTapped)))
-                            .Select(args => args.Sender as FrameworkElement)
-                            .Subscribe(FlyoutBase.ShowAttachedFlyout)
-                            .DisposeWith(disposables);
-                    })
+                    .Subscribe(viewModel => viewModel.Copied
+                        .RegisterHandler(async x => x.SetOutput(await HandleCopied()))
+                        .DisposeWith(disposables))
                     .DisposeWith(disposables);
             });
         }
